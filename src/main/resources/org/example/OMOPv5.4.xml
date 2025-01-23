@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns4:modelInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="urn:hl7-org:elm-modelinfo:r1" name="OMOP" version="v5.4" url="urn:ohdsi:omop-types:r5.4">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CareSite" baseType="System.Any" retrievable="true">
+        <ns4:element name="placeOfServiceSourceValue" type="System.String"/>
+        <ns4:element name="careSiteSourceValue" type="System.String"/>
+        <ns4:element name="locationId" type="System.Integer"/>
+        <ns4:element name="location" type="Location"/>
+        <ns4:element name="placeOfServiceConceptId" type="System.Integer"/>
+        <ns4:element name="placeOfServiceConcept" type="Concept"/>
+        <ns4:element name="careSiteName" type="System.String"/>
+        <ns4:element name="careSiteId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CdmSource" baseType="System.Any" retrievable="true">
+        <ns4:element name="vocabularyVersion" type="System.String"/>
+        <ns4:element name="cdmVersionConceptId" type="System.Integer"/>
+        <ns4:element name="cdmVersionConcept" type="Concept"/>
+        <ns4:element name="cdmVersion" type="System.String"/>
+        <ns4:element name="cdmReleaseDate" type="System.Date"/>
+        <ns4:element name="sourceReleaseDate" type="System.Date"/>
+        <ns4:element name="cdmEtlReference" type="System.String"/>
+        <ns4:element name="sourceDocumentationReference" type="System.String"/>
+        <ns4:element name="sourceDescription" type="System.String"/>
+        <ns4:element name="cdmHolder" type="System.String"/>
+        <ns4:element name="cdmSourceAbbreviation" type="System.String"/>
+        <ns4:element name="cdmSourceName" type="System.String"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Cohort" baseType="System.Any" retrievable="true">
+        <ns4:element name="cohortEndDate" type="System.Date"/>
+        <ns4:element name="cohortStartDate" type="System.Date"/>
+        <ns4:element name="subjectId" type="System.Integer"/>
+        <ns4:element name="cohortDefinitionId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CohortDefinition" baseType="System.Any" retrievable="true">
+        <ns4:element name="cohortInitiationDate" type="System.Date"/>
+        <ns4:element name="subjectConceptId" type="System.Integer"/>
+        <ns4:element name="subjectConcept" type="Concept"/>
+        <ns4:element name="cohortDefinitionSyntax" type="System.String"/>
+        <ns4:element name="definitionTypeConceptId" type="System.Integer"/>
+        <ns4:element name="definitionTypeConcept" type="Concept"/>
+        <ns4:element name="cohortDefinitionDescription" type="System.String"/>
+        <ns4:element name="cohortDefinitionName" type="System.String"/>
+        <ns4:element name="cohortDefinitionId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Concept" baseType="System.Any" retrievable="true">
+        <ns4:element name="ancestors">
+            <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
+        </ns4:element>
+        <ns4:element name="invalidReason" type="System.String"/>
+        <ns4:element name="validEndDate" type="System.Date"/>
+        <ns4:element name="validStartDate" type="System.Date"/>
+        <ns4:element name="conceptCode" type="System.String"/>
+        <ns4:element name="standardConcept" type="System.String"/>
+        <ns4:element name="conceptClassId" type="System.String"/>
+        <ns4:element name="conceptClass" type="ConceptClass"/>
+        <ns4:element name="vocabularyId" type="System.String"/>
+        <ns4:element name="vocabulary" type="Vocabulary"/>
+        <ns4:element name="domainId" type="System.String"/>
+        <ns4:element name="domain" type="Domain"/>
+        <ns4:element name="conceptName" type="System.String"/>
+        <ns4:element name="conceptId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptAncestor" baseType="System.Any" retrievable="true">
+        <ns4:element name="maxLevelsOfSeparation" type="System.Integer"/>
+        <ns4:element name="minLevelsOfSeparation" type="System.Integer"/>
+        <ns4:element name="descendantConceptId" type="System.Integer"/>
+        <ns4:element name="descendantConcept" type="Concept"/>
+        <ns4:element name="ancestorConceptId" type="System.Integer"/>
+        <ns4:element name="ancestorConcept" type="Concept"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptClass" baseType="System.Any" retrievable="true">
+        <ns4:element name="conceptClassConceptId" type="System.Integer"/>
+        <ns4:element name="conceptClassConcept" type="Concept"/>
+        <ns4:element name="conceptClassName" type="System.String"/>
+        <ns4:element name="conceptClassId" type="System.String"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptSynonym" baseType="System.Any" retrievable="true">
+        <ns4:element name="languageConceptId" type="System.Integer"/>
+        <ns4:element name="languageConcept" type="Concept"/>
+        <ns4:element name="conceptSynonymName" type="System.String"/>
+        <ns4:element name="conceptId" type="System.Integer"/>
+        <ns4:element name="concept" type="Concept"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConditionEra" baseType="System.Any" retrievable="true">
+        <ns4:element name="conditionOccurrenceCount" type="System.Integer"/>
+        <ns4:element name="conditionEraEndDate" type="System.Date"/>
+        <ns4:element name="conditionEraStartDate" type="System.Date"/>
+        <ns4:element name="conditionConceptId" type="System.Integer"/>
+        <ns4:element name="conditionConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="conditionEraId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConditionOccurrence" baseType="System.Any" retrievable="true" primaryCodePath="conditionConcept">
+        <ns4:element name="conditionStatusSourceValue" type="System.String"/>
+        <ns4:element name="conditionSourceConceptId" type="System.Integer"/>
+        <ns4:element name="conditionSourceConcept" type="Concept"/>
+        <ns4:element name="conditionSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="stopReason" type="System.String"/>
+        <ns4:element name="conditionStatusConceptId" type="System.Integer"/>
+        <ns4:element name="conditionStatusConcept" type="Concept"/>
+        <ns4:element name="conditionTypeConceptId" type="System.Integer"/>
+        <ns4:element name="conditionTypeConcept" type="Concept"/>
+        <ns4:element name="conditionEndDatetime" type="System.DateTime"/>
+        <ns4:element name="conditionEndDate" type="System.Date"/>
+        <ns4:element name="conditionStartDatetime" type="System.DateTime"/>
+        <ns4:element name="conditionStartDate" type="System.Date"/>
+        <ns4:element name="conditionConceptId" type="System.Integer"/>
+        <ns4:element name="conditionConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="conditionOccurrenceId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Cost" baseType="System.Any" retrievable="true">
+        <ns4:element name="drgSourceValue" type="System.String"/>
+        <ns4:element name="drgConceptId" type="System.Integer"/>
+        <ns4:element name="drgConcept" type="Concept"/>
+        <ns4:element name="revenueCodeSourceValue" type="System.String"/>
+        <ns4:element name="revenueCodeConceptId" type="System.Integer"/>
+        <ns4:element name="revenueCodeConcept" type="Concept"/>
+        <ns4:element name="amountAllowed" type="System.Decimal"/>
+        <ns4:element name="payerPlanPeriodId" type="System.Integer"/>
+        <ns4:element name="paidDispensingFee" type="System.Decimal"/>
+        <ns4:element name="paidIngredientCost" type="System.Decimal"/>
+        <ns4:element name="paidByPrimary" type="System.Decimal"/>
+        <ns4:element name="paidPatientDeductible" type="System.Decimal"/>
+        <ns4:element name="paidPatientCoinsurance" type="System.Decimal"/>
+        <ns4:element name="paidPatientCopay" type="System.Decimal"/>
+        <ns4:element name="paidByPatient" type="System.Decimal"/>
+        <ns4:element name="paidByPayer" type="System.Decimal"/>
+        <ns4:element name="totalPaid" type="System.Decimal"/>
+        <ns4:element name="totalCost" type="System.Decimal"/>
+        <ns4:element name="totalCharge" type="System.Decimal"/>
+        <ns4:element name="currencyConceptId" type="System.Integer"/>
+        <ns4:element name="currencyConcept" type="Concept"/>
+        <ns4:element name="costTypeConceptId" type="System.Integer"/>
+        <ns4:element name="costTypeConcept" type="Concept"/>
+        <ns4:element name="costDomainId" type="System.String"/>
+        <ns4:element name="costDomain" type="Domain"/>
+        <ns4:element name="costEventId" type="System.Integer"/>
+        <ns4:element name="costId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Death" baseType="System.Any" retrievable="true">
+        <ns4:element name="causeSourceConceptId" type="System.Integer"/>
+        <ns4:element name="causeSourceConcept" type="Concept"/>
+        <ns4:element name="causeSourceValue" type="System.String"/>
+        <ns4:element name="causeConceptId" type="System.Integer"/>
+        <ns4:element name="causeConcept" type="Concept"/>
+        <ns4:element name="deathTypeConceptId" type="System.Integer"/>
+        <ns4:element name="deathTypeConcept" type="Concept"/>
+        <ns4:element name="deathDatetime" type="System.DateTime"/>
+        <ns4:element name="deathDate" type="System.Date"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="DeviceExposure" baseType="System.Any" retrievable="true">
+        <ns4:element name="unitSourceConceptId" type="System.Integer"/>
+        <ns4:element name="unitSourceConcept" type="Concept"/>
+        <ns4:element name="unitSourceValue" type="System.String"/>
+        <ns4:element name="unitConceptId" type="System.Integer"/>
+        <ns4:element name="unitConcept" type="Concept"/>
+        <ns4:element name="deviceSourceConceptId" type="System.Integer"/>
+        <ns4:element name="deviceSourceConcept" type="Concept"/>
+        <ns4:element name="deviceSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="quantity" type="System.Integer"/>
+        <ns4:element name="productionId" type="System.String"/>
+        <ns4:element name="uniqueDeviceId" type="System.String"/>
+        <ns4:element name="deviceTypeConceptId" type="System.Integer"/>
+        <ns4:element name="deviceTypeConcept" type="Concept"/>
+        <ns4:element name="deviceExposureEndDatetime" type="System.DateTime"/>
+        <ns4:element name="deviceExposureEndDate" type="System.Date"/>
+        <ns4:element name="deviceExposureStartDatetime" type="System.DateTime"/>
+        <ns4:element name="deviceExposureStartDate" type="System.Date"/>
+        <ns4:element name="deviceConceptId" type="System.Integer"/>
+        <ns4:element name="deviceConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="deviceExposureId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Domain" baseType="System.Any" retrievable="true">
+        <ns4:element name="domainConceptId" type="System.Integer"/>
+        <ns4:element name="domainConcept" type="Concept"/>
+        <ns4:element name="domainName" type="System.String"/>
+        <ns4:element name="domainId" type="System.String"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="DoseEra" baseType="System.Any" retrievable="true">
+        <ns4:element name="doseEraEndDate" type="System.Date"/>
+        <ns4:element name="doseEraStartDate" type="System.Date"/>
+        <ns4:element name="doseValue" type="System.Decimal"/>
+        <ns4:element name="unitConceptId" type="System.Integer"/>
+        <ns4:element name="unitConcept" type="Concept"/>
+        <ns4:element name="drugConceptId" type="System.Integer"/>
+        <ns4:element name="drugConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="doseEraId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="DrugEra" baseType="System.Any" retrievable="true">
+        <ns4:element name="gapDays" type="System.Integer"/>
+        <ns4:element name="drugExposureCount" type="System.Integer"/>
+        <ns4:element name="drugEraEndDate" type="System.Date"/>
+        <ns4:element name="drugEraStartDate" type="System.Date"/>
+        <ns4:element name="drugConceptId" type="System.Integer"/>
+        <ns4:element name="drugConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="drugEraId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="DrugExposure" baseType="System.Any" retrievable="true">
+        <ns4:element name="doseUnitSourceValue" type="System.String"/>
+        <ns4:element name="routeSourceValue" type="System.String"/>
+        <ns4:element name="drugSourceConceptId" type="System.Integer"/>
+        <ns4:element name="drugSourceConcept" type="Concept"/>
+        <ns4:element name="drugSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="lotNumber" type="System.String"/>
+        <ns4:element name="routeConceptId" type="System.Integer"/>
+        <ns4:element name="routeConcept" type="Concept"/>
+        <ns4:element name="sig" type="System.String"/>
+        <ns4:element name="daysSupply" type="System.Integer"/>
+        <ns4:element name="quantity" type="System.Decimal"/>
+        <ns4:element name="refills" type="System.Integer"/>
+        <ns4:element name="stopReason" type="System.String"/>
+        <ns4:element name="drugTypeConceptId" type="System.Integer"/>
+        <ns4:element name="drugTypeConcept" type="Concept"/>
+        <ns4:element name="verbatimEndDate" type="System.Date"/>
+        <ns4:element name="drugExposureEndDatetime" type="System.DateTime"/>
+        <ns4:element name="drugExposureEndDate" type="System.Date"/>
+        <ns4:element name="drugExposureStartDatetime" type="System.DateTime"/>
+        <ns4:element name="drugExposureStartDate" type="System.Date"/>
+        <ns4:element name="drugConceptId" type="System.Integer"/>
+        <ns4:element name="drugConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="drugExposureId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="DrugStrength" baseType="System.Any" retrievable="true">
+        <ns4:element name="invalidReason" type="System.String"/>
+        <ns4:element name="validEndDate" type="System.Date"/>
+        <ns4:element name="validStartDate" type="System.Date"/>
+        <ns4:element name="boxSize" type="System.Integer"/>
+        <ns4:element name="denominatorUnitConceptId" type="System.Integer"/>
+        <ns4:element name="denominatorUnitConcept" type="Concept"/>
+        <ns4:element name="denominatorValue" type="System.Decimal"/>
+        <ns4:element name="numeratorUnitConceptId" type="System.Integer"/>
+        <ns4:element name="numeratorUnitConcept" type="Concept"/>
+        <ns4:element name="numeratorValue" type="System.Decimal"/>
+        <ns4:element name="amountUnitConceptId" type="System.Integer"/>
+        <ns4:element name="amountUnitConcept" type="Concept"/>
+        <ns4:element name="amountValue" type="System.Decimal"/>
+        <ns4:element name="ingredientConceptId" type="System.Integer"/>
+        <ns4:element name="ingredientConcept" type="Concept"/>
+        <ns4:element name="drugConceptId" type="System.Integer"/>
+        <ns4:element name="drugConcept" type="Concept"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Episode" baseType="System.Any" retrievable="true">
+        <ns4:element name="episodeSourceConceptId" type="System.Integer"/>
+        <ns4:element name="episodeSourceConcept" type="Concept"/>
+        <ns4:element name="episodeSourceValue" type="System.String"/>
+        <ns4:element name="episodeTypeConceptId" type="System.Integer"/>
+        <ns4:element name="episodeTypeConcept" type="Concept"/>
+        <ns4:element name="episodeObjectConceptId" type="System.Integer"/>
+        <ns4:element name="episodeObjectConcept" type="Concept"/>
+        <ns4:element name="episodeNumber" type="System.Integer"/>
+        <ns4:element name="episodeParentId" type="System.Integer"/>
+        <ns4:element name="episodeEndDatetime" type="System.DateTime"/>
+        <ns4:element name="episodeEndDate" type="System.Date"/>
+        <ns4:element name="episodeStartDatetime" type="System.DateTime"/>
+        <ns4:element name="episodeStartDate" type="System.Date"/>
+        <ns4:element name="episodeConceptId" type="System.Integer"/>
+        <ns4:element name="episodeConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="episodeId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="EpisodeEvent" baseType="System.Any" retrievable="true">
+        <ns4:element name="episodeEventFieldConceptId" type="System.Integer"/>
+        <ns4:element name="episodeEventFieldConcept" type="Concept"/>
+        <ns4:element name="eventId" type="System.Integer"/>
+        <ns4:element name="episodeId" type="System.Integer"/>
+        <ns4:element name="episode" type="Episode"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="FactRelationship" baseType="System.Any" retrievable="true">
+        <ns4:element name="relationshipConceptId" type="System.Integer"/>
+        <ns4:element name="relationshipConcept" type="Concept"/>
+        <ns4:element name="factId2" type="System.Integer"/>
+        <ns4:element name="domainConceptId2" type="System.Integer"/>
+        <ns4:element name="domainConcept2" type="Concept"/>
+        <ns4:element name="factId1" type="System.Integer"/>
+        <ns4:element name="domainConceptId1" type="System.Integer"/>
+        <ns4:element name="domainConcept1" type="Concept"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Location" baseType="System.Any" retrievable="true">
+        <ns4:element name="longitude" type="System.Decimal"/>
+        <ns4:element name="latitude" type="System.Decimal"/>
+        <ns4:element name="countrySourceValue" type="System.String"/>
+        <ns4:element name="countryConceptId" type="System.Integer"/>
+        <ns4:element name="countryConcept" type="Concept"/>
+        <ns4:element name="locationSourceValue" type="System.String"/>
+        <ns4:element name="county" type="System.String"/>
+        <ns4:element name="zip" type="System.String"/>
+        <ns4:element name="state" type="System.String"/>
+        <ns4:element name="city" type="System.String"/>
+        <ns4:element name="address2" type="System.String"/>
+        <ns4:element name="address1" type="System.String"/>
+        <ns4:element name="locationId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Measurement" baseType="System.Any" retrievable="true">
+        <ns4:element name="measEventFieldConceptId" type="System.Integer"/>
+        <ns4:element name="measEventFieldConcept" type="Concept"/>
+        <ns4:element name="measurementEventId" type="System.Integer"/>
+        <ns4:element name="valueSourceValue" type="System.String"/>
+        <ns4:element name="unitSourceConceptId" type="System.Integer"/>
+        <ns4:element name="unitSourceConcept" type="Concept"/>
+        <ns4:element name="unitSourceValue" type="System.String"/>
+        <ns4:element name="measurementSourceConceptId" type="System.Integer"/>
+        <ns4:element name="measurementSourceConcept" type="Concept"/>
+        <ns4:element name="measurementSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="rangeHigh" type="System.Decimal"/>
+        <ns4:element name="rangeLow" type="System.Decimal"/>
+        <ns4:element name="unitConceptId" type="System.Integer"/>
+        <ns4:element name="unitConcept" type="Concept"/>
+        <ns4:element name="valueAsConceptId" type="System.Integer"/>
+        <ns4:element name="valueAsConcept" type="Concept"/>
+        <ns4:element name="valueAsNumber" type="System.Decimal"/>
+        <ns4:element name="operatorConceptId" type="System.Integer"/>
+        <ns4:element name="operatorConcept" type="Concept"/>
+        <ns4:element name="measurementTypeConceptId" type="System.Integer"/>
+        <ns4:element name="measurementTypeConcept" type="Concept"/>
+        <ns4:element name="measurementTime" type="System.String"/>
+        <ns4:element name="measurementDatetime" type="System.DateTime"/>
+        <ns4:element name="measurementDate" type="System.Date"/>
+        <ns4:element name="measurementConceptId" type="System.Integer"/>
+        <ns4:element name="measurementConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="measurementId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Metadata" baseType="System.Any" retrievable="true">
+        <ns4:element name="metadataDatetime" type="System.DateTime"/>
+        <ns4:element name="metadataDate" type="System.Date"/>
+        <ns4:element name="valueAsNumber" type="System.Decimal"/>
+        <ns4:element name="valueAsConceptId" type="System.Integer"/>
+        <ns4:element name="valueAsConcept" type="Concept"/>
+        <ns4:element name="valueAsString" type="System.String"/>
+        <ns4:element name="name" type="System.String"/>
+        <ns4:element name="metadataTypeConceptId" type="System.Integer"/>
+        <ns4:element name="metadataTypeConcept" type="Concept"/>
+        <ns4:element name="metadataConceptId" type="System.Integer"/>
+        <ns4:element name="metadataConcept" type="Concept"/>
+        <ns4:element name="metadataId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Note" baseType="System.Any" retrievable="true">
+        <ns4:element name="noteEventFieldConceptId" type="System.Integer"/>
+        <ns4:element name="noteEventFieldConcept" type="Concept"/>
+        <ns4:element name="noteEventId" type="System.Integer"/>
+        <ns4:element name="noteSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="languageConceptId" type="System.Integer"/>
+        <ns4:element name="languageConcept" type="Concept"/>
+        <ns4:element name="encodingConceptId" type="System.Integer"/>
+        <ns4:element name="encodingConcept" type="Concept"/>
+        <ns4:element name="noteText" type="System.String"/>
+        <ns4:element name="noteTitle" type="System.String"/>
+        <ns4:element name="noteClassConceptId" type="System.Integer"/>
+        <ns4:element name="noteClassConcept" type="Concept"/>
+        <ns4:element name="noteTypeConceptId" type="System.Integer"/>
+        <ns4:element name="noteTypeConcept" type="Concept"/>
+        <ns4:element name="noteDatetime" type="System.DateTime"/>
+        <ns4:element name="noteDate" type="System.Date"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="noteId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="NoteNlp" baseType="System.Any" retrievable="true">
+        <ns4:element name="termModifiers" type="System.String"/>
+        <ns4:element name="termTemporal" type="System.String"/>
+        <ns4:element name="termExists" type="System.String"/>
+        <ns4:element name="nlpDatetime" type="System.DateTime"/>
+        <ns4:element name="nlpDate" type="System.Date"/>
+        <ns4:element name="nlpSystem" type="System.String"/>
+        <ns4:element name="noteNlpSourceConceptId" type="System.Integer"/>
+        <ns4:element name="noteNlpSourceConcept" type="Concept"/>
+        <ns4:element name="noteNlpConceptId" type="System.Integer"/>
+        <ns4:element name="noteNlpConcept" type="Concept"/>
+        <ns4:element name="lexicalVariant" type="System.String"/>
+        <ns4:element name="offset" type="System.String"/>
+        <ns4:element name="snippet" type="System.String"/>
+        <ns4:element name="sectionConceptId" type="System.Integer"/>
+        <ns4:element name="sectionConcept" type="Concept"/>
+        <ns4:element name="noteId" type="System.Integer"/>
+        <ns4:element name="noteNlpId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Observation" baseType="System.Any" retrievable="true">
+        <ns4:element name="obsEventFieldConceptId" type="System.Integer"/>
+        <ns4:element name="obsEventFieldConcept" type="Concept"/>
+        <ns4:element name="observationEventId" type="System.Integer"/>
+        <ns4:element name="valueSourceValue" type="System.String"/>
+        <ns4:element name="qualifierSourceValue" type="System.String"/>
+        <ns4:element name="unitSourceValue" type="System.String"/>
+        <ns4:element name="observationSourceConceptId" type="System.Integer"/>
+        <ns4:element name="observationSourceConcept" type="Concept"/>
+        <ns4:element name="observationSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="unitConceptId" type="System.Integer"/>
+        <ns4:element name="unitConcept" type="Concept"/>
+        <ns4:element name="qualifierConceptId" type="System.Integer"/>
+        <ns4:element name="qualifierConcept" type="Concept"/>
+        <ns4:element name="valueAsConceptId" type="System.Integer"/>
+        <ns4:element name="valueAsConcept" type="Concept"/>
+        <ns4:element name="valueAsString" type="System.String"/>
+        <ns4:element name="valueAsNumber" type="System.Decimal"/>
+        <ns4:element name="observationTypeConceptId" type="System.Integer"/>
+        <ns4:element name="observationTypeConcept" type="Concept"/>
+        <ns4:element name="observationDatetime" type="System.DateTime"/>
+        <ns4:element name="observationDate" type="System.Date"/>
+        <ns4:element name="observationConceptId" type="System.Integer"/>
+        <ns4:element name="observationConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="observationId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ObservationPeriod" baseType="System.Any" retrievable="true">
+        <ns4:element name="periodTypeConceptId" type="System.Integer"/>
+        <ns4:element name="periodTypeConcept" type="Concept"/>
+        <ns4:element name="observationPeriodEndDate" type="System.Date"/>
+        <ns4:element name="observationPeriodStartDate" type="System.Date"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="observationPeriodId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="PayerPlanPeriod" baseType="System.Any" retrievable="true">
+        <ns4:element name="stopReasonSourceConceptId" type="System.Integer"/>
+        <ns4:element name="stopReasonSourceConcept" type="Concept"/>
+        <ns4:element name="stopReasonSourceValue" type="System.String"/>
+        <ns4:element name="stopReasonConceptId" type="System.Integer"/>
+        <ns4:element name="stopReasonConcept" type="Concept"/>
+        <ns4:element name="familySourceValue" type="System.String"/>
+        <ns4:element name="sponsorSourceConceptId" type="System.Integer"/>
+        <ns4:element name="sponsorSourceConcept" type="Concept"/>
+        <ns4:element name="sponsorSourceValue" type="System.String"/>
+        <ns4:element name="sponsorConceptId" type="System.Integer"/>
+        <ns4:element name="sponsorConcept" type="Concept"/>
+        <ns4:element name="planSourceConceptId" type="System.Integer"/>
+        <ns4:element name="planSourceConcept" type="Concept"/>
+        <ns4:element name="planSourceValue" type="System.String"/>
+        <ns4:element name="planConceptId" type="System.Integer"/>
+        <ns4:element name="planConcept" type="Concept"/>
+        <ns4:element name="payerSourceConceptId" type="System.Integer"/>
+        <ns4:element name="payerSourceConcept" type="Concept"/>
+        <ns4:element name="payerSourceValue" type="System.String"/>
+        <ns4:element name="payerConceptId" type="System.Integer"/>
+        <ns4:element name="payerConcept" type="Concept"/>
+        <ns4:element name="payerPlanPeriodEndDate" type="System.Date"/>
+        <ns4:element name="payerPlanPeriodStartDate" type="System.Date"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="payerPlanPeriodId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Person" baseType="System.Any" retrievable="true">
+        <ns4:element name="ethnicitySourceConceptId" type="System.Integer"/>
+        <ns4:element name="ethnicitySourceConcept" type="Concept"/>
+        <ns4:element name="ethnicitySourceValue" type="System.String"/>
+        <ns4:element name="raceSourceConceptId" type="System.Integer"/>
+        <ns4:element name="raceSourceConcept" type="Concept"/>
+        <ns4:element name="raceSourceValue" type="System.String"/>
+        <ns4:element name="genderSourceConceptId" type="System.Integer"/>
+        <ns4:element name="genderSourceConcept" type="Concept"/>
+        <ns4:element name="genderSourceValue" type="System.String"/>
+        <ns4:element name="personSourceValue" type="System.String"/>
+        <ns4:element name="careSiteId" type="System.Integer"/>
+        <ns4:element name="careSite" type="CareSite"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="locationId" type="System.Integer"/>
+        <ns4:element name="location" type="Location"/>
+        <ns4:element name="ethnicityConceptId" type="System.Integer"/>
+        <ns4:element name="ethnicityConcept" type="Concept"/>
+        <ns4:element name="raceConceptId" type="System.Integer"/>
+        <ns4:element name="raceConcept" type="Concept"/>
+        <ns4:element name="birthDatetime" type="System.DateTime"/>
+        <ns4:element name="dayOfBirth" type="System.Integer"/>
+        <ns4:element name="monthOfBirth" type="System.Integer"/>
+        <ns4:element name="yearOfBirth" type="System.Integer"/>
+        <ns4:element name="genderConceptId" type="System.Integer"/>
+        <ns4:element name="genderConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ProcedureOccurrence" baseType="System.Any" retrievable="true">
+        <ns4:element name="modifierSourceValue" type="System.String"/>
+        <ns4:element name="procedureSourceConceptId" type="System.Integer"/>
+        <ns4:element name="procedureSourceConcept" type="Concept"/>
+        <ns4:element name="procedureSourceValue" type="System.String"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+        <ns4:element name="visitDetail" type="VisitDetail"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="quantity" type="System.Integer"/>
+        <ns4:element name="modifierConceptId" type="System.Integer"/>
+        <ns4:element name="modifierConcept" type="Concept"/>
+        <ns4:element name="procedureTypeConceptId" type="System.Integer"/>
+        <ns4:element name="procedureTypeConcept" type="Concept"/>
+        <ns4:element name="procedureEndDatetime" type="System.DateTime"/>
+        <ns4:element name="procedureEndDate" type="System.Date"/>
+        <ns4:element name="procedureDatetime" type="System.DateTime"/>
+        <ns4:element name="procedureDate" type="System.Date"/>
+        <ns4:element name="procedureConceptId" type="System.Integer"/>
+        <ns4:element name="procedureConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="procedureOccurrenceId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Provider" baseType="System.Any" retrievable="true">
+        <ns4:element name="genderSourceConceptId" type="System.Integer"/>
+        <ns4:element name="genderSourceConcept" type="Concept"/>
+        <ns4:element name="genderSourceValue" type="System.String"/>
+        <ns4:element name="specialtySourceConceptId" type="System.Integer"/>
+        <ns4:element name="specialtySourceConcept" type="Concept"/>
+        <ns4:element name="specialtySourceValue" type="System.String"/>
+        <ns4:element name="providerSourceValue" type="System.String"/>
+        <ns4:element name="genderConceptId" type="System.Integer"/>
+        <ns4:element name="genderConcept" type="Concept"/>
+        <ns4:element name="yearOfBirth" type="System.Integer"/>
+        <ns4:element name="careSiteId" type="System.Integer"/>
+        <ns4:element name="careSite" type="CareSite"/>
+        <ns4:element name="specialtyConceptId" type="System.Integer"/>
+        <ns4:element name="specialtyConcept" type="Concept"/>
+        <ns4:element name="dea" type="System.String"/>
+        <ns4:element name="npi" type="System.String"/>
+        <ns4:element name="providerName" type="System.String"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Relationship" baseType="System.Any" retrievable="true">
+        <ns4:element name="relationshipConceptId" type="System.Integer"/>
+        <ns4:element name="relationshipConcept" type="Concept"/>
+        <ns4:element name="reverseRelationshipId" type="System.String"/>
+        <ns4:element name="definesAncestry" type="System.String"/>
+        <ns4:element name="isHierarchical" type="System.String"/>
+        <ns4:element name="relationshipName" type="System.String"/>
+        <ns4:element name="relationshipId" type="System.String"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="SourceToConceptMap" baseType="System.Any" retrievable="true">
+        <ns4:element name="invalidReason" type="System.String"/>
+        <ns4:element name="validEndDate" type="System.Date"/>
+        <ns4:element name="validStartDate" type="System.Date"/>
+        <ns4:element name="targetVocabularyId" type="System.String"/>
+        <ns4:element name="targetVocabulary" type="Vocabulary"/>
+        <ns4:element name="targetConceptId" type="System.Integer"/>
+        <ns4:element name="targetConcept" type="Concept"/>
+        <ns4:element name="sourceCodeDescription" type="System.String"/>
+        <ns4:element name="sourceVocabularyId" type="System.String"/>
+        <ns4:element name="sourceConceptId" type="System.Integer"/>
+        <ns4:element name="sourceConcept" type="Concept"/>
+        <ns4:element name="sourceCode" type="System.String"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Specimen" baseType="System.Any" retrievable="true">
+        <ns4:element name="diseaseStatusSourceValue" type="System.String"/>
+        <ns4:element name="anatomicSiteSourceValue" type="System.String"/>
+        <ns4:element name="unitSourceValue" type="System.String"/>
+        <ns4:element name="specimenSourceValue" type="System.String"/>
+        <ns4:element name="specimenSourceId" type="System.String"/>
+        <ns4:element name="diseaseStatusConceptId" type="System.Integer"/>
+        <ns4:element name="diseaseStatusConcept" type="Concept"/>
+        <ns4:element name="anatomicSiteConceptId" type="System.Integer"/>
+        <ns4:element name="anatomicSiteConcept" type="Concept"/>
+        <ns4:element name="unitConceptId" type="System.Integer"/>
+        <ns4:element name="unitConcept" type="Concept"/>
+        <ns4:element name="quantity" type="System.Decimal"/>
+        <ns4:element name="specimenDatetime" type="System.DateTime"/>
+        <ns4:element name="specimenDate" type="System.Date"/>
+        <ns4:element name="specimenTypeConceptId" type="System.Integer"/>
+        <ns4:element name="specimenTypeConcept" type="Concept"/>
+        <ns4:element name="specimenConceptId" type="System.Integer"/>
+        <ns4:element name="specimenConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="specimenId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitDetail" baseType="System.Any" retrievable="true">
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="parentVisitDetailId" type="System.Integer"/>
+        <ns4:element name="parentVisitDetail" type="VisitDetail"/>
+        <ns4:element name="precedingVisitDetailId" type="System.Integer"/>
+        <ns4:element name="precedingVisitDetail" type="VisitDetail"/>
+        <ns4:element name="dischargedToConceptId" type="System.Integer"/>
+        <ns4:element name="dischargedToConcept" type="Concept"/>
+        <ns4:element name="dischargedToSourceValue" type="System.String"/>
+        <ns4:element name="admittedFromSourceValue" type="System.String"/>
+        <ns4:element name="admittedFromConceptId" type="System.Integer"/>
+        <ns4:element name="admittedFromConcept" type="Concept"/>
+        <ns4:element name="visitDetailSourceConceptId" type="System.Integer"/>
+        <ns4:element name="visitDetailSourceConcept" type="Concept"/>
+        <ns4:element name="visitDetailSourceValue" type="System.String"/>
+        <ns4:element name="careSiteId" type="System.Integer"/>
+        <ns4:element name="careSite" type="CareSite"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="visitDetailTypeConceptId" type="System.Integer"/>
+        <ns4:element name="visitDetailTypeConcept" type="Concept"/>
+        <ns4:element name="visitDetailEndDatetime" type="System.DateTime"/>
+        <ns4:element name="visitDetailEndDate" type="System.Date"/>
+        <ns4:element name="visitDetailStartDatetime" type="System.DateTime"/>
+        <ns4:element name="visitDetailStartDate" type="System.Date"/>
+        <ns4:element name="visitDetailConceptId" type="System.Integer"/>
+        <ns4:element name="visitDetailConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="visitDetailId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitOccurrence" baseType="System.Any" retrievable="true">
+        <ns4:element name="precedingVisitOccurrenceId" type="System.Integer"/>
+        <ns4:element name="precedingVisitOccurrence" type="VisitOccurrence"/>
+        <ns4:element name="dischargedToSourceValue" type="System.String"/>
+        <ns4:element name="dischargedToConceptId" type="System.Integer"/>
+        <ns4:element name="dischargedToConcept" type="Concept"/>
+        <ns4:element name="admittedFromSourceValue" type="System.String"/>
+        <ns4:element name="admittedFromConceptId" type="System.Integer"/>
+        <ns4:element name="admittedFromConcept" type="Concept"/>
+        <ns4:element name="visitSourceConceptId" type="System.Integer"/>
+        <ns4:element name="visitSourceConcept" type="Concept"/>
+        <ns4:element name="visitSourceValue" type="System.String"/>
+        <ns4:element name="careSiteId" type="System.Integer"/>
+        <ns4:element name="careSite" type="CareSite"/>
+        <ns4:element name="providerId" type="System.Integer"/>
+        <ns4:element name="provider" type="Provider"/>
+        <ns4:element name="visitTypeConceptId" type="System.Integer"/>
+        <ns4:element name="visitTypeConcept" type="Concept"/>
+        <ns4:element name="visitEndDatetime" type="System.DateTime"/>
+        <ns4:element name="visitEndDate" type="System.Date"/>
+        <ns4:element name="visitStartDatetime" type="System.DateTime"/>
+        <ns4:element name="visitStartDate" type="System.Date"/>
+        <ns4:element name="visitConceptId" type="System.Integer"/>
+        <ns4:element name="visitConcept" type="Concept"/>
+        <ns4:element name="personId" type="System.Integer"/>
+        <ns4:element name="person" type="Person"/>
+        <ns4:element name="visitOccurrenceId" type="System.Integer"/>
+    </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Vocabulary" baseType="System.Any" retrievable="true">
+        <ns4:element name="vocabularyConceptId" type="System.Integer"/>
+        <ns4:element name="vocabularyConcept" type="Concept"/>
+        <ns4:element name="vocabularyVersion" type="System.String"/>
+        <ns4:element name="vocabularyReference" type="System.String"/>
+        <ns4:element name="vocabularyName" type="System.String"/>
+        <ns4:element name="vocabularyId" type="System.String"/>
+    </ns4:typeInfo>
+</ns4:modelInfo>
