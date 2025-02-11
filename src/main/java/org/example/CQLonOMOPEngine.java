@@ -8,10 +8,7 @@ import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
-import org.opencds.cqf.cql.engine.runtime.Code;
-import org.opencds.cqf.cql.engine.terminology.CodeSystemInfo;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
-import org.opencds.cqf.cql.engine.terminology.ValueSetInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -72,7 +69,9 @@ public class CQLonOMOPEngine {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
         this.libraryManager = new LibraryManager(modelManager);
         this.libraryManager.getLibrarySourceLoader().registerProvider(librarySourceProvider);
-        this.dataProviders = Map.of("urn:ohdsi:omop-types:r5.4", new OMOPDataProvider());
+        final var modelResolver = new OMOPModelResolver();
+        this.dataProviders = Map.of("urn:ohdsi:omop-types:r5.4",
+                new OMOPDataProvider(modelResolver));
         this.terminologyProvider = new OMOPTerminologyProvider();
         this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
         this.engine = new CqlEngine(environment);

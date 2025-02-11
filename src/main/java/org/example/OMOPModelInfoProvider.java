@@ -12,11 +12,11 @@ public class OMOPModelInfoProvider implements ModelInfoProvider {
 
     private NamespaceManager namespaceManager;
 
-    public void setNamespaceManager(NamespaceManager namespaceManager) {
+    public void setNamespaceManager(final NamespaceManager namespaceManager) {
         this.namespaceManager = namespaceManager;
     }
 
-    private boolean isOMOPModelIdentifier(ModelIdentifier modelIdentifier) {
+    private boolean isOMOPModelIdentifier(final ModelIdentifier modelIdentifier) {
         final var idMatches = modelIdentifier.getId().equals("OMOP");
         if (namespaceManager != null && namespaceManager.hasNamespaces()) {
             return idMatches
@@ -27,7 +27,8 @@ public class OMOPModelInfoProvider implements ModelInfoProvider {
         }
     }
 
-    public ModelInfo load(ModelIdentifier modelIdentifier) {
+    @Override
+    public ModelInfo load(final ModelIdentifier modelIdentifier) {
         if (isOMOPModelIdentifier(modelIdentifier)) {
             return loadModelInfo(modelIdentifier.getVersion());
         } else {

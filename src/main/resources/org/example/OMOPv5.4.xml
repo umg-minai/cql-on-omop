@@ -45,6 +45,9 @@
         <ns4:element name="ancestors">
             <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
         </ns4:element>
+        <ns4:element name="descendants">
+            <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
+        </ns4:element>
         <ns4:element name="invalidReason" type="System.String"/>
         <ns4:element name="validEndDate" type="System.Date"/>
         <ns4:element name="validStartDate" type="System.Date"/>
@@ -671,11 +674,18 @@
         <ns4:element name="visitOccurrenceId" type="System.Integer"/>
     </ns4:typeInfo>
     <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Vocabulary" baseType="System.Any" retrievable="true">
-        <ns4:element name="vocabularyConceptId" type="System.Integer"/>
-        <ns4:element name="vocabularyConcept" type="Concept"/>
-        <ns4:element name="vocabularyVersion" type="System.String"/>
-        <ns4:element name="vocabularyReference" type="System.String"/>
-        <ns4:element name="vocabularyName" type="System.String"/>
-        <ns4:element name="vocabularyId" type="System.String"/>
+        <ns4:element name="VocabularyConceptId" type="System.Integer"/>
+        <ns4:element name="VocabularyConcept" type="OMOP.Concept"/>
+        <ns4:element name="VocabularyVersion" type="System.String"/>
+        <ns4:element name="VocabularyReference" type="System.String"/>
+        <ns4:element name="VocabularyName" type="System.String"/>
+        <ns4:element name="VocabularyId" type="System.String"/>
     </ns4:typeInfo>
+    <ns4:contextInfo name="Practitioner" keyElement="id">
+        <ns4:contextType namespace="OMOP" name="Person"/>
+    </ns4:contextInfo>
+    <ns4:contextInfo name="Patient" keyElement="id" birthDateElement="birthDatetime">
+        <ns4:contextType namespace="OMOP" name="Person"/>
+    </ns4:contextInfo>
+    <!-- <ns4:conversionInfo fromType="OMOP.Concept" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/> -->
 </ns4:modelInfo>
