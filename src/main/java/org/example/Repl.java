@@ -1,8 +1,9 @@
 package org.example;
 
+import org.example.repl.Completer;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
-import org.jline.terminal.Attributes;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
@@ -10,9 +11,24 @@ import org.jline.utils.AttributedStyle;
 import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 
+import java.io.IOException;
+
 public class Repl {
 
-    private static void presentResult(final EvaluationResult result, final Terminal terminal) {
+    private final CQLonOMOPEngine engine;
+
+    private final Terminal terminal;
+    private final LineReader reader;
+
+    public Repl() throws IOException {
+        this.engine = new CQLonOMOPEngine();
+        this.terminal = TerminalBuilder.builder().build();
+        this.reader = LineReaderBuilder.builder()
+                .completer(new Completer())
+                .terminal(this.terminal).build();
+    }
+
+    private void presentResult(final EvaluationResult result, final Terminal terminal) {
         final var string = new AttributedStringBuilder();
         result.expressionResults.forEach((expressionName, expressionResult) -> {
             final var value = expressionResult.value();
@@ -20,7 +36,9 @@ public class Repl {
                   .append(String.format("%s => ", expressionName));
             string.style(new AttributedStyle().foregroundRgb(0xa0f0a0));
             final String type;
-            if (value instanceof Iterable<?> iterable) {
+            if (value == null) {
+                type = "Null (unknown)";
+            } else if (value instanceof Iterable<?> iterable) {
                 final var it = iterable.iterator();
                 final var elementType = it.hasNext() ? it.next().getClass() : Object.class;
                 type = String.format("List<%s>", elementType.getSimpleName());
@@ -39,11 +57,7 @@ public class Repl {
         string.print(terminal);
     }
 
-    public static void main(String[] args) throws Exception {
-        final var engine = new CQLonOMOPEngine();
-
-        final var terminal = TerminalBuilder.builder().build();
-        final var reader = LineReaderBuilder.builder().terminal(terminal).build();
+    public void repl() {
         for (int i = 0;; ++i) {
             final String expression;
             try {
@@ -58,8 +72,9 @@ public class Repl {
             final var input = String.format("""
                         library REPL%s version '1.0.0'
                         using "OMOP" version 'v5.4'
-                        //context Patient
+                        
                         codesystem "LOINC": 'http://loinc.org'
+                        context Patient
                         define E: %s
                         """, i, expression);
             EvaluationResult result = null;
@@ -74,8 +89,11 @@ public class Repl {
             if (result != null) {
                 presentResult(result, terminal);
             }
-
-
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        final var repl = new Repl();
+        repl.repl();
     }
 }
