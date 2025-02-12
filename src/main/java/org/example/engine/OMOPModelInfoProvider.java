@@ -1,4 +1,4 @@
-package org.example;
+package org.example.engine;
 
 import org.hl7.cql.model.ModelIdentifier;
 import org.hl7.cql.model.ModelInfoProvider;
@@ -38,7 +38,7 @@ public class OMOPModelInfoProvider implements ModelInfoProvider {
 
     private ModelInfo loadModelInfo(final String version) {
         try {
-            final var resourceName = String.format("OMOP%s.xml", version);
+            final var resourceName = String.format("/org/example/OMOP%s.xml", version);
             return ModelInfoReaderFactory.getReader("application/xml")
                     .read(OMOPModelInfoProvider.class.getResourceAsStream(resourceName));
         } catch (IOException e) {

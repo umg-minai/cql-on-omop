@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.repl.Completer;
+import org.example.repl.Evaluator;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -15,13 +16,13 @@ import java.io.IOException;
 
 public class Repl {
 
-    private final CQLonOMOPEngine engine;
+    private final Evaluator evaluator;
 
     private final Terminal terminal;
     private final LineReader reader;
 
     public Repl() throws IOException {
-        this.engine = new CQLonOMOPEngine();
+        this.evaluator = new Evaluator();
         this.terminal = TerminalBuilder.builder().build();
         this.reader = LineReaderBuilder.builder()
                 .completer(new Completer())
@@ -59,27 +60,27 @@ public class Repl {
 
     public void repl() {
         for (int i = 0;; ++i) {
-            final String expression;
+            final String input;
             try {
-                expression = reader.readLine(String.format("[%s] ", i));
+                input = reader.readLine(String.format("[%s] ", i));
             } catch (EndOfFileException _e) {
                 // User probably pressed C-d.
                 break;
             }
-            if (expression.equals("quit")) {
+            if (input.equals("quit")) {
                 break;
             }
-            final var input = String.format("""
+            /*final var input = String.format("""
                         library REPL%s version '1.0.0'
                         using "OMOP" version 'v5.4'
                         
                         codesystem "LOINC": 'http://loinc.org'
                         context Patient
                         define E: %s
-                        """, i, expression);
+                        """, i, expression);*/
             EvaluationResult result = null;
             try {
-                result = engine.evaluateExpression(input);
+                result = evaluator.evaluate(input);
             } catch (CqlException exception) {
                 new AttributedStringBuilder()
                         .style(new AttributedStyle().foregroundRgb(0xff0000))

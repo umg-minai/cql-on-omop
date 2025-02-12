@@ -1,4 +1,4 @@
-package org.example;
+package org.example.engine;
 
 import org.opencds.cqf.cql.engine.model.ModelResolver;
 
@@ -47,6 +47,7 @@ public class OMOPModelResolver implements ModelResolver {
         return switch (contextType) {
             case "Patient" -> switch (targetType) {
                 case "ConditionOccurrence" -> "person";
+                case "Person" -> "personId";
                 default -> null;
             };
             default -> null;
