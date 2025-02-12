@@ -1,5 +1,6 @@
 package OMOP;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import jakarta.persistence.Entity;
@@ -118,6 +119,10 @@ public class Observation {
   @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "provider_id")
   private Provider provider;
+
+  public DateTime getObservationDateTime() { return new DateTime(observationDateTime.toOffsetDateTime()); }
+  @Column(name = "observation_datetime")
+  private ZonedDateTime observationDateTime;
 
   public Optional<Provider> getProvider() {
     return Optional.of(this.provider);

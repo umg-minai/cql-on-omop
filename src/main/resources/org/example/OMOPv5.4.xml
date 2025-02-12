@@ -454,6 +454,7 @@
         <ns4:element name="personId" type="System.Integer"/>
         <ns4:element name="person" type="Person"/>
         <ns4:element name="observationId" type="System.Integer"/>
+        <ns4:element name="observationDateTime" type="System.DateTime"/>
     </ns4:typeInfo>
     <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ObservationPeriod" baseType="System.Any" retrievable="true">
         <ns4:element name="periodTypeConceptId" type="System.Integer"/>
