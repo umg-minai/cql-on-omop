@@ -1,0 +1,55 @@
+package OMOP;
+
+import java.util.List;
+import java.util.Optional;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+
+@Entity
+@Table(name = "concept_synonym", schema = "cds_cdm")
+public class ConceptSynonym {
+
+  @Column(name = "language_concept_id", insertable = false, updatable = false)
+  private Integer languageConceptId;
+  
+  public Optional<Integer> getLanguageConceptId() {
+    return Optional.of(this.languageConceptId);
+  }
+  
+  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "language_concept_id")
+  private Concept languageConcept;
+  
+  public Optional<Concept> getLanguageConcept() {
+    return Optional.of(this.languageConcept);
+  }
+  @Column(name = "concept_synonym_name", insertable = false, updatable = false)
+  private String conceptSynonymName;
+  
+  public Optional<String> getConceptSynonymName() {
+    return Optional.of(this.conceptSynonymName);
+  }
+  
+  @Column(name = "concept_id", insertable = false, updatable = false)
+  private Integer conceptId;
+  
+  public Optional<Integer> getConceptId() {
+    return Optional.of(this.conceptId);
+  }
+  
+  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "concept_id")
+  private Concept concept;
+  
+  public Optional<Concept> getConcept() {
+    return Optional.of(this.concept);
+  }
+  
+}
