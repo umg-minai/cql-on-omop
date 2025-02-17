@@ -1,5 +1,6 @@
 package org.example.engine;
 
+import OMOP.ModelInfo;
 import jakarta.persistence.EntityManager;
 import org.hibernate.cfg.Configuration;
 
@@ -10,7 +11,7 @@ public class ConnectionFactory {
         final var config = new Configuration();
         config.configure("org/example/hibernate.cfg.xml");
         // TODO: config.setProperty("hibernate.connection.url", connectionUrl)
-        OMOP.Meta.allClasses().forEach(clazz -> {
+        ModelInfo.allClasses().forEach(clazz -> {
             if (!clazz.getName().equals("OMOP.FactRelationship")
                     && !clazz.getName().equals("OMOP.ConceptRelationship")
                     && !clazz.getName().equals("OMOP.ConceptSynonym")

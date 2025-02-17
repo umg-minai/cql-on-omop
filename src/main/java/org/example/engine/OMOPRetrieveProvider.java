@@ -1,9 +1,11 @@
 package org.example.engine;
 
+import OMOP.Concept;
+import OMOP.ModelInfo;
 import OMOP.Person;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.*;
 import org.opencds.cqf.cql.engine.model.ModelResolver;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
@@ -32,24 +35,24 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
     class RetrieveResult implements Iterable<Object> {
 
-        private final TypedQuery<Object> query;
+        private final TypedQuery<?> query;
 
         private final Predicate<Object> codeFilter;
 
         private List<Object> cache = null;
 
-        public RetrieveResult(TypedQuery<Object> query,
+        public RetrieveResult(TypedQuery<?> query,
                               final Predicate<Object> codeFilter) {
             this.query = query;
             this.codeFilter = codeFilter;
         }
 
-        public RetrieveResult(TypedQuery<Object> query) { this(query, null); }
+        public RetrieveResult(TypedQuery<?> query) { this(query, null); }
 
         @Override
         public Iterator<Object> iterator() {
             if (cache == null) {
-                Stream<Object> stream = query.getResultStream();
+                Stream<?> stream = query.getResultStream();
                 if (this.codeFilter != null) {
                     stream = stream.filter(this.codeFilter);
                 }
@@ -57,26 +60,6 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             }
             return cache.iterator();
         }
-    }
-
-    private List<Object> getContextObject() {
-        return null;
-    }
-
-    private CriteriaQuery<Object> prepareCriteria (final String dataType) {
-        final Class<Object> clazz;
-        try {
-            // TODO: keep a map of name -> class
-            clazz = (Class<Object>) Class.forName(String.format("OMOP.%s", dataType));
-            System.err.println("Class " + dataType + " => " + clazz);
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class " + dataType + " not found: " + e);
-            return null;
-        }
-        // TODO: add code filtering here
-        final var criteria = entityManager.getCriteriaBuilder()
-                .createQuery(clazz);
-        return criteria.select(criteria.from(clazz));
     }
 
     @Override
@@ -92,19 +75,22 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                      String dateLowPath,
                                      String dateHighPath,
                                      Interval dateRange) {
-
-        var criteria = prepareCriteria(dataType);
-        if (contextValue instanceof Person person) {
-            final var root = criteria.getRoots().stream().findFirst().orElseThrow();
-            final var id = person.getPersonId().orElseThrow(); // TODO: don't throw
-            final var column = switch (dataType) {
-                case "ConditionOccurrence", "Observation" -> root.get("personId");
-                default -> root.get(contextPath);
-            };
-            criteria =criteria.where(entityManager.getCriteriaBuilder().equal(column, id));
+        // Create a base query that selects from the OMOP table for dataType.
+        var criteriaQuery = dataTypeCriteria(dataType);
+        final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        final var root = criteriaQuery.getRoots().stream().findFirst().orElseThrow();
+        // Add context criteria, if possible.
+        if (context != null && contextPath != null && contextValue != null) {
+            criteriaQuery = maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
         }
-        final var query = entityManager.createQuery(criteria);
+
+        // Add code criteria, if possible.
+        boolean mustFilterCodes = false;
         if (codes != null) {
+            criteriaQuery = maybeAddCodeCriteria(criteriaBuilder, criteriaQuery, dataType, root, codePath, codes);
+        }
+        final var query = entityManager.createQuery(criteriaQuery);
+        if (mustFilterCodes) {
             final Predicate<Object> filter = object -> {
                 final var objectCode = modelResolver.resolvePath(object, codePath);
                 for (final Object code : codes) {
@@ -119,6 +105,126 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             return new RetrieveResult(query);
         }
 
+    }
+
+    private CriteriaQuery<?> dataTypeCriteria(final String dataType) {
+        // TODO(jmoringe): keep a map of name -> class
+        final Class<Object> clazz = (Class<Object>) ModelInfo.getClass(String.format("OMOP.%s", dataType));
+        if (clazz == null) {
+            System.err.println("Class for " + dataType + " not found");
+            return null;
+        }
+        final var criteria = entityManager.getCriteriaBuilder().createQuery(clazz);
+        return criteria.select(criteria.from(clazz));
+    }
+
+    /**
+     * Add predicates to @param{baseQuery} to restrict it the current context and return the modified query.
+     *
+     * @param baseQuery The partially built query that should be restricted to the context
+     * @param dataType The type of the objects that will be retrieved
+     * @param root The table from which objects are being retrieved
+     * @param contextPath the path within objects from the @param{root} table that should match the context
+     */
+    private CriteriaQuery<?> maybeAddContextCriteria(final CriteriaBuilder criteriaBuilder,
+                                                     final CriteriaQuery<?> baseQuery,
+                                                     final String dataType,
+                                                     final Root<?> root,
+                                                     final String contextPath,
+                                                     final Object contextValue) {
+        /* TODO(jmoringe): This is what should happen here
+        final DataTypeInfo info;
+        final var column = info.columnForContext(contextPath, contextValue);*/
+
+        if (contextValue instanceof Person person) {
+            final var column = switch (dataType) {
+                case "ConditionOccurrence", "Observation", "Measurement" -> root.get("personId");
+                case "Concept" -> null;
+                default -> root.get(contextPath);
+            };
+            if (column != null) {
+                final var id = person.getPersonId().orElseThrow(); // TODO: don't throw
+                return addRestriction(baseQuery, criteriaBuilder.equal(column, id));
+            } else {
+                return baseQuery;
+            }
+        } else {
+            return baseQuery;
+        }
+    }
+
+    private CriteriaQuery<?> maybeAddCodeCriteria(final CriteriaBuilder criteriaBuilder,
+                                         final CriteriaQuery<?> baseQuery,
+                                         final String dataType,
+                                         final Root<?> root,
+                                         final String codePath,
+                                         final Iterable<Code> codes) {
+        /* TODO(jmoringe): This is what should happen here
+        final DataTypeInfo info;
+         if (info.isJoinableCodePath(codePath)) {
+            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
+        }*/
+
+        // TODO: try to add where clause for codes
+        if (dataType.equals("Concept") && codePath.equals("conceptId")) {
+            final var conceptRoot = (Root<Concept>) root;
+            final var criteria = conceptPredicateForCodes(criteriaBuilder, conceptRoot, codes);
+            return addRestriction(baseQuery, criteria);
+        } else if (dataType.equals("ConditionOccurrence") && codePath.equals("conditionConcept")) {
+            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
+        } else if (dataType.equals("Observation") && (codePath.equals("observationConcept") || codePath.equals("observationTypeConcept"))) {
+            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
+        } else {
+            return null;
+        }
+    }
+
+    /*
+     *
+     */
+    private <T> CriteriaQuery<T> addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                     final CriteriaQuery<T> baseQuery,
+                                                     final String conceptRelation,
+                                                     final Iterable<Code> codes) {
+        final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
+        final Join<T, Concept> join = root.join(conceptRelation);
+        return addRestriction(baseQuery, conceptPredicateForCodes(criteriaBuilder, join, codes));
+    }
+
+    private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
+                                                                            final Path<OMOP.Concept> conceptPath,
+                                                                            final Iterable<Code> codes) {
+        final var predicates = StreamSupport
+                .stream(codes.spliterator(), false)
+                .map(code -> conceptPredicateForCode(criteriaBuilder, conceptPath, code))
+                .toArray(jakarta.persistence.criteria.Predicate[]::new);
+        return criteriaBuilder.or(predicates);
+    }
+
+    private jakarta.persistence.criteria.Predicate conceptPredicateForCode(final CriteriaBuilder criteriaBuilder,
+                                                                           final Path<OMOP.Concept> conceptPath,
+                                                                           final Code code) {
+        if (code.getSystem().equals(Constants.OMOP_CODESYSTEM_URI)) {
+            final var conceptId = Integer.parseInt(code.getCode()); // TODO: handle errors
+            return criteriaBuilder.equal(conceptPath.get("conceptId"), conceptId);
+        } else {
+            // TODO(jmoringe): we could look up the code system url in the OMOP vocabulary table to obtain the vocabulary id
+            final var vocabularyId = Constants.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.get(code.getSystem());
+            assert vocabularyId != null;
+            return criteriaBuilder.and(
+                    criteriaBuilder.equal(conceptPath.get("conceptCode"), code.getCode()),
+                    criteriaBuilder.equal(conceptPath.get("vocabularyId"), vocabularyId));
+        }
+    }
+
+    private <T> CriteriaQuery<T> addRestriction(final CriteriaQuery<T> baseQuery,
+                                                final jakarta.persistence.criteria.Predicate predicate) {
+        final var oldRestriction = baseQuery.getRestriction();
+        if (oldRestriction == null) {
+            return baseQuery.where(predicate);
+        } else {
+            return baseQuery.where(oldRestriction, predicate);
+        }
     }
 
 }

@@ -27,11 +27,16 @@ public class CQLonOMOPEngine {
 
     public CQLonOMOPEngine(final OMOPDataProvider dataProvider, final LibrarySourceProvider librarySourceProvider) {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
+
         this.libraryManager = new LibraryManager(modelManager);
-        this.libraryManager.getLibrarySourceLoader().registerProvider(librarySourceProvider);
-        final var modelResolver = new OMOPModelResolver();
+        final var loader = this.libraryManager.getLibrarySourceLoader();
+        loader.registerProvider(new BuiltinLibrariesSourceProvider());
+        loader.registerProvider(librarySourceProvider);
+
         this.dataProviders = Map.of("urn:ohdsi:omop-types:r5.4", dataProvider);
+
         this.terminologyProvider = new OMOPTerminologyProvider();
+
         this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
         this.engine = new CqlEngine(environment);
     }

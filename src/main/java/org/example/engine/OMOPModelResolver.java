@@ -43,8 +43,8 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Object getContextPath(final String contextType, final String targetType) {
-        return switch (contextType) {
+    public Object getContextPath(final String contextName, final String targetType) {
+        return switch (contextName) {
             case "Patient" -> switch (targetType) {
                 case "ConditionOccurrence" -> "person";
                 case "Person" -> "personId";
