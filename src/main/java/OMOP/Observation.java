@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
+import org.opencds.cqf.cql.engine.runtime.Date;
 
 @Entity
 @Table(name = "observation", schema = "cds_cdm")
@@ -20,223 +21,317 @@ public class Observation {
 
   @Column(name = "obs_event_field_concept_id", insertable = false, updatable = false)
   private Integer obsEventFieldConceptId;
-
+  
   public Optional<Integer> getObsEventFieldConceptId() {
-    return Optional.of(this.obsEventFieldConceptId);
+    if (this.obsEventFieldConceptId != null) {
+      return Optional.of(this.obsEventFieldConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "obs_event_field_concept_id")
   private Concept obsEventFieldConcept;
-
+  
   public Optional<Concept> getObsEventFieldConcept() {
     return Optional.of(this.obsEventFieldConcept);
   }
   @Column(name = "observation_event_id", insertable = false, updatable = false)
   private Integer observationEventId;
-
+  
   public Optional<Integer> getObservationEventId() {
-    return Optional.of(this.observationEventId);
+    if (this.observationEventId != null) {
+      return Optional.of(this.observationEventId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "value_source_value", insertable = false, updatable = false)
   private String valueSourceValue;
-
+  
   public Optional<String> getValueSourceValue() {
-    return Optional.of(this.valueSourceValue);
+    if (this.valueSourceValue != null) {
+      return Optional.of(this.valueSourceValue);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "qualifier_source_value", insertable = false, updatable = false)
   private String qualifierSourceValue;
-
+  
   public Optional<String> getQualifierSourceValue() {
-    return Optional.of(this.qualifierSourceValue);
+    if (this.qualifierSourceValue != null) {
+      return Optional.of(this.qualifierSourceValue);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "unit_source_value", insertable = false, updatable = false)
   private String unitSourceValue;
-
+  
   public Optional<String> getUnitSourceValue() {
-    return Optional.of(this.unitSourceValue);
+    if (this.unitSourceValue != null) {
+      return Optional.of(this.unitSourceValue);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "observation_source_concept_id", insertable = false, updatable = false)
   private Integer observationSourceConceptId;
-
+  
   public Optional<Integer> getObservationSourceConceptId() {
-    return Optional.of(this.observationSourceConceptId);
+    if (this.observationSourceConceptId != null) {
+      return Optional.of(this.observationSourceConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "observation_source_concept_id")
   private Concept observationSourceConcept;
-
+  
   public Optional<Concept> getObservationSourceConcept() {
     return Optional.of(this.observationSourceConcept);
   }
   @Column(name = "observation_source_value", insertable = false, updatable = false)
   private String observationSourceValue;
-
+  
   public Optional<String> getObservationSourceValue() {
-    return Optional.of(this.observationSourceValue);
+    if (this.observationSourceValue != null) {
+      return Optional.of(this.observationSourceValue);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "visit_detail_id", insertable = false, updatable = false)
   private Integer visitDetailId;
-
+  
   public Optional<Integer> getVisitDetailId() {
-    return Optional.of(this.visitDetailId);
+    if (this.visitDetailId != null) {
+      return Optional.of(this.visitDetailId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "visit_detail_id")
   private VisitDetail visitDetail;
-
+  
   public Optional<VisitDetail> getVisitDetail() {
     return Optional.of(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
-
+  
   public Optional<Integer> getVisitOccurrenceId() {
-    return Optional.of(this.visitOccurrenceId);
+    if (this.visitOccurrenceId != null) {
+      return Optional.of(this.visitOccurrenceId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "visit_occurrence_id")
   private VisitOccurrence visitOccurrence;
-
+  
   public Optional<VisitOccurrence> getVisitOccurrence() {
     return Optional.of(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
-
+  
   public Optional<Integer> getProviderId() {
-    return Optional.of(this.providerId);
+    if (this.providerId != null) {
+      return Optional.of(this.providerId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "provider_id")
   private Provider provider;
-
-  public DateTime getObservationDateTime() { return new DateTime(observationDateTime.toOffsetDateTime()); }
-  @Column(name = "observation_datetime")
-  private ZonedDateTime observationDateTime;
-
+  
   public Optional<Provider> getProvider() {
     return Optional.of(this.provider);
   }
   @Column(name = "unit_concept_id", insertable = false, updatable = false)
   private Integer unitConceptId;
-
+  
   public Optional<Integer> getUnitConceptId() {
-    return Optional.of(this.unitConceptId);
+    if (this.unitConceptId != null) {
+      return Optional.of(this.unitConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "unit_concept_id")
   private Concept unitConcept;
-
+  
   public Optional<Concept> getUnitConcept() {
     return Optional.of(this.unitConcept);
   }
   @Column(name = "qualifier_concept_id", insertable = false, updatable = false)
   private Integer qualifierConceptId;
-
+  
   public Optional<Integer> getQualifierConceptId() {
-    return Optional.of(this.qualifierConceptId);
+    if (this.qualifierConceptId != null) {
+      return Optional.of(this.qualifierConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "qualifier_concept_id")
   private Concept qualifierConcept;
-
+  
   public Optional<Concept> getQualifierConcept() {
     return Optional.of(this.qualifierConcept);
   }
   @Column(name = "value_as_concept_id", insertable = false, updatable = false)
   private Integer valueAsConceptId;
-
+  
   public Optional<Integer> getValueAsConceptId() {
-    return Optional.of(this.valueAsConceptId);
+    if (this.valueAsConceptId != null) {
+      return Optional.of(this.valueAsConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "value_as_concept_id")
   private Concept valueAsConcept;
-
+  
   public Optional<Concept> getValueAsConcept() {
     return Optional.of(this.valueAsConcept);
   }
   @Column(name = "value_as_string", insertable = false, updatable = false)
   private String valueAsString;
-
+  
   public Optional<String> getValueAsString() {
-    return Optional.of(this.valueAsString);
+    if (this.valueAsString != null) {
+      return Optional.of(this.valueAsString);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "value_as_number", insertable = false, updatable = false)
   private Float valueAsNumber;
-
+  
   public Optional<Float> getValueAsNumber() {
-    return Optional.of(this.valueAsNumber);
+    if (this.valueAsNumber != null) {
+      return Optional.of(this.valueAsNumber);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Column(name = "observation_type_concept_id", insertable = false, updatable = false)
   private Integer observationTypeConceptId;
-
+  
   public Optional<Integer> getObservationTypeConceptId() {
-    return Optional.of(this.observationTypeConceptId);
+    if (this.observationTypeConceptId != null) {
+      return Optional.of(this.observationTypeConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "observation_type_concept_id")
   private Concept observationTypeConcept;
-
+  
   public Optional<Concept> getObservationTypeConcept() {
     return Optional.of(this.observationTypeConcept);
   }
+  @Column(name = "observation_datetime", insertable = false, updatable = false)
+  private ZonedDateTime observationDatetime;
+  
+  public Optional<DateTime> getObservationDatetime() {
+    if (this.observationDatetime != null) {
+      return Optional.of(new DateTime(this.observationDatetime.toOffsetDateTime()));
+    } else {
+      return Optional.empty();
+    }
+  }
+  
+  @Column(name = "observation_date", insertable = false, updatable = false)
+  private ZonedDateTime observationDate;
+  
+  public Optional<Date> getObservationDate() {
+    if (this.observationDate != null) {
+      return Optional.of(new Date(this.observationDate.toLocalDate()));
+    } else {
+      return Optional.empty();
+    }
+  }
+  
   @Column(name = "observation_concept_id", insertable = false, updatable = false)
   private Integer observationConceptId;
-
+  
   public Optional<Integer> getObservationConceptId() {
-    return Optional.of(this.observationConceptId);
+    if (this.observationConceptId != null) {
+      return Optional.of(this.observationConceptId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "observation_concept_id")
   private Concept observationConcept;
-
+  
   public Optional<Concept> getObservationConcept() {
     return Optional.of(this.observationConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
-
+  
   public Optional<Integer> getPersonId() {
-    return Optional.of(this.personId);
+    if (this.personId != null) {
+      return Optional.of(this.personId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "person_id")
   private Person person;
-
+  
   public Optional<Person> getPerson() {
     return Optional.of(this.person);
   }
   @Id
   @Column(name = "observation_id", insertable = false, updatable = false)
   private Integer observationId;
-
+  
   public Optional<Integer> getObservationId() {
-    return Optional.of(this.observationId);
+    if (this.observationId != null) {
+      return Optional.of(this.observationId);
+    } else {
+      return Optional.empty();
+    }
   }
-
+  
   @Override
   public String toString() {
     return "Observation{id=" + this.observationId + "}";
   }
-
-
+  
+  
 }

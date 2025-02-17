@@ -1,5 +1,6 @@
 package OMOP;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 @Entity
 @Table(name = "person", schema = "cds_cdm")
@@ -203,6 +205,16 @@ public class Person {
   public String toString() {
     return "Person{id=" + this.personId + "}";
   }
-  
+
+  @Column(name = "birth_datetime", insertable = false, updatable = false)
+  private ZonedDateTime birthDatetime;
+
+  public Optional<DateTime> getBirthDatetime() {
+    if (this.birthDatetime != null) {
+      return Optional.of(new DateTime(this.birthDatetime.toOffsetDateTime()));
+    } else {
+      return Optional.empty();
+    }
+  }
   
 }
