@@ -1,5 +1,6 @@
 package org.example.engine;
 
+import OMOP.MappingInfo;
 import org.opencds.cqf.cql.engine.model.ModelResolver;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,14 +9,20 @@ import java.util.Optional;
 
 public class OMOPModelResolver implements ModelResolver {
 
+    final MappingInfo mappingInfo;
+
+    public OMOPModelResolver(final MappingInfo mappingInfo) {
+        this.mappingInfo = mappingInfo;
+    }
+
     @Override
     public String getPackageName() {
-        return "OMOP";
+        return String.format("OMOP.%s", this.mappingInfo.getVersion().replace(".", ""));
     }
 
     @Override
     public void setPackageName(String s) {
-
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -44,19 +51,12 @@ public class OMOPModelResolver implements ModelResolver {
 
     @Override
     public Object getContextPath(final String contextName, final String targetType) {
-        return switch (contextName) {
-            case "Patient" -> switch (targetType) {
-                case "ConditionOccurrence" -> "person";
-                case "Person" -> "personId";
-                default -> null;
-            };
-            default -> null;
-        };
+       return mappingInfo.getDataTypeInfo(targetType).contextPath(contextName);
     }
 
     @Override
-    public Class<?> resolveType(String s) {
-        return null;
+    public Class<?> resolveType(final String typeName) {
+        return this.mappingInfo.getDataTypeInfo(typeName).getClazz();
     }
 
     @Override

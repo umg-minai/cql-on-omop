@@ -1,5 +1,6 @@
 package org.example.engine;
 
+import OMOP.MappingInfo;
 import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.LibraryManager;
@@ -25,7 +26,8 @@ public class CQLonOMOPEngine {
     private final Environment environment;
     private final CqlEngine engine;
 
-    public CQLonOMOPEngine(final OMOPDataProvider dataProvider, final LibrarySourceProvider librarySourceProvider) {
+    public CQLonOMOPEngine(final OMOPDataProvider dataProvider,
+                           final LibrarySourceProvider librarySourceProvider) {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         this.libraryManager = new LibraryManager(modelManager);
@@ -33,7 +35,10 @@ public class CQLonOMOPEngine {
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
         loader.registerProvider(librarySourceProvider);
 
-        this.dataProviders = Map.of("urn:ohdsi:omop-types:r5.4", dataProvider);
+        this.dataProviders = Map.of(
+                // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
+                "urn:ohdsi:omop-types:r5.4",
+                dataProvider);
 
         this.terminologyProvider = new OMOPTerminologyProvider();
 
@@ -41,12 +46,15 @@ public class CQLonOMOPEngine {
         this.engine = new CqlEngine(environment);
     }
 
-    public CQLonOMOPEngine(final EntityManager entityManager, final LibrarySourceProvider librarySourceProvider) {
-        this(OMOPDataProvider.fromEntityManager(entityManager), librarySourceProvider);
+    public CQLonOMOPEngine(final EntityManager entityManager,
+                           final MappingInfo mappingInfo,
+                           final LibrarySourceProvider librarySourceProvider) {
+        this(OMOPDataProvider.fromEntityManager(entityManager, mappingInfo), librarySourceProvider);
     }
 
-    public CQLonOMOPEngine(final LibrarySourceProvider librarySourceProvider) {
-        this(new OMOPDataProvider(), librarySourceProvider);
+    public CQLonOMOPEngine(final MappingInfo mappingInfo,
+                           final LibrarySourceProvider librarySourceProvider) {
+        this(new OMOPDataProvider(mappingInfo), librarySourceProvider);
     }
 
     public EvaluationResult evaluateLibrary(final String library, final Object patient) {

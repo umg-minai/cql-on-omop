@@ -1,12 +1,10 @@
 package org.example.engine;
 
-import OMOP.Concept;
-import OMOP.ModelInfo;
-import OMOP.Person;
+import OMOP.v54.Concept;
+import OMOP.MappingInfo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import org.opencds.cqf.cql.engine.model.ModelResolver;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
@@ -20,17 +18,18 @@ import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
-    private final ModelResolver modelResolver;
+    private final OMOPModelResolver modelResolver;
 
     private final EntityManager entityManager;
 
-    public OMOPRetrieveProvider(final ModelResolver modelResolver, final EntityManager entityManager) {
+    public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
+                                final EntityManager entityManager) {
         this.modelResolver = modelResolver;
         this.entityManager = entityManager;
     }
 
-    public OMOPRetrieveProvider(final ModelResolver modelResolver) {
-        this(modelResolver, ConnectionFactory.createEntityManager());
+    public OMOPRetrieveProvider(final OMOPModelResolver modelResolver) {
+        this(modelResolver, ConnectionFactory.createEntityManager(modelResolver.mappingInfo));
     }
 
     class RetrieveResult implements Iterable<Object> {
@@ -108,8 +107,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private CriteriaQuery<?> dataTypeCriteria(final String dataType) {
-        // TODO(jmoringe): keep a map of name -> class
-        final Class<Object> clazz = (Class<Object>) ModelInfo.getClass(String.format("OMOP.%s", dataType));
+        final Class<Object> clazz = (Class<Object>) MappingInfo.ensureVersion("v54").getDataTypeInfo(dataType).getClazz();
         if (clazz == null) {
             System.err.println("Class for " + dataType + " not found");
             return null;
@@ -132,50 +130,28 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                                      final Root<?> root,
                                                      final String contextPath,
                                                      final Object contextValue) {
-        /* TODO(jmoringe): This is what should happen here
-        final DataTypeInfo info;
-        final var column = info.columnForContext(contextPath, contextValue);*/
-
-        if (contextValue instanceof Person person) {
-            final var column = switch (dataType) {
-                case "ConditionOccurrence", "Observation", "Measurement" -> root.get("personId");
-                case "Concept" -> null;
-                default -> root.get(contextPath);
-            };
-            if (column != null) {
-                final var id = person.getPersonId().orElseThrow(); // TODO: don't throw
-                return addRestriction(baseQuery, criteriaBuilder.equal(column, id));
-            } else {
-                return baseQuery;
-            }
+        final var info = MappingInfo.ensureVersion("v5.4").getDataTypeInfo(dataType);
+        final var columnName = info.columnForContext(contextPath, contextValue);
+        if (columnName != null && contextValue instanceof OMOP.v54.Person person) { // TODO: do this via info
+            final var column = root.get(columnName);
+            final var id = person.getPersonId().orElseThrow(); // TODO: don't throw
+            return addRestriction(baseQuery, criteriaBuilder.equal(column, id));
         } else {
             return baseQuery;
         }
     }
 
     private CriteriaQuery<?> maybeAddCodeCriteria(final CriteriaBuilder criteriaBuilder,
-                                         final CriteriaQuery<?> baseQuery,
-                                         final String dataType,
-                                         final Root<?> root,
-                                         final String codePath,
-                                         final Iterable<Code> codes) {
-        /* TODO(jmoringe): This is what should happen here
-        final DataTypeInfo info;
-         if (info.isJoinableCodePath(codePath)) {
-            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
-        }*/
-
-        // TODO: try to add where clause for codes
-        if (dataType.equals("Concept") && codePath.equals("conceptId")) {
-            final var conceptRoot = (Root<Concept>) root;
-            final var criteria = conceptPredicateForCodes(criteriaBuilder, conceptRoot, codes);
-            return addRestriction(baseQuery, criteria);
-        } else if (dataType.equals("ConditionOccurrence") && codePath.equals("conditionConcept")) {
-            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
-        } else if (dataType.equals("Observation") && (codePath.equals("observationConcept") || codePath.equals("observationTypeConcept"))) {
+                                                  final CriteriaQuery<?> baseQuery,
+                                                  final String dataType,
+                                                  final Root<?> root,
+                                                  final String codePath,
+                                                  final Iterable<Code> codes) {
+        final var info = MappingInfo.ensureVersion("v5.4").getDataTypeInfo(dataType);
+        if (info.isJoinableCodePath(codePath)) {
             return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
         } else {
-            return null;
+            return baseQuery;
         }
     }
 
@@ -192,7 +168,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
-                                                                            final Path<OMOP.Concept> conceptPath,
+                                                                            final Path<Concept> conceptPath,
                                                                             final Iterable<Code> codes) {
         final var predicates = StreamSupport
                 .stream(codes.spliterator(), false)
@@ -202,7 +178,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCode(final CriteriaBuilder criteriaBuilder,
-                                                                           final Path<OMOP.Concept> conceptPath,
+                                                                           final Path<Concept> conceptPath,
                                                                            final Code code) {
         if (code.getSystem().equals(Constants.OMOP_CODESYSTEM_URI)) {
             final var conceptId = Integer.parseInt(code.getCode()); // TODO: handle errors

@@ -1,6 +1,7 @@
 package org.example.celida;
 
-import OMOP.Person;
+import OMOP.MappingInfo;
+import OMOP.v54.Person;
 import jakarta.persistence.EntityManager;
 import org.example.engine.CQLonOMOPEngine;
 import org.example.engine.ConnectionFactory;
@@ -9,7 +10,6 @@ import org.hl7.elm.r1.VersionedIdentifier;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Celida {
 
@@ -20,9 +20,10 @@ public class Celida {
     final CQLonOMOPEngine engine;
 
     private Celida() {
-        this.entityManager = ConnectionFactory.createEntityManager();
+        final var modelInfo = MappingInfo.ensureVersion("v5.4");
+        this.entityManager = ConnectionFactory.createEntityManager(modelInfo);
         this.librarySourceProvider = new InMemoryLibrarySourceProvider();
-        this.engine = new CQLonOMOPEngine(entityManager, librarySourceProvider);
+        this.engine = new CQLonOMOPEngine(entityManager, modelInfo, librarySourceProvider);
     }
 
     private void run() {
@@ -30,14 +31,14 @@ public class Celida {
     }
 
     private Set<Person> getPersons() {
-        final var clazz = OMOP.Person.class;
+        final var clazz = Person.class;
         final var criteria = entityManager.getCriteriaBuilder()
                 .createQuery(clazz);
         final var query = criteria.select(criteria.from(clazz));
         return entityManager.createQuery(query).getResultStream().collect(Collectors.toSet());
     }
 
-    private void evaluatePerson(final OMOP.Person person) {
+    private void evaluatePerson(final Person person) {
         final var id = person.getPersonId().orElseThrow();
         final var libraryName = "Test2"; // String.format("Test%s", id);
         final var identifier = new VersionedIdentifier().withId(libraryName);

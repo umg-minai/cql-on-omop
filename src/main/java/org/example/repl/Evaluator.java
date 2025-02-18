@@ -1,5 +1,6 @@
 package org.example.repl;
 
+import OMOP.MappingInfo;
 import org.example.engine.CQLonOMOPEngine;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 
@@ -25,7 +26,8 @@ public class Evaluator {
     private final State state;
 
     public Evaluator() {
-        this.engine = new CQLonOMOPEngine(new REPLSourceProvider());
+        final var modelInfo = MappingInfo.ensureVersion("v5.4");
+        this.engine = new CQLonOMOPEngine(modelInfo, new REPLSourceProvider());
         this.state = new State();
     }
 

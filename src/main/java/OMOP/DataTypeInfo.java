@@ -4,7 +4,7 @@ public interface DataTypeInfo {
 
     Class<?> getClazz();
 
-    String contextPath(String contextType);
+    String contextPath(String contextName);
 
     String columnForContext(String contextPath, Object contextValue);
 
