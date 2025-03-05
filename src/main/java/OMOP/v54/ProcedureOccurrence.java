@@ -46,7 +46,7 @@ public class ProcedureOccurrence {
   private Concept procedureSourceConcept;
   
   public Optional<Concept> getProcedureSourceConcept() {
-    return Optional.of(this.procedureSourceConcept);
+    return Optional.ofNullable(this.procedureSourceConcept);
   }
   @Column(name = "procedure_source_value", insertable = false, updatable = false)
   private String procedureSourceValue;
@@ -75,7 +75,7 @@ public class ProcedureOccurrence {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -93,7 +93,7 @@ public class ProcedureOccurrence {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -111,7 +111,7 @@ public class ProcedureOccurrence {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "quantity", insertable = false, updatable = false)
   private Integer quantity;
@@ -140,7 +140,7 @@ public class ProcedureOccurrence {
   private Concept modifierConcept;
   
   public Optional<Concept> getModifierConcept() {
-    return Optional.of(this.modifierConcept);
+    return Optional.ofNullable(this.modifierConcept);
   }
   @Column(name = "procedure_type_concept_id", insertable = false, updatable = false)
   private Integer procedureTypeConceptId;
@@ -158,7 +158,7 @@ public class ProcedureOccurrence {
   private Concept procedureTypeConcept;
   
   public Optional<Concept> getProcedureTypeConcept() {
-    return Optional.of(this.procedureTypeConcept);
+    return Optional.ofNullable(this.procedureTypeConcept);
   }
   @Column(name = "procedure_end_datetime", insertable = false, updatable = false)
   private ZonedDateTime procedureEndDatetime;
@@ -220,7 +220,7 @@ public class ProcedureOccurrence {
   private Concept procedureConcept;
   
   public Optional<Concept> getProcedureConcept() {
-    return Optional.of(this.procedureConcept);
+    return Optional.ofNullable(this.procedureConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -238,7 +238,7 @@ public class ProcedureOccurrence {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "procedure_occurrence_id", insertable = false, updatable = false)
@@ -252,10 +252,17 @@ public class ProcedureOccurrence {
     }
   }
   
-  @Override
-  public String toString() {
-    return "ProcedureOccurrence{id=" + this.procedureOccurrenceId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("ProcedureOccurrence{id=").append(this.procedureOccurrenceId);
+    this.getProcedureConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

@@ -68,7 +68,7 @@ public class SourceToConceptMap {
   private Vocabulary targetVocabulary;
   
   public Optional<Vocabulary> getTargetVocabulary() {
-    return Optional.of(this.targetVocabulary);
+    return Optional.ofNullable(this.targetVocabulary);
   }
   @Column(name = "target_concept_id", insertable = false, updatable = false)
   private Integer targetConceptId;
@@ -86,7 +86,7 @@ public class SourceToConceptMap {
   private Concept targetConcept;
   
   public Optional<Concept> getTargetConcept() {
-    return Optional.of(this.targetConcept);
+    return Optional.ofNullable(this.targetConcept);
   }
   @Column(name = "source_code_description", insertable = false, updatable = false)
   private String sourceCodeDescription;
@@ -126,7 +126,7 @@ public class SourceToConceptMap {
   private Concept sourceConcept;
   
   public Optional<Concept> getSourceConcept() {
-    return Optional.of(this.sourceConcept);
+    return Optional.ofNullable(this.sourceConcept);
   }
   @Column(name = "source_code", insertable = false, updatable = false)
   private String sourceCode;

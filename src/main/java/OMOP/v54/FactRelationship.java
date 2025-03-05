@@ -35,7 +35,7 @@ public class FactRelationship {
   private Concept relationshipConcept;
   
   public Optional<Concept> getRelationshipConcept() {
-    return Optional.of(this.relationshipConcept);
+    return Optional.ofNullable(this.relationshipConcept);
   }
   @Column(name = "fact_id_2", insertable = false, updatable = false)
   private Integer factId2;
@@ -64,7 +64,7 @@ public class FactRelationship {
   private Concept domainConcept2;
   
   public Optional<Concept> getDomainConcept2() {
-    return Optional.of(this.domainConcept2);
+    return Optional.ofNullable(this.domainConcept2);
   }
   @Column(name = "fact_id_1", insertable = false, updatable = false)
   private Integer factId1;
@@ -93,7 +93,7 @@ public class FactRelationship {
   private Concept domainConcept1;
   
   public Optional<Concept> getDomainConcept1() {
-    return Optional.of(this.domainConcept1);
+    return Optional.ofNullable(this.domainConcept1);
   }
   
 }

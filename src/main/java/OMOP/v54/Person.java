@@ -35,7 +35,7 @@ public class Person {
   private Concept ethnicitySourceConcept;
   
   public Optional<Concept> getEthnicitySourceConcept() {
-    return Optional.of(this.ethnicitySourceConcept);
+    return Optional.ofNullable(this.ethnicitySourceConcept);
   }
   @Column(name = "ethnicity_source_value", insertable = false, updatable = false)
   private String ethnicitySourceValue;
@@ -64,7 +64,7 @@ public class Person {
   private Concept raceSourceConcept;
   
   public Optional<Concept> getRaceSourceConcept() {
-    return Optional.of(this.raceSourceConcept);
+    return Optional.ofNullable(this.raceSourceConcept);
   }
   @Column(name = "race_source_value", insertable = false, updatable = false)
   private String raceSourceValue;
@@ -93,7 +93,7 @@ public class Person {
   private Concept genderSourceConcept;
   
   public Optional<Concept> getGenderSourceConcept() {
-    return Optional.of(this.genderSourceConcept);
+    return Optional.ofNullable(this.genderSourceConcept);
   }
   @Column(name = "gender_source_value", insertable = false, updatable = false)
   private String genderSourceValue;
@@ -133,7 +133,7 @@ public class Person {
   private CareSite careSite;
   
   public Optional<CareSite> getCareSite() {
-    return Optional.of(this.careSite);
+    return Optional.ofNullable(this.careSite);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -151,7 +151,7 @@ public class Person {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "location_id", insertable = false, updatable = false)
   private Integer locationId;
@@ -169,7 +169,7 @@ public class Person {
   private Location location;
   
   public Optional<Location> getLocation() {
-    return Optional.of(this.location);
+    return Optional.ofNullable(this.location);
   }
   @Column(name = "ethnicity_concept_id", insertable = false, updatable = false)
   private Integer ethnicityConceptId;
@@ -187,7 +187,7 @@ public class Person {
   private Concept ethnicityConcept;
   
   public Optional<Concept> getEthnicityConcept() {
-    return Optional.of(this.ethnicityConcept);
+    return Optional.ofNullable(this.ethnicityConcept);
   }
   @Column(name = "race_concept_id", insertable = false, updatable = false)
   private Integer raceConceptId;
@@ -205,7 +205,7 @@ public class Person {
   private Concept raceConcept;
   
   public Optional<Concept> getRaceConcept() {
-    return Optional.of(this.raceConcept);
+    return Optional.ofNullable(this.raceConcept);
   }
   @Column(name = "birth_datetime", insertable = false, updatable = false)
   private ZonedDateTime birthDatetime;
@@ -267,7 +267,7 @@ public class Person {
   private Concept genderConcept;
   
   public Optional<Concept> getGenderConcept() {
-    return Optional.of(this.genderConcept);
+    return Optional.ofNullable(this.genderConcept);
   }
   @Id
   @Column(name = "person_id", insertable = false, updatable = false)
@@ -281,10 +281,12 @@ public class Person {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Person{id=" + this.personId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Person{id=").append(this.personId);
+    result.append("}");
+    return result.toString();
+}
   
 }

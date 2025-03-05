@@ -57,7 +57,7 @@ public class CareSite {
   private Location location;
   
   public Optional<Location> getLocation() {
-    return Optional.of(this.location);
+    return Optional.ofNullable(this.location);
   }
   @Column(name = "place_of_service_concept_id", insertable = false, updatable = false)
   private Integer placeOfServiceConceptId;
@@ -75,7 +75,7 @@ public class CareSite {
   private Concept placeOfServiceConcept;
   
   public Optional<Concept> getPlaceOfServiceConcept() {
-    return Optional.of(this.placeOfServiceConcept);
+    return Optional.ofNullable(this.placeOfServiceConcept);
   }
   @Column(name = "care_site_name", insertable = false, updatable = false)
   private String careSiteName;
@@ -100,10 +100,12 @@ public class CareSite {
     }
   }
   
-  @Override
-  public String toString() {
-    return "CareSite{id=" + this.careSiteId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("CareSite{id=").append(this.careSiteId);
+    result.append("}");
+    return result.toString();
+}
   
 }

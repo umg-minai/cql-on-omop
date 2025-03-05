@@ -46,7 +46,7 @@ public class CdmSource {
   private Concept cdmVersionConcept;
   
   public Optional<Concept> getCdmVersionConcept() {
-    return Optional.of(this.cdmVersionConcept);
+    return Optional.ofNullable(this.cdmVersionConcept);
   }
   @Column(name = "cdm_version", insertable = false, updatable = false)
   private String cdmVersion;

@@ -101,7 +101,7 @@ public class NoteNlp {
   private Concept noteNlpSourceConcept;
   
   public Optional<Concept> getNoteNlpSourceConcept() {
-    return Optional.of(this.noteNlpSourceConcept);
+    return Optional.ofNullable(this.noteNlpSourceConcept);
   }
   @Column(name = "note_nlp_concept_id", insertable = false, updatable = false)
   private Integer noteNlpConceptId;
@@ -119,7 +119,7 @@ public class NoteNlp {
   private Concept noteNlpConcept;
   
   public Optional<Concept> getNoteNlpConcept() {
-    return Optional.of(this.noteNlpConcept);
+    return Optional.ofNullable(this.noteNlpConcept);
   }
   @Column(name = "lexical_variant", insertable = false, updatable = false)
   private String lexicalVariant;
@@ -170,7 +170,7 @@ public class NoteNlp {
   private Concept sectionConcept;
   
   public Optional<Concept> getSectionConcept() {
-    return Optional.of(this.sectionConcept);
+    return Optional.ofNullable(this.sectionConcept);
   }
   @Column(name = "note_id", insertable = false, updatable = false)
   private Integer noteId;
@@ -195,10 +195,17 @@ public class NoteNlp {
     }
   }
   
-  @Override
-  public String toString() {
-    return "NoteNlp{id=" + this.noteNlpId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("NoteNlp{id=").append(this.noteNlpId);
+    this.getNoteNlpConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

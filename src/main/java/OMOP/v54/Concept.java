@@ -90,7 +90,7 @@ public class Concept {
   private ConceptClass conceptClass;
   
   public Optional<ConceptClass> getConceptClass() {
-    return Optional.of(this.conceptClass);
+    return Optional.ofNullable(this.conceptClass);
   }
   @Column(name = "vocabulary_id", insertable = false, updatable = false)
   private String vocabularyId;
@@ -108,7 +108,7 @@ public class Concept {
   private Vocabulary vocabulary;
   
   public Optional<Vocabulary> getVocabulary() {
-    return Optional.of(this.vocabulary);
+    return Optional.ofNullable(this.vocabulary);
   }
   @Column(name = "domain_id", insertable = false, updatable = false)
   private String domainId;
@@ -126,7 +126,7 @@ public class Concept {
   private Domain domain;
   
   public Optional<Domain> getDomain() {
-    return Optional.of(this.domain);
+    return Optional.ofNullable(this.domain);
   }
   @Column(name = "concept_name", insertable = false, updatable = false)
   private String conceptName;
@@ -151,11 +151,13 @@ public class Concept {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Concept{id=" + this.conceptId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Concept{id=").append(this.conceptId);
+    result.append("}");
+    return result.toString();
+}
   @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinTable(name="concept_ancestor", schema="cds_cdm",
     joinColumns = {

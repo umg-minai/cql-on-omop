@@ -35,7 +35,7 @@ public class Observation {
   private Concept obsEventFieldConcept;
   
   public Optional<Concept> getObsEventFieldConcept() {
-    return Optional.of(this.obsEventFieldConcept);
+    return Optional.ofNullable(this.obsEventFieldConcept);
   }
   @Column(name = "observation_event_id", insertable = false, updatable = false)
   private Integer observationEventId;
@@ -97,7 +97,7 @@ public class Observation {
   private Concept observationSourceConcept;
   
   public Optional<Concept> getObservationSourceConcept() {
-    return Optional.of(this.observationSourceConcept);
+    return Optional.ofNullable(this.observationSourceConcept);
   }
   @Column(name = "observation_source_value", insertable = false, updatable = false)
   private String observationSourceValue;
@@ -126,7 +126,7 @@ public class Observation {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -144,7 +144,7 @@ public class Observation {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -162,7 +162,7 @@ public class Observation {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "unit_concept_id", insertable = false, updatable = false)
   private Integer unitConceptId;
@@ -180,7 +180,7 @@ public class Observation {
   private Concept unitConcept;
   
   public Optional<Concept> getUnitConcept() {
-    return Optional.of(this.unitConcept);
+    return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "qualifier_concept_id", insertable = false, updatable = false)
   private Integer qualifierConceptId;
@@ -198,7 +198,7 @@ public class Observation {
   private Concept qualifierConcept;
   
   public Optional<Concept> getQualifierConcept() {
-    return Optional.of(this.qualifierConcept);
+    return Optional.ofNullable(this.qualifierConcept);
   }
   @Column(name = "value_as_concept_id", insertable = false, updatable = false)
   private Integer valueAsConceptId;
@@ -216,7 +216,7 @@ public class Observation {
   private Concept valueAsConcept;
   
   public Optional<Concept> getValueAsConcept() {
-    return Optional.of(this.valueAsConcept);
+    return Optional.ofNullable(this.valueAsConcept);
   }
   @Column(name = "value_as_string", insertable = false, updatable = false)
   private String valueAsString;
@@ -256,7 +256,7 @@ public class Observation {
   private Concept observationTypeConcept;
   
   public Optional<Concept> getObservationTypeConcept() {
-    return Optional.of(this.observationTypeConcept);
+    return Optional.ofNullable(this.observationTypeConcept);
   }
   @Column(name = "observation_datetime", insertable = false, updatable = false)
   private ZonedDateTime observationDatetime;
@@ -296,7 +296,7 @@ public class Observation {
   private Concept observationConcept;
   
   public Optional<Concept> getObservationConcept() {
-    return Optional.of(this.observationConcept);
+    return Optional.ofNullable(this.observationConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -314,7 +314,7 @@ public class Observation {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "observation_id", insertable = false, updatable = false)
@@ -328,10 +328,17 @@ public class Observation {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Observation{id=" + this.observationId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Observation{id=").append(this.observationId);
+    this.getObservationConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

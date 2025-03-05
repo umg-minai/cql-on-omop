@@ -46,7 +46,7 @@ public class CohortDefinition {
   private Concept subjectConcept;
   
   public Optional<Concept> getSubjectConcept() {
-    return Optional.of(this.subjectConcept);
+    return Optional.ofNullable(this.subjectConcept);
   }
   @Column(name = "cohort_definition_syntax", insertable = false, updatable = false)
   private String cohortDefinitionSyntax;
@@ -75,7 +75,7 @@ public class CohortDefinition {
   private Concept definitionTypeConcept;
   
   public Optional<Concept> getDefinitionTypeConcept() {
-    return Optional.of(this.definitionTypeConcept);
+    return Optional.ofNullable(this.definitionTypeConcept);
   }
   @Column(name = "cohort_definition_description", insertable = false, updatable = false)
   private String cohortDefinitionDescription;

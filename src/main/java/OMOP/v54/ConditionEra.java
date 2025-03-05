@@ -68,7 +68,7 @@ public class ConditionEra {
   private Concept conditionConcept;
   
   public Optional<Concept> getConditionConcept() {
-    return Optional.of(this.conditionConcept);
+    return Optional.ofNullable(this.conditionConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -86,7 +86,7 @@ public class ConditionEra {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "condition_era_id", insertable = false, updatable = false)
@@ -100,10 +100,12 @@ public class ConditionEra {
     }
   }
   
-  @Override
-  public String toString() {
-    return "ConditionEra{id=" + this.conditionEraId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("ConditionEra{id=").append(this.conditionEraId);
+    result.append("}");
+    return result.toString();
+}
   
 }

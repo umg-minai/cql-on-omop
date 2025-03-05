@@ -90,7 +90,7 @@ public class Specimen {
   private Concept diseaseStatusConcept;
   
   public Optional<Concept> getDiseaseStatusConcept() {
-    return Optional.of(this.diseaseStatusConcept);
+    return Optional.ofNullable(this.diseaseStatusConcept);
   }
   @Column(name = "anatomic_site_concept_id", insertable = false, updatable = false)
   private Integer anatomicSiteConceptId;
@@ -108,7 +108,7 @@ public class Specimen {
   private Concept anatomicSiteConcept;
   
   public Optional<Concept> getAnatomicSiteConcept() {
-    return Optional.of(this.anatomicSiteConcept);
+    return Optional.ofNullable(this.anatomicSiteConcept);
   }
   @Column(name = "unit_concept_id", insertable = false, updatable = false)
   private Integer unitConceptId;
@@ -126,7 +126,7 @@ public class Specimen {
   private Concept unitConcept;
   
   public Optional<Concept> getUnitConcept() {
-    return Optional.of(this.unitConcept);
+    return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "quantity", insertable = false, updatable = false)
   private Float quantity;
@@ -177,7 +177,7 @@ public class Specimen {
   private Concept specimenTypeConcept;
   
   public Optional<Concept> getSpecimenTypeConcept() {
-    return Optional.of(this.specimenTypeConcept);
+    return Optional.ofNullable(this.specimenTypeConcept);
   }
   @Column(name = "specimen_concept_id", insertable = false, updatable = false)
   private Integer specimenConceptId;
@@ -195,7 +195,7 @@ public class Specimen {
   private Concept specimenConcept;
   
   public Optional<Concept> getSpecimenConcept() {
-    return Optional.of(this.specimenConcept);
+    return Optional.ofNullable(this.specimenConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -213,7 +213,7 @@ public class Specimen {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "specimen_id", insertable = false, updatable = false)
@@ -227,10 +227,17 @@ public class Specimen {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Specimen{id=" + this.specimenId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Specimen{id=").append(this.specimenId);
+    this.getSpecimenConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

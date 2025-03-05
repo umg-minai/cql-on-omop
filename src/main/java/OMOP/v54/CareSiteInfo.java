@@ -3,7 +3,6 @@ package OMOP.v54;
 import OMOP.DataTypeInfo;
 
 public class CareSiteInfo implements DataTypeInfo {
-
     public Class<?> getClazz() {
         return CareSite.class;
     }

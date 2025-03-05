@@ -35,7 +35,7 @@ public class DeviceExposure {
   private Concept unitSourceConcept;
   
   public Optional<Concept> getUnitSourceConcept() {
-    return Optional.of(this.unitSourceConcept);
+    return Optional.ofNullable(this.unitSourceConcept);
   }
   @Column(name = "unit_source_value", insertable = false, updatable = false)
   private String unitSourceValue;
@@ -64,7 +64,7 @@ public class DeviceExposure {
   private Concept unitConcept;
   
   public Optional<Concept> getUnitConcept() {
-    return Optional.of(this.unitConcept);
+    return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "device_source_concept_id", insertable = false, updatable = false)
   private Integer deviceSourceConceptId;
@@ -82,7 +82,7 @@ public class DeviceExposure {
   private Concept deviceSourceConcept;
   
   public Optional<Concept> getDeviceSourceConcept() {
-    return Optional.of(this.deviceSourceConcept);
+    return Optional.ofNullable(this.deviceSourceConcept);
   }
   @Column(name = "device_source_value", insertable = false, updatable = false)
   private String deviceSourceValue;
@@ -111,7 +111,7 @@ public class DeviceExposure {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -129,7 +129,7 @@ public class DeviceExposure {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -147,7 +147,7 @@ public class DeviceExposure {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "quantity", insertable = false, updatable = false)
   private Integer quantity;
@@ -198,7 +198,7 @@ public class DeviceExposure {
   private Concept deviceTypeConcept;
   
   public Optional<Concept> getDeviceTypeConcept() {
-    return Optional.of(this.deviceTypeConcept);
+    return Optional.ofNullable(this.deviceTypeConcept);
   }
   @Column(name = "device_exposure_end_datetime", insertable = false, updatable = false)
   private ZonedDateTime deviceExposureEndDatetime;
@@ -260,7 +260,7 @@ public class DeviceExposure {
   private Concept deviceConcept;
   
   public Optional<Concept> getDeviceConcept() {
-    return Optional.of(this.deviceConcept);
+    return Optional.ofNullable(this.deviceConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -278,7 +278,7 @@ public class DeviceExposure {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "device_exposure_id", insertable = false, updatable = false)
@@ -292,10 +292,12 @@ public class DeviceExposure {
     }
   }
   
-  @Override
-  public String toString() {
-    return "DeviceExposure{id=" + this.deviceExposureId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("DeviceExposure{id=").append(this.deviceExposureId);
+    result.append("}");
+    return result.toString();
+}
   
 }

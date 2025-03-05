@@ -35,7 +35,7 @@ public class ConceptClass {
   private Concept conceptClassConcept;
   
   public Optional<Concept> getConceptClassConcept() {
-    return Optional.of(this.conceptClassConcept);
+    return Optional.ofNullable(this.conceptClassConcept);
   }
   @Column(name = "concept_class_name", insertable = false, updatable = false)
   private String conceptClassName;
@@ -60,10 +60,17 @@ public class ConceptClass {
     }
   }
   
-  @Override
-  public String toString() {
-    return "ConceptClass{id=" + this.conceptClassId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("ConceptClass{id=").append(this.conceptClassId);
+    this.getConceptClassConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

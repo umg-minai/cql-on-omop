@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class Measurement {
   private Concept measEventFieldConcept;
   
   public Optional<Concept> getMeasEventFieldConcept() {
-    return Optional.of(this.measEventFieldConcept);
+    return Optional.ofNullable(this.measEventFieldConcept);
   }
   @Column(name = "measurement_event_id", insertable = false, updatable = false)
   private Integer measurementEventId;
@@ -75,7 +76,7 @@ public class Measurement {
   private Concept unitSourceConcept;
   
   public Optional<Concept> getUnitSourceConcept() {
-    return Optional.of(this.unitSourceConcept);
+    return Optional.ofNullable(this.unitSourceConcept);
   }
   @Column(name = "unit_source_value", insertable = false, updatable = false)
   private String unitSourceValue;
@@ -104,7 +105,7 @@ public class Measurement {
   private Concept measurementSourceConcept;
   
   public Optional<Concept> getMeasurementSourceConcept() {
-    return Optional.of(this.measurementSourceConcept);
+    return Optional.ofNullable(this.measurementSourceConcept);
   }
   @Column(name = "measurement_source_value", insertable = false, updatable = false)
   private String measurementSourceValue;
@@ -133,7 +134,7 @@ public class Measurement {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -151,7 +152,7 @@ public class Measurement {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -169,7 +170,7 @@ public class Measurement {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "range_high", insertable = false, updatable = false)
   private Float rangeHigh;
@@ -209,7 +210,7 @@ public class Measurement {
   private Concept unitConcept;
   
   public Optional<Concept> getUnitConcept() {
-    return Optional.of(this.unitConcept);
+    return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "value_as_concept_id", insertable = false, updatable = false)
   private Integer valueAsConceptId;
@@ -227,12 +228,12 @@ public class Measurement {
   private Concept valueAsConcept;
   
   public Optional<Concept> getValueAsConcept() {
-    return Optional.of(this.valueAsConcept);
+    return Optional.ofNullable(this.valueAsConcept);
   }
   @Column(name = "value_as_number", insertable = false, updatable = false)
-  private Float valueAsNumber;
+  private BigDecimal valueAsNumber;
   
-  public Optional<Float> getValueAsNumber() {
+  public Optional<BigDecimal> getValueAsNumber() {
     if (this.valueAsNumber != null) {
       return Optional.of(this.valueAsNumber);
     } else {
@@ -256,7 +257,7 @@ public class Measurement {
   private Concept operatorConcept;
   
   public Optional<Concept> getOperatorConcept() {
-    return Optional.of(this.operatorConcept);
+    return Optional.ofNullable(this.operatorConcept);
   }
   @Column(name = "measurement_type_concept_id", insertable = false, updatable = false)
   private Integer measurementTypeConceptId;
@@ -274,7 +275,7 @@ public class Measurement {
   private Concept measurementTypeConcept;
   
   public Optional<Concept> getMeasurementTypeConcept() {
-    return Optional.of(this.measurementTypeConcept);
+    return Optional.ofNullable(this.measurementTypeConcept);
   }
   @Column(name = "measurement_time", insertable = false, updatable = false)
   private String measurementTime;
@@ -325,7 +326,7 @@ public class Measurement {
   private Concept measurementConcept;
   
   public Optional<Concept> getMeasurementConcept() {
-    return Optional.of(this.measurementConcept);
+    return Optional.ofNullable(this.measurementConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -343,7 +344,7 @@ public class Measurement {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "measurement_id", insertable = false, updatable = false)
@@ -357,10 +358,17 @@ public class Measurement {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Measurement{id=" + this.measurementId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Measurement{id=").append(this.measurementId);
+    this.getMeasurementConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

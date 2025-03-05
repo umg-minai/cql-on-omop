@@ -79,7 +79,7 @@ public class DrugEra {
   private Concept drugConcept;
   
   public Optional<Concept> getDrugConcept() {
-    return Optional.of(this.drugConcept);
+    return Optional.ofNullable(this.drugConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -97,7 +97,7 @@ public class DrugEra {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "drug_era_id", insertable = false, updatable = false)
@@ -111,10 +111,12 @@ public class DrugEra {
     }
   }
   
-  @Override
-  public String toString() {
-    return "DrugEra{id=" + this.drugEraId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("DrugEra{id=").append(this.drugEraId);
+    result.append("}");
+    return result.toString();
+}
   
 }

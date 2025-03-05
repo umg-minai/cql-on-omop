@@ -35,7 +35,7 @@ public class EpisodeEvent {
   private Concept episodeEventFieldConcept;
   
   public Optional<Concept> getEpisodeEventFieldConcept() {
-    return Optional.of(this.episodeEventFieldConcept);
+    return Optional.ofNullable(this.episodeEventFieldConcept);
   }
   @Column(name = "event_id", insertable = false, updatable = false)
   private Integer eventId;
@@ -64,7 +64,7 @@ public class EpisodeEvent {
   private Episode episode;
   
   public Optional<Episode> getEpisode() {
-    return Optional.of(this.episode);
+    return Optional.ofNullable(this.episode);
   }
   
 }

@@ -35,7 +35,7 @@ public class PayerPlanPeriod {
   private Concept stopReasonSourceConcept;
   
   public Optional<Concept> getStopReasonSourceConcept() {
-    return Optional.of(this.stopReasonSourceConcept);
+    return Optional.ofNullable(this.stopReasonSourceConcept);
   }
   @Column(name = "stop_reason_source_value", insertable = false, updatable = false)
   private String stopReasonSourceValue;
@@ -64,7 +64,7 @@ public class PayerPlanPeriod {
   private Concept stopReasonConcept;
   
   public Optional<Concept> getStopReasonConcept() {
-    return Optional.of(this.stopReasonConcept);
+    return Optional.ofNullable(this.stopReasonConcept);
   }
   @Column(name = "family_source_value", insertable = false, updatable = false)
   private String familySourceValue;
@@ -93,7 +93,7 @@ public class PayerPlanPeriod {
   private Concept sponsorSourceConcept;
   
   public Optional<Concept> getSponsorSourceConcept() {
-    return Optional.of(this.sponsorSourceConcept);
+    return Optional.ofNullable(this.sponsorSourceConcept);
   }
   @Column(name = "sponsor_source_value", insertable = false, updatable = false)
   private String sponsorSourceValue;
@@ -122,7 +122,7 @@ public class PayerPlanPeriod {
   private Concept sponsorConcept;
   
   public Optional<Concept> getSponsorConcept() {
-    return Optional.of(this.sponsorConcept);
+    return Optional.ofNullable(this.sponsorConcept);
   }
   @Column(name = "plan_source_concept_id", insertable = false, updatable = false)
   private Integer planSourceConceptId;
@@ -140,7 +140,7 @@ public class PayerPlanPeriod {
   private Concept planSourceConcept;
   
   public Optional<Concept> getPlanSourceConcept() {
-    return Optional.of(this.planSourceConcept);
+    return Optional.ofNullable(this.planSourceConcept);
   }
   @Column(name = "plan_source_value", insertable = false, updatable = false)
   private String planSourceValue;
@@ -169,7 +169,7 @@ public class PayerPlanPeriod {
   private Concept planConcept;
   
   public Optional<Concept> getPlanConcept() {
-    return Optional.of(this.planConcept);
+    return Optional.ofNullable(this.planConcept);
   }
   @Column(name = "payer_source_concept_id", insertable = false, updatable = false)
   private Integer payerSourceConceptId;
@@ -187,7 +187,7 @@ public class PayerPlanPeriod {
   private Concept payerSourceConcept;
   
   public Optional<Concept> getPayerSourceConcept() {
-    return Optional.of(this.payerSourceConcept);
+    return Optional.ofNullable(this.payerSourceConcept);
   }
   @Column(name = "payer_source_value", insertable = false, updatable = false)
   private String payerSourceValue;
@@ -216,7 +216,7 @@ public class PayerPlanPeriod {
   private Concept payerConcept;
   
   public Optional<Concept> getPayerConcept() {
-    return Optional.of(this.payerConcept);
+    return Optional.ofNullable(this.payerConcept);
   }
   @Column(name = "payer_plan_period_end_date", insertable = false, updatable = false)
   private ZonedDateTime payerPlanPeriodEndDate;
@@ -256,7 +256,7 @@ public class PayerPlanPeriod {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "payer_plan_period_id", insertable = false, updatable = false)
@@ -270,10 +270,12 @@ public class PayerPlanPeriod {
     }
   }
   
-  @Override
-  public String toString() {
-    return "PayerPlanPeriod{id=" + this.payerPlanPeriodId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("PayerPlanPeriod{id=").append(this.payerPlanPeriodId);
+    result.append("}");
+    return result.toString();
+}
   
 }

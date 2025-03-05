@@ -35,7 +35,7 @@ public class Episode {
   private Concept episodeSourceConcept;
   
   public Optional<Concept> getEpisodeSourceConcept() {
-    return Optional.of(this.episodeSourceConcept);
+    return Optional.ofNullable(this.episodeSourceConcept);
   }
   @Column(name = "episode_source_value", insertable = false, updatable = false)
   private String episodeSourceValue;
@@ -64,7 +64,7 @@ public class Episode {
   private Concept episodeTypeConcept;
   
   public Optional<Concept> getEpisodeTypeConcept() {
-    return Optional.of(this.episodeTypeConcept);
+    return Optional.ofNullable(this.episodeTypeConcept);
   }
   @Column(name = "episode_object_concept_id", insertable = false, updatable = false)
   private Integer episodeObjectConceptId;
@@ -82,7 +82,7 @@ public class Episode {
   private Concept episodeObjectConcept;
   
   public Optional<Concept> getEpisodeObjectConcept() {
-    return Optional.of(this.episodeObjectConcept);
+    return Optional.ofNullable(this.episodeObjectConcept);
   }
   @Column(name = "episode_number", insertable = false, updatable = false)
   private Integer episodeNumber;
@@ -166,7 +166,7 @@ public class Episode {
   private Concept episodeConcept;
   
   public Optional<Concept> getEpisodeConcept() {
-    return Optional.of(this.episodeConcept);
+    return Optional.ofNullable(this.episodeConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -184,7 +184,7 @@ public class Episode {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "episode_id", insertable = false, updatable = false)
@@ -198,10 +198,17 @@ public class Episode {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Episode{id=" + this.episodeId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Episode{id=").append(this.episodeId);
+    this.getEpisodeConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

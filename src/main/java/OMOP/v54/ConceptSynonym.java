@@ -35,7 +35,7 @@ public class ConceptSynonym {
   private Concept languageConcept;
   
   public Optional<Concept> getLanguageConcept() {
-    return Optional.of(this.languageConcept);
+    return Optional.ofNullable(this.languageConcept);
   }
   @Column(name = "concept_synonym_name", insertable = false, updatable = false)
   private String conceptSynonymName;
@@ -64,7 +64,7 @@ public class ConceptSynonym {
   private Concept concept;
   
   public Optional<Concept> getConcept() {
-    return Optional.of(this.concept);
+    return Optional.ofNullable(this.concept);
   }
   
 }

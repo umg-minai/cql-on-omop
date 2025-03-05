@@ -57,7 +57,7 @@ public class ConceptAncestor {
   private Concept descendantConcept;
   
   public Optional<Concept> getDescendantConcept() {
-    return Optional.of(this.descendantConcept);
+    return Optional.ofNullable(this.descendantConcept);
   }
   @Column(name = "ancestor_concept_id", insertable = false, updatable = false)
   private Integer ancestorConceptId;
@@ -75,7 +75,7 @@ public class ConceptAncestor {
   private Concept ancestorConcept;
   
   public Optional<Concept> getAncestorConcept() {
-    return Optional.of(this.ancestorConcept);
+    return Optional.ofNullable(this.ancestorConcept);
   }
   
 }

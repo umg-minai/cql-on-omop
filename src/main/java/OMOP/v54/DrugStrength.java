@@ -79,7 +79,7 @@ public class DrugStrength {
   private Concept denominatorUnitConcept;
   
   public Optional<Concept> getDenominatorUnitConcept() {
-    return Optional.of(this.denominatorUnitConcept);
+    return Optional.ofNullable(this.denominatorUnitConcept);
   }
   @Column(name = "denominator_value", insertable = false, updatable = false)
   private Float denominatorValue;
@@ -108,7 +108,7 @@ public class DrugStrength {
   private Concept numeratorUnitConcept;
   
   public Optional<Concept> getNumeratorUnitConcept() {
-    return Optional.of(this.numeratorUnitConcept);
+    return Optional.ofNullable(this.numeratorUnitConcept);
   }
   @Column(name = "numerator_value", insertable = false, updatable = false)
   private Float numeratorValue;
@@ -137,7 +137,7 @@ public class DrugStrength {
   private Concept amountUnitConcept;
   
   public Optional<Concept> getAmountUnitConcept() {
-    return Optional.of(this.amountUnitConcept);
+    return Optional.ofNullable(this.amountUnitConcept);
   }
   @Column(name = "amount_value", insertable = false, updatable = false)
   private Float amountValue;
@@ -166,7 +166,7 @@ public class DrugStrength {
   private Concept ingredientConcept;
   
   public Optional<Concept> getIngredientConcept() {
-    return Optional.of(this.ingredientConcept);
+    return Optional.ofNullable(this.ingredientConcept);
   }
   @Column(name = "drug_concept_id", insertable = false, updatable = false)
   private Integer drugConceptId;
@@ -184,7 +184,7 @@ public class DrugStrength {
   private Concept drugConcept;
   
   public Optional<Concept> getDrugConcept() {
-    return Optional.of(this.drugConcept);
+    return Optional.ofNullable(this.drugConcept);
   }
   
 }

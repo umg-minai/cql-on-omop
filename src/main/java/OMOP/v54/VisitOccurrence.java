@@ -35,7 +35,7 @@ public class VisitOccurrence {
   private VisitOccurrence precedingVisitOccurrence;
   
   public Optional<VisitOccurrence> getPrecedingVisitOccurrence() {
-    return Optional.of(this.precedingVisitOccurrence);
+    return Optional.ofNullable(this.precedingVisitOccurrence);
   }
   @Column(name = "discharged_to_source_value", insertable = false, updatable = false)
   private String dischargedToSourceValue;
@@ -64,7 +64,7 @@ public class VisitOccurrence {
   private Concept dischargedToConcept;
   
   public Optional<Concept> getDischargedToConcept() {
-    return Optional.of(this.dischargedToConcept);
+    return Optional.ofNullable(this.dischargedToConcept);
   }
   @Column(name = "admitted_from_source_value", insertable = false, updatable = false)
   private String admittedFromSourceValue;
@@ -93,7 +93,7 @@ public class VisitOccurrence {
   private Concept admittedFromConcept;
   
   public Optional<Concept> getAdmittedFromConcept() {
-    return Optional.of(this.admittedFromConcept);
+    return Optional.ofNullable(this.admittedFromConcept);
   }
   @Column(name = "visit_source_concept_id", insertable = false, updatable = false)
   private Integer visitSourceConceptId;
@@ -111,7 +111,7 @@ public class VisitOccurrence {
   private Concept visitSourceConcept;
   
   public Optional<Concept> getVisitSourceConcept() {
-    return Optional.of(this.visitSourceConcept);
+    return Optional.ofNullable(this.visitSourceConcept);
   }
   @Column(name = "visit_source_value", insertable = false, updatable = false)
   private String visitSourceValue;
@@ -140,7 +140,7 @@ public class VisitOccurrence {
   private CareSite careSite;
   
   public Optional<CareSite> getCareSite() {
-    return Optional.of(this.careSite);
+    return Optional.ofNullable(this.careSite);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -158,7 +158,7 @@ public class VisitOccurrence {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "visit_type_concept_id", insertable = false, updatable = false)
   private Integer visitTypeConceptId;
@@ -176,7 +176,7 @@ public class VisitOccurrence {
   private Concept visitTypeConcept;
   
   public Optional<Concept> getVisitTypeConcept() {
-    return Optional.of(this.visitTypeConcept);
+    return Optional.ofNullable(this.visitTypeConcept);
   }
   @Column(name = "visit_end_datetime", insertable = false, updatable = false)
   private ZonedDateTime visitEndDatetime;
@@ -238,7 +238,7 @@ public class VisitOccurrence {
   private Concept visitConcept;
   
   public Optional<Concept> getVisitConcept() {
-    return Optional.of(this.visitConcept);
+    return Optional.ofNullable(this.visitConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -256,7 +256,7 @@ public class VisitOccurrence {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
@@ -270,10 +270,17 @@ public class VisitOccurrence {
     }
   }
   
-  @Override
-  public String toString() {
-    return "VisitOccurrence{id=" + this.visitOccurrenceId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("VisitOccurrence{id=").append(this.visitOccurrenceId);
+    this.getVisitConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

@@ -35,7 +35,7 @@ public class Note {
   private Concept noteEventFieldConcept;
   
   public Optional<Concept> getNoteEventFieldConcept() {
-    return Optional.of(this.noteEventFieldConcept);
+    return Optional.ofNullable(this.noteEventFieldConcept);
   }
   @Column(name = "note_event_id", insertable = false, updatable = false)
   private Integer noteEventId;
@@ -75,7 +75,7 @@ public class Note {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -93,7 +93,7 @@ public class Note {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -111,7 +111,7 @@ public class Note {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "language_concept_id", insertable = false, updatable = false)
   private Integer languageConceptId;
@@ -129,7 +129,7 @@ public class Note {
   private Concept languageConcept;
   
   public Optional<Concept> getLanguageConcept() {
-    return Optional.of(this.languageConcept);
+    return Optional.ofNullable(this.languageConcept);
   }
   @Column(name = "encoding_concept_id", insertable = false, updatable = false)
   private Integer encodingConceptId;
@@ -147,7 +147,7 @@ public class Note {
   private Concept encodingConcept;
   
   public Optional<Concept> getEncodingConcept() {
-    return Optional.of(this.encodingConcept);
+    return Optional.ofNullable(this.encodingConcept);
   }
   @Column(name = "note_text", insertable = false, updatable = false)
   private String noteText;
@@ -187,7 +187,7 @@ public class Note {
   private Concept noteClassConcept;
   
   public Optional<Concept> getNoteClassConcept() {
-    return Optional.of(this.noteClassConcept);
+    return Optional.ofNullable(this.noteClassConcept);
   }
   @Column(name = "note_type_concept_id", insertable = false, updatable = false)
   private Integer noteTypeConceptId;
@@ -205,7 +205,7 @@ public class Note {
   private Concept noteTypeConcept;
   
   public Optional<Concept> getNoteTypeConcept() {
-    return Optional.of(this.noteTypeConcept);
+    return Optional.ofNullable(this.noteTypeConcept);
   }
   @Column(name = "note_datetime", insertable = false, updatable = false)
   private ZonedDateTime noteDatetime;
@@ -245,7 +245,7 @@ public class Note {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "note_id", insertable = false, updatable = false)
@@ -259,10 +259,12 @@ public class Note {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Note{id=" + this.noteId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Note{id=").append(this.noteId);
+    result.append("}");
+    return result.toString();
+}
   
 }

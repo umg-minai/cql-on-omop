@@ -46,7 +46,7 @@ public class Cost {
   private Concept drgConcept;
   
   public Optional<Concept> getDrgConcept() {
-    return Optional.of(this.drgConcept);
+    return Optional.ofNullable(this.drgConcept);
   }
   @Column(name = "revenue_code_source_value", insertable = false, updatable = false)
   private String revenueCodeSourceValue;
@@ -75,7 +75,7 @@ public class Cost {
   private Concept revenueCodeConcept;
   
   public Optional<Concept> getRevenueCodeConcept() {
-    return Optional.of(this.revenueCodeConcept);
+    return Optional.ofNullable(this.revenueCodeConcept);
   }
   @Column(name = "amount_allowed", insertable = false, updatable = false)
   private Float amountAllowed;
@@ -236,7 +236,7 @@ public class Cost {
   private Concept currencyConcept;
   
   public Optional<Concept> getCurrencyConcept() {
-    return Optional.of(this.currencyConcept);
+    return Optional.ofNullable(this.currencyConcept);
   }
   @Column(name = "cost_type_concept_id", insertable = false, updatable = false)
   private Integer costTypeConceptId;
@@ -254,7 +254,7 @@ public class Cost {
   private Concept costTypeConcept;
   
   public Optional<Concept> getCostTypeConcept() {
-    return Optional.of(this.costTypeConcept);
+    return Optional.ofNullable(this.costTypeConcept);
   }
   @Column(name = "cost_domain_id", insertable = false, updatable = false)
   private String costDomainId;
@@ -272,7 +272,7 @@ public class Cost {
   private Domain costDomain;
   
   public Optional<Domain> getCostDomain() {
-    return Optional.of(this.costDomain);
+    return Optional.ofNullable(this.costDomain);
   }
   @Column(name = "cost_event_id", insertable = false, updatable = false)
   private Integer costEventId;
@@ -297,10 +297,12 @@ public class Cost {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Cost{id=" + this.costId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Cost{id=").append(this.costId);
+    result.append("}");
+    return result.toString();
+}
   
 }

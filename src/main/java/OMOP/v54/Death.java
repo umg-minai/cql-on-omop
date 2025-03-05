@@ -35,7 +35,7 @@ public class Death {
   private Concept causeSourceConcept;
   
   public Optional<Concept> getCauseSourceConcept() {
-    return Optional.of(this.causeSourceConcept);
+    return Optional.ofNullable(this.causeSourceConcept);
   }
   @Column(name = "cause_source_value", insertable = false, updatable = false)
   private String causeSourceValue;
@@ -64,7 +64,7 @@ public class Death {
   private Concept causeConcept;
   
   public Optional<Concept> getCauseConcept() {
-    return Optional.of(this.causeConcept);
+    return Optional.ofNullable(this.causeConcept);
   }
   @Column(name = "death_type_concept_id", insertable = false, updatable = false)
   private Integer deathTypeConceptId;
@@ -82,7 +82,7 @@ public class Death {
   private Concept deathTypeConcept;
   
   public Optional<Concept> getDeathTypeConcept() {
-    return Optional.of(this.deathTypeConcept);
+    return Optional.ofNullable(this.deathTypeConcept);
   }
   @Column(name = "death_datetime", insertable = false, updatable = false)
   private ZonedDateTime deathDatetime;
@@ -122,7 +122,7 @@ public class Death {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   
 }

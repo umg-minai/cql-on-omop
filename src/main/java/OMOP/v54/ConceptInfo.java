@@ -13,7 +13,7 @@ public class ConceptInfo implements DataTypeInfo {
         return null;
     }
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("concept");
+        return codePath.equals("conceptId");
     }
     
 }

@@ -68,7 +68,7 @@ public class DoseEra {
   private Concept unitConcept;
   
   public Optional<Concept> getUnitConcept() {
-    return Optional.of(this.unitConcept);
+    return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "drug_concept_id", insertable = false, updatable = false)
   private Integer drugConceptId;
@@ -86,7 +86,7 @@ public class DoseEra {
   private Concept drugConcept;
   
   public Optional<Concept> getDrugConcept() {
-    return Optional.of(this.drugConcept);
+    return Optional.ofNullable(this.drugConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -104,7 +104,7 @@ public class DoseEra {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "dose_era_id", insertable = false, updatable = false)
@@ -118,10 +118,12 @@ public class DoseEra {
     }
   }
   
-  @Override
-  public String toString() {
-    return "DoseEra{id=" + this.doseEraId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("DoseEra{id=").append(this.doseEraId);
+    result.append("}");
+    return result.toString();
+}
   
 }

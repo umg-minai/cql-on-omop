@@ -35,7 +35,7 @@ public class Domain {
   private Concept domainConcept;
   
   public Optional<Concept> getDomainConcept() {
-    return Optional.of(this.domainConcept);
+    return Optional.ofNullable(this.domainConcept);
   }
   @Column(name = "domain_name", insertable = false, updatable = false)
   private String domainName;
@@ -60,10 +60,17 @@ public class Domain {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Domain{id=" + this.domainId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Domain{id=").append(this.domainId);
+    this.getDomainConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

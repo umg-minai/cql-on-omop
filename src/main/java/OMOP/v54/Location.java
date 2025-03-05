@@ -68,7 +68,7 @@ public class Location {
   private Concept countryConcept;
   
   public Optional<Concept> getCountryConcept() {
-    return Optional.of(this.countryConcept);
+    return Optional.ofNullable(this.countryConcept);
   }
   @Column(name = "location_source_value", insertable = false, updatable = false)
   private String locationSourceValue;
@@ -159,10 +159,12 @@ public class Location {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Location{id=" + this.locationId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Location{id=").append(this.locationId);
+    result.append("}");
+    return result.toString();
+}
   
 }

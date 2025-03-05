@@ -35,7 +35,7 @@ public class ObservationPeriod {
   private Concept periodTypeConcept;
   
   public Optional<Concept> getPeriodTypeConcept() {
-    return Optional.of(this.periodTypeConcept);
+    return Optional.ofNullable(this.periodTypeConcept);
   }
   @Column(name = "observation_period_end_date", insertable = false, updatable = false)
   private ZonedDateTime observationPeriodEndDate;
@@ -75,7 +75,7 @@ public class ObservationPeriod {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "observation_period_id", insertable = false, updatable = false)
@@ -89,10 +89,12 @@ public class ObservationPeriod {
     }
   }
   
-  @Override
-  public String toString() {
-    return "ObservationPeriod{id=" + this.observationPeriodId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("ObservationPeriod{id=").append(this.observationPeriodId);
+    result.append("}");
+    return result.toString();
+}
   
 }

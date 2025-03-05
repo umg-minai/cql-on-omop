@@ -35,7 +35,7 @@ public class Relationship {
   private Concept relationshipConcept;
   
   public Optional<Concept> getRelationshipConcept() {
-    return Optional.of(this.relationshipConcept);
+    return Optional.ofNullable(this.relationshipConcept);
   }
   @Column(name = "reverse_relationship_id", insertable = false, updatable = false)
   private String reverseRelationshipId;
@@ -93,10 +93,17 @@ public class Relationship {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Relationship{id=" + this.relationshipId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Relationship{id=").append(this.relationshipId);
+    this.getRelationshipConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

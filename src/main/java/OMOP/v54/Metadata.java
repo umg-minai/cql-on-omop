@@ -68,7 +68,7 @@ public class Metadata {
   private Concept valueAsConcept;
   
   public Optional<Concept> getValueAsConcept() {
-    return Optional.of(this.valueAsConcept);
+    return Optional.ofNullable(this.valueAsConcept);
   }
   @Column(name = "value_as_string", insertable = false, updatable = false)
   private String valueAsString;
@@ -108,7 +108,7 @@ public class Metadata {
   private Concept metadataTypeConcept;
   
   public Optional<Concept> getMetadataTypeConcept() {
-    return Optional.of(this.metadataTypeConcept);
+    return Optional.ofNullable(this.metadataTypeConcept);
   }
   @Column(name = "metadata_concept_id", insertable = false, updatable = false)
   private Integer metadataConceptId;
@@ -126,7 +126,7 @@ public class Metadata {
   private Concept metadataConcept;
   
   public Optional<Concept> getMetadataConcept() {
-    return Optional.of(this.metadataConcept);
+    return Optional.ofNullable(this.metadataConcept);
   }
   @Id
   @Column(name = "metadata_id", insertable = false, updatable = false)
@@ -140,10 +140,17 @@ public class Metadata {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Metadata{id=" + this.metadataId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Metadata{id=").append(this.metadataId);
+    this.getMetadataConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

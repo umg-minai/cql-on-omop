@@ -35,7 +35,7 @@ public class Provider {
   private Concept genderSourceConcept;
   
   public Optional<Concept> getGenderSourceConcept() {
-    return Optional.of(this.genderSourceConcept);
+    return Optional.ofNullable(this.genderSourceConcept);
   }
   @Column(name = "gender_source_value", insertable = false, updatable = false)
   private String genderSourceValue;
@@ -64,7 +64,7 @@ public class Provider {
   private Concept specialtySourceConcept;
   
   public Optional<Concept> getSpecialtySourceConcept() {
-    return Optional.of(this.specialtySourceConcept);
+    return Optional.ofNullable(this.specialtySourceConcept);
   }
   @Column(name = "specialty_source_value", insertable = false, updatable = false)
   private String specialtySourceValue;
@@ -104,7 +104,7 @@ public class Provider {
   private Concept genderConcept;
   
   public Optional<Concept> getGenderConcept() {
-    return Optional.of(this.genderConcept);
+    return Optional.ofNullable(this.genderConcept);
   }
   @Column(name = "year_of_birth", insertable = false, updatable = false)
   private Integer yearOfBirth;
@@ -133,7 +133,7 @@ public class Provider {
   private CareSite careSite;
   
   public Optional<CareSite> getCareSite() {
-    return Optional.of(this.careSite);
+    return Optional.ofNullable(this.careSite);
   }
   @Column(name = "specialty_concept_id", insertable = false, updatable = false)
   private Integer specialtyConceptId;
@@ -151,7 +151,7 @@ public class Provider {
   private Concept specialtyConcept;
   
   public Optional<Concept> getSpecialtyConcept() {
-    return Optional.of(this.specialtyConcept);
+    return Optional.ofNullable(this.specialtyConcept);
   }
   @Column(name = "dea", insertable = false, updatable = false)
   private String dea;
@@ -198,10 +198,12 @@ public class Provider {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Provider{id=" + this.providerId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Provider{id=").append(this.providerId);
+    result.append("}");
+    return result.toString();
+}
   
 }

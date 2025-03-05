@@ -35,7 +35,7 @@ public class Vocabulary {
   private Concept vocabularyConcept;
   
   public Optional<Concept> getVocabularyConcept() {
-    return Optional.of(this.vocabularyConcept);
+    return Optional.ofNullable(this.vocabularyConcept);
   }
   @Column(name = "vocabulary_version", insertable = false, updatable = false)
   private String vocabularyVersion;
@@ -82,10 +82,17 @@ public class Vocabulary {
     }
   }
   
-  @Override
-  public String toString() {
-    return "Vocabulary{id=" + this.vocabularyId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("Vocabulary{id=").append(this.vocabularyId);
+    this.getVocabularyConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }

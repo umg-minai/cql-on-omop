@@ -57,7 +57,7 @@ public class DrugExposure {
   private Concept drugSourceConcept;
   
   public Optional<Concept> getDrugSourceConcept() {
-    return Optional.of(this.drugSourceConcept);
+    return Optional.ofNullable(this.drugSourceConcept);
   }
   @Column(name = "drug_source_value", insertable = false, updatable = false)
   private String drugSourceValue;
@@ -86,7 +86,7 @@ public class DrugExposure {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -104,7 +104,7 @@ public class DrugExposure {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -122,7 +122,7 @@ public class DrugExposure {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "lot_number", insertable = false, updatable = false)
   private String lotNumber;
@@ -151,7 +151,7 @@ public class DrugExposure {
   private Concept routeConcept;
   
   public Optional<Concept> getRouteConcept() {
-    return Optional.of(this.routeConcept);
+    return Optional.ofNullable(this.routeConcept);
   }
   @Column(name = "sig", insertable = false, updatable = false)
   private String sig;
@@ -224,7 +224,7 @@ public class DrugExposure {
   private Concept drugTypeConcept;
   
   public Optional<Concept> getDrugTypeConcept() {
-    return Optional.of(this.drugTypeConcept);
+    return Optional.ofNullable(this.drugTypeConcept);
   }
   @Column(name = "verbatim_end_date", insertable = false, updatable = false)
   private ZonedDateTime verbatimEndDate;
@@ -297,7 +297,7 @@ public class DrugExposure {
   private Concept drugConcept;
   
   public Optional<Concept> getDrugConcept() {
-    return Optional.of(this.drugConcept);
+    return Optional.ofNullable(this.drugConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -315,7 +315,7 @@ public class DrugExposure {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "drug_exposure_id", insertable = false, updatable = false)
@@ -329,10 +329,12 @@ public class DrugExposure {
     }
   }
   
-  @Override
-  public String toString() {
-    return "DrugExposure{id=" + this.drugExposureId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("DrugExposure{id=").append(this.drugExposureId);
+    result.append("}");
+    return result.toString();
+}
   
 }

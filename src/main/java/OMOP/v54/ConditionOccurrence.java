@@ -46,7 +46,7 @@ public class ConditionOccurrence {
   private Concept conditionSourceConcept;
   
   public Optional<Concept> getConditionSourceConcept() {
-    return Optional.of(this.conditionSourceConcept);
+    return Optional.ofNullable(this.conditionSourceConcept);
   }
   @Column(name = "condition_source_value", insertable = false, updatable = false)
   private String conditionSourceValue;
@@ -75,7 +75,7 @@ public class ConditionOccurrence {
   private VisitDetail visitDetail;
   
   public Optional<VisitDetail> getVisitDetail() {
-    return Optional.of(this.visitDetail);
+    return Optional.ofNullable(this.visitDetail);
   }
   @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
   private Integer visitOccurrenceId;
@@ -93,7 +93,7 @@ public class ConditionOccurrence {
   private VisitOccurrence visitOccurrence;
   
   public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.of(this.visitOccurrence);
+    return Optional.ofNullable(this.visitOccurrence);
   }
   @Column(name = "provider_id", insertable = false, updatable = false)
   private Integer providerId;
@@ -111,7 +111,7 @@ public class ConditionOccurrence {
   private Provider provider;
   
   public Optional<Provider> getProvider() {
-    return Optional.of(this.provider);
+    return Optional.ofNullable(this.provider);
   }
   @Column(name = "stop_reason", insertable = false, updatable = false)
   private String stopReason;
@@ -140,7 +140,7 @@ public class ConditionOccurrence {
   private Concept conditionStatusConcept;
   
   public Optional<Concept> getConditionStatusConcept() {
-    return Optional.of(this.conditionStatusConcept);
+    return Optional.ofNullable(this.conditionStatusConcept);
   }
   @Column(name = "condition_type_concept_id", insertable = false, updatable = false)
   private Integer conditionTypeConceptId;
@@ -158,7 +158,7 @@ public class ConditionOccurrence {
   private Concept conditionTypeConcept;
   
   public Optional<Concept> getConditionTypeConcept() {
-    return Optional.of(this.conditionTypeConcept);
+    return Optional.ofNullable(this.conditionTypeConcept);
   }
   @Column(name = "condition_end_datetime", insertable = false, updatable = false)
   private ZonedDateTime conditionEndDatetime;
@@ -220,7 +220,7 @@ public class ConditionOccurrence {
   private Concept conditionConcept;
   
   public Optional<Concept> getConditionConcept() {
-    return Optional.of(this.conditionConcept);
+    return Optional.ofNullable(this.conditionConcept);
   }
   @Column(name = "person_id", insertable = false, updatable = false)
   private Integer personId;
@@ -238,7 +238,7 @@ public class ConditionOccurrence {
   private Person person;
   
   public Optional<Person> getPerson() {
-    return Optional.of(this.person);
+    return Optional.ofNullable(this.person);
   }
   @Id
   @Column(name = "condition_occurrence_id", insertable = false, updatable = false)
@@ -252,10 +252,17 @@ public class ConditionOccurrence {
     }
   }
   
-  @Override
-  public String toString() {
-    return "ConditionOccurrence{id=" + this.conditionOccurrenceId + "}";
-  }
-  
+@Override
+public String toString() {
+    final var result = new StringBuilder();
+    result.append("ConditionOccurrence{id=").append(this.conditionOccurrenceId);
+    this.getConditionConcept().ifPresent(concept -> {
+      result.append(", concept='")
+      .append(concept.getConceptName().get())
+      .append("'");
+    });
+    result.append("}");
+    return result.toString();
+}
   
 }
