@@ -7,8 +7,13 @@ import org.jline.reader.ParsedLine;
 import java.util.List;
 
 public class Completer implements org.jline.reader.Completer {
+
     @Override
-    public void complete(LineReader lineReader, ParsedLine parsedLine, List<Candidate> list) {
+    public void complete(final LineReader lineReader,
+                         final ParsedLine parsedLine,
+                         final List<Candidate> list) {
+        list.add(new Candidate(",focus"));
         list.add(new Candidate("[ConditionOccurrence"));
     }
+
 }

@@ -16,16 +16,23 @@ public class REPLSourceProvider implements LibrarySourceProvider {
 
     private int replCount = 0;
 
-    public int setReplContent(String replContent) {
+    public String libraryName() {
+        return String.format("REPL%s", this.replCount);
+    }
+
+    public void setContent(final String replContent) {
         this.replContent = replContent;
-        return ++this.replCount;
+        this.replCount++;
     }
 
     @Override
     public InputStream getLibrarySource(final VersionedIdentifier libraryIdentifier) {
-        if (libraryIdentifier.getId().equals(String.format("REPL%s", this.replCount))) {
-            return new ByteArrayInputStream(replContent.getBytes(StandardCharsets.UTF_8));
+        if (libraryIdentifier.getId().equals(libraryName())) {
+            final var replLibrary = String.format("library REPL%s version '1.0.0'\n%s", replCount, replContent);
+            //System.out.println(replLibrary);
+            return new ByteArrayInputStream(replLibrary.getBytes(StandardCharsets.UTF_8));
         }
+        // TODO: use a separate source provider for filesystem content
         String path =
                 switch (libraryIdentifier.getId()) {
                     case "Test" -> "/home/jan/code/cql/cql-on-omop/cql/test.cql";
