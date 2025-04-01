@@ -4,6 +4,7 @@ import OMOP.MappingInfo;
 import OMOP.v54.Person;
 import jakarta.persistence.EntityManager;
 import org.example.engine.CQLonOMOPEngine;
+import org.example.engine.Configuration;
 import org.example.engine.ConnectionFactory;
 import org.example.engine.InMemoryLibrarySourceProvider;
 import org.hl7.elm.r1.VersionedIdentifier;
@@ -21,9 +22,9 @@ public class Celida {
 
     private Celida() {
         final var modelInfo = MappingInfo.ensureVersion("v5.4");
-        this.entityManager = ConnectionFactory.createEntityManager(modelInfo);
+        this.entityManager = ConnectionFactory.createEntityManager(new Configuration(), modelInfo);
         this.librarySourceProvider = new InMemoryLibrarySourceProvider();
-        this.engine = new CQLonOMOPEngine(entityManager, modelInfo, librarySourceProvider);
+        this.engine = null; // new CQLonOMOPEngine(entityManager, modelInfo, librarySourceProvider);
     }
 
     private void run() {
