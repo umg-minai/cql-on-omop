@@ -3,6 +3,7 @@ package org.example.engine;
 import OMOP.MappingInfo;
 import org.opencds.cqf.cql.engine.model.ModelResolver;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -60,23 +61,34 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Class<?> resolveType(Object o) {
-        return null;
+    public Class<?> resolveType(final Object value) {
+        return value.getClass();
     }
 
     @Override
-    public Boolean is(Object o, Class<?> aClass) {
-        return null;
+    public Boolean is(final Object value, final Class<?> type) {
+        return type.isAssignableFrom(value.getClass());
     }
 
     @Override
-    public Object as(Object o, Class<?> aClass, boolean b) {
-        return null;
+    public Object as(Object value, Class<?> type, boolean isStrict) {
+        throw new RuntimeException("not implemented");
     }
 
     @Override
-    public Object createInstance(String s) {
-        return null;
+    public Object createInstance(String typeName) {
+        final var clazz = mappingInfo.getDataTypeInfo(typeName).getClazz();
+        final Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor((Class<?>[]) null);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+        try {
+            return constructor.newInstance((Object[]) null);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            return null;
+        }
     }
 
     @Override
@@ -85,18 +97,18 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Boolean objectEqual(Object o, Object o1) {
-        return null;
+    public Boolean objectEqual(final Object left, final Object right) {
+        return left.equals(right);
     }
 
     @Override
     public Boolean objectEquivalent(Object o, Object o1) {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public String resolveId(Object o) {
-        return "";
+        throw new RuntimeException("Not implemented");
     }
 
 }

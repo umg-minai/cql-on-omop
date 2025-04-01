@@ -16,6 +16,7 @@ public class Constants {
      * concept table has concept_code = i and vocabulary_id = v.
      */
     public final static Map<String, String> OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID = Map.of(
+            "http://loinc.org",       "LOINC",
             "http://snomed.info/sct", "SNOMED"
     );
 

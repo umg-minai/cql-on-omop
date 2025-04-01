@@ -1,11 +1,11 @@
 package org.example.engine;
 
 import OMOP.MappingInfo;
-import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.LibraryManager;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.cqframework.cql.cql2elm.ModelManager;
+import org.hibernate.SessionFactory;
 import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
@@ -17,14 +17,14 @@ import java.util.Map;
 
 public class CQLonOMOPEngine {
 
-    private final ModelManager modelManager = new ModelManager(Path.of("/home/jan/code/cql/cql-example/input/cql/"));
+    // TODO(jmoringe): do something better
+    private final ModelManager modelManager = new ModelManager(Path.of("."));
 
     private final LibraryManager libraryManager;
 
     private final Map<String, DataProvider> dataProviders;
     private final TerminologyProvider terminologyProvider;
     private final Environment environment;
-    private final CqlEngine engine;
 
     public CQLonOMOPEngine(final OMOPDataProvider dataProvider,
                            final LibrarySourceProvider librarySourceProvider) {
@@ -37,29 +37,37 @@ public class CQLonOMOPEngine {
 
         this.dataProviders = Map.of(
                 // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
-                "urn:ohdsi:omop-types:r5.4",
+                "urn:ohdsi:omop-types:v5.4",
                 dataProvider);
 
         this.terminologyProvider = new OMOPTerminologyProvider();
 
         this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
-        this.engine = new CqlEngine(environment);
+        //this.engine = new CqlEngine(environment);
     }
 
-    public CQLonOMOPEngine(final EntityManager entityManager,
+    public CQLonOMOPEngine(final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
-        this(OMOPDataProvider.fromEntityManager(entityManager, mappingInfo), librarySourceProvider);
+        //this(OMOPDataProvider.fromEntityManager(entityManager, mappingInfo), librarySourceProvider);
+        this(OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo), librarySourceProvider);
     }
 
-    public CQLonOMOPEngine(final MappingInfo mappingInfo,
+    /*public CQLonOMOPEngine(final Configuration configuration,
+                           final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
-        this(new OMOPDataProvider(mappingInfo), librarySourceProvider);
-    }
+        this(new OMOPDataProvider(configuration, mappingInfo), librarySourceProvider);
+    }*/
 
-    public EvaluationResult evaluateLibrary(final String library, final Object patient) {
+    public EvaluationResult evaluateLibrary(final String library, final Object contextObject) {
         //engine.getState().getDebugResult().getMessages().forEach(System.err::println);
-        return engine.evaluate(library, Pair.of("Patient", patient));
+        final var engine = new CqlEngine(this.environment);
+        if (contextObject == null) {
+            return engine.evaluate(library);
+        } else {
+            // TODO(jmoringe): can we know the name of the context?
+            return engine.evaluate(library, Pair.of("Patient", contextObject));
+        }
     }
 
     public EvaluationResult evaluateLibrary(final String library) {
