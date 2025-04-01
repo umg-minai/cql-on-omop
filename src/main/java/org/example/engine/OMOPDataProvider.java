@@ -24,19 +24,19 @@ public class OMOPDataProvider extends CompositeDataProvider {
         this(configuration, new OMOPModelResolver(mappingInfo));
     }*/
 
-    /*public static OMOPDataProvider fromEntityManager(final EntityManager entityManager,
+    public static OMOPDataProvider fromEntityManager(final EntityManager entityManager,
                                                      final MappingInfo mappingInfo) {
         final var modelResolver = new OMOPModelResolver(mappingInfo);
         final var retrieveProvider = new OMOPRetrieveProvider(modelResolver, entityManager);
         return new OMOPDataProvider(modelResolver, retrieveProvider);
-    }*/
+    }
 
-    public static OMOPDataProvider fromSessionFactory(final SessionFactory sessionFactory,
+    /*public static OMOPDataProvider fromSessionFactory(final SessionFactory sessionFactory,
                                                       final MappingInfo mappingInfo) {
         final var modelResolver = new OMOPModelResolver(mappingInfo);
         final var retrieveProvider = new OMOPRetrieveProvider(modelResolver, sessionFactory);
         return new OMOPDataProvider(modelResolver, retrieveProvider);
-    }
+    }*/
 
     public MappingInfo getModelInfo() {
         return this.mappingInfo;

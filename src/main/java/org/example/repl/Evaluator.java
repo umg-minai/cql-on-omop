@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Evaluator {
 
+    private Configuration configuration;
+
     private static class State {
         public int expressionCount = 1;
         public List<String> prelude = new LinkedList<>();
@@ -43,18 +45,19 @@ public class Evaluator {
 
     private final REPLSourceProvider sourceProvider;
 
-    private final OMOPDataProvider dataProvider;
+    // private final OMOPDataProvider dataProvider;
 
     private final CQLonOMOPEngine engine;
 
     private State state;
 
     public Evaluator(final Configuration configuration) {
+        this.configuration = configuration;
         this.sourceProvider = new REPLSourceProvider();
         final var mappingInfo = MappingInfo.ensureVersion("v5.4");
         final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
-        this.dataProvider = OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo);
-        this.engine = new CQLonOMOPEngine(this.dataProvider, this.sourceProvider);
+        //this.dataProvider = OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo);
+        this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, this.sourceProvider);
         this.state = new State();
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
     }
@@ -177,24 +180,38 @@ public class Evaluator {
             if (definitionName != null) {
                 final var allResults = new ConcurrentHashMap<String, Object>();
                 final int[] count = {0};
-                final var pool = Executors.newWorkStealingPool();
+                final var pool = this.configuration.getThreadCount() != null
+                        ? Executors.newWorkStealingPool(this.configuration.getThreadCount())
+                        : Executors.newWorkStealingPool();
                 try {
                     contextObjects.forEach(object -> {
-                        System.out.printf("+ %d/%d (%s) %s\n", ++count[0], contextObjects.size(), object, this.state.parameterBindings);
-                        //pool.submit(() -> {
+                        pool.submit(() -> {
+                            synchronized (this) {
+                                System.out.printf("[%s] + %d/%d (%s)\n",
+                                        Thread.currentThread(),
+                                        ++count[0],
+                                        contextObjects.size(),
+                                        object);
+                            }
                             final var objectKey = object.toString(); // TODO(jmoringe): ensure uniqueness
-                            final var results = engine.evaluateLibrary(libraryName,
+                            try {
+                                final var results = engine.evaluateLibrary(libraryName,
                                     object,
                                     this.state.parameterBindings);
-                            try {
                                 final var objectResult = results.forExpression(definitionName);
                                 allResults.put(objectKey, objectResult.value());
                             } catch (Exception e) {
                                 allResults.put(objectKey, e.toString());
                             }
                             // TODO(jmoringe): wrong
-                            //System.out.printf("- %d/%d\n", --count[0], contextObjects.size());
-                        //});
+                            synchronized (this) {
+                                System.out.printf("[%s] - %d/%d (%s)\n",
+                                        Thread.currentThread(),
+                                        --count[0],
+                                        contextObjects.size(),
+                                        object);
+                            }
+                        });
                     });
                 } finally {
                     try {

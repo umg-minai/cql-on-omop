@@ -22,34 +22,34 @@ import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
-    public record SessionData(Session session, EntityManager entityManager) {};
+    // public record SessionData(Session session, EntityManager entityManager) {};
 
     private final OMOPModelResolver modelResolver;
 
-    //  private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    private final ConcurrentHashMap<Thread, SessionData> sessions = new ConcurrentHashMap<>();
+    // private final ConcurrentHashMap<Thread, SessionData> sessions = new ConcurrentHashMap<>();
 
-    private final SessionFactory sessionFactory;
+    // private final SessionFactory sessionFactory;
 
-    public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
+    /*public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
                                 final SessionFactory sessionFactory) {
         this.modelResolver = modelResolver;
         this.sessionFactory = sessionFactory;
-    }
+    }*/
 
-    /*public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
+    public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
                                 final EntityManager entityManager) {
         this.modelResolver = modelResolver;
         this.entityManager = entityManager;
     }
 
-    public OMOPRetrieveProvider(final Configuration configuration,
+    /*public OMOPRetrieveProvider(final Configuration configuration,
                                 final OMOPModelResolver modelResolver) {
         this(modelResolver, ConnectionFactory.createEntityManager(configuration, modelResolver.mappingInfo));
     }*/
 
-    public SessionData sessionForCurrentThread() {
+    /*public SessionData sessionForCurrentThread() {
         return sessions.compute(Thread.currentThread(),
                 (thread, data) -> {
             if (data == null) {
@@ -59,9 +59,9 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                 return data;
             }
         });
-    }
+    }*/
 
-    class RetrieveResult implements Iterable<Object> {
+    static class RetrieveResult implements Iterable<Object> {
 
         private final TypedQuery<?> query;
 
@@ -110,7 +110,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         if (Objects.equals(contextPath, "person") && Objects.equals(contextValue, "DummyContextObject")) {
             return List.of(contextValue);
         }
-        final var entityManager = sessionForCurrentThread().entityManager;
+        final var entityManager = this.entityManager;
         // Create a base query that selects from the OMOP table for dataType.
         var criteriaQuery = dataTypeCriteria(dataType);
         final var criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -158,7 +158,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             return null;
         }
         // TODO(jmoringe): pass entityManager
-        final var criteria = sessionForCurrentThread().entityManager.getCriteriaBuilder().createQuery(clazz);
+        final var criteria = this.entityManager.getCriteriaBuilder().createQuery(clazz);
         return criteria.select(criteria.from(clazz));
     }
 

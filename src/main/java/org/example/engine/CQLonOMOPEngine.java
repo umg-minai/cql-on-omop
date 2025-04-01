@@ -22,9 +22,15 @@ public class CQLonOMOPEngine {
 
     private final LibraryManager libraryManager;
 
-    private final Map<String, DataProvider> dataProviders;
     private final TerminologyProvider terminologyProvider;
-    private final Environment environment;
+    //private final Environment environment;
+
+    private SessionFactory sessionFactory;
+
+    private MappingInfo mappingInfo;
+
+    // TODO(jmoringe): remove
+    private Map<String, DataProvider> dataProviders;
 
     public CQLonOMOPEngine(final OMOPDataProvider dataProvider,
                            final LibrarySourceProvider librarySourceProvider) {
@@ -35,14 +41,14 @@ public class CQLonOMOPEngine {
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
         loader.registerProvider(librarySourceProvider);
 
-        this.dataProviders = Map.of(
+        /*this.dataProviders = Map.of(
                 // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
                 "urn:ohdsi:omop-types:v5.4",
-                dataProvider);
+                dataProvider);*/
 
         this.terminologyProvider = new OMOPTerminologyProvider();
 
-        this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
+        //this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
         //this.engine = new CqlEngine(environment);
     }
 
@@ -50,7 +56,9 @@ public class CQLonOMOPEngine {
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
         //this(OMOPDataProvider.fromEntityManager(entityManager, mappingInfo), librarySourceProvider);
-        this(OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo), librarySourceProvider);
+        this(null /*OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo)*/, librarySourceProvider);
+        this.sessionFactory = sessionFactory;
+        this.mappingInfo = mappingInfo;
     }
 
     /*public CQLonOMOPEngine(final Configuration configuration,
@@ -62,15 +70,26 @@ public class CQLonOMOPEngine {
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
                                             final Map<String, Object> parameterBindings) {
-        //engine.getState().getDebugResult().getMessages().forEach(System.err::println);
-        final var engine = new CqlEngine(this.environment);
-        if (contextObject == null) {
-            return engine.evaluate(library, parameterBindings);
-        } else {
-            // TODO(jmoringe): can we know the name of the context?
-            return engine.evaluate(library,
-                    Pair.of("Patient", contextObject),
-                    parameterBindings);
+        //final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
+        try (var session = this.sessionFactory.openSession();
+             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
+            // final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
+            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
+            final var dataProviders = Map.<String, DataProvider>of(
+                    // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
+                    "urn:ohdsi:omop-types:v5.4",
+                    dataProvider);
+            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
+            //engine.getState().getDebugResult().getMessages().forEach(System.err::println);
+            final var engine = new CqlEngine(environment);
+            if (contextObject == null) {
+                return engine.evaluate(library, parameterBindings);
+            } else {
+                // TODO(jmoringe): can we know the name of the context?
+                return engine.evaluate(library,
+                        Pair.of("Patient", contextObject),
+                        parameterBindings);
+            }
         }
     }
 
@@ -80,15 +99,6 @@ public class CQLonOMOPEngine {
 
     public EvaluationResult evaluateLibrary(final String library) {
         return evaluateLibrary(library, null, Map.of());
-    }
-
-    public EvaluationResult evaluateExpression(final String expression) {
-        /*final var i = this.librarySourceProvider.setReplContent(expression);
-        final var result = engine.evaluate(String.format("REPL%s", i),
-                Pair.of("Patient", null));
-        engine.getState().getDebugResult().getMessages().forEach(System.err::println);
-        return result;*/
-        return null;
     }
 
 }

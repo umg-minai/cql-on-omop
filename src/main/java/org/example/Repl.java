@@ -42,6 +42,9 @@ public class Repl implements Runnable {
     @CommandLine.Option(names = { "-s", "--show-sql"})
     private boolean showSQL = false;
 
+    @CommandLine.Option(names = { "-n", "--threads"})
+    private Integer threadCount;
+
     @CommandLine.Option(names = { "-l", "--load" })
     private List<Path> load = List.of();
 
@@ -103,6 +106,7 @@ public class Repl implements Runnable {
                     .withDatabaseUser(databaseUser)
                     .withDatabasePassword(databasePassword)
                     .withDatabaseName(databaseName)
+                    .withThreadCount(threadCount)
                     .withShowSQL(showSQL);
             this.evaluator = new Evaluator(configuration);
             Evaluator evaluator1 = this.evaluator;

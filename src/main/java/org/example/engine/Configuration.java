@@ -12,6 +12,8 @@ public class Configuration {
 
     private String databaseName;
 
+    private Integer threadCount;
+
     private Boolean showSQL = false;
 
     public String getDatabaseHost() {
@@ -59,6 +61,15 @@ public class Configuration {
         return this;
     }
 
+    public Integer getThreadCount() {
+        return this.threadCount;
+    }
+
+    public Configuration withThreadCount(Integer threadCount) {
+        this.threadCount = threadCount;
+        return this;
+    }
+
     public boolean getShowSQL() {
         return this.showSQL;
     }
@@ -67,5 +78,6 @@ public class Configuration {
         this.showSQL = showSQL;
         return this;
     }
+
 
 }
