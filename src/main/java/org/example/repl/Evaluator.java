@@ -30,6 +30,7 @@ public class Evaluator {
         public List<String> prelude = new LinkedList<>();
         public List<String> statements = new LinkedList<>();
         public Set<Object> contextObjects = new HashSet<>();
+        public Map<String, Object> parameterBindings = new HashMap<>();
         public EvaluationResult previousResult = null;
     }
 
@@ -89,6 +90,13 @@ public class Evaluator {
                 //assert arguments.length == 0;
                 // TODO: not implemented
             }
+            case "set" -> {
+                final var parameterAndExpression = argument.split(" ", 2);
+                commandSet(parameterAndExpression[0], parameterAndExpression[1]);
+            }
+            case "unset" -> {
+                commandUnset(argument);
+            }
             case "focus" -> {
                 //assert arguments.length == 1;
                 commandFocus(argument);
@@ -97,6 +105,7 @@ public class Evaluator {
                 final var filenameAndExpression = argument.split(" ", 2);
                 commandGraph(filenameAndExpression[1], filenameAndExpression[0]);
             }
+            default -> throw new RuntimeException(String.format("Unknown command %s", command));
         }
     }
 
@@ -155,9 +164,11 @@ public class Evaluator {
         final var contextObjects = this.state.contextObjects;
         final EvaluationResult result;
         if (contextObjects.isEmpty()) {
-            result = engine.evaluateLibrary(libraryName);
+            result = engine.evaluateLibrary(libraryName, this.state.parameterBindings);
         } else if (contextObjects.size() == 1) {
-            result = engine.evaluateLibrary(libraryName, contextObjects.iterator().next());
+            result = engine.evaluateLibrary(libraryName,
+                    contextObjects.iterator().next(),
+                    this.state.parameterBindings);
         } else {
             result = new EvaluationResult();
             if (state.previousResult != null) {
@@ -169,10 +180,12 @@ public class Evaluator {
                 final var pool = Executors.newWorkStealingPool();
                 try {
                     contextObjects.forEach(object -> {
-                        System.out.printf("+ %d/%d (%s)\n", ++count[0], contextObjects.size(), object);
+                        System.out.printf("+ %d/%d (%s) %s\n", ++count[0], contextObjects.size(), object, this.state.parameterBindings);
                         //pool.submit(() -> {
                             final var objectKey = object.toString(); // TODO(jmoringe): ensure uniqueness
-                            final var results = engine.evaluateLibrary(libraryName, object);
+                            final var results = engine.evaluateLibrary(libraryName,
+                                    object,
+                                    this.state.parameterBindings);
                             try {
                                 final var objectResult = results.forExpression(definitionName);
                                 allResults.put(objectKey, objectResult.value());
@@ -199,6 +212,24 @@ public class Evaluator {
             }
         }
         return result;
+    }
+
+    private void commandSet(final String parameter, final String expression) {
+        Object object;
+        final var oldState = this.state;
+        this.state = new State();
+        try {
+            object = evaluateExpression(expression, "Unfiltered", new HashSet<>());
+            System.out.printf("Assigning %s <- %s\n", parameter, object);
+        } finally {
+            this.state = oldState;
+        }
+        this.state.parameterBindings.put(parameter, object);
+    }
+
+    private void commandUnset(final String parameter) {
+        System.out.printf("Removing binding for %s\n", parameter);
+        this.state.parameterBindings.remove(parameter);
     }
 
     private void commandFocus(final String expression) {

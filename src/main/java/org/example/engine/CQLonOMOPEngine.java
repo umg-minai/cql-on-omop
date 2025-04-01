@@ -59,19 +59,27 @@ public class CQLonOMOPEngine {
         this(new OMOPDataProvider(configuration, mappingInfo), librarySourceProvider);
     }*/
 
-    public EvaluationResult evaluateLibrary(final String library, final Object contextObject) {
+    public EvaluationResult evaluateLibrary(final String library,
+                                            final Object contextObject,
+                                            final Map<String, Object> parameterBindings) {
         //engine.getState().getDebugResult().getMessages().forEach(System.err::println);
         final var engine = new CqlEngine(this.environment);
         if (contextObject == null) {
-            return engine.evaluate(library);
+            return engine.evaluate(library, parameterBindings);
         } else {
             // TODO(jmoringe): can we know the name of the context?
-            return engine.evaluate(library, Pair.of("Patient", contextObject));
+            return engine.evaluate(library,
+                    Pair.of("Patient", contextObject),
+                    parameterBindings);
         }
     }
 
+    public EvaluationResult evaluateLibrary(final String library, final Object contextObject) {
+        return evaluateLibrary(library, contextObject, Map.of());
+    }
+
     public EvaluationResult evaluateLibrary(final String library) {
-        return evaluateLibrary(library, null);
+        return evaluateLibrary(library, null, Map.of());
     }
 
     public EvaluationResult evaluateExpression(final String expression) {
