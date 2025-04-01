@@ -4,11 +4,11 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name = "hibernate.connection.url">jdbc:postgresql://localhost:8432/ohdsi</property>
-        <property name = "hibernate.connection.username">postgres</property>
-        <property name = "hibernate.connection.password">yourpassword</property>
+        <!-- <property name = "hibernate.connection.url">jdbc:postgresql://localhost:8432/ohdsi</property> -->
+        <!-- <property name = "hibernate.connection.username">postgres</property> -->
+        <!-- <property name = "hibernate.connection.password">yourpassword</property> -->
         <property name = "hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name = "hibernate.show_sql">true</property>
+        <property name = "hibernate.show_sql">false</property>
         <!-- Optional: Auto-generate schema -->
         <!-- <property name = "hibernate.hbm2ddl.auto">create</property> -->
     </session-factory>
