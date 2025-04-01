@@ -5,6 +5,9 @@ import org.hl7.elm.r1.VersionedIdentifier;
 
 import java.io.InputStream;
 
+/**
+ * This class provides the built-in OMOPHelpers library as a library source.
+ */
 public class BuiltinLibrariesSourceProvider implements LibrarySourceProvider {
 
     @Override
