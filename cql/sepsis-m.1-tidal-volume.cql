@@ -8,7 +8,7 @@
 
 //library "sepsis-m.1-tidal-volume" version '1.0.0'
 
-parameter ObservationWindow Interval<DateTime> // TODO(jmoringe): not yet used
+parameter ObservationWindow Interval<DateTime>
 
 // TODO(jmoringe): use the actual URI
 codesystem Gender: 'Gender'
@@ -61,6 +61,21 @@ define function PointsToIntervals(intervals List<Tuple{time DateTime, good Boole
         }
   ).intervals
 
+define function IntersectWithObservationWindow(AnInterval Interval<DateTime>):
+  if ObservationWindow is null then
+    AnInterval
+  else
+    AnInterval intersect ObservationWindow
+
+define function RestrictToObservationWindow(Intervals List<Interval<DateTime>>):
+  if ObservationWindow is null then
+    Intervals
+  else
+    (Intervals) i
+      where (start of i before end of ObservationWindow)
+            and (end of i after start of ObservationWindow)
+      return IntersectWithObservationWindow(i)
+
 // Convert a list of intervals with DateTime boundaries into a list of
 // intervals with Date boundaries such that the returned range covers the
 // original range.
@@ -79,15 +94,15 @@ context Patient
 // Population
 
 define "Condition Acute respiratory distress syndrome":
-  [ConditionOccurrence: "Acute respiratory distress syndrome"] o
+  RestrictToObservationWindow([ConditionOccurrence: "Acute respiratory distress syndrome"] o
     // The database has a few rows in the condition_occurrence table
     // in which the start date is after the end date.
     where o.conditionStartDatetime <= o.conditionEndDatetime
-    return Interval[o.conditionStartDatetime, o.conditionEndDatetime]
+    return Interval[o.conditionStartDatetime, o.conditionEndDatetime])
 
 define "Procedure Artificial ventilation":
-  [ProcedureOccurrence: "Artificial ventilation"] o
-    return Interval[o.procedureDatetime, o.procedureEndDatetime]
+  RestrictToObservationWindow([ProcedureOccurrence: "Artificial ventilation"] o
+    return Interval[o.procedureDatetime, o.procedureEndDatetime])
 
 define Population:
   from ("Condition Acute respiratory distress syndrome") c,
@@ -131,6 +146,7 @@ define function "Ideal Body Weight for Height"(HeightMeasurement Measurement):
 //   m sort by measurementDatetime asc
 // Would be even better to do this only if the patient is in the
 // intervention set, but I don't see a way to achieve that.
+// TODO(jmoringe): restrict this to observation window?
 define "Body Height Measurements": [Measurement: "Body Height"]
 
 define function "Body Height as of"(Time DateTime):
@@ -150,12 +166,17 @@ define function DivideQuantities(Divident System.Quantity,
     unit:  Divident.unit + '/' + Divisor.unit
   }
 
+define "Tidal Volume Measurements":
+  [Measurement: "Tidal Volume on Ventilator"] m
+    where (ObservationWindow is null)
+          or (m.measurementDatetime in ObservationWindow)
+
 define "Tidal Volume per Ideal Body Weight":
   // Get all tidal volume measurements and, for each such measurement,
   // find the most recent ideal body weight estimation before that
   // tidal volume measurement. The ideal body weight estimation is
   // based on the body height measurement.
-  [Measurement: "Tidal Volume on Ventilator"] m
+  ("Tidal Volume Measurements") m
     let IdealWeight: "Ideal Body Weight as of"(m.measurementDatetime)
       where not IdealWeight is null
       return {
