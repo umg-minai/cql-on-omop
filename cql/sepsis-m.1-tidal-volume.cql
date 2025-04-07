@@ -98,6 +98,18 @@ define function DayCoverageAsDateTime(Intervals List<Interval<DateTime>>):
 
 context Patient
 
+// Base
+
+define "Visit Occurrences":
+  ([VisitOccurrence] o sort by visitStartDatetime) o
+    return OMOPHelpers.ToInterval(o)
+
+define function WithinBase(PointInTime DateTime):
+  AnyTrue(("Visit Occurrences") o return PointInTime in o)
+
+define function WithinBase(TimeInterval Interval<DateTime>):
+  AnyTrue(("Visit Occurrences") o return TimeInterval overlaps o)
+
 // Population
 
 define "Condition Acute respiratory distress syndrome":
@@ -180,9 +192,11 @@ define function DivideQuantities(Divident System.Quantity,
 
 define "Tidal Volume Measurements":
   [Measurement: "Tidal Volume on Ventilator"] m
-    where (ObservationWindow is null)
-          or (m.measurementDatetime in ObservationWindow)
+    where ((ObservationWindow is null)
+           or (m.measurementDatetime in ObservationWindow))
+          and WithinBase(m.measurementDatetime)
     return all m
+    sort by measurementDatetime
 
 define "Tidal Volume per Ideal Body Weight":
   // Get all tidal volume measurements and, for each such measurement,
