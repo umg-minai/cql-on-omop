@@ -2,9 +2,8 @@ package org.example.engine;
 
 import OMOP.MappingInfo;
 import org.apache.commons.lang3.tuple.Pair;
-import org.cqframework.cql.cql2elm.LibraryManager;
-import org.cqframework.cql.cql2elm.LibrarySourceProvider;
-import org.cqframework.cql.cql2elm.ModelManager;
+import org.cqframework.cql.cql2elm.*;
+import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
@@ -36,7 +35,9 @@ public class CQLonOMOPEngine {
                            final LibrarySourceProvider librarySourceProvider) {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
-        this.libraryManager = new LibraryManager(modelManager);
+        CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
+                .withSignatureLevel(LibraryBuilder.SignatureLevel.All);
+        this.libraryManager = new LibraryManager(modelManager, options);
         final var loader = this.libraryManager.getLibrarySourceLoader();
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
         loader.registerProvider(librarySourceProvider);
