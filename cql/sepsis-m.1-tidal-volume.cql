@@ -63,6 +63,11 @@ define function PointsToIntervals(intervals List<Tuple{time DateTime, good Boole
         }
   ).intervals
 
+define function IntersectIntervals(Left List<Interval<DateTime>>, Right List<Interval<DateTime>>):
+  from (Left) l, (Right) r
+    where (l overlaps r)
+    return all l intersect r
+
 define function IntersectWithObservationWindow(AnInterval Interval<DateTime>):
   if ObservationWindow is null then
     AnInterval
@@ -211,8 +216,7 @@ define Intervention:
 // Entry point
 
 define Quality:
-  from (Population) p, (Intervention) i
-    where (p overlaps i) return p intersect i
+  IntersectIntervals(Population, Intervention)
 
 define QualityDayCoverage:
   DayCoverage(Quality)
