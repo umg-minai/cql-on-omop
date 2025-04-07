@@ -158,7 +158,6 @@ define function "Ideal Body Weight for Height"(HeightMeasurement Measurement):
 //   m sort by measurementDatetime asc
 // Would be even better to do this only if the patient is in the
 // intervention set, but I don't see a way to achieve that.
-// TODO(jmoringe): restrict this to observation window?
 define "Body Height Measurements": [Measurement: "Body Height"]
 
 define function "Body Height as of"(Time DateTime):
