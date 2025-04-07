@@ -50,11 +50,13 @@ define function PointsToIntervals(intervals List<Tuple{time DateTime, good Boole
         {
           previous:  {time: Interval[e.time, e.time], good: e.good},
           intervals: if start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time < e.time then
-                       {{
-                          time: Interval[start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time, e.time],
-                          good: (r.previous as Tuple{time Interval<DateTime>, good Boolean}).good
-                       }}
-                       union r.intervals
+                       flatten({
+                         r.intervals,
+                         { {
+                             time: Interval[start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time, e.time],
+                             good: (r.previous as Tuple{time Interval<DateTime>, good Boolean}).good
+                         } }
+                       })
                      else
                        r.intervals
 
