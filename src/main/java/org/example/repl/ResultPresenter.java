@@ -33,7 +33,8 @@ public class ResultPresenter {
             type = "Null (unknown)";
         } else if (value instanceof Iterable<?> iterable) {
             final var it = iterable.iterator();
-            final var elementType = it.hasNext() ? it.next().getClass() : Object.class;
+            final var firstElement = it.hasNext() ? it.next() : null;
+            final var elementType = firstElement != null ? firstElement.getClass() : Object.class;
             type = String.format("List<%s>", elementType.getSimpleName());
         } else {
             type = value.getClass().getSimpleName();
