@@ -76,7 +76,7 @@ define function RestrictToObservationWindow(Intervals List<Interval<DateTime>>):
     (Intervals) i
       where (start of i before end of ObservationWindow)
             and (end of i after start of ObservationWindow)
-      return IntersectWithObservationWindow(i)
+      return all IntersectWithObservationWindow(i)
 
 // Convert a list of intervals with DateTime boundaries into a list of
 // intervals with Date boundaries such that the returned range covers the
@@ -88,28 +88,33 @@ define function DayCoverage(Intervals List<Interval<DateTime>>):
 
 define function DayCoverageAsDateTime(Intervals List<Interval<DateTime>>):
   (DayCoverage(Intervals)) i
-    return Interval[convert start of i         to DateTime,
-                    convert (end of i) + 1 day to DateTime)
+    return all Interval[convert start of i         to DateTime,
+                        convert (end of i) + 1 day to DateTime)
 
 context Patient
 
 // Population
 
 define "Condition Acute respiratory distress syndrome":
-  RestrictToObservationWindow([ConditionOccurrence: "Acute respiratory distress syndrome"] o
-    // The database has a few rows in the condition_occurrence table
-    // in which the start date is after the end date.
-    where o.conditionStartDatetime <= o.conditionEndDatetime
-    return Interval[o.conditionStartDatetime, o.conditionEndDatetime])
+  RestrictToObservationWindow(
+    [ConditionOccurrence: "Acute respiratory distress syndrome"] o
+      // The database has a few rows in the condition_occurrence table
+      // in which the start date is after the end date.
+      where o.conditionStartDatetime <= o.conditionEndDatetime
+      return all Interval[o.conditionStartDatetime, o.conditionEndDatetime]
+  )
 
 define "Procedure Artificial ventilation":
-  RestrictToObservationWindow([ProcedureOccurrence: "Artificial ventilation"] o
-    return Interval[o.procedureDatetime, o.procedureEndDatetime])
+  RestrictToObservationWindow(
+    [ProcedureOccurrence: "Artificial ventilation"] o
+      return all Interval[o.procedureDatetime, o.procedureEndDatetime]
+  )
 
 define Population:
   from ("Condition Acute respiratory distress syndrome") c,
        ("Procedure Artificial ventilation") p
-    where (c overlaps p) return c intersect p
+    where (c overlaps p)
+    return all c intersect p
 
 // Intervention
 
@@ -154,6 +159,7 @@ define "Body Height Measurements": [Measurement: "Body Height"]
 define function "Body Height as of"(Time DateTime):
   Last("Body Height Measurements" m
          where m.measurementDatetime <= Time
+         return all m
          sort by measurementDatetime asc) // TODO(jmoringe): move sort into previous expression
 
 define function "Ideal Body Weight as of"(Time DateTime):
@@ -172,6 +178,7 @@ define "Tidal Volume Measurements":
   [Measurement: "Tidal Volume on Ventilator"] m
     where (ObservationWindow is null)
           or (m.measurementDatetime in ObservationWindow)
+    return all m
 
 define "Tidal Volume per Ideal Body Weight":
   // Get all tidal volume measurements and, for each such measurement,
@@ -181,7 +188,7 @@ define "Tidal Volume per Ideal Body Weight":
   ("Tidal Volume Measurements") m
     let IdealWeight: "Ideal Body Weight as of"(m.measurementDatetime)
       where not IdealWeight is null
-      return {
+      return all {
         time:  m.measurementDatetime,
         value: DivideQuantities(
           OMOPHelpers.ToQuantity(m),
@@ -193,7 +200,7 @@ define "Tidal Volume per Ideal Body Weight Intervals":
   (
     PointsToIntervals(
       ("Tidal Volume per Ideal Body Weight") p
-        return {time: p.time, good: (p.value <= 6.0 'mL/kg')}
+        return all {time: p.time, good: (p.value <= 6.0 'mL/kg')}
         sort by time
     ) as List<Tuple{time Interval<DateTime>, good Boolean}>
   ) i where i.good return i.time
