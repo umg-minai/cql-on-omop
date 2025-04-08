@@ -130,11 +130,16 @@ define function WithinBase(TimeInterval Interval<DateTime>):
 
 define "Condition Acute respiratory distress syndrome":
   RestrictToObservationWindow(
-    [ConditionOccurrence: "Acute respiratory distress syndrome"] o
-      // The database has a few rows in the condition_occurrence table
-      // in which the start date is after the end date.
-      where o.conditionStartDatetime <= o.conditionEndDatetime
-      return all Interval[o.conditionStartDatetime, o.conditionEndDatetime]
+    // The database has rows in the condition_occurrence table for
+    // which the time intervals overlap even though the condition
+    // concept is identical
+    collapse(
+      [ConditionOccurrence: "Acute respiratory distress syndrome"] o
+        // The database has a few rows in the condition_occurrence table
+        // in which the start date is after the end date.
+        where o.conditionStartDatetime <= o.conditionEndDatetime
+        return all Interval[o.conditionStartDatetime, o.conditionEndDatetime]
+    )
   )
 
 define "Procedure Artificial ventilation":
