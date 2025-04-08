@@ -1,10 +1,13 @@
 package org.example.repl;
 
 import OMOP.MappingInfo;
+import org.cqframework.cql.cql2elm.DefaultLibrarySourceProvider;
+import org.cqframework.cql.cql2elm.LibrarySourceProvider;
+import org.cqframework.cql.cql2elm.PriorityLibrarySourceLoader;
+import org.cqframework.cql.cql2elm.StringLibrarySourceProvider;
 import org.example.engine.CQLonOMOPEngine;
 import org.example.engine.Configuration;
 import org.example.engine.ConnectionFactory;
-import org.example.engine.OMOPDataProvider;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
 import org.opencds.cqf.cql.engine.runtime.Date;
@@ -13,14 +16,9 @@ import org.opencds.cqf.cql.engine.runtime.Tuple;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.time.Year;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalField;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 
 public class Evaluator {
@@ -29,6 +27,7 @@ public class Evaluator {
 
     private static class State {
         public int expressionCount = 1;
+        public List<String> include = new LinkedList<>();
         public List<String> prelude = new LinkedList<>();
         public List<String> statements = new LinkedList<>();
         public Set<Object> contextObjects = new HashSet<>();
@@ -54,10 +53,15 @@ public class Evaluator {
     public Evaluator(final Configuration configuration) {
         this.configuration = configuration;
         this.sourceProvider = new REPLSourceProvider();
+        final List<LibrarySourceProvider> sourceProviders = new LinkedList<>();
+        sourceProviders.add(this.sourceProvider);
+        configuration.getLibrarySearchPath().forEach(path ->
+                sourceProviders.add(new DefaultLibrarySourceProvider(path)));
+
         final var mappingInfo = MappingInfo.ensureVersion("v5.4");
         final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
         //this.dataProvider = OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo);
-        this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, this.sourceProvider);
+        this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, sourceProviders);
         this.state = new State();
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
     }
@@ -66,13 +70,31 @@ public class Evaluator {
         this.state.statements.add(Files.readString(filename));
     }
 
+    public void setParameter(final String name, final Object value) {
+        this.state.parameterBindings.put(name, value);
+    }
+
+    public void setParameter(final String name, final String value) {
+        // TODO(jmoringe): make evaluateStandaloneExpression or similar
+        final var oldState = this.state;
+        this.state = new State();
+        try {
+            final Object result = evaluateExpression(value);
+            this.setParameter(name, result);
+        } finally {
+            this.state = oldState;
+        }
+    }
+
     public EvaluationResult evaluate(final String command) throws Exception {
         final var trimmed = command.trim();
         if (trimmed.startsWith(",")) {
             executeMetaCommand(trimmed);
             return null;
         } else if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
-            if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
+            if (trimmed.startsWith("include")) {
+                executeCQLIncludeStatement(trimmed);
+            } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
                 executeCQLPreludeStatement(trimmed);
             } else {
                 executeCQLStatement(trimmed, null);
@@ -112,6 +134,16 @@ public class Evaluator {
         }
     }
 
+    private void executeCQLIncludeStatement(final String statement) {
+        this.state.include.add(statement);
+        try {
+            internalEvaluate(null);
+        } catch (Exception e) {
+            this.state.include.remove(this.state.include.size() - 1);
+            throw e;
+        }
+    }
+
     private void executeCQLPreludeStatement(final String statement) {
         this.state.prelude.add(statement);
         try {
@@ -146,7 +178,12 @@ public class Evaluator {
             using "OMOP" version 'v5.4'
             
             include "OMOPHelpers"
-            
+            """);
+        this.state.include.forEach(statement -> {
+            input.append(statement);
+            input.append("\n");
+        });
+        input.append("""
             codesystem LOINC: 'http://loinc.org'
             
             codesystem OMOPSV: 'https://fhir-terminology.ohdsi.org' // SV = Standardized Vocabulary 

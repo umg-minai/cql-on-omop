@@ -1,5 +1,8 @@
 package org.example.engine;
 
+import java.nio.file.Path;
+import java.util.List;
+
 public class Configuration {
 
     private String databaseHost;
@@ -15,6 +18,8 @@ public class Configuration {
     private Integer threadCount;
 
     private Boolean showSQL = false;
+
+    private List<Path> librarySearchPath = List.of();
 
     public String getDatabaseHost() {
         return this.databaseHost;
@@ -79,5 +84,18 @@ public class Configuration {
         return this;
     }
 
+    public List<Path> getLibrarySearchPath() {
+        return this.librarySearchPath;
+    }
+
+    public Configuration withLibrarySearchPath(final List<Path> librarySearchPath) {
+        this.librarySearchPath = librarySearchPath;
+        return this;
+    }
+
+    public Configuration addLibrarySearchPath(final Path searchPath) {
+        this.librarySearchPath.add(searchPath);
+        return this;
+    }
 
 }

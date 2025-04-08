@@ -17,36 +17,65 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 @CommandLine.Command(name = "REPL", version = "REPL 0.1", mixinStandardHelpOptions = true)
 public class Repl implements Runnable {
 
-    @CommandLine.Option(names = { "-h", "--host" })
+    @CommandLine.Option(
+            names       = { "-h", "--host" },
+            description = "The hostname of the database server from which to retrieve the OMOP data."
+    )
     private String databaseHost = "localhost";
 
-    @CommandLine.Option(names = { "-p", "--port" })
+    @CommandLine.Option(
+            names       = { "-p", "--port"},
+            description = "The post on which the database server from which to retrieve the OMOP data listens."
+    )
     private int databasePort = 5434;
 
-    @CommandLine.Option(names = { "-u", "--user" })
+    @CommandLine.Option(
+            names       = { "-u", "--user" },
+            description = "The username of the database server account that should be used to retrieve the OMOP data."
+    )
     private String databaseUser = "postgres";
 
     @CommandLine.Option(
             names        = { "--password" },
-            defaultValue = "${env:CQL_ON_OMOP_DATABASE_PASSWORD}"
+            defaultValue = "${env:CQL_ON_OMOP_DATABASE_PASSWORD}",
+            description  = "The password for the database server account."
     )
     private String databasePassword;
 
-    @CommandLine.Option(names = { "-d", "--database" }, required = true)
+    @CommandLine.Option(
+            names       = { "-d", "--database" },
+            required    = true,
+            description = "The name of the database from which OMOP data should be retrieved.")
     private String databaseName;
 
     @CommandLine.Option(names = { "-s", "--show-sql"})
     private boolean showSQL = false;
 
-    @CommandLine.Option(names = { "-n", "--threads"})
+    @CommandLine.Option(
+            names       = { "-n", "--threads"},
+            description = "Use the specified number of threads when evaluating CQL expressions for multiple context values in parallel."
+    )
     private Integer threadCount;
 
-    @CommandLine.Option(names = { "-l", "--load" })
+    @CommandLine.Option(names = { "-I" })
+    private List<Path> librarySearchPath = List.of();
+
+    @CommandLine.Option(
+            names       = { "-l", "--load" },
+            description = "Load the specified file as CQL code."
+    )
     private List<Path> load = List.of();
+
+    @CommandLine.Option(
+            names       = {"-D"},
+            description = "Bind parameters of the CQL library to specific values. A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is evaluated to produce the CQL value that is assigned to the parameter named NAME. "
+    )
+    private Map<String, String> parameterBindings = Map.of();
 
     private Terminal terminal;
     private LineReader reader;
@@ -68,14 +97,6 @@ public class Repl implements Runnable {
             if (input.equals("quit")) {
                 break;
             }
-            /*final var input = String.format("""
-                        library REPL%s version '1.0.0'
-                        using "OMOP" version 'v5.4'
-
-                        codesystem "LOINC": 'http://loinc.org'
-                        context Patient
-                        define E: %s
-                        """, i, expression);*/
             EvaluationResult result = null;
             try {
                 result = evaluator.evaluate(input);
@@ -99,23 +120,41 @@ public class Repl implements Runnable {
             this.reader = LineReaderBuilder.builder()
                     .completer(new Completer())
                     .terminal(this.terminal).build();
-            // Configure and create evaluator.
-            final var configuration = new Configuration()
-                    .withDatabaseHost(databaseHost)
-                    .withDatabasePort(databasePort)
-                    .withDatabaseUser(databaseUser)
-                    .withDatabasePassword(databasePassword)
-                    .withDatabaseName(databaseName)
-                    .withThreadCount(threadCount)
-                    .withShowSQL(showSQL);
-            this.evaluator = new Evaluator(configuration);
-            Evaluator evaluator1 = this.evaluator;
-            for (Path filename : load) {
-                evaluator1.load(filename);
+        } catch (IOException e) {
+            throw new RuntimeException("Error initializing terminal", e);
+        }
+        // Configure and create evaluator.
+        final var configuration = new Configuration()
+                .withDatabaseHost(databaseHost)
+                .withDatabasePort(databasePort)
+                .withDatabaseUser(databaseUser)
+                .withDatabasePassword(databasePassword)
+                .withDatabaseName(databaseName)
+                .withThreadCount(threadCount)
+                .withShowSQL(showSQL)
+                .withLibrarySearchPath(librarySearchPath);
+        this.evaluator = new Evaluator(configuration);
+        // Load files
+        for (Path filename : load) {
+            try {
+                this.evaluator.load(filename);
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Error loading file '%s'", filename), e);
             }
+        }
+        // Install parameter bindings
+        for (Map.Entry<String, String> entry : parameterBindings.entrySet()) {
+            final var name = entry.getKey();
+            final var expression = entry.getValue();
+            try {
+                this.evaluator.setParameter(name, expression);
+            } catch (Exception e) {
+                throw new RuntimeException(String.format("Error setting parameter '%s' to '%s'", name, expression), e);
+            }
+        }
 
-            this.resultPresenter = new ResultPresenter();
-
+        this.resultPresenter = new ResultPresenter();
+        try {
             repl();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -127,4 +166,7 @@ public class Repl implements Runnable {
         System.exit(exitCode);
     }
 
+    public Map<String, String> getParameterBindings() {
+        return parameterBindings;
+    }
 }

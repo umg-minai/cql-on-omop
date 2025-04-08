@@ -22,10 +22,9 @@ public class ConnectionFactory {
             config.setProperty("hibernate.connection.password", password);
         }
         config.setProperty("hibernate.show_sql", String.valueOf(configuration.getShowSQL()));
-        mappingInfo.getDataTypeInfos().forEach((name, info) -> {
-            System.out.printf("Registering class %s%n", info.getClazz().getName());
-            config.addAnnotatedClass(info.getClazz());
-        });
+        // Register class of the data model.
+        mappingInfo.getDataTypeInfos().forEach(
+                (name, info) -> config.addAnnotatedClass(info.getClazz()));
         return config.buildSessionFactory();
     }
 

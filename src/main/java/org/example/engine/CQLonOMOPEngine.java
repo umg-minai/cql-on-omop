@@ -3,19 +3,17 @@ package org.example.engine;
 import OMOP.MappingInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.*;
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
-import org.hibernate.proxy.HibernateProxy;
 import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
 
-import java.beans.BeanDescriptor;
-import java.beans.PropertyDescriptor;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class CQLonOMOPEngine {
 
@@ -34,8 +32,7 @@ public class CQLonOMOPEngine {
     // TODO(jmoringe): remove
     private Map<String, DataProvider> dataProviders;
 
-    public CQLonOMOPEngine(final OMOPDataProvider dataProvider,
-                           final LibrarySourceProvider librarySourceProvider) {
+    public CQLonOMOPEngine(final List<LibrarySourceProvider> librarySourceProviders) {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
@@ -43,33 +40,23 @@ public class CQLonOMOPEngine {
         this.libraryManager = new LibraryManager(modelManager, options);
         final var loader = this.libraryManager.getLibrarySourceLoader();
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
-        loader.registerProvider(librarySourceProvider);
-
-        /*this.dataProviders = Map.of(
-                // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
-                "urn:ohdsi:omop-types:v5.4",
-                dataProvider);*/
-
+        librarySourceProviders.forEach(loader::registerProvider);
         this.terminologyProvider = new OMOPTerminologyProvider();
+    }
 
-        //this.environment = new Environment(libraryManager, dataProviders, terminologyProvider);
-        //this.engine = new CqlEngine(environment);
+    public CQLonOMOPEngine(final SessionFactory sessionFactory,
+                           final MappingInfo mappingInfo,
+                           final List<LibrarySourceProvider> librarySourceProviders) {
+        this(librarySourceProviders);
+        this.sessionFactory = sessionFactory;
+        this.mappingInfo = mappingInfo;
     }
 
     public CQLonOMOPEngine(final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
-        //this(OMOPDataProvider.fromEntityManager(entityManager, mappingInfo), librarySourceProvider);
-        this(null /*OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo)*/, librarySourceProvider);
-        this.sessionFactory = sessionFactory;
-        this.mappingInfo = mappingInfo;
+        this(sessionFactory, mappingInfo, List.of(librarySourceProvider));
     }
-
-    /*public CQLonOMOPEngine(final Configuration configuration,
-                           final MappingInfo mappingInfo,
-                           final LibrarySourceProvider librarySourceProvider) {
-        this(new OMOPDataProvider(configuration, mappingInfo), librarySourceProvider);
-    }*/
 
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,

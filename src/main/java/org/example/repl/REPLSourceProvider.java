@@ -29,24 +29,8 @@ public class REPLSourceProvider implements LibrarySourceProvider {
     public InputStream getLibrarySource(final VersionedIdentifier libraryIdentifier) {
         if (libraryIdentifier.getId().equals(libraryName())) {
             final var replLibrary = String.format("library REPL%s version '1.0.0'\n%s", replCount, replContent);
-            //System.out.println(replLibrary);
             return new ByteArrayInputStream(replLibrary.getBytes(StandardCharsets.UTF_8));
-        }
-        // TODO: use a separate source provider for filesystem content
-        String path =
-                switch (libraryIdentifier.getId()) {
-                    case "Test" -> "/home/jan/code/cql/cql-on-omop/cql/test.cql";
-                    default ->
-                            throw new IllegalStateException("Unexpected value: " + libraryIdentifier.getId());
-                };
-            /*switch (libraryIdentifier.getId()) {
-                case "MINAICDS" -> "/home/jan/code/cql/cql-example/input/cql/MINAICDS.cql";
-                case "FHIRHelpers" -> "/home/jan/code/cql/clinical_quality_language/Src/java/quick/src/main/resources/org/hl7/fhir/FHIRHelpers-4.0.1.cql";
-                default -> throw new IllegalStateException("Unexpected value: " + libraryIdentifier.getId());
-            };*/
-        try {
-            return new FileInputStream(Path.of(path).toFile());
-        } catch (FileNotFoundException e) {
+        } else {
             return null;
         }
     }
