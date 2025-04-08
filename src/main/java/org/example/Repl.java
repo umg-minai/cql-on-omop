@@ -19,21 +19,27 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-@CommandLine.Command(name = "REPL", version = "REPL 0.1", mixinStandardHelpOptions = true)
+@CommandLine.Command(
+        name = "REPL",
+        version = "REPL 0.1",
+        mixinStandardHelpOptions = true
+)
 public class Repl implements Runnable {
 
     @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
-    DatabaseOptions databaseOptions;
+    DatabaseOptions databaseOptions = new DatabaseOptions();
 
     static class DatabaseOptions {
         @CommandLine.Option(
                 names = {"-h", "--host"},
+                defaultValue = "localhost",
                 description = "The hostname of the database server from which to retrieve the OMOP data."
         )
         private String host = "localhost";
 
         @CommandLine.Option(
                 names = {"-p", "--port"},
+                defaultValue = "5434",
                 description = "The post on which the database server from which to retrieve the OMOP data listens."
         )
         private int port = 5434;
@@ -54,10 +60,14 @@ public class Repl implements Runnable {
         @CommandLine.Option(
                 names = {"-d", "--database"},
                 required = true,
-                description = "The name of the database from which OMOP data should be retrieved.")
+                description = "The name of the database from which OMOP data should be retrieved."
+        )
         private String database;
 
-        @CommandLine.Option(names = {"-s", "--show-sql"})
+        @CommandLine.Option(
+                names = {"-s", "--show-sql"},
+                defaultValue = "false"
+        )
         private boolean showSQL = false;
     }
 
@@ -142,32 +152,40 @@ public class Repl implements Runnable {
             throw new RuntimeException("Error initializing terminal", e);
         }
         // Configure and create evaluator.
-        final var configuration = new Configuration()
+        var configuration = new Configuration()
                 .withDatabaseHost(databaseOptions.host)
                 .withDatabasePort(databaseOptions.port)
                 .withDatabaseUser(databaseOptions.user)
                 .withDatabasePassword(databaseOptions.password)
                 .withDatabaseName(databaseOptions.database)
-                .withShowSQL(databaseOptions.showSQL)
-                .withLibrarySearchPath(cqlOptions.librarySearchPath)
-                .withThreadCount(otherOptions.threadCount);
+                .withShowSQL(databaseOptions.showSQL);
+        if (cqlOptions != null) {
+            configuration = configuration
+                    .withLibrarySearchPath(cqlOptions.librarySearchPath);
+        }
+        if (otherOptions != null) {
+            configuration = configuration
+                    .withThreadCount(otherOptions.threadCount);
+        }
         this.evaluator = new Evaluator(configuration);
         // Load files
-        for (Path filename : cqlOptions.load) {
-            try {
-                this.evaluator.load(filename);
-            } catch (IOException e) {
-                throw new RuntimeException(String.format("Error loading file '%s'", filename), e);
+        if (cqlOptions != null) {
+            for (Path filename : cqlOptions.load) {
+                try {
+                    this.evaluator.load(filename);
+                } catch (IOException e) {
+                    throw new RuntimeException(String.format("Error loading file '%s'", filename), e);
+                }
             }
-        }
-        // Install parameter bindings
-        for (Map.Entry<String, String> entry : cqlOptions.parameterBindings.entrySet()) {
-            final var name = entry.getKey();
-            final var expression = entry.getValue();
-            try {
-                this.evaluator.setParameter(name, expression);
-            } catch (Exception e) {
-                throw new RuntimeException(String.format("Error setting parameter '%s' to '%s'", name, expression), e);
+            // Install parameter bindings
+            for (Map.Entry<String, String> entry : cqlOptions.parameterBindings.entrySet()) {
+                final var name = entry.getKey();
+                final var expression = entry.getValue();
+                try {
+                    this.evaluator.setParameter(name, expression);
+                } catch (Exception e) {
+                    throw new RuntimeException(String.format("Error setting parameter '%s' to '%s'", name, expression), e);
+                }
             }
         }
 
