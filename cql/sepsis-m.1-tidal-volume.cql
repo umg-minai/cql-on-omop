@@ -17,16 +17,14 @@ codesystem Gender: 'Gender'
 // The OMOPSV (OMOP Standard Vocabulary) codesystem is built-in and
 // uses the OMOP concept id as code.
 
-code "Gender Female": '8532' from Gender
-code "Gender Male":   '8507' from Gender
+code "Gender Female": '8532' from OMOPSV
+code "Gender Male":   '8507' from OMOPSV
 
 code "Body Height": '3036277' from OMOPSV
 
 code "Artificial ventilation": '4230167' from OMOPSV
-  display 'Artificial ventilation'
 
 code "Acute respiratory distress syndrome": '4195694' from OMOPSV
-  display 'Acute respiratory distress syndrome'
 
 code "Tidal Volume on Ventilator": '21490854' from OMOPSV
 
