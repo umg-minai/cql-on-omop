@@ -78,7 +78,8 @@ define function PointsToIntervals(Intervals List<Tuple{time DateTime, good Boole
         }
   ).intervals
 
-define function IntersectIntervals(Left List<Interval<DateTime>>, Right List<Interval<DateTime>>):
+define function IntersectIntervals(Left List<Interval<DateTime>>,
+                                   Right List<Interval<DateTime>>):
   from (Left) l, (Right) r
     where (l overlaps r)
     return all l intersect r
