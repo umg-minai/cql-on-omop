@@ -22,60 +22,78 @@ import java.util.Map;
 @CommandLine.Command(name = "REPL", version = "REPL 0.1", mixinStandardHelpOptions = true)
 public class Repl implements Runnable {
 
-    @CommandLine.Option(
-            names       = { "-h", "--host" },
-            description = "The hostname of the database server from which to retrieve the OMOP data."
-    )
-    private String databaseHost = "localhost";
+    @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
+    DatabaseOptions databaseOptions;
 
-    @CommandLine.Option(
-            names       = { "-p", "--port"},
-            description = "The post on which the database server from which to retrieve the OMOP data listens."
-    )
-    private int databasePort = 5434;
+    static class DatabaseOptions {
+        @CommandLine.Option(
+                names = {"-h", "--host"},
+                description = "The hostname of the database server from which to retrieve the OMOP data."
+        )
+        private String host = "localhost";
 
-    @CommandLine.Option(
-            names       = { "-u", "--user" },
-            description = "The username of the database server account that should be used to retrieve the OMOP data."
-    )
-    private String databaseUser = "postgres";
+        @CommandLine.Option(
+                names = {"-p", "--port"},
+                description = "The post on which the database server from which to retrieve the OMOP data listens."
+        )
+        private int port = 5434;
 
-    @CommandLine.Option(
-            names        = { "--password" },
-            defaultValue = "${env:CQL_ON_OMOP_DATABASE_PASSWORD}",
-            description  = "The password for the database server account."
-    )
-    private String databasePassword;
+        @CommandLine.Option(
+                names = {"-u", "--user"},
+                description = "The username of the database server account that should be used to retrieve the OMOP data."
+        )
+        private String user = "postgres";
 
-    @CommandLine.Option(
-            names       = { "-d", "--database" },
-            required    = true,
-            description = "The name of the database from which OMOP data should be retrieved.")
-    private String databaseName;
+        @CommandLine.Option(
+                names = {"--password"},
+                defaultValue = "${env:CQL_ON_OMOP_DATABASE_PASSWORD}",
+                description = "The password for the database server account."
+        )
+        private String password;
 
-    @CommandLine.Option(names = { "-s", "--show-sql"})
-    private boolean showSQL = false;
+        @CommandLine.Option(
+                names = {"-d", "--database"},
+                required = true,
+                description = "The name of the database from which OMOP data should be retrieved.")
+        private String database;
 
-    @CommandLine.Option(
-            names       = { "-n", "--threads"},
-            description = "Use the specified number of threads when evaluating CQL expressions for multiple context values in parallel."
-    )
-    private Integer threadCount;
+        @CommandLine.Option(names = {"-s", "--show-sql"})
+        private boolean showSQL = false;
+    }
 
-    @CommandLine.Option(names = { "-I" })
-    private List<Path> librarySearchPath = List.of();
+    @CommandLine.ArgGroup(validate = false, heading = "CQL Options%n")
+    CQLOptions cqlOptions;
 
-    @CommandLine.Option(
-            names       = { "-l", "--load" },
-            description = "Load the specified file as CQL code."
-    )
-    private List<Path> load = List.of();
+    static class CQLOptions {
 
-    @CommandLine.Option(
-            names       = {"-D"},
-            description = "Bind parameters of the CQL library to specific values. A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is evaluated to produce the CQL value that is assigned to the parameter named NAME. "
-    )
-    private Map<String, String> parameterBindings = Map.of();
+        @CommandLine.Option(names = {"-I"})
+        private List<Path> librarySearchPath = List.of();
+
+        @CommandLine.Option(
+                names = {"-l", "--load"},
+                description = "Load the specified file as CQL code."
+        )
+        private List<Path> load = List.of();
+
+        @CommandLine.Option(
+                names = {"-D"},
+                description = "Bind parameters of the CQL library to specific values. A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is evaluated to produce the CQL value that is assigned to the parameter named NAME. "
+        )
+        private Map<String, String> parameterBindings = Map.of();
+
+    }
+
+    @CommandLine.ArgGroup(validate = false, heading = "Other Options%n")
+    OtherOptions otherOptions;
+
+    static class OtherOptions {
+
+        @CommandLine.Option(
+                names = {"-n", "--threads"},
+                description = "Use the specified number of threads when evaluating CQL expressions for multiple context values in parallel."
+        )
+        private Integer threadCount;
+    }
 
     private Terminal terminal;
     private LineReader reader;
@@ -125,17 +143,17 @@ public class Repl implements Runnable {
         }
         // Configure and create evaluator.
         final var configuration = new Configuration()
-                .withDatabaseHost(databaseHost)
-                .withDatabasePort(databasePort)
-                .withDatabaseUser(databaseUser)
-                .withDatabasePassword(databasePassword)
-                .withDatabaseName(databaseName)
-                .withThreadCount(threadCount)
-                .withShowSQL(showSQL)
-                .withLibrarySearchPath(librarySearchPath);
+                .withDatabaseHost(databaseOptions.host)
+                .withDatabasePort(databaseOptions.port)
+                .withDatabaseUser(databaseOptions.user)
+                .withDatabasePassword(databaseOptions.password)
+                .withDatabaseName(databaseOptions.database)
+                .withShowSQL(databaseOptions.showSQL)
+                .withLibrarySearchPath(cqlOptions.librarySearchPath)
+                .withThreadCount(otherOptions.threadCount);
         this.evaluator = new Evaluator(configuration);
         // Load files
-        for (Path filename : load) {
+        for (Path filename : cqlOptions.load) {
             try {
                 this.evaluator.load(filename);
             } catch (IOException e) {
@@ -143,7 +161,7 @@ public class Repl implements Runnable {
             }
         }
         // Install parameter bindings
-        for (Map.Entry<String, String> entry : parameterBindings.entrySet()) {
+        for (Map.Entry<String, String> entry : cqlOptions.parameterBindings.entrySet()) {
             final var name = entry.getKey();
             final var expression = entry.getValue();
             try {
@@ -166,7 +184,4 @@ public class Repl implements Runnable {
         System.exit(exitCode);
     }
 
-    public Map<String, String> getParameterBindings() {
-        return parameterBindings;
-    }
 }
