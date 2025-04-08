@@ -86,6 +86,24 @@ define function IntersectIntervals(Left List<Interval<DateTime>>,
     where (l overlaps r)
     return all l intersect r
 
+// For comparison with execution-engine
+define function IntersectIntervalsPlusOne(Left List<Interval<DateTime>>,
+                                          Right List<Interval<DateTime>>):
+  from (Left) l, (Right) r
+    where (l overlaps r)
+    return all Interval[Max({start of l, start of r}),
+                        Min({end of l, end of r}) + 1 second] // 1 s offset is a hack
+
+// For comparison with execution-engine
+define function IntersectIntervalsMaybePlusOne(Left List<Interval<DateTime>>,
+                                               Right List<Interval<DateTime>>):
+  from (Left) l, (Right) r
+    where (l overlaps r)
+    return all (if end of l = end of r then
+                  Interval[Max({start of l, start of r}), end of r + 1 second] // 1 s offset is a hack
+                else
+                  l intersect r)
+
 define function IntersectWithObservationWindow(AnInterval Interval<DateTime>):
   if ObservationWindow is null then
     AnInterval
@@ -151,10 +169,10 @@ define "Procedure Artificial ventilation":
   )
 
 define Population:
-  from ("Condition Acute respiratory distress syndrome") c,
-       ("Procedure Artificial ventilation") p
-    where (c overlaps p)
-    return all c intersect p
+  IntersectIntervalsMaybePlusOne(
+    IntersectIntervalsPlusOne("Condition Acute respiratory distress syndrome",
+                              "Procedure Artificial ventilation"),
+    "Visit Occurrences")
 
 // Intervention
 
@@ -251,16 +269,21 @@ define "Tidal Volume per Ideal Body Weight":
       }
 
 define "Tidal Volume per Ideal Body Weight Intervals":
-  (
-    PointsToIntervals(
-      ("Tidal Volume per Ideal Body Weight") p
-        return all {
-          time: p.time,
-          good: (p.value - 6.0 'mL/kg') <= ThresholdTolerance
-        }
-        sort by time
-    ) as List<Tuple{time Interval<DateTime>, good Boolean}>
-  ) i where i.good return i.time
+  IntersectIntervalsMaybePlusOne(
+    ((
+      PointsToIntervals(
+        (("Tidal Volume per Ideal Body Weight") p
+          // For the tolerance, see method ValueNumeric.to_sql()
+          // in the execution-engine
+          return all {
+            time: p.time,
+            good: (p.value - 6.0 'mL/kg') <= ThresholdTolerance
+          }
+          sort by time),
+        end of Last("Visit Occurrences")
+      ) as List<Tuple{time Interval<DateTime>, good Boolean}>
+    ) i where i.good return i.time),
+    "Visit Occurrences")
 
 define Intervention:
   "Tidal Volume per Ideal Body Weight Intervals"
