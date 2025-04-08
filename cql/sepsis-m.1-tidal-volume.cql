@@ -10,6 +10,8 @@
 
 parameter ObservationWindow Interval<DateTime>
 
+parameter ThresholdTolerance Quantity default 0.001 'mL/kg'
+
 // TODO(jmoringe): use the actual URI
 codesystem Gender: 'Gender'
 
@@ -239,7 +241,10 @@ define "Tidal Volume per Ideal Body Weight Intervals":
   (
     PointsToIntervals(
       ("Tidal Volume per Ideal Body Weight") p
-        return all {time: p.time, good: (p.value <= 6.0 'mL/kg')}
+        return all {
+          time: p.time,
+          good: (p.value - 6.0 'mL/kg') <= ThresholdTolerance
+        }
         sort by time
     ) as List<Tuple{time Interval<DateTime>, good Boolean}>
   ) i where i.good return i.time
