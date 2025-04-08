@@ -161,23 +161,34 @@ define Population:
 define function LengthInCentimeters(Length Quantity):
   (convert Length to 'cm').value
 
+define MinimumBodyWeightValue: 0.0001
+
 define function IdealBodyWeight(PatientGender Code,
                                 PatientHeight Quantity):
-  // PatientHeight can (theoretically) be expressed in any length
-  // unit. We convert to centimeters since that is what the formula
-  // below expects. Also attach a unit to the computed result.
   if PatientHeight is null then
-    null
+    // If the Body Height Measurement does not have a numeric value,
+    // use the MinimumBodyweightvalue instead.
+    Quantity{ value: MinimumBodyWeightValue, unit: 'kg' }
   else
     Quantity{
-      value: case
-             when PatientGender = "Gender Female" then
-               45.5 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
-             when PatientGender = "Gender Male" then
-               50.0 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
-             else
-               47.75 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
-             end,
+      // Since PatientHeight maybe present but invalid (such as 0) or
+      // too small for the formula (such as 100), we ensure that the
+      // overall value is at least MinimumBodyWeightValue.
+      value: Max({
+               case
+               when PatientGender ~ "Gender Female" then
+                 // PatientHeight can (theoretically) be expressed in
+                 // any length unit. We convert to centimeters since
+                 // that is what the formula below expects. Then, we
+                 // attach the unit 'kg' to the computed result.
+                 45.5 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
+               when PatientGender ~ "Gender Male" then
+                 50.0 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
+               else
+                 47.75 + 0.91 * (LengthInCentimeters(PatientHeight) - 152.4)
+               end,
+               MinimumBodyWeightValue
+             }),
       unit: 'kg'
     }
 
@@ -228,6 +239,8 @@ define "Tidal Volume per Ideal Body Weight":
   // based on the body height measurement.
   ("Tidal Volume Measurements") m
     let IdealWeight: "Ideal Body Weight as of"(m.measurementDatetime)
+      // Never actually null at the moment but we could change the
+      // handling of invalid values.
       where not IdealWeight is null
       return all {
         time:  m.measurementDatetime,
