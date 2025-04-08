@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -129,9 +130,9 @@ public class Specimen {
     return Optional.ofNullable(this.unitConcept);
   }
   @Column(name = "quantity", insertable = false, updatable = false)
-  private Float quantity;
+  private BigDecimal quantity;
   
-  public Optional<Float> getQuantity() {
+  public Optional<BigDecimal> getQuantity() {
     if (this.quantity != null) {
       return Optional.of(this.quantity);
     } else {
@@ -227,17 +228,18 @@ public class Specimen {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Specimen{id=").append(this.specimenId);
-    this.getSpecimenConcept().ifPresent(concept -> {
-      result.append(", concept='")
-      .append(concept.getConceptName().get())
-      .append("'");
-    });
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Specimen{id=").append(this.specimenId);
+      this.getSpecimenConcept().ifPresent(concept -> {
+        result.append(", concept='")
+        .append(concept.getConceptName().get())
+        .append("'");
+      });
+      result.append("}");
+      return result.toString();
+  }
   
 }

@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -151,13 +152,17 @@ public class Concept {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Concept{id=").append(this.conceptId);
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Concept{id=").append(this.conceptId);
+      result.append(", name='")
+        .append(this.getConceptName().get())
+        .append("'");
+      result.append("}");
+      return result.toString();
+  }
   @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
   @JoinTable(name="concept_ancestor", schema="cds_cdm",
     joinColumns = {

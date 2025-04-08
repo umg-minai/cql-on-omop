@@ -173,9 +173,9 @@ public class Measurement {
     return Optional.ofNullable(this.provider);
   }
   @Column(name = "range_high", insertable = false, updatable = false)
-  private Float rangeHigh;
+  private BigDecimal rangeHigh;
   
-  public Optional<Float> getRangeHigh() {
+  public Optional<BigDecimal> getRangeHigh() {
     if (this.rangeHigh != null) {
       return Optional.of(this.rangeHigh);
     } else {
@@ -184,9 +184,9 @@ public class Measurement {
   }
   
   @Column(name = "range_low", insertable = false, updatable = false)
-  private Float rangeLow;
+  private BigDecimal rangeLow;
   
-  public Optional<Float> getRangeLow() {
+  public Optional<BigDecimal> getRangeLow() {
     if (this.rangeLow != null) {
       return Optional.of(this.rangeLow);
     } else {
@@ -358,17 +358,18 @@ public class Measurement {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Measurement{id=").append(this.measurementId);
-    this.getMeasurementConcept().ifPresent(concept -> {
-      result.append(", concept='")
-      .append(concept.getConceptName().get())
-      .append("'");
-    });
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Measurement{id=").append(this.measurementId);
+      this.getMeasurementConcept().ifPresent(concept -> {
+        result.append(", concept='")
+        .append(concept.getConceptName().get())
+        .append("'");
+      });
+      result.append("}");
+      return result.toString();
+  }
   
 }

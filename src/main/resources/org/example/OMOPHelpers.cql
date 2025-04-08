@@ -2,78 +2,278 @@ library OMOPHelpers version '1.0'
 
 using OMOP version 'v5.4'
 
-// Conversion to concept
+// Conversion to System.Code
 
-define function ToConcept(OMOPConcept OMOP.Concept):
-  System.Concept{
-    codes: ({ OMOPConcept } union OMOPConcept.ancestors) c return ToCode(c)
-  }
-
-// Conversion to code
-
-define function ToCode(OMOPConcept OMOP.Concept):
+define function ToCode(OMOPObject OMOP.Relationship):
   System.Code{
-    code:   ToString(OMOPConcept.conceptId),
-    system: OMOPConcept.vocabularyId
+    code:    ToString(OMOPObject.relationshipConceptId),
+    system:  OMOPObject.relationshipConcept.vocabularyId,
+    display: OMOPObject.relationshipConcept.conceptName
   }
+  
+define function ToCode(OMOPObject OMOP.ConceptClass):
+  System.Code{
+    code:    ToString(OMOPObject.conceptClassConceptId),
+    system:  OMOPObject.conceptClassConcept.vocabularyId,
+    display: OMOPObject.conceptClassConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Domain):
+  System.Code{
+    code:    ToString(OMOPObject.domainConceptId),
+    system:  OMOPObject.domainConcept.vocabularyId,
+    display: OMOPObject.domainConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Vocabulary):
+  System.Code{
+    code:    ToString(OMOPObject.vocabularyConceptId),
+    system:  OMOPObject.vocabularyConcept.vocabularyId,
+    display: OMOPObject.vocabularyConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Concept):
+  System.Code{
+    code:    ToString(OMOPObject.conceptId),
+    system:  OMOPObject.vocabularyId,
+    display: OMOPObject.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Metadata):
+  System.Code{
+    code:    ToString(OMOPObject.metadataConceptId),
+    system:  OMOPObject.metadataConcept.vocabularyId,
+    display: OMOPObject.metadataConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Episode):
+  System.Code{
+    code:    ToString(OMOPObject.episodeConceptId),
+    system:  OMOPObject.episodeConcept.vocabularyId,
+    display: OMOPObject.episodeConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Specimen):
+  System.Code{
+    code:    ToString(OMOPObject.specimenConceptId),
+    system:  OMOPObject.specimenConcept.vocabularyId,
+    display: OMOPObject.specimenConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.NoteNlp):
+  System.Code{
+    code:    ToString(OMOPObject.noteNlpConceptId),
+    system:  OMOPObject.noteNlpConcept.vocabularyId,
+    display: OMOPObject.noteNlpConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Observation):
+  System.Code{
+    code:    ToString(OMOPObject.observationConceptId),
+    system:  OMOPObject.observationConcept.vocabularyId,
+    display: OMOPObject.observationConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.Measurement):
+  System.Code{
+    code:    ToString(OMOPObject.measurementConceptId),
+    system:  OMOPObject.measurementConcept.vocabularyId,
+    display: OMOPObject.measurementConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.ProcedureOccurrence):
+  System.Code{
+    code:    ToString(OMOPObject.procedureConceptId),
+    system:  OMOPObject.procedureConcept.vocabularyId,
+    display: OMOPObject.procedureConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.ConditionOccurrence):
+  System.Code{
+    code:    ToString(OMOPObject.conditionConceptId),
+    system:  OMOPObject.conditionConcept.vocabularyId,
+    display: OMOPObject.conditionConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.VisitDetail):
+  System.Code{
+    code:    ToString(OMOPObject.visitDetailConceptId),
+    system:  OMOPObject.visitDetailConcept.vocabularyId,
+    display: OMOPObject.visitDetailConcept.conceptName
+  }
+  
+define function ToCode(OMOPObject OMOP.VisitOccurrence):
+  System.Code{
+    code:    ToString(OMOPObject.visitConceptId),
+    system:  OMOPObject.visitConcept.vocabularyId,
+    display: OMOPObject.visitConcept.conceptName
+  }
+  
+// Conversion to System.Concept
 
-// Conversion to quantity
+define function ToConcept(OMOPObject OMOP.Relationship):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.ConceptClass):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Domain):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Vocabulary):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Concept):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Metadata):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Episode):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Specimen):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.NoteNlp):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Observation):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.Measurement):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.ProcedureOccurrence):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.ConditionOccurrence):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.VisitDetail):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+define function ToConcept(OMOPObject OMOP.VisitOccurrence):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+  
+// Conversion to System.Interval
 
-define function ToQuantity(OMOPMeasurement OMOP.Measurement):
-  if OMOPMeasurement.valueAsNumber is null or OMOPMeasurement.unitConcept is null then
+define function ToInterval(OMOPObject OMOP.Episode):
+  Interval[OMOPObject.episodeStartDatetime, OMOPObject.episodeEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.DeviceExposure):
+  Interval[OMOPObject.deviceExposureStartDatetime, OMOPObject.deviceExposureEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.ProcedureOccurrence):
+  Interval[OMOPObject.procedureDatetime, OMOPObject.procedureEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.DrugExposure):
+  Interval[OMOPObject.drugExposureStartDatetime, OMOPObject.drugExposureEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.ConditionOccurrence):
+  Interval[OMOPObject.conditionStartDatetime, OMOPObject.conditionEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.VisitDetail):
+  Interval[OMOPObject.visitDetailStartDatetime, OMOPObject.visitDetailEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.VisitOccurrence):
+  Interval[OMOPObject.visitStartDatetime, OMOPObject.visitEndDatetime]
+  
+define function ToInterval(OMOPObject OMOP.Cohort):
+  Interval[OMOPObject.cohortStartDate, OMOPObject.cohortEndDate]
+  
+define function ToInterval(OMOPObject OMOP.DrugStrength):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToInterval(OMOPObject OMOP.SourceToConceptMap):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToInterval(OMOPObject OMOP.Concept):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToInterval(OMOPObject OMOP.Episode):
+  Interval[OMOPObject.episodeStartDate, OMOPObject.episodeEndDate]
+  
+define function ToInterval(OMOPObject OMOP.ConditionEra):
+  Interval[OMOPObject.conditionEraStartDate, OMOPObject.conditionEraEndDate]
+  
+define function ToInterval(OMOPObject OMOP.DoseEra):
+  Interval[OMOPObject.doseEraStartDate, OMOPObject.doseEraEndDate]
+  
+define function ToInterval(OMOPObject OMOP.DrugEra):
+  Interval[OMOPObject.drugEraStartDate, OMOPObject.drugEraEndDate]
+  
+define function ToInterval(OMOPObject OMOP.PayerPlanPeriod):
+  Interval[OMOPObject.payerPlanPeriodStartDate, OMOPObject.payerPlanPeriodEndDate]
+  
+define function ToInterval(OMOPObject OMOP.DeviceExposure):
+  Interval[OMOPObject.deviceExposureStartDate, OMOPObject.deviceExposureEndDate]
+  
+define function ToInterval(OMOPObject OMOP.ProcedureOccurrence):
+  Interval[OMOPObject.procedureDate, OMOPObject.procedureEndDate]
+  
+define function ToInterval(OMOPObject OMOP.DrugExposure):
+  Interval[OMOPObject.drugExposureStartDate, OMOPObject.verbatimEndDate]
+  
+define function ToInterval(OMOPObject OMOP.ConditionOccurrence):
+  Interval[OMOPObject.conditionStartDate, OMOPObject.conditionEndDate]
+  
+define function ToInterval(OMOPObject OMOP.VisitDetail):
+  Interval[OMOPObject.visitDetailStartDate, OMOPObject.visitDetailEndDate]
+  
+define function ToInterval(OMOPObject OMOP.VisitOccurrence):
+  Interval[OMOPObject.visitStartDate, OMOPObject.visitEndDate]
+  
+define function ToInterval(OMOPObject OMOP.ObservationPeriod):
+  Interval[OMOPObject.observationPeriodStartDate, OMOPObject.observationPeriodEndDate]
+  
+// Conversion to System.Quantity
+
+define function ToQuantity(OMOPObject OMOP.Observation):
+  if OMOPObject.valueAsNumber is null or OMOPObject.unitConcept is null then
     null
   else
     System.Quantity{
-      value: OMOPMeasurement.valueAsNumber,
-      unit:  OMOPMeasurement.unitConcept.conceptCode
+      value: OMOPObject.valueAsNumber,
+      unit:  OMOPObject.unitConcept.conceptCode
     }
-
-// Conversion to temporal interval
-
-// Maybe; Note that start/end are Date not Datetime in this case
-//define function ToInterval(OMOPConditionEra OMOP.ConditionEra):
-//  Interval[OMOPConditionEra.conditionEraStartDate,
-//           OMOPConditionEra.conditionEraEndDate]
-
-define function ToInterval(OMOPConditionOccurrence OMOP.ConditionOccurrence):
-  Interval[OMOPConditionOccurrence.conditionStartDatetime,
-           OMOPConditionOccurrence.conditionEndDatetime]
-
-define function ToInterval(OMOPDeviceExposure OMOP.DeviceExposure):
-  Interval[OMOPDeviceExposure.deviceExposureStartDatetime,
-           OMOPDeviceExposure.deviceExposureEndDatetime]
-
-// Maybe; Note that start/end are Date not Datetime in this case
-//define function ToInterval(OMOPDoseEra OMOP.DoseEra):
-//  Interval[OMOPDoseEra.doseEraStartDate,
-//           OMOPDoseEra.doseEraEndDate]
-
-// Maybe; Note that start/end are Date not Datetime in this case
-//define function ToInterval(OMOPDrugEra OMOP.DrugEra):
-//  Interval[OMOPDrugEra.drugEraStartDate,
-//           OMOPDrugEra.drugEraEndDate]
-
-define function ToInterval(OMOPDrugExposure OMOP.DrugExposure):
-  Interval[OMOPDrugExposure.drugExposureStartDatetime,
-           OMOPDrugExposure.drugExposureEndDatetime]
-
-define function ToInterval(OMOPEpisode OMOP.Episode):
-  Interval[OMOPEpisode.episodeStartDatetime,
-           OMOPEpisode.episodeEndDatetime]
-
-define function ToInterval(OMOPVisitOccurrence OMOP.VisitOccurrence):
-  Interval[OMOPVisitOccurrence.visitStartDatetime,
-           OMOPVisitOccurrence.visitEndDatetime]
-
-// Conversion to Date
-
-define function ToDate(OMOPDeath OMOP.Death):
-  OMOPDeath.deathDate
-
-// Conversion to DateTime
-
-define function ToDateTime(OMOPDeath OMOP.Death):
-  OMOPDeath.deathDatetime
-
-define function ToDateTime(OMOPMeasurement OMOP.Measurement):
-  OMOPMeasurement.measurementDatetime
+  
+define function ToQuantity(OMOPObject OMOP.Measurement):
+  if OMOPObject.valueAsNumber is null or OMOPObject.unitConcept is null then
+    null
+  else
+    System.Quantity{
+      value: OMOPObject.valueAsNumber,
+      unit:  OMOPObject.unitConcept.conceptCode
+    }
+  

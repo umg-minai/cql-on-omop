@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -82,9 +83,9 @@ public class DrugStrength {
     return Optional.ofNullable(this.denominatorUnitConcept);
   }
   @Column(name = "denominator_value", insertable = false, updatable = false)
-  private Float denominatorValue;
+  private BigDecimal denominatorValue;
   
-  public Optional<Float> getDenominatorValue() {
+  public Optional<BigDecimal> getDenominatorValue() {
     if (this.denominatorValue != null) {
       return Optional.of(this.denominatorValue);
     } else {
@@ -111,9 +112,9 @@ public class DrugStrength {
     return Optional.ofNullable(this.numeratorUnitConcept);
   }
   @Column(name = "numerator_value", insertable = false, updatable = false)
-  private Float numeratorValue;
+  private BigDecimal numeratorValue;
   
-  public Optional<Float> getNumeratorValue() {
+  public Optional<BigDecimal> getNumeratorValue() {
     if (this.numeratorValue != null) {
       return Optional.of(this.numeratorValue);
     } else {
@@ -140,9 +141,9 @@ public class DrugStrength {
     return Optional.ofNullable(this.amountUnitConcept);
   }
   @Column(name = "amount_value", insertable = false, updatable = false)
-  private Float amountValue;
+  private BigDecimal amountValue;
   
-  public Optional<Float> getAmountValue() {
+  public Optional<BigDecimal> getAmountValue() {
     if (this.amountValue != null) {
       return Optional.of(this.amountValue);
     } else {
@@ -186,5 +187,6 @@ public class DrugStrength {
   public Optional<Concept> getDrugConcept() {
     return Optional.ofNullable(this.drugConcept);
   }
+  
   
 }

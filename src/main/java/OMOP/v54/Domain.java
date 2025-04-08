@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -60,17 +61,18 @@ public class Domain {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Domain{id=").append(this.domainId);
-    this.getDomainConcept().ifPresent(concept -> {
-      result.append(", concept='")
-      .append(concept.getConceptName().get())
-      .append("'");
-    });
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Domain{id=").append(this.domainId);
+      this.getDomainConcept().ifPresent(concept -> {
+        result.append(", concept='")
+        .append(concept.getConceptName().get())
+        .append("'");
+      });
+      result.append("}");
+      return result.toString();
+  }
   
 }

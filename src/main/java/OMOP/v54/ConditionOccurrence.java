@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -252,17 +253,18 @@ public class ConditionOccurrence {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("ConditionOccurrence{id=").append(this.conditionOccurrenceId);
-    this.getConditionConcept().ifPresent(concept -> {
-      result.append(", concept='")
-      .append(concept.getConceptName().get())
-      .append("'");
-    });
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("ConditionOccurrence{id=").append(this.conditionOccurrenceId);
+      this.getConditionConcept().ifPresent(concept -> {
+        result.append(", concept='")
+        .append(concept.getConceptName().get())
+        .append("'");
+      });
+      result.append("}");
+      return result.toString();
+  }
   
 }

@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -77,5 +78,6 @@ public class ConceptAncestor {
   public Optional<Concept> getAncestorConcept() {
     return Optional.ofNullable(this.ancestorConcept);
   }
+  
   
 }

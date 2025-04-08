@@ -41,7 +41,7 @@
         <ns4:element name="cohortDefinitionName" type="System.String"/>
         <ns4:element name="cohortDefinitionId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Concept" baseType="System.Any" retrievable="true" primaryCodePath="conceptId">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Concept" baseType="System.Any" retrievable="true" primaryCodePath="concept">
         <ns4:element name="ancestors">
             <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
         </ns4:element>
@@ -70,7 +70,7 @@
         <ns4:element name="ancestorConceptId" type="System.Integer"/>
         <ns4:element name="ancestorConcept" type="Concept"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptClass" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptClass" baseType="System.Any" retrievable="true" primaryCodePath="conceptClassConcept">
         <ns4:element name="conceptClassConceptId" type="System.Integer"/>
         <ns4:element name="conceptClassConcept" type="Concept"/>
         <ns4:element name="conceptClassName" type="System.String"/>
@@ -191,7 +191,7 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="deviceExposureId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Domain" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Domain" baseType="System.Any" retrievable="true" primaryCodePath="domainConcept">
         <ns4:element name="domainConceptId" type="System.Integer"/>
         <ns4:element name="domainConcept" type="Concept"/>
         <ns4:element name="domainName" type="System.String"/>
@@ -272,7 +272,7 @@
         <ns4:element name="drugConceptId" type="System.Integer"/>
         <ns4:element name="drugConcept" type="Concept"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Episode" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Episode" baseType="System.Any" retrievable="true" primaryCodePath="episodeConcept">
         <ns4:element name="episodeSourceConceptId" type="System.Integer"/>
         <ns4:element name="episodeSourceConcept" type="Concept"/>
         <ns4:element name="episodeSourceValue" type="System.String"/>
@@ -361,7 +361,7 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="measurementId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Metadata" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Metadata" baseType="System.Any" retrievable="true" primaryCodePath="metadataConcept">
         <ns4:element name="metadataDatetime" type="System.DateTime"/>
         <ns4:element name="metadataDate" type="System.Date"/>
         <ns4:element name="valueAsNumber" type="System.Decimal"/>
@@ -402,7 +402,7 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="noteId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="NoteNlp" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="NoteNlp" baseType="System.Any" retrievable="true" primaryCodePath="noteNlpConcept">
         <ns4:element name="termModifiers" type="System.String"/>
         <ns4:element name="termTemporal" type="System.String"/>
         <ns4:element name="termExists" type="System.String"/>
@@ -421,7 +421,7 @@
         <ns4:element name="noteId" type="System.Integer"/>
         <ns4:element name="noteNlpId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Observation" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Observation" baseType="System.Any" retrievable="true" primaryCodePath="observationConcept">
         <ns4:element name="obsEventFieldConceptId" type="System.Integer"/>
         <ns4:element name="obsEventFieldConcept" type="Concept"/>
         <ns4:element name="observationEventId" type="System.Integer"/>
@@ -567,7 +567,7 @@
         <ns4:element name="providerName" type="System.String"/>
         <ns4:element name="providerId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Relationship" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Relationship" baseType="System.Any" retrievable="true" primaryCodePath="relationshipConcept">
         <ns4:element name="relationshipConceptId" type="System.Integer"/>
         <ns4:element name="relationshipConcept" type="Concept"/>
         <ns4:element name="reverseRelationshipId" type="System.String"/>
@@ -590,7 +590,7 @@
         <ns4:element name="sourceConcept" type="Concept"/>
         <ns4:element name="sourceCode" type="System.String"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Specimen" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Specimen" baseType="System.Any" retrievable="true" primaryCodePath="specimenConcept">
         <ns4:element name="diseaseStatusSourceValue" type="System.String"/>
         <ns4:element name="anatomicSiteSourceValue" type="System.String"/>
         <ns4:element name="unitSourceValue" type="System.String"/>
@@ -613,7 +613,7 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="specimenId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitDetail" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitDetail" baseType="System.Any" retrievable="true" primaryCodePath="visitDetailConcept">
         <ns4:element name="visitOccurrenceId" type="System.Integer"/>
         <ns4:element name="visitOccurrence" type="VisitOccurrence"/>
         <ns4:element name="parentVisitDetailId" type="System.Integer"/>
@@ -645,7 +645,7 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="visitDetailId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitOccurrence" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="VisitOccurrence" baseType="System.Any" retrievable="true" primaryCodePath="visitConcept">
         <ns4:element name="precedingVisitOccurrenceId" type="System.Integer"/>
         <ns4:element name="precedingVisitOccurrence" type="VisitOccurrence"/>
         <ns4:element name="dischargedToSourceValue" type="System.String"/>
@@ -673,9 +673,9 @@
         <ns4:element name="person" type="Person"/>
         <ns4:element name="visitOccurrenceId" type="System.Integer"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Vocabulary" baseType="System.Any" retrievable="true">
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Vocabulary" baseType="System.Any" retrievable="true" primaryCodePath="vocabularyConcept">
         <ns4:element name="vocabularyConceptId" type="System.Integer"/>
-        <ns4:element name="vocabularyConcept" type="OMOP.Concept"/>
+        <ns4:element name="vocabularyConcept" type="Concept"/>
         <ns4:element name="vocabularyVersion" type="System.String"/>
         <ns4:element name="vocabularyReference" type="System.String"/>
         <ns4:element name="vocabularyName" type="System.String"/>
@@ -687,6 +687,59 @@
     <ns4:contextInfo name="Patient" keyElement="id" birthDateElement="birthDatetime">
         <ns4:contextType namespace="OMOP" name="Person"/>
     </ns4:contextInfo>
+    <!--<ns4:conversionInfo fromType="OMOP.ObservationPeriod" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.VisitOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.VisitDetail" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.ConditionOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DrugExposure" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.ProcedureOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DeviceExposure" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.PayerPlanPeriod" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DrugEra" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DoseEra" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.ConditionEra" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.Episode" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.Concept" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.SourceToConceptMap" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DrugStrength" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.Cohort" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.VisitOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.VisitDetail" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.ConditionOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DrugExposure" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.ProcedureOccurrence" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.DeviceExposure" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>
+    <ns4:conversionInfo fromType="OMOP.Episode" toType="System.Interval" functionName="OMOPHelpers.ToInterval"/>-->
+    <ns4:conversionInfo fromType="OMOP.Measurement" toType="System.Quantity" functionName="OMOPHelpers.ToQuantity"/>
+    <ns4:conversionInfo fromType="OMOP.Observation" toType="System.Quantity" functionName="OMOPHelpers.ToQuantity"/>
+    <ns4:conversionInfo fromType="OMOP.VisitOccurrence" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.VisitOccurrence" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.VisitDetail" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.VisitDetail" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.ConditionOccurrence" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.ConditionOccurrence" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.ProcedureOccurrence" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.ProcedureOccurrence" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Measurement" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Measurement" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Observation" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Observation" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.NoteNlp" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.NoteNlp" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Specimen" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Specimen" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Episode" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Episode" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Metadata" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Metadata" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
     <ns4:conversionInfo fromType="OMOP.Concept" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
     <ns4:conversionInfo fromType="OMOP.Concept" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Vocabulary" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Vocabulary" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Domain" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Domain" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.ConceptClass" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.ConceptClass" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
+    <ns4:conversionInfo fromType="OMOP.Relationship" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
+    <ns4:conversionInfo fromType="OMOP.Relationship" toType="System.Concept" functionName="OMOPHelpers.ToConcept"/>
 </ns4:modelInfo>

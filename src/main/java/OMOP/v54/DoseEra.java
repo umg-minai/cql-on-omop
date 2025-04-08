@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +43,9 @@ public class DoseEra {
   }
   
   @Column(name = "dose_value", insertable = false, updatable = false)
-  private Float doseValue;
+  private BigDecimal doseValue;
   
-  public Optional<Float> getDoseValue() {
+  public Optional<BigDecimal> getDoseValue() {
     if (this.doseValue != null) {
       return Optional.of(this.doseValue);
     } else {
@@ -118,12 +119,13 @@ public class DoseEra {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("DoseEra{id=").append(this.doseEraId);
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("DoseEra{id=").append(this.doseEraId);
+      result.append("}");
+      return result.toString();
+  }
   
 }

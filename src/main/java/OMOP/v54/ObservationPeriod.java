@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -89,12 +90,13 @@ public class ObservationPeriod {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("ObservationPeriod{id=").append(this.observationPeriodId);
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("ObservationPeriod{id=").append(this.observationPeriodId);
+      result.append("}");
+      return result.toString();
+  }
   
 }

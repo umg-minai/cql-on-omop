@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +21,9 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 public class Location {
 
   @Column(name = "longitude", insertable = false, updatable = false)
-  private Float longitude;
+  private BigDecimal longitude;
   
-  public Optional<Float> getLongitude() {
+  public Optional<BigDecimal> getLongitude() {
     if (this.longitude != null) {
       return Optional.of(this.longitude);
     } else {
@@ -31,9 +32,9 @@ public class Location {
   }
   
   @Column(name = "latitude", insertable = false, updatable = false)
-  private Float latitude;
+  private BigDecimal latitude;
   
-  public Optional<Float> getLatitude() {
+  public Optional<BigDecimal> getLatitude() {
     if (this.latitude != null) {
       return Optional.of(this.latitude);
     } else {
@@ -159,12 +160,13 @@ public class Location {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Location{id=").append(this.locationId);
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Location{id=").append(this.locationId);
+      result.append("}");
+      return result.toString();
+  }
   
 }

@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -78,9 +79,9 @@ public class Cost {
     return Optional.ofNullable(this.revenueCodeConcept);
   }
   @Column(name = "amount_allowed", insertable = false, updatable = false)
-  private Float amountAllowed;
+  private BigDecimal amountAllowed;
   
-  public Optional<Float> getAmountAllowed() {
+  public Optional<BigDecimal> getAmountAllowed() {
     if (this.amountAllowed != null) {
       return Optional.of(this.amountAllowed);
     } else {
@@ -100,9 +101,9 @@ public class Cost {
   }
   
   @Column(name = "paid_dispensing_fee", insertable = false, updatable = false)
-  private Float paidDispensingFee;
+  private BigDecimal paidDispensingFee;
   
-  public Optional<Float> getPaidDispensingFee() {
+  public Optional<BigDecimal> getPaidDispensingFee() {
     if (this.paidDispensingFee != null) {
       return Optional.of(this.paidDispensingFee);
     } else {
@@ -111,9 +112,9 @@ public class Cost {
   }
   
   @Column(name = "paid_ingredient_cost", insertable = false, updatable = false)
-  private Float paidIngredientCost;
+  private BigDecimal paidIngredientCost;
   
-  public Optional<Float> getPaidIngredientCost() {
+  public Optional<BigDecimal> getPaidIngredientCost() {
     if (this.paidIngredientCost != null) {
       return Optional.of(this.paidIngredientCost);
     } else {
@@ -122,9 +123,9 @@ public class Cost {
   }
   
   @Column(name = "paid_by_primary", insertable = false, updatable = false)
-  private Float paidByPrimary;
+  private BigDecimal paidByPrimary;
   
-  public Optional<Float> getPaidByPrimary() {
+  public Optional<BigDecimal> getPaidByPrimary() {
     if (this.paidByPrimary != null) {
       return Optional.of(this.paidByPrimary);
     } else {
@@ -133,9 +134,9 @@ public class Cost {
   }
   
   @Column(name = "paid_patient_deductible", insertable = false, updatable = false)
-  private Float paidPatientDeductible;
+  private BigDecimal paidPatientDeductible;
   
-  public Optional<Float> getPaidPatientDeductible() {
+  public Optional<BigDecimal> getPaidPatientDeductible() {
     if (this.paidPatientDeductible != null) {
       return Optional.of(this.paidPatientDeductible);
     } else {
@@ -144,9 +145,9 @@ public class Cost {
   }
   
   @Column(name = "paid_patient_coinsurance", insertable = false, updatable = false)
-  private Float paidPatientCoinsurance;
+  private BigDecimal paidPatientCoinsurance;
   
-  public Optional<Float> getPaidPatientCoinsurance() {
+  public Optional<BigDecimal> getPaidPatientCoinsurance() {
     if (this.paidPatientCoinsurance != null) {
       return Optional.of(this.paidPatientCoinsurance);
     } else {
@@ -155,9 +156,9 @@ public class Cost {
   }
   
   @Column(name = "paid_patient_copay", insertable = false, updatable = false)
-  private Float paidPatientCopay;
+  private BigDecimal paidPatientCopay;
   
-  public Optional<Float> getPaidPatientCopay() {
+  public Optional<BigDecimal> getPaidPatientCopay() {
     if (this.paidPatientCopay != null) {
       return Optional.of(this.paidPatientCopay);
     } else {
@@ -166,9 +167,9 @@ public class Cost {
   }
   
   @Column(name = "paid_by_patient", insertable = false, updatable = false)
-  private Float paidByPatient;
+  private BigDecimal paidByPatient;
   
-  public Optional<Float> getPaidByPatient() {
+  public Optional<BigDecimal> getPaidByPatient() {
     if (this.paidByPatient != null) {
       return Optional.of(this.paidByPatient);
     } else {
@@ -177,9 +178,9 @@ public class Cost {
   }
   
   @Column(name = "paid_by_payer", insertable = false, updatable = false)
-  private Float paidByPayer;
+  private BigDecimal paidByPayer;
   
-  public Optional<Float> getPaidByPayer() {
+  public Optional<BigDecimal> getPaidByPayer() {
     if (this.paidByPayer != null) {
       return Optional.of(this.paidByPayer);
     } else {
@@ -188,9 +189,9 @@ public class Cost {
   }
   
   @Column(name = "total_paid", insertable = false, updatable = false)
-  private Float totalPaid;
+  private BigDecimal totalPaid;
   
-  public Optional<Float> getTotalPaid() {
+  public Optional<BigDecimal> getTotalPaid() {
     if (this.totalPaid != null) {
       return Optional.of(this.totalPaid);
     } else {
@@ -199,9 +200,9 @@ public class Cost {
   }
   
   @Column(name = "total_cost", insertable = false, updatable = false)
-  private Float totalCost;
+  private BigDecimal totalCost;
   
-  public Optional<Float> getTotalCost() {
+  public Optional<BigDecimal> getTotalCost() {
     if (this.totalCost != null) {
       return Optional.of(this.totalCost);
     } else {
@@ -210,9 +211,9 @@ public class Cost {
   }
   
   @Column(name = "total_charge", insertable = false, updatable = false)
-  private Float totalCharge;
+  private BigDecimal totalCharge;
   
-  public Optional<Float> getTotalCharge() {
+  public Optional<BigDecimal> getTotalCharge() {
     if (this.totalCharge != null) {
       return Optional.of(this.totalCharge);
     } else {
@@ -297,12 +298,13 @@ public class Cost {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Cost{id=").append(this.costId);
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Cost{id=").append(this.costId);
+      result.append("}");
+      return result.toString();
+  }
   
 }

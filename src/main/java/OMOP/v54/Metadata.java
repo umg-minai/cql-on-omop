@@ -1,5 +1,6 @@
 package OMOP.v54;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +43,9 @@ public class Metadata {
   }
   
   @Column(name = "value_as_number", insertable = false, updatable = false)
-  private Float valueAsNumber;
+  private BigDecimal valueAsNumber;
   
-  public Optional<Float> getValueAsNumber() {
+  public Optional<BigDecimal> getValueAsNumber() {
     if (this.valueAsNumber != null) {
       return Optional.of(this.valueAsNumber);
     } else {
@@ -140,17 +141,18 @@ public class Metadata {
     }
   }
   
-@Override
-public String toString() {
-    final var result = new StringBuilder();
-    result.append("Metadata{id=").append(this.metadataId);
-    this.getMetadataConcept().ifPresent(concept -> {
-      result.append(", concept='")
-      .append(concept.getConceptName().get())
-      .append("'");
-    });
-    result.append("}");
-    return result.toString();
-}
+  
+  @Override
+  public String toString() {
+      final var result = new StringBuilder();
+      result.append("Metadata{id=").append(this.metadataId);
+      this.getMetadataConcept().ifPresent(concept -> {
+        result.append(", concept='")
+        .append(concept.getConceptName().get())
+        .append("'");
+      });
+      result.append("}");
+      return result.toString();
+  }
   
 }
