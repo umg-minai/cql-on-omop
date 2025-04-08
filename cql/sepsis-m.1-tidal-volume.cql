@@ -31,10 +31,28 @@ code "Tidal Volume on Ventilator": '21490854' from OMOPSV
 // Utility functions
 // Skip these when reading this library for the first time.
 
-define function PointsToIntervals(intervals List<Tuple{time DateTime, good Boolean}>):
+define function PointsToIntervals(Intervals List<Tuple{time DateTime, good Boolean}>,
+                                  EndTime   DateTime):
   (
-    intervals e aggregate r starting ({previous: null , intervals: {}}):
-      if r.previous is null then
+    // Add sentinal after last proper element
+    (flatten({Intervals, {null}} as List<List<Tuple{time DateTime, good Boolean}>>)) e
+               aggregate r
+               starting ({previous: null , intervals: {}}):
+      if e is null then // sentinel
+        {
+          previous:  r.previous, // unused since we are done
+          intervals: flatten({
+                       r.intervals,
+                       { {
+                         time: Interval[
+                                 start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time,
+                                 EndTime
+                               ],
+                         good: (r.previous as Tuple{time Interval<DateTime>, good Boolean}).good
+                       } }
+                     })
+        }
+      else if r.previous is null then
         { previous: {time: Interval[e.time, e.time], good: e.good}, intervals: r.intervals }
       else if ((r.previous as Tuple{time Interval<DateTime>, good Boolean}).good = e.good) then
         {
@@ -51,13 +69,12 @@ define function PointsToIntervals(intervals List<Tuple{time DateTime, good Boole
                        flatten({
                          r.intervals,
                          { {
-                             time: Interval[start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time, e.time],
-                             good: (r.previous as Tuple{time Interval<DateTime>, good Boolean}).good
+                           time: Interval[start of (r.previous as Tuple{time Interval<DateTime>, good Boolean}).time, e.time],
+                           good: (r.previous as Tuple{time Interval<DateTime>, good Boolean}).good
                          } }
                        })
                      else
                        r.intervals
-
         }
   ).intervals
 
