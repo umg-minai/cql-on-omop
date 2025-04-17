@@ -32,6 +32,7 @@ public class Register  {
         mappingInfo.registerDataTypeInfo("Domain", new DomainInfo());
         mappingInfo.registerDataTypeInfo("ConceptClass", new ConceptClassInfo());
         mappingInfo.registerDataTypeInfo("Relationship", new RelationshipInfo());
+        mappingInfo.registerDataTypeInfo("ConceptRelationship", new ConceptRelationshipInfo());
         
     }
     

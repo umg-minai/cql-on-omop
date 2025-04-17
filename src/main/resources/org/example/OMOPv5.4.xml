@@ -30,6 +30,11 @@
         <ns4:element name="subjectId" type="System.Integer"/>
         <ns4:element name="cohortDefinitionId" type="System.Integer"/>
     </ns4:typeInfo>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptRelationship" baseType="System.Any" retrievable="true">
+        <ns4:element name="relationship" type="Relationship"/>
+        <ns4:element name="concept1" type="Concept"/>
+        <ns4:element name="concept2" type="Concept"/>
+    </ns4:typeInfo>
     <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CohortDefinition" baseType="System.Any" retrievable="true">
         <ns4:element name="cohortInitiationDate" type="System.Date"/>
         <ns4:element name="subjectConceptId" type="System.Integer"/>
@@ -47,6 +52,12 @@
         </ns4:element>
         <ns4:element name="descendants">
             <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
+        </ns4:element>
+        <ns4:element name="relatedConcepts">
+            <ns4:elementTypeSpecifier elementType="OMOP.Concept" xsi:type="ns4:ListTypeSpecifier"/>
+        </ns4:element>
+        <ns4:element name="relationships">
+            <ns4:elementTypeSpecifier elementType="OMOP.ConceptRelationship" xsi:type="ns4:ListTypeSpecifier"/>
         </ns4:element>
         <ns4:element name="invalidReason" type="System.String"/>
         <ns4:element name="validEndDate" type="System.Date"/>
