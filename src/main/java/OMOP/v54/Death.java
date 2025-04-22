@@ -1,24 +1,26 @@
 package OMOP.v54;
 
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
+import jakarta.persistence.*;
 import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "death", schema = "cds_cdm")
 public class Death {
+
+  @Embeddable
+  private static class PersonId {
+
+    @Column(name = "person_id")
+    public Integer personId;
+
+  }
+
+  @EmbeddedId
+  private PersonId embeddedPersonId;
 
   @Column(name = "cause_source_concept_id", insertable = false, updatable = false)
   private Integer causeSourceConceptId;
@@ -107,18 +109,20 @@ public class Death {
     }
   }
   
-  @Column(name = "person_id", insertable = false, updatable = false)
-  private Integer personId;
+  //@Column(name = "person_id", insertable = false, updatable = false)
+  //private Integer personId;
   
   public Optional<Integer> getPersonId() {
-    if (this.personId != null) {
+    /*if (this.personId != null) {
       return Optional.of(this.personId);
     } else {
       return Optional.empty();
-    }
+    }*/
+    return Optional.of(this.embeddedPersonId.personId);
   }
-  
+
   @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
+  @MapsId("personId")
   @JoinColumn(name = "person_id")
   private Person person;
   

@@ -4,6 +4,7 @@ import OMOP.MappingInfo;
 
 public class Register  {
     public static void register(final MappingInfo mappingInfo) {
+        mappingInfo.registerDataTypeInfo("Death", new DeathInfo());
         mappingInfo.registerDataTypeInfo("Person", new PersonInfo());
         mappingInfo.registerDataTypeInfo("ObservationPeriod", new ObservationPeriodInfo());
         mappingInfo.registerDataTypeInfo("VisitOccurrence", new VisitOccurrenceInfo());
