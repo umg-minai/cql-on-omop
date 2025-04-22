@@ -194,14 +194,13 @@ public class Concept {
   }*/
 
   @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinTable(name="concept_relationship", schema="cds_cdm",
+  @JoinTable(name = "concept_relationship", schema = "cds_cdm",
           joinColumns = {
-                  @JoinColumn(name="concept_id_1")
+                  @JoinColumn(name = "concept_id_1")
           },
           inverseJoinColumns = {
-                  @JoinColumn(name="concept_id_2")
-          }
-  )
+                  @JoinColumn(name = "concept_id_2")
+          })
   private List<Concept> relatedConcepts;
 
   public List<Concept> getRelatedConcepts() { return this.relatedConcepts; }
@@ -210,34 +209,16 @@ public class Concept {
   @JoinTable(
           schema = "cds_cdm",
           name = "concept_relationship",
-          joinColumns = { @JoinColumn(name = "concept_id_1", insertable = false, updatable = false) },
+          joinColumns = {@JoinColumn(name = "concept_id_1", insertable = false, updatable = false)},
           inverseJoinColumns = {
                   @JoinColumn(name = "concept_id_1", insertable = false, updatable = false),
-                  @JoinColumn(name = "concept_id_2", insertable = false, updatable = false) })
+                  @JoinColumn(name = "concept_id_2", insertable = false, updatable = false),
+                  @JoinColumn(name = "relationship_id", insertable = false, updatable = false)
+          })
   private List<ConceptRelationship> relationships;
 
   public List<ConceptRelationship> getRelationships() {
     return this.relationships;
   }
-
-  /*public List<Concept> getRelatedConcepts() {
-    Hibernate.
-    final var relationshipId = "Is a"; // relationship.getRelationshipId().orElseThrow()
-
-    EntityManager e = null;
-    final var clazz = Relationship.class;
-    final var criteriaBuilder = e.getCriteriaBuilder();
-    final var criteriaQuery = criteriaBuilder.createQuery(Concept.class);
-    final var root = criteriaQuery.getRoots().stream().findFirst().orElseThrow();
-
-    Join<Concept, Relationship> join = root.join();
-    join.on(criteriaBuilder.equal(join.get("relationship_id"), relationshipId));
-
-
-    final var query = e.createQuery(
-            criteriaQuery.select(criteriaQuery.from(Concept.class))
-    );
-    return query.getResultList();
-  }*/
 
 }

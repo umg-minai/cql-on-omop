@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class ConceptRelationship {
 
     @Embeddable
-    private static class Concept1IdConcept2Id {
+    private static class CompoundId {
 
         @Column(name = "concept_id_1")
         public Integer concept1Id;
@@ -15,14 +15,20 @@ public class ConceptRelationship {
         @Column(name = "concept_id_2")
         public Integer concept2Id;
 
-        // FIXME(jmoringe): needs relationship_id for uniqueness as well
+        @Column(name = "relationship_id")
+        public String relationshipId;
 
     }
 
     @EmbeddedId
-    Concept1IdConcept2Id concept1IdConcept2Id;
+    CompoundId embeddedId;
+
+    public String getRelationshipId() {
+        return this.embeddedId.relationshipId;
+    }
 
     @ManyToOne(targetEntity = Relationship.class, fetch = FetchType.LAZY)
+    @MapsId("relationshipId")
     @JoinColumn(name = "relationship_id")
     private Relationship relationship;
 
@@ -42,10 +48,24 @@ public class ConceptRelationship {
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @MapsId("concept2Id")
     @JoinColumn(name = "concept_id_2")
-    Concept concept2;
+    private Concept concept2;
 
     public Concept getConcept2() {
         return this.concept2;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptRelationshiop{id=").append(this.relationship);
+        result.append(", concept1=")
+                .append(this.getConcept1())
+                .append("'");
+        result.append(", concept2=")
+                .append(this.getConcept2())
+                .append("'");
+        result.append("}");
+        return result.toString();
     }
 
 }
