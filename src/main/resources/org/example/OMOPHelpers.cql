@@ -111,6 +111,16 @@ define function ToCode(OMOPObject OMOP.VisitOccurrence):
 
 // Conversion to System.Concept
 
+define function ToConcept(OMOPObject OMOP.Concept):
+  System.Concept{
+    codes: { ToCode(OMOPObject) }
+  }
+
+define function ToConcept(OMOPObject List<OMOP.Concept>):
+  System.Concept{
+    codes: (OMOPObject) o return all ToCode(o)
+  }
+
 define function ToConcept(OMOPObject OMOP.Relationship):
   System.Concept{
     codes: { ToCode(OMOPObject) }
@@ -127,11 +137,6 @@ define function ToConcept(OMOPObject OMOP.Domain):
   }
 
 define function ToConcept(OMOPObject OMOP.Vocabulary):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
-
-define function ToConcept(OMOPObject OMOP.Concept):
   System.Concept{
     codes: { ToCode(OMOPObject) }
   }

@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ns4:modelInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns4="urn:hl7-org:elm-modelinfo:r1" name="OMOP" version="v5.4" url="urn:ohdsi:omop-types:v5.4">
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CareSite" baseType="System.Any" retrievable="true">
-        <ns4:element name="placeOfServiceSourceValue" type="System.String"/>
-        <ns4:element name="careSiteSourceValue" type="System.String"/>
-        <ns4:element name="locationId" type="System.Integer"/>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CareSite" baseType="System.Any" retrievable="true" description="The CARE_SITE table contains a list of uniquely identified institutional (physical or organizational) units where healthcare delivery is practiced (offices, wards, hospitals, clinics, etc.).">
+        <ns4:element name="placeOfServiceSourceValue" type="System.String" description="NIL&#10;---&#10;Put the place of service of the care_site as it appears in the source data."/>
+        <ns4:element name="careSiteSourceValue" type="System.String" description="The identifier of the care_site as it appears in the source data. This could be an identifier separate from the name of the care_site."/>
+        <ns4:element name="locationId" type="System.Integer" description="The location_id from the LOCATION table representing the physical location of the care_site."/>
         <ns4:element name="location" type="Location"/>
-        <ns4:element name="placeOfServiceConceptId" type="System.Integer"/>
+        <ns4:element name="placeOfServiceConceptId" type="System.Integer" description="This is a high-level way of characterizing a Care Site. Typically, however, Care Sites can provide care in multiple settings (inpatient, outpatient, etc.) and this granularity should be reflected in the visit.&#10;---&#10;Choose the concept in the visit domain that best represents the setting in which healthcare is provided in the Care Site. If most visits in a Care Site are Inpatient, then the place_of_service_concept_id should represent Inpatient. If information is present about a unique Care Site (e.g. Pharmacy) then a Care Site record should be created. [Accepted Concepts](https://athena.ohdsi.org/search-terms/terms?domain=Visit&amp;standardConcept=Standard&amp;page=2&amp;pageSize=15&amp;query=). For information about how to populate this field please see the [THEMIS Conventions](https://ohdsi.github.io/Themis/tag_place_of_service.html)."/>
         <ns4:element name="placeOfServiceConcept" type="Concept"/>
-        <ns4:element name="careSiteName" type="System.String"/>
-        <ns4:element name="careSiteId" type="System.Integer"/>
+        <ns4:element name="careSiteName" type="System.String" description="The name of the care_site as it appears in the source data"/>
+        <ns4:element name="careSiteId" type="System.Integer" description="NIL&#10;---&#10;Assign an ID to each combination of a location and nature of the site - the latter could be the Place of Service, name or another characteristic in your source data."/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CdmSource" baseType="System.Any" retrievable="true">
-        <ns4:element name="vocabularyVersion" type="System.String"/>
-        <ns4:element name="cdmVersionConceptId" type="System.Integer"/>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CdmSource" baseType="System.Any" retrievable="true" description="The CDM_SOURCE table contains detail about the source database and the process used to transform the data into the OMOP Common Data Model.">
+        <ns4:element name="vocabularyVersion" type="System.String" description="Version of the OMOP standardised vocabularies loaded&#10;---&#10;You can find the version of your Vocabulary using the query: `SELECT vocabulary_version from vocabulary  where vocabulary_id = 'None'`"/>
+        <ns4:element name="cdmVersionConceptId" type="System.Integer" description="The Concept Id representing the version of the CDM.&#10;---&#10;You can find all concepts that represent the CDM versions using the query: `SELECT * FROM CONCEPT WHERE   VOCABULARY_ID = 'CDM' AND CONCEPT_CLASS = 'CDM'`"/>
         <ns4:element name="cdmVersionConcept" type="Concept"/>
-        <ns4:element name="cdmVersion" type="System.String"/>
-        <ns4:element name="cdmReleaseDate" type="System.Date"/>
-        <ns4:element name="sourceReleaseDate" type="System.Date"/>
-        <ns4:element name="cdmEtlReference" type="System.String"/>
-        <ns4:element name="sourceDocumentationReference" type="System.String"/>
-        <ns4:element name="sourceDescription" type="System.String"/>
-        <ns4:element name="cdmHolder" type="System.String"/>
-        <ns4:element name="cdmSourceAbbreviation" type="System.String"/>
-        <ns4:element name="cdmSourceName" type="System.String"/>
+        <ns4:element name="cdmVersion" type="System.String" description="Version of the OMOP CDM used as string. e.g. v5.4"/>
+        <ns4:element name="cdmReleaseDate" type="System.Date" description="The date the ETL script was completed. Typically this is after the source_release_date."/>
+        <ns4:element name="sourceReleaseDate" type="System.Date" description="The date the data was extracted from the source system. In some systems that is the same as the date the ETL was run. Typically the latest even date in the source is on the source_release_date."/>
+        <ns4:element name="cdmEtlReference" type="System.String" description="NIL&#10;---&#10;Version of the ETL script used. e.g. link to the Git release"/>
+        <ns4:element name="sourceDocumentationReference" type="System.String" description="NIL"/>
+        <ns4:element name="sourceDescription" type="System.String" description="The description of the CDM instance."/>
+        <ns4:element name="cdmHolder" type="System.String" description="The holder of the CDM instance."/>
+        <ns4:element name="cdmSourceAbbreviation" type="System.String" description="The abbreviation of the CDM instance."/>
+        <ns4:element name="cdmSourceName" type="System.String" description="The name of the CDM instance."/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Cohort" baseType="System.Any" retrievable="true">
-        <ns4:element name="cohortEndDate" type="System.Date"/>
-        <ns4:element name="cohortStartDate" type="System.Date"/>
-        <ns4:element name="subjectId" type="System.Integer"/>
-        <ns4:element name="cohortDefinitionId" type="System.Integer"/>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Cohort" baseType="System.Any" retrievable="true" description="The subject of a cohort can have multiple, discrete records in the cohort table per cohort_definition_id, subject_id, and non-overlapping time periods. The definition of the cohort is contained within the COHORT_DEFINITION table. It is listed as part of the RESULTS schema because it is a table that users of the database as well as tools such as ATLAS need to be able to write to. The CDM and Vocabulary tables are all read-only so it is suggested that the COHORT and COHORT_DEFINTION tables are kept in a separate schema to alleviate confusion.">
+        <ns4:element name="cohortEndDate" type="System.Date" description="NIL"/>
+        <ns4:element name="cohortStartDate" type="System.Date" description="NIL"/>
+        <ns4:element name="subjectId" type="System.Integer" description="NIL"/>
+        <ns4:element name="cohortDefinitionId" type="System.Integer" description="NIL"/>
     </ns4:typeInfo>
     <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="ConceptRelationship" baseType="System.Any" retrievable="true">
+        <ns4:element name="relationshipId" type="System.String"/>
         <ns4:element name="relationship" type="Relationship"/>
-        <ns4:element name="concept1" type="Concept"/>
-        <ns4:element name="concept2" type="Concept"/>
+        <ns4:element name="conceptId1" type="System.Integer"/>
+        <ns4:element name="concept1" type="OMOP.Concept"/>
+        <ns4:element name="conceptId2" type="System.Integer"/>
+        <ns4:element name="concept2" type="OMOP.Concept"/>
     </ns4:typeInfo>
-    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CohortDefinition" baseType="System.Any" retrievable="true">
-        <ns4:element name="cohortInitiationDate" type="System.Date"/>
-        <ns4:element name="subjectConceptId" type="System.Integer"/>
+    <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="CohortDefinition" baseType="System.Any" retrievable="true" description="The COHORT_DEFINITION table contains records defining a Cohort derived from the data through the associated description and syntax and upon instantiation (execution of the algorithm) placed into the COHORT table. Cohorts are a set of subjects that satisfy a given combination of inclusion criteria for a duration of time. The COHORT_DEFINITION table provides a standardized structure for maintaining the rules governing the inclusion of a subject into a cohort, and can store operational programming code to instantiate the cohort within the OMOP Common Data Model.">
+        <ns4:element name="cohortInitiationDate" type="System.Date" description="A date to indicate when the Cohort was initiated in the COHORT table."/>
+        <ns4:element name="subjectConceptId" type="System.Integer" description="This field contains a Concept that represents the domain of the subjects that are members of the cohort (e.g., Person, Provider, Visit)."/>
         <ns4:element name="subjectConcept" type="Concept"/>
         <ns4:element name="cohortDefinitionSyntax" type="System.String"/>
         <ns4:element name="definitionTypeConceptId" type="System.Integer"/>

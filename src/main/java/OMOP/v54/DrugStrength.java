@@ -1,24 +1,29 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
 
 @Entity
 @Table(name = "drug_strength", schema = "cds_cdm")
 public class DrugStrength {
+
+  @Embeddable
+  private static class CompoundId {
+
+    @Column(name = "ingredient_concept_id")
+    public Integer ingredientConceptId;
+
+    @Column(name = "drug_concept_id")
+    public Integer drugConceptId;
+
+  }
+
+  @EmbeddedId
+  private CompoundId compoundId;
 
   @Column(name = "invalid_reason", insertable = false, updatable = false)
   private String invalidReason;
@@ -150,37 +155,36 @@ public class DrugStrength {
       return Optional.empty();
     }
   }
-  
-  @Column(name = "ingredient_concept_id", insertable = false, updatable = false)
-  private Integer ingredientConceptId;
-  
+
   public Optional<Integer> getIngredientConceptId() {
-    if (this.ingredientConceptId != null) {
+    /*if (this.ingredientConceptId != null) {
       return Optional.of(this.ingredientConceptId);
     } else {
       return Optional.empty();
-    }
+    }*/
+    return Optional.of(this.compoundId.ingredientConceptId);
   }
   
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+  @MapsId("ingredientConceptId")
   @JoinColumn(name = "ingredient_concept_id")
   private Concept ingredientConcept;
   
   public Optional<Concept> getIngredientConcept() {
     return Optional.ofNullable(this.ingredientConcept);
   }
-  @Column(name = "drug_concept_id", insertable = false, updatable = false)
-  private Integer drugConceptId;
   
   public Optional<Integer> getDrugConceptId() {
-    if (this.drugConceptId != null) {
+    /*if (this.drugConceptId != null) {
       return Optional.of(this.drugConceptId);
     } else {
       return Optional.empty();
-    }
+    }*/
+    return Optional.of(this.compoundId.drugConceptId);
   }
   
   @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+  @MapsId("drugConceptId")
   @JoinColumn(name = "drug_concept_id")
   private Concept drugConcept;
   

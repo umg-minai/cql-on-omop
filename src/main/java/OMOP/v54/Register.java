@@ -34,6 +34,7 @@ public class Register  {
         mappingInfo.registerDataTypeInfo("ConceptClass", new ConceptClassInfo());
         mappingInfo.registerDataTypeInfo("Relationship", new RelationshipInfo());
         mappingInfo.registerDataTypeInfo("ConceptRelationship", new ConceptRelationshipInfo());
+        mappingInfo.registerDataTypeInfo("DrugStrength", new DrugStrengthInfo());
         
     }
     
