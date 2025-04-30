@@ -11,6 +11,7 @@ import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,8 @@ public class CQLonOMOPEngine {
         modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
-                .withSignatureLevel(LibraryBuilder.SignatureLevel.All);
+                .withSignatureLevel(LibraryBuilder.SignatureLevel.All)
+                .withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
         this.libraryManager = new LibraryManager(modelManager, options);
         final var loader = this.libraryManager.getLibrarySourceLoader();
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
@@ -56,6 +58,32 @@ public class CQLonOMOPEngine {
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
         this(sessionFactory, mappingInfo, List.of(librarySourceProvider));
+    }
+
+    public Library prepareLibrary(final VersionedIdentifier libraryIdentifier) {
+        // "Compilation" proceeds despite errors, collect errors in a
+        // list.
+        final var errors = new ArrayList<CqlCompilerException>();
+        final var library = this.libraryManager
+                .resolveLibrary(libraryIdentifier, errors)
+                .getLibrary();
+        final var includes = library.getIncludes();
+        final var includesDef = includes == null ? null : includes.getDef();
+        if (includesDef != null) {
+            includesDef.forEach(included -> {
+                    final var includedIdentifier = new VersionedIdentifier()
+                            .withSystem(NamespaceManager.getUriPart(included.getPath()))
+                            .withId(NamespaceManager.getNamePart(included.getPath()))
+                            .withVersion(included.getVersion());
+                    prepareLibrary(includedIdentifier);
+            });
+        }
+        // Compilation failures are not indicated directly (as far as
+        // I can tell) but via a non-empty list of errors.
+        if (!errors.isEmpty()) {
+            throw new CompilationFailedException(errors);
+        }
+        return library;
     }
 
     public EvaluationResult evaluateLibrary(final String library,
