@@ -8,6 +8,7 @@ import org.cqframework.cql.cql2elm.StringLibrarySourceProvider;
 import org.example.engine.CQLonOMOPEngine;
 import org.example.engine.Configuration;
 import org.example.engine.ConnectionFactory;
+import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
 import org.opencds.cqf.cql.engine.runtime.Date;
@@ -201,6 +202,17 @@ public class Evaluator {
         });
         this.sourceProvider.setContent(input.toString());
         final var libraryName = this.sourceProvider.libraryName();
+        // Compile library. The compilation results will be
+        // cached. This with parallel evaluation since compilation
+        // would happen at the start of each task otherwise.
+        //
+        // Also, if the compilation fails, an exception is thrown here
+        // and evaluation is aborted.
+        engine.prepareLibrary(new VersionedIdentifier().withId(libraryName));
+        // Choose evaluation semantics based on the context object(s):
+        // for no object or a single object, evaluate in the current
+        // thread right away. For a list of objects, evaluate in
+        // parallel using a thread pool and tasks.
         final var contextObjects = this.state.contextObjects;
         final EvaluationResult result;
         if (contextObjects.isEmpty()) {
