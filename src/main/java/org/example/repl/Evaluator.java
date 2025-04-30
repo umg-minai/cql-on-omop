@@ -3,8 +3,6 @@ package org.example.repl;
 import OMOP.MappingInfo;
 import org.cqframework.cql.cql2elm.DefaultLibrarySourceProvider;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
-import org.cqframework.cql.cql2elm.PriorityLibrarySourceLoader;
-import org.cqframework.cql.cql2elm.StringLibrarySourceProvider;
 import org.example.engine.CQLonOMOPEngine;
 import org.example.engine.Configuration;
 import org.example.engine.ConnectionFactory;
@@ -24,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Evaluator {
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     private static class State {
         public int expressionCount = 1;
@@ -59,12 +57,16 @@ public class Evaluator {
         configuration.getLibrarySearchPath().forEach(path ->
                 sourceProviders.add(new DefaultLibrarySourceProvider(path)));
 
-        final var mappingInfo = MappingInfo.ensureVersion("v5.4");
+        final var mappingInfo = MappingInfo.ensureVersion("v5.4"); // TODO(jmoringe): don't hard-code
         final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
         //this.dataProvider = OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo);
         this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, sourceProviders);
         this.state = new State();
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
+    }
+
+    public CQLonOMOPEngine getEngine() {
+        return this.engine;
     }
 
     public void load(final Path filename) throws IOException {
@@ -173,35 +175,43 @@ public class Evaluator {
         return executeCQLStatement(statement, definitionName);
     }
 
-    private EvaluationResult internalEvaluate(final String definitionName) {
+    private String pseudoLibrary(final State state) {
         final var input = new StringBuilder();
         input.append("""
             using "OMOP" version 'v5.4'
-            
+
             include "OMOPHelpers"
             include "OMOPFunctions"
             """);
-        this.state.include.forEach(statement -> {
+        state.include.forEach(statement -> {
             input.append(statement);
             input.append("\n");
         });
         input.append("""
             codesystem LOINC: 'http://loinc.org'
-            
-            codesystem OMOPSV: 'https://fhir-terminology.ohdsi.org' // SV = Standardized Vocabulary 
-            
+
+            codesystem OMOPSV: 'https://fhir-terminology.ohdsi.org' // SV = Standardized Vocabulary
+
             codesystem SNOMED: 'http://snomed.info/sct'
-                                    
+
             """);
-        this.state.prelude.forEach(statement -> {
+        state.prelude.forEach(statement -> {
             input.append(statement);
             input.append("\n");
         });
-        this.state.statements.forEach(statement -> {
+        state.statements.forEach(statement -> {
             input.append(statement);
             input.append("\n");
         });
-        this.sourceProvider.setContent(input.toString());
+        return input.toString();
+    }
+
+    private String pseudoLibrary() {
+        return pseudoLibrary(this.state);
+    }
+
+    private EvaluationResult internalEvaluate(final String definitionName) {
+        this.sourceProvider.setContent(pseudoLibrary());
         final var libraryName = this.sourceProvider.libraryName();
         // Compile library. The compilation results will be
         // cached. This with parallel evaluation since compilation
@@ -236,13 +246,6 @@ public class Evaluator {
                 try {
                     contextObjects.forEach(object -> {
                         pool.submit(() -> {
-                            synchronized (this) {
-                                System.out.printf("[%s] + %d/%d (%s)\n",
-                                        Thread.currentThread(),
-                                        ++count[0],
-                                        contextObjects.size(),
-                                        object);
-                            }
                             final var objectKey = object.toString(); // TODO(jmoringe): ensure uniqueness
                             try {
                                 final var results = engine.evaluateLibrary(libraryName,
@@ -254,12 +257,12 @@ public class Evaluator {
                                 allResults.put(objectKey, e.toString());
                             }
                             // TODO(jmoringe): wrong
+                            var currentCount = 0;
                             synchronized (this) {
-                                System.out.printf("[%s] - %d/%d (%s)\n",
-                                        Thread.currentThread(),
-                                        --count[0],
-                                        contextObjects.size(),
-                                        object);
+                                currentCount = ++count[0];
+                            }
+                            if (currentCount % 100 == 0) {
+                                System.out.printf("%d/%d\n", currentCount, contextObjects.size());
                             }
                         });
                     });
