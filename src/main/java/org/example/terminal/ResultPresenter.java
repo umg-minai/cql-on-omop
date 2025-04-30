@@ -1,4 +1,4 @@
-package org.example.repl;
+package org.example.terminal;
 
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
@@ -11,7 +11,13 @@ public class ResultPresenter {
 
     private final Set<String> seenResults = new HashSet<>();
 
-    public void presentResult(final EvaluationResult result, final Terminal terminal) {
+    private final Terminal terminal;
+
+    public ResultPresenter(final Terminal terminal) {
+        this.terminal = terminal;
+    }
+
+    public void presentResult(final EvaluationResult result) {
         // Messages
         final var debugResult = result.getDebugResult();
         if (debugResult != null) {
@@ -41,7 +47,7 @@ public class ResultPresenter {
                 presentValue(value, string);
             }
         });
-        string.print(terminal);
+        string.print(this.terminal);
     }
 
     private void presentValue(final Object value, final AttributedStringBuilder string) {

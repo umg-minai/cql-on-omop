@@ -3,15 +3,13 @@ package org.example;
 import org.example.engine.Configuration;
 import org.example.repl.Completer;
 import org.example.repl.Evaluator;
-import org.example.repl.ResultPresenter;
+import org.example.terminal.ErrorPresenter;
+import org.example.terminal.ResultPresenter;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
-import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -110,6 +108,7 @@ public class Repl implements Runnable {
 
     private Evaluator evaluator;
     private ResultPresenter resultPresenter;
+    private ErrorPresenter errorPresenter;
 
     public Repl() {}
 
@@ -125,32 +124,20 @@ public class Repl implements Runnable {
             if (input.equals("quit")) {
                 break;
             }
-            EvaluationResult result = null;
             try {
-                result = evaluator.evaluate(input);
+                final var result = evaluator.evaluate(input);
+                if (result != null) { // TODO(jmoringe): can this be null?
+                    this.resultPresenter.presentResult(result);
+                }
             } catch (Exception exception) {
-                new AttributedStringBuilder()
-                        .style(new AttributedStyle().foregroundRgb(0xff0000))
-                        .append(exception.toString())
-                        .println(terminal);
+                this.errorPresenter.presentError(exception);
             }
-            if (result != null) {
-                resultPresenter.presentResult(result, terminal);
-            }
+
         }
     }
 
     @Override
     public void run() {
-        try {
-            // Initialize user interface.
-            this.terminal = TerminalBuilder.builder().build();
-            this.reader = LineReaderBuilder.builder()
-                    .completer(new Completer())
-                    .terminal(this.terminal).build();
-        } catch (IOException e) {
-            throw new RuntimeException("Error initializing terminal", e);
-        }
         // Configure and create evaluator.
         var configuration = new Configuration()
                 .withDatabaseHost(databaseOptions.host)
@@ -189,11 +176,33 @@ public class Repl implements Runnable {
             }
         }
 
-        this.resultPresenter = new ResultPresenter();
+        // Initialize user interface.
+        final var systemModelInfo = this.evaluator.getEngine().getModel("System").getModelInfo();
+        final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
+        try {
+
+            this.terminal = TerminalBuilder.builder().build();
+            this.reader = LineReaderBuilder.builder()
+                    .variable(LineReader.HISTORY_FILE,
+                            String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME")))
+                    .completer(new Completer(systemModelInfo, domainModelInfo))
+                    .terminal(this.terminal).build();
+        } catch (IOException e) {
+            throw new RuntimeException("Error initializing terminal", e);
+        }
+
+        this.resultPresenter = new ResultPresenter(terminal);
+        this.errorPresenter = new ErrorPresenter(this.evaluator.getEngine().getLibraryManager(), terminal);
         try {
             repl();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                this.reader.getHistory().save();
+            } catch (IOException e) {
+                System.err.printf("Error saving REPL history %s\n", e);
+            }
         }
     }
 
