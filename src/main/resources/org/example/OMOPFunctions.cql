@@ -4,6 +4,24 @@ using OMOP version 'v5.4'
 
 include OMOPHelpers
 
+// Conversion to OMOP.Concept
+
+define function ToOMOPConcept(SystemCode System.Code):
+  singleton from ([OMOP.Concept: SystemCode] c return all c)
+
+// Standard concept
+
+define function IsStandardConcept(AConcept OMOP.Concept):
+  AConcept.standardConcept = 'S'
+
+define function StandardConcept(AConcept OMOP.Concept):
+  if IsStandardConcept(AConcept) then
+    AConcept
+  else
+    singleton from ((AConcept.relationships)
+                      r where r.relationshipId = 'Maps to'
+                      return all r.concept2)
+
 // Concept relationships
 
 define function RelatedConcepts(OMOPConcept OMOP.Concept,
@@ -21,7 +39,7 @@ define function DrugStrengthForDrug(Drug List<OMOP.Concept>):
   [DrugStrength: drugConcept ~ OMOPHelpers.ToConcept(Drug)]
 
 define function DrugStrengthForIngredient(Ingredient OMOP.Concept):
-  [DrugStrength: ingredientConcept ~ (convert Ingredient to Concept)]
+  [DrugStrength: ingredientConcept ~ (convert Ingredient to System.Concept)]
 
 define function DrugStrengthForIngredient(Ingredient List<OMOP.Concept>):
   [DrugStrength: ingredientConcept ~ OMOPHelpers.ToConcept(Ingredient)]
