@@ -152,6 +152,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private CriteriaQuery<?> dataTypeCriteria(final String dataType) {
+        // TODO(jmoringe): don't hard-code version
         final Class<Object> clazz = (Class<Object>) MappingInfo.ensureVersion("v54").getDataTypeInfo(dataType).getClazz();
         if (clazz == null) {
             System.err.println("Class for " + dataType + " not found");
@@ -209,13 +210,21 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                                      final String conceptRelation,
                                                      final Iterable<Code> codes) {
         final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
-        final Join<T, Concept> join = root.join(conceptRelation);
-        return addRestriction(baseQuery, conceptPredicateForCodes(criteriaBuilder, join, codes));
+        jakarta.persistence.criteria.Predicate predicates;
+        if (root.getModel().getName().equals("Concept")
+                && conceptRelation.equals("concept")) {
+            predicates = conceptPredicateForCodes(criteriaBuilder, (Path<Concept>) root, codes);
+        } else {
+            final Join<T, Concept> join = root.join(conceptRelation);
+            predicates = conceptPredicateForCodes(criteriaBuilder, join, codes);
+        }
+        return addRestriction(baseQuery, predicates);
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
                                                                             final Path<Concept> conceptPath,
                                                                             final Iterable<Code> codes) {
+        // TODO(jmoringe): can we use criteriaBuilder.in(expression).in(collection)?
         final var predicates = StreamSupport
                 .stream(codes.spliterator(), false)
                 .map(code -> conceptPredicateForCode(criteriaBuilder, conceptPath, code))
