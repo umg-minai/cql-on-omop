@@ -3,7 +3,12 @@ package org.example.engine;
 import OMOP.MappingInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.*;
+import org.cqframework.cql.cql2elm.model.Model;
 import org.hibernate.SessionFactory;
+import org.hl7.cql.model.ModelIdentifier;
+import org.hl7.cql.model.NamespaceManager;
+import org.hl7.elm.r1.Library;
+import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
@@ -17,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CQLonOMOPEngine {
+
+    private final ModelIdentifier modelIdentifier = new ModelIdentifier()
+            .withId("OMOP")
+            .withVersion("v5.4");
 
     // TODO(jmoringe): do something better
     private final ModelManager modelManager = new ModelManager(Path.of("."));
@@ -34,7 +43,7 @@ public class CQLonOMOPEngine {
     private Map<String, DataProvider> dataProviders;
 
     public CQLonOMOPEngine(final List<LibrarySourceProvider> librarySourceProviders) {
-        modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
+        this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
                 .withSignatureLevel(LibraryBuilder.SignatureLevel.All)
@@ -58,6 +67,22 @@ public class CQLonOMOPEngine {
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
         this(sessionFactory, mappingInfo, List.of(librarySourceProvider));
+    }
+
+    public Model getModel(final ModelIdentifier modelIdentifier) {
+        return this.modelManager.resolveModel(modelIdentifier);
+    }
+
+    public Model getModel(final String id) {
+        return getModel(new ModelIdentifier().withId(id));
+    }
+
+    public Model getModel() {
+        return getModel(this.modelIdentifier);
+    }
+
+    public LibraryManager getLibraryManager() {
+        return this.libraryManager;
     }
 
     public Library prepareLibrary(final VersionedIdentifier libraryIdentifier) {
@@ -92,14 +117,11 @@ public class CQLonOMOPEngine {
         //final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
         try (var session = this.sessionFactory.openSession();
              var entityManager = session.getEntityManagerFactory().createEntityManager()) {
-            // final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
             final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
             final var dataProviders = Map.<String, DataProvider>of(
-                    // TODO String.format("urn:ohdsi:omop-types:r5.4", dataProvider.getModelInfo().getVersion()),
-                    "urn:ohdsi:omop-types:v5.4",
+                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
                     dataProvider);
             final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
-            //engine.getState().getDebugResult().getMessages().forEach(System.err::println);
             final var engine = new CqlEngine(environment);
             final var result = contextObject == null
                 ? engine.evaluate(library, parameterBindings)
