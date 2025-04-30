@@ -179,6 +179,7 @@ public class Evaluator {
             using "OMOP" version 'v5.4'
             
             include "OMOPHelpers"
+            include "OMOPFunctions"
             """);
         this.state.include.forEach(statement -> {
             input.append(statement);

@@ -15,7 +15,10 @@ public class BuiltinLibrariesSourceProvider implements LibrarySourceProvider {
         // TODO: check version
         if (versionedIdentifier.getId().equals("OMOPHelpers")) {
             return BuiltinLibrariesSourceProvider.class.getResourceAsStream("/org/example/OMOPHelpers.cql");
-        } else {
+        } else if (versionedIdentifier.getId().equals("OMOPFunctions")) {
+            return BuiltinLibrariesSourceProvider.class.getResourceAsStream("/org/example/OMOPFunctions.cql");
+        }
+        else {
             return null;
         }
     }
