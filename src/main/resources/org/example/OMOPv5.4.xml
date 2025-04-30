@@ -73,6 +73,7 @@
         <ns4:element name="vocabulary" type="Vocabulary"/>
         <ns4:element name="domainId" type="System.String"/>
         <ns4:element name="domain" type="Domain"/>
+        <ns4:element name="concept" type="Concept"/> <!-- required as code path in retrieve -->
         <ns4:element name="conceptName" type="System.String"/>
         <ns4:element name="conceptId" type="System.Integer"/>
     </ns4:typeInfo>

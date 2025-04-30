@@ -333,10 +333,18 @@ public class DrugExposure {
   
   @Override
   public String toString() {
-      final var result = new StringBuilder();
-      result.append("DrugExposure{id=").append(this.drugExposureId);
-      result.append("}");
-      return result.toString();
+    final var result = new StringBuilder();
+    result.append("DrugExposure{");
+    result.append("id=");
+    result.append(this.drugExposureId);
+    this.getDrugConcept().ifPresent(concept -> {
+              result.append(", concept='");
+              result.append(concept.getConceptName().get());
+              result.append("'");
+
+            });
+    result.append("}");
+    return result.toString();
   }
   
 }
