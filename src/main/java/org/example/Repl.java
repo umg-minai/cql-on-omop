@@ -116,7 +116,8 @@ public class Repl implements Runnable {
         for (int i = 0;; ++i) {
             final String input;
             try {
-                input = reader.readLine(String.format("[%s] ", i));
+                final var prompt = String.format("[%s] ", i);
+                input = reader.readLine(prompt);
             } catch (EndOfFileException _e) {
                 // User probably pressed C-d.
                 break;
@@ -206,7 +207,7 @@ public class Repl implements Runnable {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int exitCode = new CommandLine(new Repl()).execute(args);
         System.exit(exitCode);
     }
