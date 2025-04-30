@@ -12,6 +12,25 @@ public class ResultPresenter {
     private final Set<String> seenResults = new HashSet<>();
 
     public void presentResult(final EvaluationResult result, final Terminal terminal) {
+        // Messages
+        final var debugResult = result.getDebugResult();
+        if (debugResult != null) {
+            final var messages = debugResult.getMessages();
+            if (!messages.isEmpty()) {
+                final var string = new AttributedStringBuilder();
+                messages.forEach(message -> {
+                    string.style(new AttributedStyle().foregroundRgb(switch (message.getSeverity()) {
+                        case WARNING -> 0xc08000;
+                        case MESSAGE -> 0xc0c0c0;
+                        default -> 0x808080;
+                    }));
+                    string.append(message.getMessage());
+                    string.append("\n");
+                });
+                string.print(terminal);
+            }
+        }
+        // Result values
         final var string = new AttributedStringBuilder();
         result.expressionResults.forEach((expressionName, expressionResult) -> {
             if (!this.seenResults.contains(expressionName)) {
