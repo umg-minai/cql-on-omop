@@ -27,20 +27,20 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Object resolvePath(Object o, String s) {
-        Class<?> clazz = o.getClass();
-        final var name = s.substring(0, 1).toUpperCase() + s.substring(1);
+    public Object resolvePath(final Object object, final String path) {
+        Class<?> clazz = object.getClass();
+        final var name = path.substring(0, 1).toUpperCase() + path.substring(1);
         final Method method;
         Object result;
         try {
             method = clazz.getMethod(String.format("get%s", name), new Class[]{});
-            result = method.invoke(o);
+            result = method.invoke(object);
         } catch (NoSuchMethodException e) {
             System.err.printf("%s [get%s] not found in class %s%n",
-                    s, name, clazz.getCanonicalName());
+                    path, name, clazz.getCanonicalName());
             return null;
         } catch (InvocationTargetException | IllegalAccessException e) {
-            System.err.printf("failed to get %s of %s: %s", s, o, e);
+            System.err.printf("failed to get %s of %s: %s", path, object, e);
             return null;
         }
         if (result instanceof Optional<?> optional) {
@@ -72,7 +72,7 @@ public class OMOPModelResolver implements ModelResolver {
 
     @Override
     public Object as(Object value, Class<?> type, boolean isStrict) {
-        throw new RuntimeException("not implemented");
+        throw new RuntimeException(String.format("as(%s, %s, %s) not implemented", value, type, isStrict));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class OMOPModelResolver implements ModelResolver {
 
     @Override
     public void setValue(Object o, String s, Object o1) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(String.format("setValue(%s, %s, %s) not implemented", o, s, o1));
     }
 
     @Override
@@ -103,12 +103,12 @@ public class OMOPModelResolver implements ModelResolver {
 
     @Override
     public Boolean objectEquivalent(Object o, Object o1) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(String.format("objectEquivalent(%s, %s) not implemented", o, o1));
     }
 
     @Override
     public String resolveId(Object o) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException(String.format("resolveId(%s) not implemented", o));
     }
 
 }
