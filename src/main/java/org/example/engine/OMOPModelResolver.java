@@ -102,8 +102,8 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Boolean objectEquivalent(Object o, Object o1) {
-        throw new RuntimeException(String.format("objectEquivalent(%s, %s) not implemented", o, o1));
+    public Boolean objectEquivalent(Object left, Object right) {
+        return left.equals(right);
     }
 
     @Override
