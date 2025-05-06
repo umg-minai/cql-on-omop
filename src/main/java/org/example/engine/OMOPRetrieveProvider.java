@@ -1,12 +1,10 @@
 package org.example.engine;
 
-import OMOP.v54.Concept;
 import OMOP.MappingInfo;
+import OMOP.v54.Concept;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
@@ -14,7 +12,6 @@ import org.opencds.cqf.cql.engine.runtime.Interval;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
