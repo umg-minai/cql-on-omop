@@ -90,6 +90,8 @@ public class Repl implements Runnable {
         )
         private Map<String, String> parameterBindings = Map.of();
 
+        // TODO(jmoringe): context and focus
+
     }
 
     @CommandLine.ArgGroup(validate = false, heading = "Other Options%n")
@@ -153,9 +155,9 @@ public class Repl implements Runnable {
                     .withThreadCount(otherOptions.threadCount);
         }
         this.evaluator = new Evaluator(configuration);
-        // Load files
         if (cqlOptions != null) {
-            for (Path filename : cqlOptions.load) {
+            // Load files
+            for (var filename : cqlOptions.load) {
                 try {
                     this.evaluator.load(filename);
                 } catch (IOException e) {
@@ -163,7 +165,7 @@ public class Repl implements Runnable {
                 }
             }
             // Install parameter bindings
-            for (Map.Entry<String, String> entry : cqlOptions.parameterBindings.entrySet()) {
+            for (var entry : cqlOptions.parameterBindings.entrySet()) {
                 final var name = entry.getKey();
                 final var expression = entry.getValue();
                 try {
@@ -179,8 +181,8 @@ public class Repl implements Runnable {
         final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
         this.commandProcessor = new CommandProcessor(evaluator);
         try {
-
             this.terminal = TerminalBuilder.builder().build();
+            // TODO(jmoringe): fallback directory if XDG variable is not set
             this.reader = LineReaderBuilder.builder()
                     .variable(LineReader.HISTORY_FILE,
                             String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME")))
