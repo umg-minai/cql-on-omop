@@ -1,4 +1,4 @@
-package de.umg.minai.cqlonomop.celida;
+package de.umg.minai.cqlonomop.batch;
 
 import OMOP.MappingInfo;
 import OMOP.v54.Person;
@@ -12,7 +12,7 @@ import org.hl7.elm.r1.VersionedIdentifier;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Celida {
+public class Batch {
 
     final EntityManager entityManager;
 
@@ -20,7 +20,7 @@ public class Celida {
 
     final CQLonOMOPEngine engine;
 
-    private Celida() {
+    private Batch() {
         final var modelInfo = MappingInfo.ensureVersion("v5.4");
         this.entityManager = ConnectionFactory.createEntityManager(new Configuration(), modelInfo);
         this.librarySourceProvider = new InMemoryLibrarySourceProvider();
@@ -103,7 +103,7 @@ public class Celida {
     }
 
     public static void main(final String[] args) {
-        final var celida = new Celida();
+        final var celida = new Batch();
         celida.run();
     }
 
