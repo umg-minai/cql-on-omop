@@ -19,6 +19,7 @@ public class CommandProcessor {
         registerCommand(new CommandSet(this.evaluator));
         registerCommand(new CommandUnset(this.evaluator));
         registerCommand(new CommandGraph(this.evaluator));
+        registerCommand(new CommandProfile(this.evaluator));
     }
 
     public Map<String, Command> getCommands() {
