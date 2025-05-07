@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Evaluator {
 
-    private final Configuration configuration;
-
     private static class State {
         public int expressionCount = 1;
         public List<String> include = new LinkedList<>();
@@ -34,6 +32,8 @@ public class Evaluator {
         public EvaluationResult previousResult = null;
     }
 
+    private final Configuration configuration;
+
     private static final Set<String> statementKeywords = Set.of("code",
             "codesystem",
             "context",
@@ -42,8 +42,6 @@ public class Evaluator {
             "using");
 
     private final REPLSourceProvider sourceProvider;
-
-    // private final OMOPDataProvider dataProvider;
 
     private final CQLonOMOPEngine engine;
 
@@ -59,7 +57,6 @@ public class Evaluator {
 
         final var mappingInfo = MappingInfo.ensureVersion("v5.4"); // TODO(jmoringe): don't hard-code
         final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
-        //this.dataProvider = OMOPDataProvider.fromSessionFactory(sessionFactory, mappingInfo);
         this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, sourceProviders);
         this.state = new State();
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
@@ -74,7 +71,11 @@ public class Evaluator {
     }
 
     public void setParameter(final String name, final Object value) {
-        this.state.parameterBindings.put(name, value);
+        if (value == null) {
+            this.state.parameterBindings.remove(name);
+        } else {
+            this.state.parameterBindings.put(name, value);
+        }
     }
 
     public void setParameter(final String name, final String value) {
@@ -227,7 +228,7 @@ public class Evaluator {
         final var contextObjects = this.state.contextObjects;
         final EvaluationResult result;
         if (contextObjects.isEmpty()) {
-            result = engine.evaluateLibrary(libraryName, this.state.parameterBindings);
+            result = engine.evaluateLibrary(libraryName, null, this.state.parameterBindings);
         } else if (contextObjects.size() == 1) {
             result = engine.evaluateLibrary(libraryName,
                     contextObjects.iterator().next(),
