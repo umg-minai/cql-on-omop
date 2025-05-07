@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.engine.Configuration;
+import org.example.repl.CommandProcessor;
 import org.example.repl.Completer;
 import org.example.repl.Evaluator;
 import org.example.terminal.ErrorPresenter;
@@ -107,6 +108,7 @@ public class Repl implements Runnable {
     private LineReader reader;
 
     private Evaluator evaluator;
+    private CommandProcessor commandProcessor;
     private ResultPresenter resultPresenter;
     private ErrorPresenter errorPresenter;
 
@@ -118,18 +120,13 @@ public class Repl implements Runnable {
             try {
                 final var prompt = String.format("[%s] ", i);
                 input = reader.readLine(prompt);
-            } catch (EndOfFileException _e) {
-                // User probably pressed C-d.
-                break;
-            }
-            if (input.equals("quit")) {
-                break;
-            }
-            try {
-                final var result = evaluator.evaluate(input);
+                final var result = commandProcessor.process(input);
                 if (result != null) { // TODO(jmoringe): can this be null?
                     this.resultPresenter.presentResult(result);
                 }
+            } catch (EndOfFileException _e) {
+                // User probably pressed C-d.
+                break;
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
             }
@@ -180,13 +177,14 @@ public class Repl implements Runnable {
         // Initialize user interface.
         final var systemModelInfo = this.evaluator.getEngine().getModel("System").getModelInfo();
         final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
+        this.commandProcessor = new CommandProcessor(evaluator);
         try {
 
             this.terminal = TerminalBuilder.builder().build();
             this.reader = LineReaderBuilder.builder()
                     .variable(LineReader.HISTORY_FILE,
                             String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME")))
-                    .completer(new Completer(systemModelInfo, domainModelInfo))
+                    .completer(new Completer(systemModelInfo, domainModelInfo, this.commandProcessor))
                     .terminal(this.terminal).build();
         } catch (IOException e) {
             throw new RuntimeException("Error initializing terminal", e);

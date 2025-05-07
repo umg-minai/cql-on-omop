@@ -9,7 +9,6 @@ import org.example.engine.ConnectionFactory;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
-import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.Tuple;
 
 import java.io.IOException;
@@ -19,10 +18,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class Evaluator {
 
-    private static class State {
+    public static class State {
         public int expressionCount = 1;
         public List<String> include = new LinkedList<>();
         public List<String> prelude = new LinkedList<>();
@@ -90,68 +90,35 @@ public class Evaluator {
         }
     }
 
-    public EvaluationResult evaluate(final String command) throws Exception {
+    public EvaluationResult evaluate(final String command) {
         final var trimmed = command.trim();
-        if (trimmed.startsWith(",")) {
-            executeMetaCommand(trimmed);
-            return null;
-        } else if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
+        if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
             if (trimmed.startsWith("include")) {
-                executeCQLIncludeStatement(trimmed);
+                return executeCQLIncludeStatement(trimmed);
             } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
-                executeCQLPreludeStatement(trimmed);
+                return executeCQLPreludeStatement(trimmed);
             } else {
-                executeCQLStatement(trimmed, null);
+                return executeCQLStatement(trimmed, null);
             }
-            return null;
         } else {
             return executeCQLExpression(trimmed);
         }
     }
 
-    private void executeMetaCommand(final String string) throws Exception {
-        final var commandAndArguments = string.substring(1).split("[ \t]+", 2);
-        final var command = commandAndArguments[0];
-        //final var argument = Arrays.copyOfRange(commandAndArguments, 1, commandAndArguments.length);
-        final var argument = commandAndArguments.length == 2 ? commandAndArguments[1] : null;
-        switch (command) {
-            case "quit" -> {
-                //assert arguments.length == 0;
-                // TODO: not implemented
-            }
-            case "set" -> {
-                final var parameterAndExpression = argument.split(" ", 2);
-                commandSet(parameterAndExpression[0], parameterAndExpression[1]);
-            }
-            case "unset" -> {
-                commandUnset(argument);
-            }
-            case "focus" -> {
-                //assert arguments.length == 1;
-                commandFocus(argument);
-            }
-            case "graph" -> {
-                final var filenameAndExpression = argument.split(" ", 2);
-                commandGraph(filenameAndExpression[1], filenameAndExpression[0]);
-            }
-            default -> throw new RuntimeException(String.format("Unknown command %s", command));
-        }
-    }
-
-    private void executeCQLIncludeStatement(final String statement) {
+    private EvaluationResult executeCQLIncludeStatement(final String statement) {
         this.state.include.add(statement);
         try {
-            internalEvaluate(null);
+            return internalEvaluate(null);
         } catch (Exception e) {
             this.state.include.remove(this.state.include.size() - 1);
             throw e;
         }
     }
 
-    private void executeCQLPreludeStatement(final String statement) {
+    private EvaluationResult executeCQLPreludeStatement(final String statement) {
         this.state.prelude.add(statement);
         try {
-            internalEvaluate(null);
+            return internalEvaluate(null);
         } catch (Exception e) {
             this.state.prelude.remove(this.state.prelude.size() - 1);
             throw e;
@@ -169,7 +136,7 @@ public class Evaluator {
         return this.state.previousResult;
     }
 
-    private EvaluationResult executeCQLExpression(final String expression) {
+    public EvaluationResult executeCQLExpression(final String expression) {
         final var definitionName = String.format("E%d", state.expressionCount);
         this.state.expressionCount++;
         final var statement = String.format("define %s: %s", definitionName, expression);
@@ -285,82 +252,7 @@ public class Evaluator {
         return result;
     }
 
-    private void commandSet(final String parameter, final String expression) {
-        Object object;
-        final var oldState = this.state;
-        this.state = new State();
-        try {
-            object = evaluateExpression(expression, "Unfiltered", new HashSet<>());
-            System.out.printf("Assigning %s <- %s\n", parameter, object);
-        } finally {
-            this.state = oldState;
-        }
-        this.state.parameterBindings.put(parameter, object);
-    }
-
-    private void commandUnset(final String parameter) {
-        System.out.printf("Removing binding for %s\n", parameter);
-        this.state.parameterBindings.remove(parameter);
-    }
-
-    private void commandFocus(final String expression) {
-        final var oldState = this.state;
-        this.state = new State();
-        try {
-            final var object = evaluateExpression(expression, "Unfiltered", new HashSet<>());
-            System.out.print("Focussing on ");
-            if (object instanceof Iterable<?> iterable) {
-                oldState.contextObjects = new HashSet<>();
-                iterable.forEach(element -> {
-                    System.out.printf("%s, ", element);
-                    oldState.contextObjects.add(element);
-                });
-                System.out.println();
-            } else {
-                System.out.printf("%s\n", object);
-                oldState.contextObjects = Set.of(object);
-            }
-        } finally {
-            this.state = oldState;
-        }
-    }
-
-    private void commandGraph(final String expression, final String filename) throws IOException {
-        System.out.printf("Attempting to produce graph for %s%n", filename);
-        final var object = evaluateExpression(expression);
-        if (object instanceof Tuple tuple) {
-            final var counts = new HashMap<java.util.Date, Integer>();
-            for (Object dates : tuple.getElements().values()) {
-                if (dates instanceof List<?> list) {
-                    for (Object date : list) {
-                        if (date instanceof Date date1) {
-                            // CQL engine Dates don't have a hashCode method
-                            final var javaDate = date1.toJavaDate();
-                            counts.compute(javaDate, (_date, count) -> (count != null ? count : 0) + 1);
-                        }
-                    }
-                }
-            }
-            System.out.printf("Attempting to write graph to %s%n", filename);
-            try (var file = Files.newBufferedWriter(Path.of(filename))) {
-                final var dates = counts.keySet().stream().sorted().toList();
-                java.util.Date previous = null;
-                for (java.util.Date date : dates) {
-                    if (previous != null && (date.getTime() - previous.getTime()) > 1000 * 24 * 60 * 60) {
-                        file.write("\n");
-                    }
-                    file.write(String.format("%s-%s-%s %d\n",
-                            1900 + date.getYear(),
-                            1 + date.getMonth(),
-                            date.getDate(),
-                            counts.get(date)));
-                    previous = date;
-                }
-            }
-        }
-    }
-
-    private Object evaluateExpression(final String expression, final String context, final Set<Object> contextObjects) {
+    public Object evaluateExpression(final String expression, final String context, final Set<Object> contextObjects) {
         final var definitionName = String.format("Temporary%d", this.state.statements.size());
         final var statementBuilder = new StringBuilder();
         if (context != null) {
@@ -384,8 +276,18 @@ public class Evaluator {
         return result.forExpression(definitionName).value();
     }
 
-    private Object evaluateExpression(final String expression) {
+    public Object evaluateExpression(final String expression) {
         return evaluateExpression(expression, null, null);
+    }
+
+    public Object withoutState(final Function<State, Object> continuation) {
+        final var oldState = this.state;
+        this.state = new State();
+        try {
+            return continuation.apply(oldState);
+        } finally {
+            this.state = oldState;
+        }
     }
 
 }
