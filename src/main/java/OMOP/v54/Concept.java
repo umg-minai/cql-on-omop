@@ -3,6 +3,7 @@ package OMOP.v54;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -237,6 +238,23 @@ public class Concept {
 
     public List<ConceptRelationship> getRelationships() {
         return this.relationships;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.conceptId);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        } else if (other instanceof Concept otherConcept) {
+            // We don't compare the classes of other and otherConcept since exactly one could be a Hibernate proxy.
+            return Objects.equals(this.getConceptId(), otherConcept.getConceptId());
+        } else {
+            return false;
+        }
     }
 
     @Override
