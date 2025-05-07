@@ -6,7 +6,9 @@ import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.ConnectionFactory;
+import org.hl7.elm.r1.FunctionDef;
 import org.hl7.elm.r1.VersionedIdentifier;
+import org.opencds.cqf.cql.engine.debug.DebugResult;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
 import org.opencds.cqf.cql.engine.runtime.Tuple;
@@ -187,7 +189,48 @@ public class Evaluator {
         //
         // Also, if the compilation fails, an exception is thrown here
         // and evaluation is aborted.
-        engine.prepareLibrary(new VersionedIdentifier().withId(libraryName));
+        final var libraries = engine.prepareLibrary(new VersionedIdentifier().withId(libraryName));
+
+        // TODO(jmoringe): describe
+        final HashMap<VersionedIdentifier, Set<String>> unfilteredExpressions = new HashMap<>();
+        libraries.forEach(library -> {
+            if (library.getStatements() != null) {
+                library.getStatements().getDef().forEach(definition -> {
+                    if (!(definition instanceof FunctionDef)  && definition.getContext().equals("Unfiltered")) {
+                        System.out.printf("%-48s.%-48s %s\n",
+                                library.getIdentifier().getId(),
+                                definition.getName(),
+                                definition.getContext());
+                        unfilteredExpressions.compute(
+                                library.getIdentifier(),
+                                (_library, expressions) -> {
+                                    if (expressions == null) {
+                                        expressions = new HashSet<>();
+                                    }
+                                    expressions.add(definition.getName());
+                                    return expressions;
+                                });
+                    }
+                });
+            }
+        });
+        final var cache = this.engine.evaluateExpressions(unfilteredExpressions); // TODO(jmoringe): parameters
+
+        libraries.forEach(library -> {
+            if (library.getStatements() != null) {
+                library.getStatements().getDef().forEach(definition -> {
+                    if (!(definition instanceof FunctionDef) && definition.getContext().equals("Unfiltered")) {
+                        System.out.printf("%-48s.%-48s %s -> %s\n",
+                                library.getIdentifier().getId(),
+                                definition.getName(),
+                                definition.getContext(),
+                                cache.getCachedExpression(library.getIdentifier(), definition.getName()));
+                    }
+                });
+            }
+        });
+
+
         // Choose evaluation semantics based on the context object(s):
         // for no object or a single object, evaluate in the current
         // thread right away. For a list of objects, evaluate in
@@ -205,12 +248,17 @@ public class Evaluator {
             if (state.previousResult != null) {
                 result.expressionResults.putAll(state.previousResult.expressionResults);
             }
-            if (definitionName != null) {
+            if (definitionName != null) { // TODO(jmoringe): when is this null?
                 final var allResults = new ConcurrentHashMap<String, Object>();
+                final boolean[] anyFailed = {false};
                 final int[] count = {0};
                 final var pool = this.configuration.getThreadCount() != null
                         ? Executors.newWorkStealingPool(this.configuration.getThreadCount())
                         : Executors.newWorkStealingPool();
+                if (result.getDebugResult() == null) {
+                    result.setDebugResult(new DebugResult());
+                }
+                final var profile = result.getDebugResult().getProfile();
                 try {
                     contextObjects.forEach(object -> {
                         pool.submit(() -> {
@@ -220,9 +268,16 @@ public class Evaluator {
                                     object,
                                     this.state.parameterBindings);
                                 final var objectResult = results.forExpression(definitionName);
+                                // TODO(jmoringe): make this concurrent
+                                synchronized (profile) {
+                                    profile.merge(results.getDebugResult().getProfile());
+                                }
                                 allResults.put(objectKey, objectResult.value());
                             } catch (Exception e) {
                                 allResults.put(objectKey, e.toString());
+                                synchronized (this) {
+                                    anyFailed[0] = true;
+                                }
                             }
                             // TODO(jmoringe): wrong
                             var currentCount = 0;

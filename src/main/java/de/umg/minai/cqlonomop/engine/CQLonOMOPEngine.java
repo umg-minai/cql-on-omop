@@ -7,19 +7,20 @@ import org.cqframework.cql.cql2elm.model.Model;
 import org.hibernate.SessionFactory;
 import org.hl7.cql.model.ModelIdentifier;
 import org.hl7.cql.model.NamespaceManager;
+import org.hl7.elm.r1.ExpressionDef;
 import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.data.DataProvider;
+import org.opencds.cqf.cql.engine.execution.Cache;
 import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CQLonOMOPEngine {
 
@@ -46,8 +47,8 @@ public class CQLonOMOPEngine {
         this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
-                .withSignatureLevel(LibraryBuilder.SignatureLevel.All)
-                .withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
+                .withSignatureLevel(LibraryBuilder.SignatureLevel.All);
+                //.withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
         this.libraryManager = new LibraryManager(modelManager, options);
         final var loader = this.libraryManager.getLibrarySourceLoader();
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
@@ -85,10 +86,41 @@ public class CQLonOMOPEngine {
         return this.libraryManager;
     }
 
-    public Library prepareLibrary(final VersionedIdentifier libraryIdentifier) {
+    public Cache evaluateExpressions(final Map<VersionedIdentifier, Set<String>> expressions) {
+        // TODO(jmoringe): shares a lot of code with evaluateLibrary
+        try (var session = this.sessionFactory.openSession();
+             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
+            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
+            final var dataProviders = Map.<String, DataProvider>of(
+                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
+                    dataProvider);
+            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
+            final var engine = new CqlEngine(environment);
+            engine.getCache().setExpressionCaching(true);
+            expressions.forEach(engine::evaluate);
+            // TODO(jmoringe): return something?
+            System.out.printf("Cache %s\n", engine.getCache().getExpressions());
+            return engine.getCache();
+        }
+    }
+
+    public List<Library> prepareLibrary(final VersionedIdentifier libraryIdentifier) {
         // "Compilation" proceeds despite errors, collect errors in a
         // list.
         final var errors = new ArrayList<CqlCompilerException>();
+        final var result = new LinkedList<Library>();
+        prepareOneLibrary(libraryIdentifier, errors, result);
+        // Compilation failures are not indicated directly (as far as
+        // I can tell) but via a non-empty list of errors.
+        if (!errors.isEmpty()) {
+            throw new CompilationFailedException(errors);
+        }
+        return result;
+    }
+
+    private void prepareOneLibrary(final VersionedIdentifier libraryIdentifier,
+                                   final List<CqlCompilerException> errors,
+                                   final List<Library> result) {
         final var library = this.libraryManager
                 .resolveLibrary(libraryIdentifier, errors)
                 .getLibrary();
@@ -100,20 +132,16 @@ public class CQLonOMOPEngine {
                             .withSystem(NamespaceManager.getUriPart(included.getPath()))
                             .withId(NamespaceManager.getNamePart(included.getPath()))
                             .withVersion(included.getVersion());
-                    prepareLibrary(includedIdentifier);
+                    prepareOneLibrary(includedIdentifier, errors, result);
             });
         }
-        // Compilation failures are not indicated directly (as far as
-        // I can tell) but via a non-empty list of errors.
-        if (!errors.isEmpty()) {
-            throw new CompilationFailedException(errors);
-        }
-        return library;
+        result.add(library);
     }
 
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
-                                            final Map<String, Object> parameterBindings) {
+                                            final Map<String, Object> parameterBindings,
+                                            final Cache initialCache) {
         //final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
         try (var session = this.sessionFactory.openSession();
              var entityManager = session.getEntityManagerFactory().createEntityManager()) {
@@ -123,6 +151,9 @@ public class CQLonOMOPEngine {
                     dataProvider);
             final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
             final var engine = new CqlEngine(environment);
+            if (initialCache != null) {
+                prefillCache(engine.getCache(), initialCache);
+            }
             final var result = contextObject == null
                 ? engine.evaluate(library, parameterBindings)
                 : engine.evaluate(library,
@@ -133,6 +164,13 @@ public class CQLonOMOPEngine {
             });
             return result;
         }
+    }
+
+    private void prefillCache(final Cache cache, final Cache initialContents) {
+        initialContents.getExpressions().forEach((library, expressions) ->
+                expressions.forEach((name, result) ->
+                        cache.cacheExpression(library, name, result)));
+        initialContents.getFunctionCache().forEach(cache::cacheFunctionDef);
     }
 
     private void initializeProxies(final Object object, final HashSet<Object> seen) {
@@ -181,6 +219,12 @@ public class CQLonOMOPEngine {
                         });
             }
         }*/
+    }
+
+    public EvaluationResult evaluateLibrary(final String library,
+                                            final Object contextObject,
+                                            final Map<String, Object> parameterBindings) {
+        return evaluateLibrary(library, contextObject, parameterBindings, null);
     }
 
     public EvaluationResult evaluateLibrary(final String library, final Object contextObject) {
