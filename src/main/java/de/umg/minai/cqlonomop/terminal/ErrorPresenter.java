@@ -100,6 +100,9 @@ public class ErrorPresenter {
                 builder.append("\n");
                 presentVariableList("    Arguments", functionFrame.getArguments(), builder);
                 presentVariableList("    Local Variables", functionFrame.getLocalVariables(), builder);
+                appendHeader("    Context", builder);
+                appendBinding(functionFrame.getContextName(), functionFrame.getContextValue(), builder);
+                builder.append("\n");
             }
             appendHeader("    Source\n", builder);
             if (nextFrame == null || nextFrame instanceof Backtrace.FunctionoidFrame) {
@@ -120,20 +123,26 @@ public class ErrorPresenter {
                 .style(new AttributedStyle());
     }
 
+    private AttributedStringBuilder appendBinding(final String name,
+                                                  final Object value,
+                                                  final AttributedStringBuilder builder) {
+        return builder.append("\n      ")
+                .style(new AttributedStyle().foregroundRgb(0x40c040))
+                .append(name)
+                .style(new AttributedStyle())
+                .append("=")
+                .style(new AttributedStyle().foregroundRgb(0x4040c0))
+                .append(value != null ? value.toString() : "«no value»")  // TODO(jmoringe): use result presenter?
+                .style(new AttributedStyle());
+    }
+
     private void presentVariableList(final String title,
                                      final Collection<Variable> variables,
                                      final AttributedStringBuilder builder) {
         if (!variables.isEmpty()) {
             appendHeader(title, builder);
             variables.forEach(argument ->
-                    builder.append("\n      ")
-                            .style(new AttributedStyle().foregroundRgb(0x40c040))
-                            .append(argument.getName())
-                            .style(new AttributedStyle())
-                            .append("=")
-                            .style(new AttributedStyle().foregroundRgb(0x4040c0))
-                            .append(argument.getValue().toString())  // TODO(jmoringe): use result presenter?
-                            .style(new AttributedStyle()));
+                    appendBinding(argument.getName(), argument.getValue(), builder));
             builder.append("\n");
         }
     }
@@ -268,6 +277,13 @@ public class ErrorPresenter {
     }
 
     private static int compareLocations(final TrackBack a, final TrackBack b) {
+        if (a == null && b == null) {
+            return 0;
+        } else if (b == null) {
+            return -1;
+        } else if (a == null) {
+            return 1;
+        }
         final var endLineResult = Integer.compare(a.getEndLine(), b.getEndLine());
         if (endLineResult != 0) {
             return endLineResult;
