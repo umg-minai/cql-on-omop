@@ -32,9 +32,14 @@ public class CommandProfile extends AbstractCommand {
         final var filenameAndExpression = arguments.split(" ", 2);
         final var filename = filenameAndExpression[0];
         final var expression = filenameAndExpression[1];
-        final var result = evaluator.evaluate(expression);
-        result.getDebugResult().getProfile().render(Path.of(filename));
-        return result;
+        final var result = evaluator.withProfiling(() -> evaluator.evaluate(expression));
+        if (result instanceof EvaluationResult evaluationResult) {
+            System.out.printf("Writing profile to %s\n", filename);
+            evaluationResult.getDebugResult().getProfile().render(Path.of(filename));
+            return evaluationResult;
+        } else {
+            throw new RuntimeException(String.format("Unexpected result: %s", result));
+        }
     }
 
 }
