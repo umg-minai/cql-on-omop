@@ -7,7 +7,6 @@ import org.cqframework.cql.cql2elm.model.Model;
 import org.hibernate.SessionFactory;
 import org.hl7.cql.model.ModelIdentifier;
 import org.hl7.cql.model.NamespaceManager;
-import org.hl7.elm.r1.ExpressionDef;
 import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.data.DataProvider;
@@ -17,10 +16,9 @@ import org.opencds.cqf.cql.engine.execution.Environment;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 public class CQLonOMOPEngine {
 
@@ -43,10 +41,12 @@ public class CQLonOMOPEngine {
     // TODO(jmoringe): remove
     private Map<String, DataProvider> dataProviders;
 
+    private boolean isProfiling = false;
+
     public CQLonOMOPEngine(final List<LibrarySourceProvider> librarySourceProviders) {
         this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
-        CqlCompilerOptions options = CqlCompilerOptions.defaultOptions()
+        final var options = CqlCompilerOptions.defaultOptions()
                 .withSignatureLevel(LibraryBuilder.SignatureLevel.All);
                 //.withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
         this.libraryManager = new LibraryManager(modelManager, options);
@@ -86,22 +86,12 @@ public class CQLonOMOPEngine {
         return this.libraryManager;
     }
 
-    public Cache evaluateExpressions(final Map<VersionedIdentifier, Set<String>> expressions) {
-        // TODO(jmoringe): shares a lot of code with evaluateLibrary
-        try (var session = this.sessionFactory.openSession();
-             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
-            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
-            final var dataProviders = Map.<String, DataProvider>of(
-                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
-                    dataProvider);
-            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
-            final var engine = new CqlEngine(environment);
-            engine.getCache().setExpressionCaching(true);
-            expressions.forEach(engine::evaluate);
-            // TODO(jmoringe): return something?
-            System.out.printf("Cache %s\n", engine.getCache().getExpressions());
-            return engine.getCache();
-        }
+    public boolean isProfiling() {
+        return this.isProfiling;
+    }
+
+    public void setProfiling(boolean isProfiling) {
+        this.isProfiling = isProfiling;
     }
 
     public List<Library> prepareLibrary(final VersionedIdentifier libraryIdentifier) {
@@ -121,6 +111,9 @@ public class CQLonOMOPEngine {
     private void prepareOneLibrary(final VersionedIdentifier libraryIdentifier,
                                    final List<CqlCompilerException> errors,
                                    final List<Library> result) {
+        if (!errors.isEmpty()) {
+            return;
+        }
         final var library = this.libraryManager
                 .resolveLibrary(libraryIdentifier, errors)
                 .getLibrary();
@@ -138,32 +131,34 @@ public class CQLonOMOPEngine {
         result.add(library);
     }
 
+    public CqlEngine evaluateExpressionsIntoCache(final Map<VersionedIdentifier, Set<String>> expressions) {
+        return withCqlEngine(engine -> {
+            engine.getCache().setExpressionCaching(true);
+            expressions.forEach(engine::evaluate);
+            return engine;
+        });
+    }
+
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
                                             final Map<String, Object> parameterBindings,
                                             final Cache initialCache) {
-        //final var dataProvider = OMOPDataProvider.fromSessionFactory(this.sessionFactory, this.mappingInfo);
-        try (var session = this.sessionFactory.openSession();
-             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
-            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
-            final var dataProviders = Map.<String, DataProvider>of(
-                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
-                    dataProvider);
-            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
-            final var engine = new CqlEngine(environment);
+        return withCqlEngine((engine) -> {
+            final var cache = engine.getCache();
+            cache.setExpressionCaching(true);
             if (initialCache != null) {
-                prefillCache(engine.getCache(), initialCache);
+                prefillCache(cache, initialCache);
             }
             final var result = contextObject == null
-                ? engine.evaluate(library, parameterBindings)
-                : engine.evaluate(library,
-                        Pair.of("Patient", contextObject), // TODO(jmoringe): can we know the name of the context?
-                        parameterBindings);
-            result.expressionResults.forEach((name, expressionResult) -> {
-                initializeProxies(expressionResult.value(), new HashSet<>());
-            });
+                    ? engine.evaluate(library, parameterBindings)
+                    : engine.evaluate(library,
+                    Pair.of("Patient", contextObject), // TODO(jmoringe): can we know the name of the context?
+                    parameterBindings);
+//            result.expressionResults.forEach((name, expressionResult) -> {
+//                initializeProxies(expressionResult.value(), new HashSet<>());
+//            });
             return result;
-        }
+        });
     }
 
     private void prefillCache(final Cache cache, final Cache initialContents) {
@@ -233,6 +228,22 @@ public class CQLonOMOPEngine {
 
     public EvaluationResult evaluateLibrary(final String library) {
         return evaluateLibrary(library, null, Map.of());
+    }
+
+    private <R> R withCqlEngine(final Function<CqlEngine, R> continuation) {
+        try (var session = this.sessionFactory.openSession();
+             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
+            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
+            final var dataProviders = Map.<String, DataProvider>of(
+                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
+                    dataProvider);
+            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
+            final var options = this.isProfiling
+                    ? Set.of(CqlEngine.Options.EnableProfiling)
+                    : Set.<CqlEngine.Options>of();
+            final var engine = new CqlEngine(environment, options);
+            return continuation.apply(engine);
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
+import org.opencds.cqf.cql.engine.execution.Profile;
 import org.opencds.cqf.cql.engine.runtime.Tuple;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class Evaluator {
 
@@ -48,6 +50,8 @@ public class Evaluator {
     private final CQLonOMOPEngine engine;
 
     private State state;
+
+    private boolean isProfiling = false;
 
     public Evaluator(final Configuration configuration) {
         this.configuration = configuration;
@@ -181,6 +185,7 @@ public class Evaluator {
     }
 
     private EvaluationResult internalEvaluate(final String definitionName) {
+        this.engine.setProfiling(this.isProfiling);
         this.sourceProvider.setContent(pseudoLibrary());
         final var libraryName = this.sourceProvider.libraryName();
         // Compile library. The compilation results will be
@@ -197,10 +202,10 @@ public class Evaluator {
             if (library.getStatements() != null) {
                 library.getStatements().getDef().forEach(definition -> {
                     if (!(definition instanceof FunctionDef)  && definition.getContext().equals("Unfiltered")) {
-                        System.out.printf("%-48s.%-48s %s\n",
-                                library.getIdentifier().getId(),
-                                definition.getName(),
-                                definition.getContext());
+//                        System.out.printf("%-48s.%-48s %s\n",
+//                                library.getIdentifier().getId(),
+//                                definition.getName(),
+//                                definition.getContext());
                         unfilteredExpressions.compute(
                                 library.getIdentifier(),
                                 (_library, expressions) -> {
@@ -214,17 +219,22 @@ public class Evaluator {
                 });
             }
         });
-        final var cache = this.engine.evaluateExpressions(unfilteredExpressions); // TODO(jmoringe): parameters
+
+        final var unfilteredEngine = this.engine.evaluateExpressionsIntoCache(unfilteredExpressions); // TODO(jmoringe): parameters
+        final var unfilteredCache = unfilteredEngine.getCache();
+        final var unfilteredProfile = unfilteredEngine.getState().getDebugResult() != null
+                ? unfilteredEngine.getState().getDebugResult().getProfile()
+                : null;
 
         libraries.forEach(library -> {
             if (library.getStatements() != null) {
                 library.getStatements().getDef().forEach(definition -> {
                     if (!(definition instanceof FunctionDef) && definition.getContext().equals("Unfiltered")) {
-                        System.out.printf("%-48s.%-48s %s -> %s\n",
-                                library.getIdentifier().getId(),
-                                definition.getName(),
-                                definition.getContext(),
-                                cache.getCachedExpression(library.getIdentifier(), definition.getName()));
+//                        System.out.printf("%-48s.%-48s %s -> %s\n",
+//                                library.getIdentifier().getId(),
+//                                definition.getName(),
+//                                definition.getContext(),
+//                                cache.getCachedExpression(library.getIdentifier(), definition.getName()));
                     }
                 });
             }
@@ -238,11 +248,12 @@ public class Evaluator {
         final var contextObjects = this.state.contextObjects;
         final EvaluationResult result;
         if (contextObjects.isEmpty()) {
-            result = engine.evaluateLibrary(libraryName, null, this.state.parameterBindings);
+            result = engine.evaluateLibrary(libraryName, null, this.state.parameterBindings, unfilteredCache);
         } else if (contextObjects.size() == 1) {
             result = engine.evaluateLibrary(libraryName,
                     contextObjects.iterator().next(),
-                    this.state.parameterBindings);
+                    this.state.parameterBindings,
+                    unfilteredCache);
         } else {
             result = new EvaluationResult();
             if (state.previousResult != null) {
@@ -255,22 +266,38 @@ public class Evaluator {
                 final var pool = this.configuration.getThreadCount() != null
                         ? Executors.newWorkStealingPool(this.configuration.getThreadCount())
                         : Executors.newWorkStealingPool();
-                if (result.getDebugResult() == null) {
-                    result.setDebugResult(new DebugResult());
+                final Profile profile;
+                if (this.isProfiling) {
+                    final var debugResult = new DebugResult();
+                    result.setDebugResult(debugResult);
+                    profile = debugResult.ensureProfile();
+                } else {
+                    profile = null;
                 }
-                final var profile = result.getDebugResult().getProfile();
                 try {
                     contextObjects.forEach(object -> {
                         pool.submit(() -> {
                             final var objectKey = object.toString(); // TODO(jmoringe): ensure uniqueness
                             try {
                                 final var results = engine.evaluateLibrary(libraryName,
-                                    object,
-                                    this.state.parameterBindings);
+                                        object,
+                                        this.state.parameterBindings,
+                                        unfilteredCache);
                                 final var objectResult = results.forExpression(definitionName);
-                                // TODO(jmoringe): make this concurrent
-                                synchronized (profile) {
-                                    profile.merge(results.getDebugResult().getProfile());
+                                // TODO(jmoringe): make this concurrent or just do it after the parallel part
+                                if (profile != null) {
+                                    long start = System.nanoTime();
+                                    synchronized (profile) {
+                                        profile.merge(results.getDebugResult().getProfile());
+                                        long elapsed = System.nanoTime() - start;
+                                        if (results.getDebugResult().getProfile().getDuration() > 3_000_000_000L) {
+                                            System.out.printf("%s, evaluation %,3d ms, profile merge %,3d ms, overhead %d ms\n",
+                                                    object,
+                                                    results.getDebugResult().getProfile().getDuration() / 1_000_000,
+                                                    elapsed / 1_000_000,
+                                                    0/*results.getDebugResult().getProfile().getOverhead() / 1_000_000*/);
+                                        }
+                                    }
                                 }
                                 allResults.put(objectKey, objectResult.value());
                             } catch (Exception e) {
@@ -302,6 +329,11 @@ public class Evaluator {
                 final var tuple = new Tuple();
                 tuple.setElements(new LinkedHashMap<>(allResults));
                 result.expressionResults.put(definitionName, new ExpressionResult(tuple, Set.of()));
+            }
+        }
+        if (this.isProfiling) {
+            if (result.getDebugResult() != null) {
+                result.getDebugResult().getProfile().merge(unfilteredProfile);
             }
         }
         return result;
@@ -342,6 +374,16 @@ public class Evaluator {
             return continuation.apply(oldState);
         } finally {
             this.state = oldState;
+        }
+    }
+
+    public Object withProfiling(final Supplier<Object> continuation) {
+        final var oldValue = this.isProfiling;
+        this.isProfiling = true;
+        try {
+            return continuation.get();
+        } finally {
+            this.isProfiling = oldValue;
         }
     }
 
