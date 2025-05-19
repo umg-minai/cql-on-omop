@@ -65,7 +65,8 @@ public class Repl implements Runnable {
 
         @CommandLine.Option(
                 names = {"-s", "--show-sql"},
-                defaultValue = "false"
+                defaultValue = "false",
+                description = "Show the generated SQL statements as they are sent to the database server."
         )
         private boolean showSQL = false;
     }
@@ -75,11 +76,16 @@ public class Repl implements Runnable {
 
     static class CQLOptions {
 
-        @CommandLine.Option(names = {"-I"})
+        @CommandLine.Option(
+                names = {"-I"},
+                paramLabel = "<directory>",
+                description = "Search the specified directory for CQL libraries when processing CQL include statements. This option can be supplied multiple times."
+        )
         private List<Path> librarySearchPath = List.of();
 
         @CommandLine.Option(
                 names = {"-l", "--load"},
+                paramLabel = "<library-file>",
                 description = "Load the specified file as CQL code."
         )
         private List<Path> load = List.of();
@@ -101,7 +107,7 @@ public class Repl implements Runnable {
 
         @CommandLine.Option(
                 names = {"-n", "--threads"},
-                description = "Use the specified number of threads when evaluating CQL expressions for multiple context values in parallel."
+                description = "Use the specified number of threads when evaluating CQL expressions for multiple context values (typically patients) in parallel. If this option is not supplied, try to determine a suitable number of threads automatically."
         )
         private Integer threadCount;
     }
