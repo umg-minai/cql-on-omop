@@ -3,6 +3,7 @@ package de.umg.minai.cqlonomop.engine;
 import OMOP.MappingInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.*;
+import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.cql2elm.model.Model;
 import org.hibernate.SessionFactory;
 import org.hl7.cql.model.ModelIdentifier;
@@ -31,6 +32,8 @@ public class CQLonOMOPEngine {
 
     private final LibraryManager libraryManager;
 
+    private final Map<VersionedIdentifier, CompiledLibrary> libraryCache = new HashMap<>();
+
     private final TerminologyProvider terminologyProvider;
     //private final Environment environment;
 
@@ -49,7 +52,7 @@ public class CQLonOMOPEngine {
         final var options = CqlCompilerOptions.defaultOptions()
                 .withSignatureLevel(LibraryBuilder.SignatureLevel.All);
                 //.withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
-        this.libraryManager = new LibraryManager(modelManager, options);
+        this.libraryManager = new LibraryManager(modelManager, options, libraryCache);
         final var loader = this.libraryManager.getLibrarySourceLoader();
         loader.registerProvider(new BuiltinLibrariesSourceProvider());
         librarySourceProviders.forEach(loader::registerProvider);
@@ -85,6 +88,8 @@ public class CQLonOMOPEngine {
     public LibraryManager getLibraryManager() {
         return this.libraryManager;
     }
+
+    public Map<VersionedIdentifier, CompiledLibrary> getLibraryCache() { return this.libraryCache; }
 
     public boolean isProfiling() {
         return this.isProfiling;

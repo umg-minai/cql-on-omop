@@ -72,6 +72,10 @@ public class Evaluator {
         return this.engine;
     }
 
+    public void clearLibraryCache() {
+        this.engine.getLibraryCache().clear();
+    }
+
     public void load(final Path filename) throws IOException {
         this.state.statements.add(Files.readString(filename));
     }
@@ -290,13 +294,13 @@ public class Evaluator {
                                     synchronized (profile) {
                                         profile.merge(results.getDebugResult().getProfile());
                                         long elapsed = System.nanoTime() - start;
-                                        if (results.getDebugResult().getProfile().getDuration() > 3_000_000_000L) {
+                                        /*if (results.getDebugResult().getProfile().getDuration() > 3_000_000_000L) {
                                             System.out.printf("%s, evaluation %,3d ms, profile merge %,3d ms, overhead %d ms\n",
                                                     object,
                                                     results.getDebugResult().getProfile().getDuration() / 1_000_000,
                                                     elapsed / 1_000_000,
-                                                    0/*results.getDebugResult().getProfile().getOverhead() / 1_000_000*/);
-                                        }
+                                                    0/results.getDebugResult().getProfile().getOverhead() / 1_000_000/);
+                                        }*/
                                     }
                                 }
                                 allResults.put(objectKey, objectResult.value());
