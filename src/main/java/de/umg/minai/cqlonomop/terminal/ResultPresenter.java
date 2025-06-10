@@ -1,10 +1,15 @@
 package de.umg.minai.cqlonomop.terminal;
 
+import org.cqframework.cql.cql2elm.LibraryManager;
+import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
+import org.opencds.cqf.cql.engine.runtime.Interval;
+import org.opencds.cqf.cql.engine.runtime.Quantity;
+import org.opencds.cqf.cql.engine.runtime.Ratio;
+import org.opencds.cqf.cql.engine.runtime.Tuple;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class ResultPresenter {
@@ -13,45 +18,67 @@ public class ResultPresenter {
 
     private final Terminal terminal;
 
-    public ResultPresenter(final Terminal terminal) {
+    private final SourcePresenter sourcePresenter;
+
+    private final Theme theme;
+
+    public ResultPresenter(final Terminal terminal, final SourcePresenter sourcePresenter, final Theme theme) {
         this.terminal = terminal;
+        this.sourcePresenter = sourcePresenter;
+        this.theme = theme;
+    }
+
+    public ResultPresenter(final LibraryManager libraryManager, final Terminal terminal, final Theme theme) {
+        this(terminal, new SourcePresenter(libraryManager, terminal, theme), theme);
+    }
+
+    public ResultPresenter(final Terminal terminal, final SourcePresenter sourcePresenter) {
+        this(terminal, sourcePresenter, new DefaultTheme()); // TODO(jmoringe): singleton
     }
 
     public void presentResult(final EvaluationResult result) {
+        final var builder = new ThemeAwareStringBuilder(this.theme);
         // Messages
         final var debugResult = result.getDebugResult();
         if (debugResult != null) {
             final var messages = debugResult.getMessages();
             if (!messages.isEmpty()) {
-                final var string = new AttributedStringBuilder();
                 messages.forEach(message -> {
-                    string.style(new AttributedStyle().foregroundRgb(switch (message.getSeverity()) {
-                        case WARNING -> 0xc08000;
-                        case MESSAGE -> 0xc0c0c0;
-                        default -> 0x808080;
-                    }));
-                    string.append(message.getMessage());
-                    string.append("\n");
+                    builder.withStyle(switch (message.getSeverity()) {
+                                case WARNING -> Theme.Element.MESSAGE_WARNING;
+                                case MESSAGE -> Theme.Element.MESSAGE_INFO;
+                                default -> Theme.Element.MESSAGE_OTHER;
+                            }, message.getMessage())
+                            .append("\n");
+                    final var locator = message.getSourceLocator();
+                    if (locator != null) {
+                        builder.append("  ");
+                        builder.withStyle(DefaultTheme.STYLE_HEADING, locator.getLibraryName())
+                                .append("\n");
+                        final var libraryId = new VersionedIdentifier()
+                                .withSystem(locator.getLibrarySystemId())
+                                .withId(locator.getLibraryName())
+                                .withVersion(locator.getLibraryVersion());
+                        final var sourceLines = this.sourcePresenter.fetchLibrarySource(libraryId);
+                        this.sourcePresenter.presentSource(sourceLines, locator.getSourceLocation(), builder);
+                    }
                 });
-                string.print(terminal);
             }
         }
         // Result values
-        final var string = new AttributedStringBuilder();
         result.expressionResults.forEach((expressionName, expressionResult) -> {
             if (!this.seenResults.contains(expressionName)) {
                 this.seenResults.add(expressionName);
                 final var value = expressionResult.value();
-                string.style(new AttributedStyle().foregroundRgb(0x808080))
-                        .append(String.format("%s => ", expressionName));
-                presentValue(value, string);
+                builder.withStyle(Theme.Element.IDENTIFIER, expressionName).append(" => ");
+                presentResultValue(value, builder);
             }
         });
-        string.print(this.terminal);
+        builder.print(this.terminal);
     }
 
-    private void presentValue(final Object value, final AttributedStringBuilder string) {
-        string.style(new AttributedStyle().foregroundRgb(0xa0f0a0));
+    private void presentResultValue(final Object value, final ThemeAwareStringBuilder builder) {
+        boolean isOMOP = false;
         // Present type
         final String type;
         if (value == null) {
@@ -61,54 +88,90 @@ public class ResultPresenter {
             final var firstElement = it.hasNext() ? it.next() : null;
             final var elementType = firstElement != null ? firstElement.getClass() : Object.class;
             type = String.format("List<%s>", elementType.getSimpleName());
+        } else if (value instanceof Interval interval) {
+            type = String.format("Interval<%s>", interval.getPointType().getSimpleName());
+        } else if (value.getClass().getPackageName().contains("OMOP")) {
+            isOMOP = true;
+            type = value.getClass().getCanonicalName();
         } else {
             type = value.getClass().getSimpleName();
         }
-        string.append(type);
+        builder.withStyle(Theme.Element.TYPE_SPECIFIER, type);
         // Present value
-        string.style(new AttributedStyle().foregroundRgb(0xa0a0f0));
-        if (value == null) {
-            string.append(" null\n");
-        } else if (value instanceof Iterable<?> iterable) {
-            string.append("\n");
-            iterable.forEach(v -> string.append(String.format("  %s%n", v)));
-        } else if (value.getClass().getPackageName().contains("OMOP")) {
-            string.append("\n");
+        builder.append(" ");
+        if (value instanceof Iterable<?> iterable) {
+            iterable.forEach(v -> builder.append(String.format("%n  %s", v)));
+        } else if (value instanceof Tuple tuple) {
+            builder.append("{");
+            tuple.getElements().forEach((name, value2) -> {
+                builder.append("\n  ");
+                builder.withStyle(Theme.Element.IDENTIFIER, name);
+                builder.append(": ");
+                presentValue(value2, builder);
+            });
+            builder.append("\n}");
+        } else if (isOMOP) {
             final var clazz = value.getClass();
-            string.append(String.format("%s {\n", clazz.getCanonicalName()));
+            builder.append("{");
             Arrays.stream(clazz.getMethods())
                     .filter(method -> method.getName().startsWith("get")
                             && !method.getName().equals("getClass"))
                     .forEach(method -> {
                         final var fieldName = method.getName().substring(3, 4).toLowerCase(Locale.ROOT)
                                 + method.getName().substring(4);
-                        Object fieldValue;
+                        builder.append("\n");
+                        builder.withStyle(Theme.Element.IDENTIFIER, String.format("  %s: ", fieldName));
                         try {
-                            fieldValue = method.invoke(value);
+                            final var fieldValue = method.invoke(value);
+                            presentFieldValue(fieldValue, builder);
                         } catch (Exception e) {
-                            fieldValue = String.format("error accessing field: %s", e);
+                            builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
                         }
-                        string.append(String.format("  %s: ", fieldName));
-                        presentFieldValue(fieldValue, string);
-                        string.append("\n");
                     });
-            string.append("}\n");
+            builder.append("\n}");
         } else {
-            string.append(String.format(" %s%n", value));
+            presentValue(value, builder);
         }
+        builder.append("\n");
     }
 
-    private void presentFieldValue(final Object fieldValue, final AttributedStringBuilder string) {
+    public void presentValue(final Object value, final ThemeAwareStringBuilder builder, int limit) {
+        final Theme.Element element;
+        String string;
+        if (value == null) {
+            element = Theme.Element.GENERIC_LITERAL;
+            string = "null";
+            //builder.withStyle(Theme.Element.GENERIC_LITERAL, "null");
+        } else if (value instanceof Integer || value instanceof BigDecimal || value instanceof Quantity || value instanceof Ratio) {
+            element = Theme.Element.NUMBER_LITERAL;
+            string = value.toString();
+            //builder.withStyle(Theme.Element.NUMBER_LITERAL, value.toString());
+        } else if (value instanceof String) {
+            element = Theme.Element.STRING_LITERAL;
+            string = String.format("'%s'", value);
+            // builder.withStyle(Theme.Element.STRING_LITERAL, String.format("'%s'", value));
+        } else {
+            element = Theme.Element.GENERIC_LITERAL;
+            string = value.toString();
+            // builder.withStyle(Theme.Element.GENERIC_LITERAL, value.toString());
+        }
+        if (limit > 0 && string.length() > limit) {
+            string = string.substring(0, limit - 1) + "…";
+        }
+        builder.withStyle(element, string);
+    }
+
+    public void presentValue(final Object value, final ThemeAwareStringBuilder builder) {
+        presentValue(value, builder, -1);
+    }
+
+    private void presentFieldValue(final Object fieldValue, final ThemeAwareStringBuilder builder) {
         if (fieldValue instanceof Optional<?> optional) {
             optional.ifPresentOrElse(
-                    value -> string.append(value.toString()),
-                    () -> {
-                        string.style(new AttributedStyle().foregroundRgb(0x808080));
-                        string.append("<no value>");
-                        string.style(new AttributedStyle().foregroundRgb(0xa0a0f0));
-                    });
+                    value -> presentValue(value, builder),
+                    () -> builder.withStyle(Theme.Element.INACTIVE, "<no value>"));
         } else {
-            string.append(fieldValue.toString());
+            presentValue(fieldValue, builder);
         }
     }
 

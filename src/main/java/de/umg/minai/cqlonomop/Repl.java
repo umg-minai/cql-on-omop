@@ -4,6 +4,7 @@ import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.repl.CommandProcessor;
 import de.umg.minai.cqlonomop.repl.Completer;
 import de.umg.minai.cqlonomop.repl.Evaluator;
+import de.umg.minai.cqlonomop.terminal.DefaultTheme;
 import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
 import de.umg.minai.cqlonomop.terminal.ResultPresenter;
 import org.jline.reader.EndOfFileException;
@@ -198,8 +199,9 @@ public class Repl implements Runnable {
             throw new RuntimeException("Error initializing terminal", e);
         }
 
-        this.resultPresenter = new ResultPresenter(terminal);
-        this.errorPresenter = new ErrorPresenter(this.evaluator.getEngine().getLibraryManager(), terminal);
+        final var libraryManager = this.evaluator.getEngine().getLibraryManager();
+        this.resultPresenter = new ResultPresenter(libraryManager, terminal, new DefaultTheme());
+        this.errorPresenter = new ErrorPresenter(libraryManager, terminal);
         try {
             repl();
         } catch (Exception e) {
