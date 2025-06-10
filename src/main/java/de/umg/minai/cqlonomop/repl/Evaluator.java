@@ -29,9 +29,7 @@ public class Evaluator {
 
     public static class State {
         public int expressionCount = 1;
-        public List<String> include = new LinkedList<>();
-        public List<String> prelude = new LinkedList<>();
-        public List<String> statements = new LinkedList<>();
+        public PseudoLibrary pseudoLibrary = new PseudoLibrary();
         public Set<Object> contextObjects = new HashSet<>();
         public Map<String, Object> parameterBindings = new HashMap<>();
         public EvaluationResult previousResult = null;
@@ -77,8 +75,12 @@ public class Evaluator {
         this.engine.getLibraryCache().clear();
     }
 
+    public PseudoLibrary getPseudoLibrary() {
+        return this.state.pseudoLibrary;
+    }
+
     public void load(final Path filename) throws IOException {
-        this.state.statements.add(Files.readString(filename));
+        this.state.pseudoLibrary.addStatement(Files.readString(filename));
     }
 
     public void setParameter(final String name, final Object value) {
@@ -102,48 +104,39 @@ public class Evaluator {
     }
 
     public EvaluationResult evaluate(final String command) {
-        final var trimmed = command.trim();
-        if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
-            if (trimmed.startsWith("include")) {
-                return executeCQLIncludeStatement(trimmed);
-            } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
-                return executeCQLPreludeStatement(trimmed);
+        final var oldPseudoLibrary = this.state.pseudoLibrary;
+        try {
+            final var trimmed = command.trim();
+            if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
+                if (trimmed.startsWith("include")) {
+                    return executeCQLIncludeStatement(trimmed);
+                } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
+                    return executeCQLPreludeStatement(trimmed);
+                } else {
+                    return executeCQLStatement(trimmed, null);
+                }
             } else {
-                return executeCQLStatement(trimmed, null);
+                return executeCQLExpression(trimmed);
             }
-        } else {
-            return executeCQLExpression(trimmed);
+        } catch (final Exception e) {
+            this.state.pseudoLibrary = oldPseudoLibrary;
+            throw e;
         }
     }
 
     private EvaluationResult executeCQLIncludeStatement(final String statement) {
-        this.state.include.add(statement);
-        try {
-            return internalEvaluate(null);
-        } catch (Exception e) {
-            this.state.include.remove(this.state.include.size() - 1);
-            throw e;
-        }
+        this.state.pseudoLibrary = this.state.pseudoLibrary.withAddedInclude(statement);
+        return internalEvaluate(null);
     }
 
     private EvaluationResult executeCQLPreludeStatement(final String statement) {
-        this.state.prelude.add(statement);
-        try {
-            return internalEvaluate(null);
-        } catch (Exception e) {
-            this.state.prelude.remove(this.state.prelude.size() - 1);
-            throw e;
-        }
+        this.state.pseudoLibrary = this .state.pseudoLibrary.withAddedPrelude(statement);
+        return internalEvaluate(null);
     }
 
     private EvaluationResult executeCQLStatement(final String statement, final String definitionName) {
-        this.state.statements.add(statement);
-        try {
-            this.state.previousResult = internalEvaluate(definitionName);
-        } catch (Exception e) {
-            this.state.statements.remove(this.state.statements.size() - 1);
-            throw e;
-        }
+        this.state.pseudoLibrary = this.state.pseudoLibrary.withAddedStatement(statement);
+        this.state.previousResult = internalEvaluate(definitionName);
         return this.state.previousResult;
     }
 
@@ -154,44 +147,9 @@ public class Evaluator {
         return executeCQLStatement(statement, definitionName);
     }
 
-    private String pseudoLibrary(final State state) {
-        final var input = new StringBuilder();
-        input.append("""
-            using "OMOP" version 'v5.4'
-
-            include "OMOPHelpers"
-            include "OMOPFunctions"
-            """);
-        state.include.forEach(statement -> {
-            input.append(statement);
-            input.append("\n");
-        });
-        input.append("""
-            codesystem LOINC: 'http://loinc.org'
-
-            codesystem OMOPSV: 'https://fhir-terminology.ohdsi.org' // SV = Standardized Vocabulary
-
-            codesystem SNOMED: 'http://snomed.info/sct'
-
-            """);
-        state.prelude.forEach(statement -> {
-            input.append(statement);
-            input.append("\n");
-        });
-        state.statements.forEach(statement -> {
-            input.append(statement);
-            input.append("\n");
-        });
-        return input.toString();
-    }
-
-    private String pseudoLibrary() {
-        return pseudoLibrary(this.state);
-    }
-
     private EvaluationResult internalEvaluate(final String definitionName) {
         this.engine.setProfiling(this.isProfiling);
-        this.sourceProvider.setContent(pseudoLibrary());
+        this.sourceProvider.setContent(this.state.pseudoLibrary.getCode());
         final var libraryName = this.sourceProvider.libraryName();
         // Compile library. The compilation results will be
         // cached. This with parallel evaluation since compilation
@@ -367,12 +325,12 @@ public class Evaluator {
         if (contextObjects != null) {
             this.state.contextObjects = contextObjects;
         }
-        this.state.statements.add(statement);
+        this.state.pseudoLibrary.addStatement(statement);
         final EvaluationResult result;
         try {
             result = internalEvaluate(definitionName);
         } finally {
-            this.state.statements.remove(this.state.statements.size() - 1);
+            this.state.pseudoLibrary.statements.remove(this.state.pseudoLibrary.statements.size() - 1);
             this.state.contextObjects = oldContextObjects;
         }
         return result.forExpression(definitionName).value();
