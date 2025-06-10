@@ -9,6 +9,7 @@ import de.umg.minai.cqlonomop.engine.ConnectionFactory;
 import org.hl7.elm.r1.FunctionDef;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
+import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
 import org.opencds.cqf.cql.engine.execution.Profile;
@@ -226,9 +227,13 @@ public class Evaluator {
 
         final var unfilteredEngine = this.engine.evaluateExpressionsIntoCache(unfilteredExpressions); // TODO(jmoringe): parameters
         final var unfilteredCache = unfilteredEngine.getCache();
-        final var unfilteredProfile = unfilteredEngine.getState().getDebugResult() != null
-                ? unfilteredEngine.getState().getDebugResult().getProfile()
+        final var unfilteredDebugResult = unfilteredEngine.getState().getDebugResult();
+        final var unfilteredProfile = unfilteredDebugResult != null
+                ? unfilteredDebugResult.getProfile()
                 : null;
+        final List<CqlException> unfilteredMessages = unfilteredDebugResult != null
+                ? unfilteredDebugResult.getMessages()
+                : List.of();
 
         libraries.forEach(library -> {
             if (library.getStatements() != null) {
@@ -335,16 +340,22 @@ public class Evaluator {
                 result.expressionResults.put(definitionName, new ExpressionResult(tuple, Set.of()));
             }
         }
-        if (this.isProfiling) {
-            if (result.getDebugResult() != null) {
-                result.getDebugResult().getProfile().merge(unfilteredProfile);
+        if (!unfilteredMessages.isEmpty()) {
+            var debugResult = result.getDebugResult();
+            if (debugResult == null) {
+                debugResult = new DebugResult();
+                result.setDebugResult(debugResult);
             }
+            debugResult.getMessages().addAll(unfilteredMessages);
+        }
+        if (this.isProfiling) {
+            result.getDebugResult().getProfile().merge(unfilteredProfile);
         }
         return result;
     }
 
     public Object evaluateExpression(final String expression, final String context, final Set<Object> contextObjects) {
-        final var definitionName = String.format("Temporary%d", this.state.statements.size());
+        final var definitionName = String.format("Temporary%d", this.state.pseudoLibrary.statements.size());
         final var statementBuilder = new StringBuilder();
         if (context != null) {
             statementBuilder.append(String.format("context %s\n", context));
