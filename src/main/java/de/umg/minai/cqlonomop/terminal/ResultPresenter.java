@@ -141,19 +141,19 @@ public class ResultPresenter {
         if (value == null) {
             element = Theme.Element.GENERIC_LITERAL;
             string = "null";
-            //builder.withStyle(Theme.Element.GENERIC_LITERAL, "null");
-        } else if (value instanceof Integer || value instanceof BigDecimal || value instanceof Quantity || value instanceof Ratio) {
+        } else if (value instanceof Long) {
+            element = Theme.Element.NUMBER_LITERAL;
+            string = value + "L";
+        } else if (value instanceof Integer
+                   || value instanceof BigDecimal || value instanceof Quantity || value instanceof Ratio) {
             element = Theme.Element.NUMBER_LITERAL;
             string = value.toString();
-            //builder.withStyle(Theme.Element.NUMBER_LITERAL, value.toString());
         } else if (value instanceof String) {
             element = Theme.Element.STRING_LITERAL;
             string = String.format("'%s'", value);
-            // builder.withStyle(Theme.Element.STRING_LITERAL, String.format("'%s'", value));
         } else {
             element = Theme.Element.GENERIC_LITERAL;
             string = value.toString();
-            // builder.withStyle(Theme.Element.GENERIC_LITERAL, value.toString());
         }
         if (limit > 0 && string.length() > limit) {
             string = string.substring(0, limit - 1) + "…";
