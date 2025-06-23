@@ -4,9 +4,7 @@ import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.repl.CommandProcessor;
 import de.umg.minai.cqlonomop.repl.Completer;
 import de.umg.minai.cqlonomop.repl.Evaluator;
-import de.umg.minai.cqlonomop.terminal.DefaultTheme;
-import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
-import de.umg.minai.cqlonomop.terminal.ResultPresenter;
+import de.umg.minai.cqlonomop.terminal.*;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -201,8 +199,10 @@ public class Repl implements Runnable {
 
         final var libraryManager = this.evaluator.getEngine().getLibraryManager();
         final var theme = new DefaultTheme();
-        this.resultPresenter = new ResultPresenter(terminal, theme, libraryManager);
-        this.errorPresenter = new ErrorPresenter(terminal, theme, libraryManager);
+        final var sourcePresenter = new SourcePresenter(terminal, theme, libraryManager);
+        final var valuePresenter = new ValuePresenter(terminal, theme);
+        this.resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
+        this.errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
         try {
             repl();
         } catch (Exception e) {
