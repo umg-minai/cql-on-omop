@@ -22,17 +22,16 @@ public class ErrorPresenter {
 
     private final SourcePresenter sourcePresenter;
 
-    private final ResultPresenter resultPresenter;
+    private final ValuePresenter valuePresenter;
 
     private final Theme theme;
 
-    public ErrorPresenter(final LibraryManager libraryManager,
-                          final Terminal terminal,
-                          final Theme theme) {
+    public ErrorPresenter(final Terminal terminal,
+                          final Theme theme,
+                          final LibraryManager libraryManager) {
         this.terminal = terminal;
-        this.sourcePresenter = new SourcePresenter(libraryManager, terminal, theme);
-        // FIXME(jmoringe): ResultPresenter is stateful
-        this.resultPresenter = new ResultPresenter(libraryManager, terminal, theme);
+        this.sourcePresenter = new SourcePresenter(terminal, theme, libraryManager);
+        this.valuePresenter = new ValuePresenter(terminal, theme);
         this.theme = theme;
     }
 
@@ -127,7 +126,7 @@ public class ErrorPresenter {
         builder.append("\n      ");
         builder.withStyle(Theme.Element.IDENTIFIER, name)
                 .append("=");
-        this.resultPresenter.presentValue(value, builder, 120);
+        this.valuePresenter.presentValueSimple(value, builder, 120);
         return builder;
     }
 

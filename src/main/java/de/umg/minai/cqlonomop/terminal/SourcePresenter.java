@@ -20,9 +20,9 @@ public class SourcePresenter {
 
     private final Theme theme;
 
-    public SourcePresenter(final LibraryManager libraryManager,
-                           final Terminal terminal,
-                           final Theme theme) {
+    public SourcePresenter(final Terminal terminal,
+                           final Theme theme,
+                           final LibraryManager libraryManager) {
         this.libraryManager = libraryManager;
         this.terminal = terminal;
         this.theme = theme;
