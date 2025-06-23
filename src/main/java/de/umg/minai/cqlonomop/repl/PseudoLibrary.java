@@ -9,20 +9,33 @@ import java.util.List;
 // TODO: rewrite as record?
 public class PseudoLibrary {
 
+    public String omopVersion;
     public final List<String> include;
     public final List<String> prelude;
     public final List<String> statements;
 
-    public PseudoLibrary() {
-        this.include = new LinkedList<>();
-        this.prelude = new LinkedList<>();
-        this.statements = new LinkedList<>();
-    }
-
-    public PseudoLibrary(List<String> include, List<String> prelude, List<String> statements) {
+    public PseudoLibrary(final String omopVersion,
+                         final List<String> include,
+                         final List<String> prelude,
+                         final List<String> statements) {
+        this.omopVersion = omopVersion;
         this.include = include;
         this.prelude = prelude;
         this.statements = statements;
+    }
+
+    public PseudoLibrary(final String omopVersion) {
+        this(omopVersion, new LinkedList<>(), new LinkedList<>(), new LinkedList<>());
+    }
+
+    public void setOmopVersion(final String omopVersion) {
+        this.omopVersion = omopVersion;
+    }
+
+    public PseudoLibrary withOmopVersion(final String omopVersion) {
+        final var result = klone();
+        result.setOmopVersion(omopVersion);
+        return result;
     }
 
     public void addInclude(final String include) {
@@ -57,12 +70,12 @@ public class PseudoLibrary {
 
     public String getCode() {
         final var input = new StringBuilder();
-        input.append("""
-        using "OMOP" version 'v5.4'
+        input.append(String.format("""
+        using "OMOP" version '%s'
 
-        include "OMOPHelpers"
-        include "OMOPFunctions"
-        """);
+        include "OMOPHelpers%s" called "OMOPHelpers"
+        include "OMOPFunctions" called "OMOPFunctions"
+        """, this.omopVersion, this.omopVersion));
         this.include.forEach(statement -> input.append(statement).append("\n"));
         input.append(String.format("codesystem OMOPSV: '%s' // SV = Standardized Vocabulary\n", Constants.OMOP_CODESYSTEM_URI));
         Constants.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.forEach((url, name) ->
@@ -73,7 +86,8 @@ public class PseudoLibrary {
     }
 
     public PseudoLibrary klone() {
-        return new PseudoLibrary(new ArrayList<>(this.include),
+        return new PseudoLibrary(this.omopVersion,
+                new ArrayList<>(this.include),
                 new ArrayList<>(this.prelude),
                 new ArrayList<>(this.statements));
     }

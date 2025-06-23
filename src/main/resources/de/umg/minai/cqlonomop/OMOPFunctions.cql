@@ -2,7 +2,7 @@ library OMOPFunctions version '1.0'
 
 using OMOP version 'v5.4'
 
-include OMOPHelpers
+include "OMOPHelpersv5.4" called OMOPHelpers
 
 // Conversion to OMOP.Concept
 

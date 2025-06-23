@@ -23,9 +23,7 @@ import java.util.function.Function;
 
 public class CQLonOMOPEngine {
 
-    private final ModelIdentifier modelIdentifier = new ModelIdentifier()
-            .withId("OMOP")
-            .withVersion("v5.4");
+    private final ModelIdentifier modelIdentifier;
 
     // TODO(jmoringe): do something better
     private final ModelManager modelManager = new ModelManager(Path.of("."));
@@ -46,7 +44,8 @@ public class CQLonOMOPEngine {
 
     private boolean isProfiling = false;
 
-    public CQLonOMOPEngine(final List<LibrarySourceProvider> librarySourceProviders) {
+    public CQLonOMOPEngine(final String version, final List<LibrarySourceProvider> librarySourceProviders) {
+        this.modelIdentifier = new ModelIdentifier().withId("OMOP").withVersion(version);
         this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
         final var options = CqlCompilerOptions.defaultOptions()
@@ -59,18 +58,20 @@ public class CQLonOMOPEngine {
         this.terminologyProvider = new OMOPTerminologyProvider();
     }
 
-    public CQLonOMOPEngine(final SessionFactory sessionFactory,
+    public CQLonOMOPEngine(final String version,
+                           final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
                            final List<LibrarySourceProvider> librarySourceProviders) {
-        this(librarySourceProviders);
+        this(version, librarySourceProviders);
         this.sessionFactory = sessionFactory;
         this.mappingInfo = mappingInfo;
     }
 
-    public CQLonOMOPEngine(final SessionFactory sessionFactory,
+    public CQLonOMOPEngine(final String version,
+                           final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
                            final LibrarySourceProvider librarySourceProvider) {
-        this(sessionFactory, mappingInfo, List.of(librarySourceProvider));
+        this(version, sessionFactory, mappingInfo, List.of(librarySourceProvider));
     }
 
     public Model getModel(final ModelIdentifier modelIdentifier) {

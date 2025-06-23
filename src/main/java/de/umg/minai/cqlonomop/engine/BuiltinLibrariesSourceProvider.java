@@ -6,21 +6,25 @@ import org.hl7.elm.r1.VersionedIdentifier;
 import java.io.InputStream;
 
 /**
- * This class provides the built-in OMOPHelpers library as a library source.
+ * This class provides the built-in OMOPHelpers and OMOPFunctions libraries as a library source.
  */
 public class BuiltinLibrariesSourceProvider implements LibrarySourceProvider {
 
     @Override
     public InputStream getLibrarySource(final VersionedIdentifier versionedIdentifier) {
         // TODO: check version
-        if (versionedIdentifier.getId().equals("OMOPHelpers")) {
-            return BuiltinLibrariesSourceProvider.class.getResourceAsStream("/de/umg/minai/cqlonomop/OMOPHelpers.cql");
-        } else if (versionedIdentifier.getId().equals("OMOPFunctions")) {
-            return BuiltinLibrariesSourceProvider.class.getResourceAsStream("/de/umg/minai/cqlonomop/OMOPFunctions.cql");
+        final var id = versionedIdentifier.getId();
+        if (id.startsWith("OMOPHelpers") || id.startsWith("OMOPFunctions")) {
+            return tryResource(id);
         }
         else {
             return null;
         }
+    }
+
+    private InputStream tryResource(final String basename) {
+        final var name = String.format("/de/umg/minai/cqlonomop/%s.cql", basename);
+        return BuiltinLibrariesSourceProvider.class.getResourceAsStream(name);
     }
 
 }

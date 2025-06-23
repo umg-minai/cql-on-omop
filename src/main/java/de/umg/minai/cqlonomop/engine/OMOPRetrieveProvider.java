@@ -19,44 +19,19 @@ import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
-    // public record SessionData(Session session, EntityManager entityManager) {};
-
     private final OMOPModelResolver modelResolver;
 
     private final EntityManager entityManager;
 
-    // private final ConcurrentHashMap<Thread, SessionData> sessions = new ConcurrentHashMap<>();
-
-    // private final SessionFactory sessionFactory;
-
-    /*public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
-                                final SessionFactory sessionFactory) {
-        this.modelResolver = modelResolver;
-        this.sessionFactory = sessionFactory;
-    }*/
+    private final MappingInfo mappingInfo;
 
     public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
-                                final EntityManager entityManager) {
+                                final EntityManager entityManager,
+                                final MappingInfo mappingInfo) {
         this.modelResolver = modelResolver;
         this.entityManager = entityManager;
+        this.mappingInfo = mappingInfo;
     }
-
-    /*public OMOPRetrieveProvider(final Configuration configuration,
-                                final OMOPModelResolver modelResolver) {
-        this(modelResolver, ConnectionFactory.createEntityManager(configuration, modelResolver.mappingInfo));
-    }*/
-
-    /*public SessionData sessionForCurrentThread() {
-        return sessions.compute(Thread.currentThread(),
-                (thread, data) -> {
-            if (data == null) {
-                final var session = sessionFactory.openSession();
-                return new SessionData(session, session.getEntityManagerFactory().createEntityManager());
-            } else {
-                return data;
-            }
-        });
-    }*/
 
     static class RetrieveResult implements Iterable<Object> {
 
@@ -149,8 +124,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private CriteriaQuery<?> dataTypeCriteria(final String dataType) {
-        // TODO(jmoringe): don't hard-code version
-        final Class<Object> clazz = (Class<Object>) MappingInfo.ensureVersion("v54").getDataTypeInfo(dataType).getClazz();
+        final Class<Object> clazz = (Class<Object>) this.mappingInfo.getDataTypeInfo(dataType).getClazz();
         if (clazz == null) {
             System.err.println("Class for " + dataType + " not found");
             return null;
@@ -191,12 +165,12 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                                   final Root<?> root,
                                                   final String codePath,
                                                   final Iterable<Code> codes) {
-        final var info = MappingInfo.ensureVersion("v5.4").getDataTypeInfo(dataType); // TODO: don't hard-code
-        if (info.isJoinableCodePath(codePath)) {
-            return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
-        } else {
-            return baseQuery;
+        final var info = this.mappingInfo.getDataTypeInfo(dataType);
+        if (!info.isJoinableCodePath(codePath)) {
+            throw new RuntimeException(String.format("Retrieve for data type %s cannot filter by '%s'.",
+                    dataType, codePath));
         }
+        return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
     }
 
     /*

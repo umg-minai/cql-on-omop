@@ -11,6 +11,7 @@ public class MappingInfo {
     private final Map<String, DataTypeInfo> infos = new HashMap<>();
 
     public MappingInfo(final String version) {
+        System.out.printf("Registering data type information for OMOP '%s'%n", version);
         this.version = version;
         final var registerClassName = String.format("OMOP.%s.Register", version.replace(".", ""));
         try {

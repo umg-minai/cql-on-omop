@@ -1,4 +1,4 @@
-library OMOPHelpers version '1.0'
+library "OMOPHelpersv5.4" version '1.0'
 
 using OMOP version 'v5.4'
 

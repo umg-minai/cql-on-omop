@@ -29,10 +29,15 @@ public class Evaluator {
 
     public static class State {
         public int expressionCount = 1;
-        public PseudoLibrary pseudoLibrary = new PseudoLibrary();
+        public PseudoLibrary pseudoLibrary;
         public Set<Object> contextObjects = new HashSet<>();
         public Map<String, Object> parameterBindings = new HashMap<>();
         public EvaluationResult previousResult = null;
+
+        public State(final String omopVersion) {
+            this.pseudoLibrary = new PseudoLibrary(omopVersion);
+        }
+
     }
 
     private final Configuration configuration;
@@ -60,10 +65,11 @@ public class Evaluator {
         configuration.getLibrarySearchPath().forEach(path ->
                 sourceProviders.add(new DefaultLibrarySourceProvider(path)));
 
-        final var mappingInfo = MappingInfo.ensureVersion("v5.4"); // TODO(jmoringe): don't hard-code
+        final var omopVersion = configuration.getOmopVersion();
+        final var mappingInfo = MappingInfo.ensureVersion(omopVersion);
         final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
-        this.engine = new CQLonOMOPEngine(sessionFactory, mappingInfo, sourceProviders);
-        this.state = new State();
+        this.engine = new CQLonOMOPEngine(omopVersion, sessionFactory, mappingInfo, sourceProviders);
+        this.state = new State(omopVersion);
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
     }
 
@@ -94,7 +100,7 @@ public class Evaluator {
     public void setParameter(final String name, final String value) {
         // TODO(jmoringe): make evaluateStandaloneExpression or similar
         final var oldState = this.state;
-        this.state = new State();
+        this.state = new State(this.state.pseudoLibrary.omopVersion);
         try {
             final Object result = evaluateExpression(value);
             this.setParameter(name, result);
@@ -342,7 +348,7 @@ public class Evaluator {
 
     public Object withoutState(final Function<State, Object> continuation) {
         final var oldState = this.state;
-        this.state = new State();
+        this.state = new State(this.state.pseudoLibrary.omopVersion);
         try {
             return continuation.apply(oldState);
         } finally {

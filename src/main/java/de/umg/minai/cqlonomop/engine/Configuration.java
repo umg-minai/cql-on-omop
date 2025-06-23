@@ -19,6 +19,8 @@ public class Configuration {
 
     private Boolean showSQL = false;
 
+    private String omopVersion = "v5.4";
+
     private List<Path> librarySearchPath = List.of();
 
     public String getDatabaseHost() {
@@ -90,6 +92,15 @@ public class Configuration {
 
     public Configuration withLibrarySearchPath(final List<Path> librarySearchPath) {
         this.librarySearchPath = librarySearchPath;
+        return this;
+    }
+
+    public String getOmopVersion() {
+        return this.omopVersion;
+    }
+
+    public Configuration withOmopVersion(final String omopVersion) {
+        this.omopVersion = omopVersion;
         return this;
     }
 
