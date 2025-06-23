@@ -200,8 +200,9 @@ public class Repl implements Runnable {
         }
 
         final var libraryManager = this.evaluator.getEngine().getLibraryManager();
-        this.resultPresenter = new ResultPresenter(libraryManager, terminal, new DefaultTheme());
-        this.errorPresenter = new ErrorPresenter(libraryManager, terminal);
+        final var theme = new DefaultTheme();
+        this.resultPresenter = new ResultPresenter(libraryManager, terminal, theme);
+        this.errorPresenter = new ErrorPresenter(libraryManager, terminal, theme);
         try {
             repl();
         } catch (Exception e) {

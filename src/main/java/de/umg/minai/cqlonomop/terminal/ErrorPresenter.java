@@ -24,14 +24,16 @@ public class ErrorPresenter {
 
     private final ResultPresenter resultPresenter;
 
-    private final Theme theme = new DefaultTheme(); // TODO(jmoringe): singleton
+    private final Theme theme;
 
     public ErrorPresenter(final LibraryManager libraryManager,
-                          final Terminal terminal) {
+                          final Terminal terminal,
+                          final Theme theme) {
         this.terminal = terminal;
-        this.sourcePresenter = new SourcePresenter(libraryManager, terminal, this.theme);
+        this.sourcePresenter = new SourcePresenter(libraryManager, terminal, theme);
         // FIXME(jmoringe): ResultPresenter is stateful
-        this.resultPresenter = new ResultPresenter(libraryManager, terminal, this.theme);
+        this.resultPresenter = new ResultPresenter(libraryManager, terminal, theme);
+        this.theme = theme;
     }
 
     public void presentError(final Exception error) {

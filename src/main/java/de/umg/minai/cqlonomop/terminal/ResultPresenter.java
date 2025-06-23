@@ -31,10 +31,6 @@ public class ResultPresenter {
         this(terminal, new SourcePresenter(libraryManager, terminal, theme), theme);
     }
 
-    public ResultPresenter(final Terminal terminal, final SourcePresenter sourcePresenter) {
-        this(terminal, sourcePresenter, new DefaultTheme()); // TODO(jmoringe): singleton
-    }
-
     public void presentResult(final EvaluationResult result) {
         final var builder = new ThemeAwareStringBuilder(this.theme);
         // Messages
