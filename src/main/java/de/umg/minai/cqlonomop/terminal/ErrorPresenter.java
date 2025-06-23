@@ -2,7 +2,6 @@ package de.umg.minai.cqlonomop.terminal;
 
 import de.umg.minai.cqlonomop.engine.CompilationFailedException;
 import org.cqframework.cql.cql2elm.CqlCompilerException;
-import org.cqframework.cql.cql2elm.LibraryManager;
 import org.cqframework.cql.elm.tracking.TrackBack;
 import org.hl7.elm.r1.Element;
 import org.hl7.elm.r1.FunctionDef;
@@ -32,123 +31,118 @@ public class ErrorPresenter extends AbstractPresenter{
     }
 
     public void presentError(final Exception error) {
-        if (error instanceof CompilationFailedException compilationFailedException) {
-            presentSpecificError(compilationFailedException);
-        } else if (error instanceof CqlException cqlException) {
-            presentSpecificError(cqlException);
-        } else {
-            presentSpecificError(error);
-        }
-    }
-
-    private void presentSpecificError(final Exception exception) {
-        present(builder ->
-                builder.withStyle(Theme.Element.ERROR,
-                        builder2 -> builder2.append("Internal error:\n")
-                        .append(exception.toString())));
-    }
-
-    // Runtime Exceptions
-
-    private void presentSpecificError(final CqlException exception) {
         present(builder -> {
-            builder.withStyle(Theme.Element.ERROR, b ->
-                    b.append("CQL evaluation failed:\n\n").append(exception.getMessage()));
-            builder.append("\n\n");
-            final var frames = exception.getBacktrace().getFrames();
-            for (int i = frames.size() - 1; i >= 0; --i) {
-                final var frame = frames.get(i);
-                final var nextFrame = (i > 0) ? frames.get(i - 1) : null;
-                final var expression = frame.getExpression();
-                final TrackBack trackback = maybeGetTrackback(expression);
-                VersionedIdentifier library = trackback != null ? trackback.getLibrary() : null;
-
-                if (frame instanceof Backtrace.FunctionoidFrame functionFrame) {
-                    final var functionoid = functionFrame.getDefinition();
-                    if (library == null) {
-                        final var functionTrackback = maybeGetTrackback(functionFrame.getDefinition());
-                        if (functionTrackback != null) {
-                            library = functionTrackback.getLibrary();
-                        }
-                    }
-                    builder.append("\n  ")
-                            .append(library != null ? library.getId() : "«unknown library»")
-                            .append(".");
-                    builder.withStyle(Theme.Element.DEFINITION_NAME, functionoid.getName());
-                    if (functionoid instanceof FunctionDef functionDef) {
-                        builder.append("(");
-                        boolean isFirst = true;
-                        for (OperandDef operand : functionDef.getOperand()) {
-                            if (isFirst) {
-                                isFirst = false;
-                            } else {
-                                builder.append(", ");
-                            }
-                            builder.append(operand.getName());
-                            // TODO(jmoringe): find a good way to present the type
-                                    /*.append(" ")
-                                    .append(operand.getOperandTypeSpecifier().toString());*/
-                        }
-                        builder.append(")");
-                    }
-                    builder.append("\n");
-                    presentVariableList("    Arguments", functionFrame.getArguments(), builder);
-                    presentVariableList("    Local Variables", functionFrame.getLocalVariables(), builder);
-                    appendHeader("    Context", builder);
-                    appendBinding(functionFrame.getContextName(), functionFrame.getContextValue(), builder);
-                    builder.append("\n");
-                }
-                appendHeader("    Source\n", builder);
-                if (nextFrame == null || nextFrame instanceof Backtrace.FunctionoidFrame) {
-                    if (trackback != null) {
-                        final var sourceLines = this.sourcePresenter.fetchLibrarySource(library);
-                        this.sourcePresenter.presentSource(sourceLines, trackback, builder);
-                    } else {
-                        builder.append("    <missing source>\n");
-                    }
-                }
+            if (error instanceof CompilationFailedException compilationFailedException) {
+                presentSpecificError(builder, compilationFailedException);
+            } else if (error instanceof CqlException cqlException) {
+                presentSpecificError(builder, cqlException);
+            } else {
+                presentSpecificError(builder, error);
             }
         });
     }
 
-    private ThemeAwareStringBuilder appendHeader(final String title, final ThemeAwareStringBuilder builder) {
-        return builder.withStyle(Theme.Element.HEADING, title);
+    private void presentSpecificError(final ThemeAwareStringBuilder builder, final Exception exception) {
+        builder.withStyle(Theme.Element.ERROR,
+                builder2 -> builder2.append("Internal error:\n")
+                .append(exception.toString()));
     }
 
-    private ThemeAwareStringBuilder appendBinding(final String name,
-                                                  final Object value,
-                                                  final ThemeAwareStringBuilder builder) {
+    // Runtime Exceptions
+
+    private void presentSpecificError(final ThemeAwareStringBuilder builder, final CqlException exception) {
+        builder.withStyle(Theme.Element.ERROR, b ->
+                b.append("CQL evaluation failed:\n\n").append(exception.getMessage()));
+        builder.append("\n\n");
+        final var frames = exception.getBacktrace().getFrames();
+        for (int i = frames.size() - 1; i >= 0; --i) {
+            final var frame = frames.get(i);
+            final var nextFrame = (i > 0) ? frames.get(i - 1) : null;
+            final var expression = frame.getExpression();
+            final TrackBack trackback = maybeGetTrackback(expression);
+            VersionedIdentifier library = trackback != null ? trackback.getLibrary() : null;
+
+            if (frame instanceof Backtrace.FunctionoidFrame functionFrame) {
+                final var functionoid = functionFrame.getDefinition();
+                if (library == null) {
+                    final var functionTrackback = maybeGetTrackback(functionFrame.getDefinition());
+                    if (functionTrackback != null) {
+                        library = functionTrackback.getLibrary();
+                    }
+                }
+                builder.append("\n  ")
+                        .append(library != null ? library.getId() : "«unknown library»")
+                        .append(".");
+                builder.withStyle(Theme.Element.DEFINITION_NAME, functionoid.getName());
+                if (functionoid instanceof FunctionDef functionDef) {
+                    builder.append("(");
+                    boolean isFirst = true;
+                    for (OperandDef operand : functionDef.getOperand()) {
+                        if (isFirst) {
+                            isFirst = false;
+                        } else {
+                            builder.append(", ");
+                        }
+                        builder.append(operand.getName());
+                        // TODO(jmoringe): find a good way to present the type
+                                    /*.append(" ")
+                                    .append(operand.getOperandTypeSpecifier().toString());*/
+                    }
+                    builder.append(")");
+                }
+                builder.append("\n");
+                presentVariableList(builder, "    Arguments", functionFrame.getArguments());
+                presentVariableList(builder, "    Local Variables", functionFrame.getLocalVariables());
+                appendHeader(builder,"    Context");
+                appendBinding(builder, functionFrame.getContextName(), functionFrame.getContextValue());
+                builder.append("\n");
+            }
+            appendHeader(builder, "    Source\n");
+            if (nextFrame == null || nextFrame instanceof Backtrace.FunctionoidFrame) {
+                if (trackback != null) {
+                    final var sourceLines = this.sourcePresenter.fetchLibrarySource(library);
+                    this.sourcePresenter.presentSource(builder, sourceLines, trackback);
+                } else {
+                    builder.append("    <missing source>\n");
+                }
+            }
+        }
+    }
+
+    private void appendHeader(final ThemeAwareStringBuilder builder, final String title) {
+        builder.withStyle(Theme.Element.HEADING, title);
+    }
+
+    private void appendBinding(final ThemeAwareStringBuilder builder, final String name, final Object value) {
         builder.append("\n      ");
         builder.withStyle(Theme.Element.IDENTIFIER, name)
                 .append("=");
-        this.valuePresenter.presentValueSimple(value, builder, 120);
-        return builder;
+        this.valuePresenter.presentValueSimple(builder, value, 120);
     }
 
-    private void presentVariableList(final String title,
-                                     final Collection<Variable> variables,
-                                     final ThemeAwareStringBuilder builder) {
+    private void presentVariableList(final ThemeAwareStringBuilder builder,
+                                     final String title,
+                                     final Collection<Variable> variables) {
         if (!variables.isEmpty()) {
-            appendHeader(title, builder);
+            appendHeader(builder, title);
             variables.forEach(argument ->
-                    appendBinding(argument.getName(), argument.getValue(), builder));
+                    appendBinding(builder, argument.getName(), argument.getValue()));
             builder.append("\n");
         }
     }
 
     // Compilation errors
 
-    private void presentSpecificError(final CompilationFailedException exception) {
-        present(builder -> {
-            builder.withStyle(Theme.Element.ERROR, "CQL compilation failed:\n");
-            groupErrorByLibrary(exception).forEach((library, errors) ->
-                    presentErrorsForLibrary(library, errors, builder));
-        });
+    private void presentSpecificError(final ThemeAwareStringBuilder builder,
+                                      final CompilationFailedException exception) {
+        builder.withStyle(Theme.Element.ERROR, "CQL compilation failed:\n");
+        groupErrorByLibrary(exception).forEach((library, errors) ->
+                presentErrorsForLibrary(builder, library, errors));
     }
 
-    private void presentErrorsForLibrary(final VersionedIdentifier library,
-                                         final List<CqlCompilerException> errors,
-                                         final ThemeAwareStringBuilder builder) {
+    private void presentErrorsForLibrary(final ThemeAwareStringBuilder builder,
+                                         final VersionedIdentifier library,
+                                         final List<CqlCompilerException> errors) {
         builder.append("• ");
         builder.withStyle(new AttributedStyle().bold(), library != null ? library.getId() : "<unknown source>")
                 .append("\n");
@@ -159,17 +153,17 @@ public class ErrorPresenter extends AbstractPresenter{
                 : null;
         errors.stream()
                 .sorted(ErrorPresenter::compareLocations)
-                .forEach(error -> presentErrorWithSource(error, sourceLines, builder));
+                .forEach(error -> presentErrorWithSource(builder, error, sourceLines));
     }
 
-    private void presentErrorWithSource(final CqlCompilerException error,
-                                        final List<String> sourceLines,
-                                        final ThemeAwareStringBuilder builder) {
+    private void presentErrorWithSource(final ThemeAwareStringBuilder builder,
+                                        final CqlCompilerException error,
+                                        final List<String> sourceLines) {
         builder.append("\n  • ").append(error.getMessage()).append("\n");
         if (sourceLines != null) {
             final var locator = error.getLocator();
             if (locator != null) {
-                this.sourcePresenter.presentSource(sourceLines, locator, builder);
+                this.sourcePresenter.presentSource(builder, sourceLines, locator);
             }
         }
     }

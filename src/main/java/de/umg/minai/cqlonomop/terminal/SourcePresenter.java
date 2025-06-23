@@ -23,42 +23,41 @@ public class SourcePresenter extends AbstractPresenter {
         this.libraryManager = libraryManager;
     }
 
-    public void presentSource(final List<String> sourceLines,
-                              final TrackBack location) {
-        present(builder -> presentSource(sourceLines, location, builder));
+    public void presentSource(final List<String> sourceLines, final TrackBack location) {
+        present(builder -> presentSource(builder, sourceLines, location));
     }
 
-    public ThemeAwareStringBuilder presentSource(final List<String> sourceLines,
-                                                 final TrackBack location,
-                                                 final ThemeAwareStringBuilder builder) {
+    public void presentSource(final ThemeAwareStringBuilder builder,
+                              final List<String> sourceLines,
+                              final TrackBack location) {
         final var startLine = location.getStartLine() - 1;
         final var endLine = location.getEndLine() - 1;
         final var startColumn = Math.max(0, location.getStartChar() - 1);
         final var endColumn = location.getEndChar();
-        return presentLocation(sourceLines, startLine, endLine, startColumn, endColumn, builder, 4);
+        presentLocation(builder, sourceLines, startLine, endLine, startColumn, endColumn, 4);
     }
 
     public void presentSource(final List<String> sourceLines, final Location location) {
-        present(builder -> presentSource(sourceLines, location, builder));
+        present(builder -> presentSource(builder, sourceLines, location));
     }
 
-    public ThemeAwareStringBuilder presentSource(final List<String> sourceLines,
-                                                 final Location location,
-                                                 final ThemeAwareStringBuilder builder) {
+    public void presentSource(final ThemeAwareStringBuilder builder,
+                              final List<String> sourceLines,
+                              final Location location) {
         final var startLine = location.getStartLine() - 1;
         final var endLine = location.getEndLine() - 1;
         final var startColumn = Math.max(0, location.getStartChar() - 1);
         final var endColumn = location.getEndChar();
-        return presentLocation(sourceLines, startLine, endLine, startColumn, endColumn, builder, 4);
+        presentLocation(builder, sourceLines, startLine, endLine, startColumn, endColumn, 4);
     }
 
-    public ThemeAwareStringBuilder presentLocation(final List<String> sourceLines,
-                                                   int startLine,
-                                                   int endLine,
-                                                   int startColumn,
-                                                   int endColumn,
-                                                   final ThemeAwareStringBuilder builder,
-                                                   int indent) {
+    public void presentLocation(final ThemeAwareStringBuilder builder,
+                                final List<String> sourceLines,
+                                int startLine,
+                                int endLine,
+                                int startColumn,
+                                int endColumn,
+                                int indent) {
         for (var lineNumber = startLine; lineNumber <= endLine; ++lineNumber) {
             final var line = (lineNumber < sourceLines.size())
                     ? sourceLines.get(lineNumber)
@@ -92,7 +91,6 @@ public class SourcePresenter extends AbstractPresenter {
                         .append("\n");
             }
         }
-        return builder;
     }
 
     public List<String> fetchLibrarySource(final VersionedIdentifier library) {

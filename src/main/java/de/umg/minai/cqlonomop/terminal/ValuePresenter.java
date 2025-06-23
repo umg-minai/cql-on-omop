@@ -18,31 +18,33 @@ public class ValuePresenter extends AbstractPresenter {
     }
 
     public void presentValue(final Object value) {
-        present(builder -> presentValue(value, builder));
+        present(builder -> presentValue(builder, value));
     }
 
-    public ThemeAwareStringBuilder presentValue(final Object value, final ThemeAwareStringBuilder builder) {
+    public void presentValue(final ThemeAwareStringBuilder builder, final Object value) {
         // Present type
-        presentTypeOf(value, builder);
+        presentTypeOf(builder, value);
         // Present value
         builder.append(" ");
         if (value instanceof Iterable<?> iterable) {
             builder.append("\n");
             iterable.forEach(element -> {
                 builder.append("  ");
-                presentValue(element, builder);
+                presentValue(builder, element);
             });
         } else if (value instanceof Tuple tuple) {
             final var elements = tuple.getElements();
-            presentFields(fieldPrinter -> elements.forEach((name, value2) -> {
-                fieldPrinter.accept(name);
-                presentValueSimple(value2, builder);
-            }), builder, elements.size() > 4);
+            presentFields(builder,
+                    fieldPrinter -> elements.forEach((name, value2) -> {
+                        fieldPrinter.accept(name);
+                        presentValueSimple(builder, value2);
+                    }),
+                    elements.size() > 4);
         } else if (value instanceof Interval interval) {
             builder.append(interval.getLowClosed() ? "[" : "(");
-            presentValueSimple(interval.getLow(), builder);
+            presentValueSimple(builder, interval.getLow());
             builder.append(", ");
-            presentValueSimple(interval.getHigh(), builder);
+            presentValueSimple(builder, interval.getHigh());
             builder.append(interval.getHighClosed() ? "]" : ")");
         } else if (value != null
                 && (value.getClass().getPackageName().contains("OMOP")
@@ -54,26 +56,27 @@ public class ValuePresenter extends AbstractPresenter {
                             && !method.getName().equals("getHibernateLazyInitializer"))
                     .sorted(Comparator.comparing(Method::getName))
                     .toList();
-            presentFields(fieldPrinter -> getters.forEach(method -> {
-                final var methodName = method.getName();
-                final var fieldName = methodName.substring(3, 4).toLowerCase(Locale.ROOT)
-                        + methodName.substring(4);
-                fieldPrinter.accept(fieldName);
-                try {
-                    final var fieldValue = method.invoke(value);
-                    presentFieldValue(fieldValue, builder);
-                } catch (Exception e) {
-                    builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
-                }
-            }), builder, getters.size() > 4);
+            presentFields(builder,
+                    fieldPrinter -> getters.forEach(method -> {
+                        final var methodName = method.getName();
+                        final var fieldName = methodName.substring(3, 4).toLowerCase(Locale.ROOT)
+                                + methodName.substring(4);
+                        fieldPrinter.accept(fieldName);
+                        try {
+                            final var fieldValue = method.invoke(value);
+                            presentFieldValue(builder, fieldValue);
+                        } catch (Exception e) {
+                            builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
+                        }
+                    }),
+                    getters.size() > 4);
         } else {
-            presentValueSimple(value, builder);
+            presentValueSimple(builder, value);
         }
         builder.append("\n");
-        return builder;
     }
 
-    public void presentTypeOf(final Object value, final ThemeAwareStringBuilder builder) {
+    public void presentTypeOf(final ThemeAwareStringBuilder builder, final Object value) {
         builder.withStyle(Theme.Element.TYPE_SPECIFIER, typeStringOf(value));
     }
 
@@ -103,8 +106,8 @@ public class ValuePresenter extends AbstractPresenter {
         }
     }
 
-    public void presentFields(final Consumer<Consumer<String>> continuation,
-                              final ThemeAwareStringBuilder builder,
+    public void presentFields(final ThemeAwareStringBuilder builder,
+                              final Consumer<Consumer<String>> continuation,
                               boolean multipleLines) {
         builder.append("{");
         if (multipleLines) {
@@ -129,17 +132,17 @@ public class ValuePresenter extends AbstractPresenter {
         }
     }
 
-    private void presentFieldValue(final Object fieldValue, final ThemeAwareStringBuilder builder) {
+    private void presentFieldValue(final ThemeAwareStringBuilder builder, final Object fieldValue) {
         if (fieldValue instanceof Optional<?> optional) {
             optional.ifPresentOrElse(
-                    value -> presentValueSimple(value, builder),
+                    value -> presentValueSimple(builder, value),
                     () -> builder.withStyle(Theme.Element.INACTIVE, "<no value>"));
         } else {
-            presentValueSimple(fieldValue, builder);
+            presentValueSimple(builder, fieldValue);
         }
     }
 
-    public void presentValueSimple(final Object value, final ThemeAwareStringBuilder builder, int limit) {
+    public void presentValueSimple(final ThemeAwareStringBuilder builder, final Object value, int limit) {
         final Theme.Element element;
         String string;
         if (value == null) {
@@ -165,8 +168,8 @@ public class ValuePresenter extends AbstractPresenter {
         builder.withStyle(element, string);
     }
 
-    public void presentValueSimple(final Object value, final ThemeAwareStringBuilder builder) {
-        presentValueSimple(value, builder, -1);
+    public void presentValueSimple(final ThemeAwareStringBuilder builder, final Object value) {
+        presentValueSimple(builder, value, -1);
     }
 
 }

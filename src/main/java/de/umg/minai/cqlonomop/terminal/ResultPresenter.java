@@ -1,6 +1,5 @@
 package de.umg.minai.cqlonomop.terminal;
 
-import org.cqframework.cql.cql2elm.LibraryManager;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
@@ -52,7 +51,7 @@ public class ResultPresenter extends AbstractPresenter {
                                 .withId(locator.getLibraryName())
                                 .withVersion(locator.getLibraryVersion());
                         final var sourceLines = this.sourcePresenter.fetchLibrarySource(libraryId);
-                        this.sourcePresenter.presentSource(sourceLines, locator.getSourceLocation(), builder);
+                        this.sourcePresenter.presentSource(builder, sourceLines, locator.getSourceLocation());
                     }
                 });
             }
@@ -63,7 +62,7 @@ public class ResultPresenter extends AbstractPresenter {
                 this.seenResults.add(expressionName);
                 final var value = expressionResult.value();
                 builder.withStyle(Theme.Element.IDENTIFIER, expressionName).append(" => ");
-                this.valuePresenter.presentValue(value, builder);
+                this.valuePresenter.presentValue(builder, value);
             }
         });
     }
