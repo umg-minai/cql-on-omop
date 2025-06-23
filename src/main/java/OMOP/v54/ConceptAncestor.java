@@ -1,83 +1,121 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "concept_ancestor", schema = "cds_cdm")
 public class ConceptAncestor {
 
-  @Column(name = "max_levels_of_separation", insertable = false, updatable = false)
-  private Integer maxLevelsOfSeparation;
-  
-  public Optional<Integer> getMaxLevelsOfSeparation() {
-    if (this.maxLevelsOfSeparation != null) {
-      return Optional.of(this.maxLevelsOfSeparation);
-    } else {
-      return Optional.empty();
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "ancestor_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer ancestorConceptId;
+
+        @Column(name = "descendant_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer descendantConceptId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.ancestorConceptId, otherInstance.ancestorConceptId)
+                            && Objects.equals(this.descendantConceptId, otherInstance.descendantConceptId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.ancestorConceptId, this.descendantConceptId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("ancestorConceptId=");
+            result.append(this.ancestorConceptId);
+            result.append(", ");
+            result.append("descendantConceptId=");
+            result.append(this.descendantConceptId);
+            result.append("}");
+            return result.toString();
+        }
+
+
     }
-  }
-  
-  @Column(name = "min_levels_of_separation", insertable = false, updatable = false)
-  private Integer minLevelsOfSeparation;
-  
-  public Optional<Integer> getMinLevelsOfSeparation() {
-    if (this.minLevelsOfSeparation != null) {
-      return Optional.of(this.minLevelsOfSeparation);
-    } else {
-      return Optional.empty();
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    public Integer getAncestorConceptId() {
+        return this.compoundId.ancestorConceptId;
     }
-  }
-  
-  @Column(name = "descendant_concept_id", insertable = false, updatable = false)
-  private Integer descendantConceptId;
-  
-  public Optional<Integer> getDescendantConceptId() {
-    if (this.descendantConceptId != null) {
-      return Optional.of(this.descendantConceptId);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ancestor_concept_id")
+    @MapsId("ancestorConceptId")
+    private Concept ancestorConcept;
+    
+    public Concept getAncestorConcept() {
+        return this.ancestorConcept;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "descendant_concept_id")
-  private Concept descendantConcept;
-  
-  public Optional<Concept> getDescendantConcept() {
-    return Optional.ofNullable(this.descendantConcept);
-  }
-  @Column(name = "ancestor_concept_id", insertable = false, updatable = false)
-  private Integer ancestorConceptId;
-  
-  public Optional<Integer> getAncestorConceptId() {
-    if (this.ancestorConceptId != null) {
-      return Optional.of(this.ancestorConceptId);
-    } else {
-      return Optional.empty();
+
+    public Integer getDescendantConceptId() {
+        return this.compoundId.descendantConceptId;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "ancestor_concept_id")
-  private Concept ancestorConcept;
-  
-  public Optional<Concept> getAncestorConcept() {
-    return Optional.ofNullable(this.ancestorConcept);
-  }
-  
-  
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "descendant_concept_id")
+    @MapsId("descendantConceptId")
+    private Concept descendantConcept;
+    
+    public Concept getDescendantConcept() {
+        return this.descendantConcept;
+    }
+
+    @Column(name = "max_levels_of_separation", insertable = false,
+            updatable = false, nullable = false)
+    private Integer maxLevelsOfSeparation;
+    
+    public Integer getMaxLevelsOfSeparation() {
+        return this.maxLevelsOfSeparation;
+    }
+
+    @Column(name = "min_levels_of_separation", insertable = false,
+            updatable = false, nullable = false)
+    private Integer minLevelsOfSeparation;
+    
+    public Integer getMinLevelsOfSeparation() {
+        return this.minLevelsOfSeparation;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptAncestor{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
 }

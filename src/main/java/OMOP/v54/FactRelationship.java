@@ -1,101 +1,142 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "fact_relationship", schema = "cds_cdm")
 public class FactRelationship {
 
-  @Column(name = "relationship_concept_id", insertable = false, updatable = false)
-  private Integer relationshipConceptId;
-  
-  public Optional<Integer> getRelationshipConceptId() {
-    if (this.relationshipConceptId != null) {
-      return Optional.of(this.relationshipConceptId);
-    } else {
-      return Optional.empty();
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "domain_concept_id_1", insertable = false,
+                updatable = false, nullable = false)
+        private Integer domainConceptId1;
+
+        @Column(name = "domain_concept_id_2", insertable = false,
+                updatable = false, nullable = false)
+        private Integer domainConceptId2;
+
+        @Column(name = "relationship_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer relationshipConceptId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.domainConceptId1, otherInstance.domainConceptId1)
+                            && Objects.equals(this.domainConceptId2, otherInstance.domainConceptId2)
+                            && Objects.equals(this.relationshipConceptId, otherInstance.relationshipConceptId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.domainConceptId1, this.domainConceptId2, this.relationshipConceptId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("domainConceptId1=");
+            result.append(this.domainConceptId1);
+            result.append(", ");
+            result.append("domainConceptId2=");
+            result.append(this.domainConceptId2);
+            result.append(", ");
+            result.append("relationshipConceptId=");
+            result.append(this.relationshipConceptId);
+            result.append("}");
+            return result.toString();
+        }
+
+
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "relationship_concept_id")
-  private Concept relationshipConcept;
-  
-  public Optional<Concept> getRelationshipConcept() {
-    return Optional.ofNullable(this.relationshipConcept);
-  }
-  @Column(name = "fact_id_2", insertable = false, updatable = false)
-  private Integer factId2;
-  
-  public Optional<Integer> getFactId2() {
-    if (this.factId2 != null) {
-      return Optional.of(this.factId2);
-    } else {
-      return Optional.empty();
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    public Integer getDomainConceptId1() {
+        return this.compoundId.domainConceptId1;
     }
-  }
-  
-  @Column(name = "domain_concept_id_2", insertable = false, updatable = false)
-  private Integer domainConceptId2;
-  
-  public Optional<Integer> getDomainConceptId2() {
-    if (this.domainConceptId2 != null) {
-      return Optional.of(this.domainConceptId2);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "domain_concept_id_1")
+    @MapsId("domainConceptId1")
+    private Concept domainConcept1;
+    
+    public Concept getDomainConcept1() {
+        return this.domainConcept1;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "domain_concept_id_2")
-  private Concept domainConcept2;
-  
-  public Optional<Concept> getDomainConcept2() {
-    return Optional.ofNullable(this.domainConcept2);
-  }
-  @Column(name = "fact_id_1", insertable = false, updatable = false)
-  private Integer factId1;
-  
-  public Optional<Integer> getFactId1() {
-    if (this.factId1 != null) {
-      return Optional.of(this.factId1);
-    } else {
-      return Optional.empty();
+
+    public Integer getDomainConceptId2() {
+        return this.compoundId.domainConceptId2;
     }
-  }
-  
-  @Column(name = "domain_concept_id_1", insertable = false, updatable = false)
-  private Integer domainConceptId1;
-  
-  public Optional<Integer> getDomainConceptId1() {
-    if (this.domainConceptId1 != null) {
-      return Optional.of(this.domainConceptId1);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "domain_concept_id_2")
+    @MapsId("domainConceptId2")
+    private Concept domainConcept2;
+    
+    public Concept getDomainConcept2() {
+        return this.domainConcept2;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "domain_concept_id_1")
-  private Concept domainConcept1;
-  
-  public Optional<Concept> getDomainConcept1() {
-    return Optional.ofNullable(this.domainConcept1);
-  }
-  
-  
+
+    @Column(name = "fact_id_1", insertable = false, updatable = false,
+            nullable = false)
+    private Integer factId1;
+    
+    public Integer getFactId1() {
+        return this.factId1;
+    }
+
+    @Column(name = "fact_id_2", insertable = false, updatable = false,
+            nullable = false)
+    private Integer factId2;
+    
+    public Integer getFactId2() {
+        return this.factId2;
+    }
+
+    public Integer getRelationshipConceptId() {
+        return this.compoundId.relationshipConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "relationship_concept_id")
+    @MapsId("relationshipConceptId")
+    private Concept relationshipConcept;
+    
+    public Concept getRelationshipConcept() {
+        return this.relationshipConcept;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("FactRelationship{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
 }

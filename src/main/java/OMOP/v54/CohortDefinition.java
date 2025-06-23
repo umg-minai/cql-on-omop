@@ -1,116 +1,157 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "cohort_definition", schema = "cds_cdm")
 public class CohortDefinition {
 
-  @Column(name = "cohort_initiation_date", insertable = false, updatable = false)
-  private ZonedDateTime cohortInitiationDate;
-  
-  public Optional<Date> getCohortInitiationDate() {
-    if (this.cohortInitiationDate != null) {
-      return Optional.of(new Date(this.cohortInitiationDate.toLocalDate()));
-    } else {
-      return Optional.empty();
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "definition_type_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer definitionTypeConceptId;
+
+        @Column(name = "subject_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer subjectConceptId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.definitionTypeConceptId, otherInstance.definitionTypeConceptId)
+                            && Objects.equals(this.subjectConceptId, otherInstance.subjectConceptId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.definitionTypeConceptId, this.subjectConceptId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("definitionTypeConceptId=");
+            result.append(this.definitionTypeConceptId);
+            result.append(", ");
+            result.append("subjectConceptId=");
+            result.append(this.subjectConceptId);
+            result.append("}");
+            return result.toString();
+        }
+
+
     }
-  }
-  
-  @Column(name = "subject_concept_id", insertable = false, updatable = false)
-  private Integer subjectConceptId;
-  
-  public Optional<Integer> getSubjectConceptId() {
-    if (this.subjectConceptId != null) {
-      return Optional.of(this.subjectConceptId);
-    } else {
-      return Optional.empty();
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    @Column(name = "cohort_definition_description", insertable = false,
+            updatable = false, nullable = true)
+    private String cohortDefinitionDescription;
+    
+    public Optional<String> getCohortDefinitionDescription() {
+        if (this.cohortDefinitionDescription != null) {
+            return Optional.of(this.cohortDefinitionDescription);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "subject_concept_id")
-  private Concept subjectConcept;
-  
-  public Optional<Concept> getSubjectConcept() {
-    return Optional.ofNullable(this.subjectConcept);
-  }
-  @Column(name = "cohort_definition_syntax", insertable = false, updatable = false)
-  private String cohortDefinitionSyntax;
-  
-  public Optional<String> getCohortDefinitionSyntax() {
-    if (this.cohortDefinitionSyntax != null) {
-      return Optional.of(this.cohortDefinitionSyntax);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "cohort_definition_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer cohortDefinitionId;
+    
+    public Integer getCohortDefinitionId() {
+        return this.cohortDefinitionId;
     }
-  }
-  
-  @Column(name = "definition_type_concept_id", insertable = false, updatable = false)
-  private Integer definitionTypeConceptId;
-  
-  public Optional<Integer> getDefinitionTypeConceptId() {
-    if (this.definitionTypeConceptId != null) {
-      return Optional.of(this.definitionTypeConceptId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "cohort_definition_name", insertable = false,
+            updatable = false, nullable = false)
+    private String cohortDefinitionName;
+    
+    public String getCohortDefinitionName() {
+        return this.cohortDefinitionName;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "definition_type_concept_id")
-  private Concept definitionTypeConcept;
-  
-  public Optional<Concept> getDefinitionTypeConcept() {
-    return Optional.ofNullable(this.definitionTypeConcept);
-  }
-  @Column(name = "cohort_definition_description", insertable = false, updatable = false)
-  private String cohortDefinitionDescription;
-  
-  public Optional<String> getCohortDefinitionDescription() {
-    if (this.cohortDefinitionDescription != null) {
-      return Optional.of(this.cohortDefinitionDescription);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "cohort_definition_syntax", insertable = false,
+            updatable = false, nullable = true)
+    private String cohortDefinitionSyntax;
+    
+    public Optional<String> getCohortDefinitionSyntax() {
+        if (this.cohortDefinitionSyntax != null) {
+            return Optional.of(this.cohortDefinitionSyntax);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "cohort_definition_name", insertable = false, updatable = false)
-  private String cohortDefinitionName;
-  
-  public Optional<String> getCohortDefinitionName() {
-    if (this.cohortDefinitionName != null) {
-      return Optional.of(this.cohortDefinitionName);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "cohort_initiation_date", insertable = false,
+            updatable = false, nullable = true)
+    private ZonedDateTime cohortInitiationDate;
+    
+    public Optional<Date> getCohortInitiationDate() {
+        if (this.cohortInitiationDate != null) {
+            return Optional.of(new Date(this.cohortInitiationDate.toLocalDate()));
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "cohort_definition_id", insertable = false, updatable = false)
-  private Integer cohortDefinitionId;
-  
-  public Optional<Integer> getCohortDefinitionId() {
-    if (this.cohortDefinitionId != null) {
-      return Optional.of(this.cohortDefinitionId);
-    } else {
-      return Optional.empty();
+
+    public Integer getDefinitionTypeConceptId() {
+        return this.compoundId.definitionTypeConceptId;
     }
-  }
-  
-  
-  
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "definition_type_concept_id")
+    @MapsId("definitionTypeConceptId")
+    private Concept definitionTypeConcept;
+    
+    public Concept getDefinitionTypeConcept() {
+        return this.definitionTypeConcept;
+    }
+
+    public Integer getSubjectConceptId() {
+        return this.compoundId.subjectConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_concept_id")
+    @MapsId("subjectConceptId")
+    private Concept subjectConcept;
+    
+    public Concept getSubjectConcept() {
+        return this.subjectConcept;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("CohortDefinition{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
 }

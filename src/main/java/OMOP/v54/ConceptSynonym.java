@@ -1,72 +1,113 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "concept_synonym", schema = "cds_cdm")
 public class ConceptSynonym {
 
-  @Column(name = "language_concept_id", insertable = false, updatable = false)
-  private Integer languageConceptId;
-  
-  public Optional<Integer> getLanguageConceptId() {
-    if (this.languageConceptId != null) {
-      return Optional.of(this.languageConceptId);
-    } else {
-      return Optional.empty();
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "concept_id", insertable = false, updatable = false,
+                nullable = false)
+        private Integer conceptId;
+
+        @Column(name = "language_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Integer languageConceptId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.conceptId, otherInstance.conceptId)
+                            && Objects.equals(this.languageConceptId, otherInstance.languageConceptId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.conceptId, this.languageConceptId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("conceptId=");
+            result.append(this.conceptId);
+            result.append(", ");
+            result.append("languageConceptId=");
+            result.append(this.languageConceptId);
+            result.append("}");
+            return result.toString();
+        }
+
+
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "language_concept_id")
-  private Concept languageConcept;
-  
-  public Optional<Concept> getLanguageConcept() {
-    return Optional.ofNullable(this.languageConcept);
-  }
-  @Column(name = "concept_synonym_name", insertable = false, updatable = false)
-  private String conceptSynonymName;
-  
-  public Optional<String> getConceptSynonymName() {
-    if (this.conceptSynonymName != null) {
-      return Optional.of(this.conceptSynonymName);
-    } else {
-      return Optional.empty();
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    public Integer getConceptId() {
+        return this.compoundId.conceptId;
     }
-  }
-  
-  @Column(name = "concept_id", insertable = false, updatable = false)
-  private Integer conceptId;
-  
-  public Optional<Integer> getConceptId() {
-    if (this.conceptId != null) {
-      return Optional.of(this.conceptId);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "concept_id")
+    @MapsId("conceptId")
+    private Concept concept;
+    
+    public Concept getConcept() {
+        return this.concept;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "concept_id")
-  private Concept concept;
-  
-  public Optional<Concept> getConcept() {
-    return Optional.ofNullable(this.concept);
-  }
-  
-  
+
+    @Column(name = "concept_synonym_name", insertable = false,
+            updatable = false, nullable = false)
+    private String conceptSynonymName;
+    
+    public String getConceptSynonymName() {
+        return this.conceptSynonymName;
+    }
+
+    public Integer getLanguageConceptId() {
+        return this.compoundId.languageConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_concept_id")
+    @MapsId("languageConceptId")
+    private Concept languageConcept;
+    
+    public Concept getLanguageConcept() {
+        return this.languageConcept;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptSynonym{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
 }

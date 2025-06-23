@@ -1,270 +1,271 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "condition_occurrence", schema = "cds_cdm")
 public class ConditionOccurrence {
 
-  @Column(name = "condition_status_source_value", insertable = false, updatable = false)
-  private String conditionStatusSourceValue;
-  
-  public Optional<String> getConditionStatusSourceValue() {
-    if (this.conditionStatusSourceValue != null) {
-      return Optional.of(this.conditionStatusSourceValue);
-    } else {
-      return Optional.empty();
+    @Column(name = "condition_concept_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer conditionConceptId;
+    
+    public Integer getConditionConceptId() {
+        return this.conditionConceptId;
     }
-  }
-  
-  @Column(name = "condition_source_concept_id", insertable = false, updatable = false)
-  private Integer conditionSourceConceptId;
-  
-  public Optional<Integer> getConditionSourceConceptId() {
-    if (this.conditionSourceConceptId != null) {
-      return Optional.of(this.conditionSourceConceptId);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "condition_concept_id")
+    private Concept conditionConcept;
+    
+    public Concept getConditionConcept() {
+        return this.conditionConcept;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "condition_source_concept_id")
-  private Concept conditionSourceConcept;
-  
-  public Optional<Concept> getConditionSourceConcept() {
-    return Optional.ofNullable(this.conditionSourceConcept);
-  }
-  @Column(name = "condition_source_value", insertable = false, updatable = false)
-  private String conditionSourceValue;
-  
-  public Optional<String> getConditionSourceValue() {
-    if (this.conditionSourceValue != null) {
-      return Optional.of(this.conditionSourceValue);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_end_date", insertable = false, updatable = false,
+            nullable = true)
+    private ZonedDateTime conditionEndDate;
+    
+    public Optional<Date> getConditionEndDate() {
+        if (this.conditionEndDate != null) {
+            return Optional.of(new Date(this.conditionEndDate.toLocalDate()));
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "visit_detail_id", insertable = false, updatable = false)
-  private Integer visitDetailId;
-  
-  public Optional<Integer> getVisitDetailId() {
-    if (this.visitDetailId != null) {
-      return Optional.of(this.visitDetailId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_end_datetime", insertable = false,
+            updatable = false, nullable = true)
+    private ZonedDateTime conditionEndDatetime;
+    
+    public Optional<DateTime> getConditionEndDatetime() {
+        if (this.conditionEndDatetime != null) {
+            return Optional.of(new DateTime(this.conditionEndDatetime.toOffsetDateTime()));
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "visit_detail_id")
-  private VisitDetail visitDetail;
-  
-  public Optional<VisitDetail> getVisitDetail() {
-    return Optional.ofNullable(this.visitDetail);
-  }
-  @Column(name = "visit_occurrence_id", insertable = false, updatable = false)
-  private Integer visitOccurrenceId;
-  
-  public Optional<Integer> getVisitOccurrenceId() {
-    if (this.visitOccurrenceId != null) {
-      return Optional.of(this.visitOccurrenceId);
-    } else {
-      return Optional.empty();
+
+    @Id
+    @Column(name = "condition_occurrence_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer conditionOccurrenceId;
+    
+    public Integer getConditionOccurrenceId() {
+        return this.conditionOccurrenceId;
     }
-  }
-  
-  @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "visit_occurrence_id")
-  private VisitOccurrence visitOccurrence;
-  
-  public Optional<VisitOccurrence> getVisitOccurrence() {
-    return Optional.ofNullable(this.visitOccurrence);
-  }
-  @Column(name = "provider_id", insertable = false, updatable = false)
-  private Integer providerId;
-  
-  public Optional<Integer> getProviderId() {
-    if (this.providerId != null) {
-      return Optional.of(this.providerId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_source_concept_id", insertable = false,
+            updatable = false, nullable = true)
+    private Integer conditionSourceConceptId;
+    
+    public Optional<Integer> getConditionSourceConceptId() {
+        if (this.conditionSourceConceptId != null) {
+            return Optional.of(this.conditionSourceConceptId);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "provider_id")
-  private Provider provider;
-  
-  public Optional<Provider> getProvider() {
-    return Optional.ofNullable(this.provider);
-  }
-  @Column(name = "stop_reason", insertable = false, updatable = false)
-  private String stopReason;
-  
-  public Optional<String> getStopReason() {
-    if (this.stopReason != null) {
-      return Optional.of(this.stopReason);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "condition_source_concept_id")
+    private Concept conditionSourceConcept;
+    
+    public Optional<Concept> getConditionSourceConcept() {
+        return Optional.ofNullable(this.conditionSourceConcept);
     }
-  }
-  
-  @Column(name = "condition_status_concept_id", insertable = false, updatable = false)
-  private Integer conditionStatusConceptId;
-  
-  public Optional<Integer> getConditionStatusConceptId() {
-    if (this.conditionStatusConceptId != null) {
-      return Optional.of(this.conditionStatusConceptId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_source_value", insertable = false,
+            updatable = false, nullable = true)
+    private String conditionSourceValue;
+    
+    public Optional<String> getConditionSourceValue() {
+        if (this.conditionSourceValue != null) {
+            return Optional.of(this.conditionSourceValue);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "condition_status_concept_id")
-  private Concept conditionStatusConcept;
-  
-  public Optional<Concept> getConditionStatusConcept() {
-    return Optional.ofNullable(this.conditionStatusConcept);
-  }
-  @Column(name = "condition_type_concept_id", insertable = false, updatable = false)
-  private Integer conditionTypeConceptId;
-  
-  public Optional<Integer> getConditionTypeConceptId() {
-    if (this.conditionTypeConceptId != null) {
-      return Optional.of(this.conditionTypeConceptId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_start_date", insertable = false,
+            updatable = false, nullable = false)
+    private ZonedDateTime conditionStartDate;
+    
+    public Date getConditionStartDate() {
+        return new Date(this.conditionStartDate.toLocalDate());
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "condition_type_concept_id")
-  private Concept conditionTypeConcept;
-  
-  public Optional<Concept> getConditionTypeConcept() {
-    return Optional.ofNullable(this.conditionTypeConcept);
-  }
-  @Column(name = "condition_end_datetime", insertable = false, updatable = false)
-  private ZonedDateTime conditionEndDatetime;
-  
-  public Optional<DateTime> getConditionEndDatetime() {
-    if (this.conditionEndDatetime != null) {
-      return Optional.of(new DateTime(this.conditionEndDatetime.toOffsetDateTime()));
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_start_datetime", insertable = false,
+            updatable = false, nullable = true)
+    private ZonedDateTime conditionStartDatetime;
+    
+    public Optional<DateTime> getConditionStartDatetime() {
+        if (this.conditionStartDatetime != null) {
+            return Optional.of(new DateTime(this.conditionStartDatetime.toOffsetDateTime()));
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "condition_end_date", insertable = false, updatable = false)
-  private ZonedDateTime conditionEndDate;
-  
-  public Optional<Date> getConditionEndDate() {
-    if (this.conditionEndDate != null) {
-      return Optional.of(new Date(this.conditionEndDate.toLocalDate()));
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_status_concept_id", insertable = false,
+            updatable = false, nullable = true)
+    private Integer conditionStatusConceptId;
+    
+    public Optional<Integer> getConditionStatusConceptId() {
+        if (this.conditionStatusConceptId != null) {
+            return Optional.of(this.conditionStatusConceptId);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "condition_start_datetime", insertable = false, updatable = false)
-  private ZonedDateTime conditionStartDatetime;
-  
-  public Optional<DateTime> getConditionStartDatetime() {
-    if (this.conditionStartDatetime != null) {
-      return Optional.of(new DateTime(this.conditionStartDatetime.toOffsetDateTime()));
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "condition_status_concept_id")
+    private Concept conditionStatusConcept;
+    
+    public Optional<Concept> getConditionStatusConcept() {
+        return Optional.ofNullable(this.conditionStatusConcept);
     }
-  }
-  
-  @Column(name = "condition_start_date", insertable = false, updatable = false)
-  private ZonedDateTime conditionStartDate;
-  
-  public Optional<Date> getConditionStartDate() {
-    if (this.conditionStartDate != null) {
-      return Optional.of(new Date(this.conditionStartDate.toLocalDate()));
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_status_source_value", insertable = false,
+            updatable = false, nullable = true)
+    private String conditionStatusSourceValue;
+    
+    public Optional<String> getConditionStatusSourceValue() {
+        if (this.conditionStatusSourceValue != null) {
+            return Optional.of(this.conditionStatusSourceValue);
+        } else {
+            return Optional.empty();
+        }
     }
-  }
-  
-  @Column(name = "condition_concept_id", insertable = false, updatable = false)
-  private Integer conditionConceptId;
-  
-  public Optional<Integer> getConditionConceptId() {
-    if (this.conditionConceptId != null) {
-      return Optional.of(this.conditionConceptId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "condition_type_concept_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer conditionTypeConceptId;
+    
+    public Integer getConditionTypeConceptId() {
+        return this.conditionTypeConceptId;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "condition_concept_id")
-  private Concept conditionConcept;
-  
-  public Optional<Concept> getConditionConcept() {
-    return Optional.ofNullable(this.conditionConcept);
-  }
-  @Column(name = "person_id", insertable = false, updatable = false)
-  private Integer personId;
-  
-  public Optional<Integer> getPersonId() {
-    if (this.personId != null) {
-      return Optional.of(this.personId);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "condition_type_concept_id")
+    private Concept conditionTypeConcept;
+    
+    public Concept getConditionTypeConcept() {
+        return this.conditionTypeConcept;
     }
-  }
-  
-  @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "person_id")
-  private Person person;
-  
-  public Optional<Person> getPerson() {
-    return Optional.ofNullable(this.person);
-  }
-  @Id
-  @Column(name = "condition_occurrence_id", insertable = false, updatable = false)
-  private Integer conditionOccurrenceId;
-  
-  public Optional<Integer> getConditionOccurrenceId() {
-    if (this.conditionOccurrenceId != null) {
-      return Optional.of(this.conditionOccurrenceId);
-    } else {
-      return Optional.empty();
+
+    @Column(name = "person_id", insertable = false, updatable = false,
+            nullable = false)
+    private Integer personId;
+    
+    public Integer getPersonId() {
+        return this.personId;
     }
-  }
-  
-  
-  @Override
-  public String toString() {
-      final var result = new StringBuilder();
-      result.append("ConditionOccurrence{id=").append(this.conditionOccurrenceId);
-      this.getConditionConcept().ifPresent(concept -> {
-        result.append(", concept='")
-        .append(concept.getConceptName().get())
-        .append("'");
-      });
-      result.append("}");
-      return result.toString();
-  }
-  
+
+    @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id")
+    private Person person;
+    
+    public Person getPerson() {
+        return this.person;
+    }
+
+    @Column(name = "provider_id", insertable = false, updatable = false,
+            nullable = true)
+    private Integer providerId;
+    
+    public Optional<Integer> getProviderId() {
+        if (this.providerId != null) {
+            return Optional.of(this.providerId);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id")
+    private Provider provider;
+    
+    public Optional<Provider> getProvider() {
+        return Optional.ofNullable(this.provider);
+    }
+
+    @Column(name = "stop_reason", insertable = false, updatable = false,
+            nullable = true)
+    private String stopReason;
+    
+    public Optional<String> getStopReason() {
+        if (this.stopReason != null) {
+            return Optional.of(this.stopReason);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Column(name = "visit_detail_id", insertable = false, updatable = false,
+            nullable = true)
+    private Integer visitDetailId;
+    
+    public Optional<Integer> getVisitDetailId() {
+        if (this.visitDetailId != null) {
+            return Optional.of(this.visitDetailId);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "visit_detail_id")
+    private VisitDetail visitDetail;
+    
+    public Optional<VisitDetail> getVisitDetail() {
+        return Optional.ofNullable(this.visitDetail);
+    }
+
+    @Column(name = "visit_occurrence_id", insertable = false,
+            updatable = false, nullable = true)
+    private Integer visitOccurrenceId;
+    
+    public Optional<Integer> getVisitOccurrenceId() {
+        if (this.visitOccurrenceId != null) {
+            return Optional.of(this.visitOccurrenceId);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "visit_occurrence_id")
+    private VisitOccurrence visitOccurrence;
+    
+    public Optional<VisitOccurrence> getVisitOccurrence() {
+        return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConditionOccurrence{");
+        result.append("id=");
+        result.append(this.conditionOccurrenceId);
+        {
+            result.append(", concept='");
+            result.append(this.getConditionConcept().getConceptName());
+            result.append("'");
+
+        }result.append("}");
+        return result.toString();
+    }
+
+
 }

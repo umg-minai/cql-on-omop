@@ -1,78 +1,67 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "concept_class", schema = "cds_cdm")
 public class ConceptClass {
 
-  @Column(name = "concept_class_concept_id", insertable = false, updatable = false)
-  private Integer conceptClassConceptId;
-  
-  public Optional<Integer> getConceptClassConceptId() {
-    if (this.conceptClassConceptId != null) {
-      return Optional.of(this.conceptClassConceptId);
-    } else {
-      return Optional.empty();
+    @Column(name = "concept_class_concept_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer conceptClassConceptId;
+    
+    public Integer getConceptClassConceptId() {
+        return this.conceptClassConceptId;
     }
-  }
-  
-  @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "concept_class_concept_id")
-  private Concept conceptClassConcept;
-  
-  public Optional<Concept> getConceptClassConcept() {
-    return Optional.ofNullable(this.conceptClassConcept);
-  }
-  @Column(name = "concept_class_name", insertable = false, updatable = false)
-  private String conceptClassName;
-  
-  public Optional<String> getConceptClassName() {
-    if (this.conceptClassName != null) {
-      return Optional.of(this.conceptClassName);
-    } else {
-      return Optional.empty();
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "concept_class_concept_id")
+    private Concept conceptClassConcept;
+    
+    public Concept getConceptClassConcept() {
+        return this.conceptClassConcept;
     }
-  }
-  
-  @Id
-  @Column(name = "concept_class_id", insertable = false, updatable = false)
-  private String conceptClassId;
-  
-  public Optional<String> getConceptClassId() {
-    if (this.conceptClassId != null) {
-      return Optional.of(this.conceptClassId);
-    } else {
-      return Optional.empty();
+
+    @Id
+    @Column(name = "concept_class_id", insertable = false, updatable = false,
+            nullable = false)
+    private String conceptClassId;
+    
+    public String getConceptClassId() {
+        return this.conceptClassId;
     }
-  }
-  
-  
-  @Override
-  public String toString() {
-      final var result = new StringBuilder();
-      result.append("ConceptClass{id=").append(this.conceptClassId);
-      this.getConceptClassConcept().ifPresent(concept -> {
-        result.append(", concept='")
-        .append(concept.getConceptName().get())
-        .append("'");
-      });
-      result.append("}");
-      return result.toString();
-  }
-  
+
+    @Column(name = "concept_class_name", insertable = false, updatable = false,
+            nullable = false)
+    private String conceptClassName;
+    
+    public String getConceptClassName() {
+        return this.conceptClassName;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptClass{");
+        result.append("id=");
+        result.append(this.conceptClassId);
+        {
+            result.append(", concept='");
+            result.append(this.getConceptClassConcept().getConceptName());
+            result.append("'");
+
+        }result.append("}");
+        return result.toString();
+    }
+
+
 }

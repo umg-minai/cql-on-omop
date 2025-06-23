@@ -1,5 +1,9 @@
 package OMOP.v54;
 
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -7,167 +11,121 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import jakarta.persistence.*;
-import org.opencds.cqf.cql.engine.runtime.DateTime;
-import org.opencds.cqf.cql.engine.runtime.Date;
-
 @Entity
 @Table(name = "concept", schema = "cds_cdm")
 public class Concept {
 
     @Column(name = "concept_class_id", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private String conceptClassId;
-
-    public Optional<String> getConceptClassId() {
-        if (this.conceptClassId != null) {
-            return Optional.of(this.conceptClassId);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public String getConceptClassId() {
+        return this.conceptClassId;
     }
 
     @ManyToOne(targetEntity = ConceptClass.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "concept_class_id")
     private ConceptClass conceptClass;
-
-    public Optional<ConceptClass> getConceptClass() {
-        return Optional.ofNullable(this.conceptClass);
+    
+    public ConceptClass getConceptClass() {
+        return this.conceptClass;
     }
 
     @Column(name = "concept_code", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private String conceptCode;
-
-    public Optional<String> getConceptCode() {
-        if (this.conceptCode != null) {
-            return Optional.of(this.conceptCode);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public String getConceptCode() {
+        return this.conceptCode;
     }
 
     @Id
     @Column(name = "concept_id", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private Integer conceptId;
-
-    public Optional<Integer> getConceptId() {
-        if (this.conceptId != null) {
-            return Optional.of(this.conceptId);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public Integer getConceptId() {
+        return this.conceptId;
     }
 
     @Column(name = "concept_name", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private String conceptName;
-
-    public Optional<String> getConceptName() {
-        if (this.conceptName != null) {
-            return Optional.of(this.conceptName);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public String getConceptName() {
+        return this.conceptName;
     }
 
     @Column(name = "domain_id", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private String domainId;
-
-    public Optional<String> getDomainId() {
-        if (this.domainId != null) {
-            return Optional.of(this.domainId);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public String getDomainId() {
+        return this.domainId;
     }
 
     @ManyToOne(targetEntity = Domain.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "domain_id")
     private Domain domain;
-
-    public Optional<Domain> getDomain() {
-        return Optional.ofNullable(this.domain);
+    
+    public Domain getDomain() {
+        return this.domain;
     }
 
     @Column(name = "invalid_reason", insertable = false, updatable = false,
             nullable = true)
     private String invalidReason;
-
+    
     public Optional<String> getInvalidReason() {
         if (this.invalidReason != null) {
             return Optional.of(this.invalidReason);
         } else {
             return Optional.empty();
         }
-
     }
 
     @Column(name = "standard_concept", insertable = false, updatable = false,
             nullable = true)
     private String standardConcept;
-
+    
     public Optional<String> getStandardConcept() {
         if (this.standardConcept != null) {
             return Optional.of(this.standardConcept);
         } else {
             return Optional.empty();
         }
-
     }
 
     @Column(name = "valid_end_date", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private ZonedDateTime validEndDate;
-
-    public Optional<Date> getValidEndDate() {
-        if (this.validEndDate != null) {
-            return Optional.of(new Date(this.validEndDate.toLocalDate()));
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public Date getValidEndDate() {
+        return new Date(this.validEndDate.toLocalDate());
     }
 
     @Column(name = "valid_start_date", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private ZonedDateTime validStartDate;
-
-    public Optional<Date> getValidStartDate() {
-        if (this.validStartDate != null) {
-            return Optional.of(new Date(this.validStartDate.toLocalDate()));
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public Date getValidStartDate() {
+        return new Date(this.validStartDate.toLocalDate());
     }
 
     @Column(name = "vocabulary_id", insertable = false, updatable = false,
-            nullable = true)
+            nullable = false)
     private String vocabularyId;
-
-    public Optional<String> getVocabularyId() {
-        if (this.vocabularyId != null) {
-            return Optional.of(this.vocabularyId);
-        } else {
-            return Optional.empty();
-        }
-
+    
+    public String getVocabularyId() {
+        return this.vocabularyId;
     }
 
     @ManyToOne(targetEntity = Vocabulary.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "vocabulary_id")
     private Vocabulary vocabulary;
-
-    public Optional<Vocabulary> getVocabulary() {
-        return Optional.ofNullable(this.vocabulary);
+    
+    public Vocabulary getVocabulary() {
+        return this.vocabulary;
     }
 
     @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -180,9 +138,9 @@ public class Concept {
                                insertable = false, updatable = false)
 
                })
-    private List<Concept> ancestors;
+    private Set<Concept> ancestors;
 
-    public List<Concept> getAncestors() {
+    public Set<Concept> getAncestors() {
         return this.ancestors;
     }
 
@@ -196,9 +154,9 @@ public class Concept {
                                insertable = false, updatable = false)
 
                })
-    private List<Concept> descendants;
+    private Set<Concept> descendants;
 
-    public List<Concept> getDescendants() {
+    public Set<Concept> getDescendants() {
         return this.descendants;
     }
 
@@ -233,37 +191,23 @@ public class Concept {
                                  updatable = false)
                    , @JoinColumn(name = "relationship_id", insertable = false,
                                  updatable = false)
+
                })
-    private List<ConceptRelationship> relationships;
+    private Set<ConceptRelationship> relationships;
 
-    public List<ConceptRelationship> getRelationships() {
+    public Set<ConceptRelationship> getRelationships() {
         return this.relationships;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.conceptId);
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        if (this == other) {
-            return true;
-        } else if (other instanceof Concept otherConcept) {
-            // We don't compare the classes of other and otherConcept since exactly one could be a Hibernate proxy.
-            return Objects.equals(this.getConceptId(), otherConcept.getConceptId());
-        } else {
-            return false;
-        }
     }
 
     @Override
     public String toString() {
         final var result = new StringBuilder();
-        result.append("Concept{id=").append(this.conceptId);
-        result.append(", name='")
-          .append(this.getConceptName().get())
-          .append("'");
+        result.append("Concept{");
+        result.append("id=");
+        result.append(this.conceptId);
+        result.append(", name='");
+        result.append(this.getConceptName());
+        result.append("'");
         result.append("}");
         return result.toString();
     }

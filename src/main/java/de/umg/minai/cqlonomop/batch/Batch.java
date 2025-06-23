@@ -40,7 +40,7 @@ public class Batch {
     }
 
     private void evaluatePerson(final Person person) {
-        final var id = person.getPersonId().orElseThrow();
+        final var id = person.getPersonId();
         final var libraryName = "Test2"; // String.format("Test%s", id);
         final var identifier = new VersionedIdentifier().withId(libraryName);
         librarySourceProvider.registerLibrary(identifier, String.format("""
