@@ -156,7 +156,11 @@ public class ErrorPresenter {
         builder.append("• ");
         builder.withStyle(new AttributedStyle().bold(), library != null ? library.getId() : "<unknown source>")
                 .append("\n");
-        final var sourceLines = library != null ? this.sourcePresenter.fetchLibrarySource(library) : null;
+        final var sourceLines = library != null
+                ? (library.getId() != null
+                   ? this.sourcePresenter.fetchLibrarySource(library)
+                   : null)
+                : null;
         errors.stream()
                 .sorted(ErrorPresenter::compareLocations)
                 .forEach(error -> presentErrorWithSource(error, sourceLines, builder));
