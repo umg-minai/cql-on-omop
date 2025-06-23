@@ -4,13 +4,12 @@ import org.cqframework.cql.cql2elm.LibraryManager;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
-import org.opencds.cqf.cql.engine.runtime.Interval;
-import org.opencds.cqf.cql.engine.runtime.Quantity;
-import org.opencds.cqf.cql.engine.runtime.Ratio;
-import org.opencds.cqf.cql.engine.runtime.Tuple;
+import org.opencds.cqf.cql.engine.runtime.*;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ResultPresenter {
 
@@ -78,61 +77,113 @@ public class ResultPresenter {
     }
 
     private void presentResultValue(final Object value, final ThemeAwareStringBuilder builder) {
-        boolean isOMOP = false;
         // Present type
-        final String type;
-        if (value == null) {
-            type = "Null (unknown)";
-        } else if (value instanceof Iterable<?> iterable) {
-            final var it = iterable.iterator();
-            final var firstElement = it.hasNext() ? it.next() : null;
-            final var elementType = firstElement != null ? firstElement.getClass() : Object.class;
-            type = String.format("List<%s>", elementType.getSimpleName());
-        } else if (value instanceof Interval interval) {
-            type = String.format("Interval<%s>", interval.getPointType().getSimpleName());
-        } else if (value.getClass().getPackageName().contains("OMOP")) {
-            isOMOP = true;
-            type = value.getClass().getCanonicalName();
-        } else {
-            type = value.getClass().getSimpleName();
-        }
-        builder.withStyle(Theme.Element.TYPE_SPECIFIER, type);
+        presentTypeOf(value, builder);
         // Present value
         builder.append(" ");
         if (value instanceof Iterable<?> iterable) {
-            iterable.forEach(v -> builder.append(String.format("%n  %s", v)));
-        } else if (value instanceof Tuple tuple) {
-            builder.append("{");
-            tuple.getElements().forEach((name, value2) -> {
-                builder.append("\n  ");
-                builder.withStyle(Theme.Element.IDENTIFIER, name);
-                builder.append(": ");
-                presentValue(value2, builder);
+            builder.append("\n");
+            iterable.forEach(element -> {
+                builder.append("  ");
+                presentResultValue(element, builder);
             });
-            builder.append("\n}");
-        } else if (isOMOP) {
+        } else if (value instanceof Tuple tuple) {
+            final var elements = tuple.getElements();
+            presentFields(fieldPrinter -> elements.forEach((name, value2) -> {
+                fieldPrinter.accept(name);
+                presentValue(value2, builder);
+            }), builder, elements.size() > 4);
+        } else if (value.getClass().getPackageName().contains("OMOP")
+                   || value.getClass().getPackageName().equals("org.opencds.cqf.cql.engine.runtime")) {
             final var clazz = value.getClass();
-            builder.append("{");
-            Arrays.stream(clazz.getMethods())
+            final var getters = Arrays.stream(clazz.getMethods())
                     .filter(method -> method.getName().startsWith("get")
-                            && !method.getName().equals("getClass"))
-                    .forEach(method -> {
-                        final var fieldName = method.getName().substring(3, 4).toLowerCase(Locale.ROOT)
-                                + method.getName().substring(4);
-                        builder.append("\n");
-                        builder.withStyle(Theme.Element.IDENTIFIER, String.format("  %s: ", fieldName));
-                        try {
-                            final var fieldValue = method.invoke(value);
-                            presentFieldValue(fieldValue, builder);
-                        } catch (Exception e) {
-                            builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
-                        }
-                    });
-            builder.append("\n}");
+                            && !method.getName().equals("getClass")
+                            && !method.getName().equals("getHibernateLazyInitializer"))
+                    .sorted(Comparator.comparing(Method::getName))
+                    .toList();
+            presentFields(fieldPrinter -> getters.forEach(method -> {
+                final var methodName = method.getName();
+                final var fieldName = methodName.substring(3, 4).toLowerCase(Locale.ROOT)
+                        + methodName.substring(4);
+                fieldPrinter.accept(fieldName);
+                try {
+                    final var fieldValue = method.invoke(value);
+                    presentFieldValue(fieldValue, builder);
+                } catch (Exception e) {
+                    builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
+                }
+            }), builder, getters.size() > 4);
         } else {
             presentValue(value, builder);
         }
         builder.append("\n");
+    }
+
+    public void presentTypeOf(final Object value, final ThemeAwareStringBuilder builder) {
+        builder.withStyle(Theme.Element.TYPE_SPECIFIER, typeStringOf(value));
+    }
+
+    private String typeStringOf(final Object value) {
+        if (value == null) {
+            return "Null (unknown)";
+        } else if (value instanceof Iterable<?> iterable) {
+            final var it = iterable.iterator();
+            final var firstElement = it.hasNext() ? it.next() : null;
+            final var elementType = firstElement != null ? firstElement.getClass() : Object.class;
+            return String.format("List<%s>", typeString(elementType));
+        } else if (value instanceof Interval interval) {
+            return String.format("Interval<%s>", typeString(interval.getPointType()));
+        } else {
+            return typeString(value.getClass());
+        }
+    }
+
+    private String typeString(final Class<?> clazz) {
+        final var packageName = clazz.getPackageName();
+        if (packageName.contains("OMOP")) {
+            return clazz.getCanonicalName();
+        } else if (packageName.equals("org.opencds.cqf.cql.engine.runtime")) {
+            return String.format("System.%s", clazz.getSimpleName());
+        } else {
+            return clazz.getSimpleName();
+        }
+    }
+
+    public void presentFields(final Consumer<Consumer<String>> continuation,
+                              final ThemeAwareStringBuilder builder,
+                              boolean multipleLines) {
+        builder.append("{");
+        if (multipleLines) {
+            continuation.accept(name -> {
+                builder.append("\n  ");
+                builder.withStyle(Theme.Element.IDENTIFIER, name);
+                builder.append(": ");
+            });
+            builder.append("\n}");
+        } else {
+            boolean []first = {true};
+            continuation.accept(name -> {
+                if (first[0]) {
+                    first[0] = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.withStyle(Theme.Element.IDENTIFIER, name);
+                builder.append(": ");
+            });
+            builder.append("}");
+        }
+    }
+
+    private void presentFieldValue(final Object fieldValue, final ThemeAwareStringBuilder builder) {
+        if (fieldValue instanceof Optional<?> optional) {
+            optional.ifPresentOrElse(
+                    value -> presentValue(value, builder),
+                    () -> builder.withStyle(Theme.Element.INACTIVE, "<no value>"));
+        } else {
+            presentValue(fieldValue, builder);
+        }
     }
 
     public void presentValue(final Object value, final ThemeAwareStringBuilder builder, int limit) {
@@ -163,16 +214,6 @@ public class ResultPresenter {
 
     public void presentValue(final Object value, final ThemeAwareStringBuilder builder) {
         presentValue(value, builder, -1);
-    }
-
-    private void presentFieldValue(final Object fieldValue, final ThemeAwareStringBuilder builder) {
-        if (fieldValue instanceof Optional<?> optional) {
-            optional.ifPresentOrElse(
-                    value -> presentValue(value, builder),
-                    () -> builder.withStyle(Theme.Element.INACTIVE, "<no value>"));
-        } else {
-            presentValue(fieldValue, builder);
-        }
     }
 
 }
