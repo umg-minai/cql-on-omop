@@ -67,4 +67,8 @@ public class ResultPresenter extends AbstractPresenter {
         });
     }
 
+    public void reset() {
+        this.seenResults.clear();
+    }
+
 }
