@@ -5,6 +5,7 @@ import OMOP.v54.Concept;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import org.hibernate.query.sqm.PathElementException;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
@@ -41,7 +42,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
         private List<Object> cache = null;
 
-        public RetrieveResult(TypedQuery<?> query,
+        public RetrieveResult(final TypedQuery<?> query,
                               final Predicate<Object> codeFilter) {
             this.query = query;
             this.codeFilter = codeFilter;
@@ -102,6 +103,8 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         // Add date criteria, if possible
         if (dateRange != null) {
             System.out.printf("Adding date range %s%n", dateRange);
+            throw new RuntimeException("not implemented");
+
             // TODO
         }
 
@@ -148,12 +151,17 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                                      final Root<?> root,
                                                      final String contextPath,
                                                      final Object contextValue) {
-        final var info = MappingInfo.ensureVersion("v5.4").getDataTypeInfo(dataType); // TODO: don't hard-code
-        final var columnName = info.columnForContext(contextPath, contextValue);
-        if (columnName != null && contextValue instanceof OMOP.v54.Person person) { // TODO: do this via info
-            final var column = root.get(columnName);
-            final var id = person.getPersonId().orElseThrow(); // TODO: don't throw
-            return addRestriction(baseQuery, criteriaBuilder.equal(column, id));
+        final var info = this.mappingInfo.getDataTypeInfo(dataType);
+        final var contextInfo = info.infoForContext(contextPath, contextValue);
+        if (contextInfo != null) {
+            final var columnName = contextInfo.columnName();
+            Path<?> column;
+            try {
+                column = root.get(columnName);
+            } catch (PathElementException e) {
+                column = root.get("compoundId").get(columnName);
+            }
+            return addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
         } else {
             return baseQuery;
         }

@@ -2,6 +2,8 @@ package OMOP;
 
 public interface DataTypeInfo {
 
+    record ContextInfo(String columnName, Object value) {};
+
     /**
      * Return the Java class which implements the CQL/OMOP Type.
      *
@@ -19,14 +21,18 @@ public interface DataTypeInfo {
     String contextPath(String contextName);
 
     /**
-     * Return the OMOP column within the OMOP table represented by this data type that should be compared to
-     * contextValue for contextPath.
+     * Return an OMOP column name and a value that should be used for add the context restriction to a query.
+     * <br>
+     * The OMOP column name refers to a column of the OMOP table represented by this data type. The value is obtained
+     * from contextValue according to contextPath.
      *
      * @param contextPath The CQL path within an instance of the data type.
      * @param contextValue The value of the CQL context that should be compared to the value of the OMOP column.
-     * @return The name of an OMOP column.
+     * @return A {@link ContextInfo} instance with the column name and value.
      */
-    String columnForContext(String contextPath, Object contextValue);
+    default ContextInfo infoForContext(String contextPath, Object contextValue) {
+        return null;
+    }
 
     /**
      * Indicate whether a CQL query condition with the given codePath can be translated into an SQL join of OMOP tables.

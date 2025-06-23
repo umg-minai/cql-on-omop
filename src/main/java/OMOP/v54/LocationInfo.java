@@ -12,10 +12,6 @@ public class LocationInfo implements DataTypeInfo {
         return null;
     }
 
-    public String columnForContext(final String contextPath, final Object contextValue) {
-        return null;
-    }
-
     public ContextInfo infoForContext(final String contextPath, final Object contextValue) {
         return null;
     }

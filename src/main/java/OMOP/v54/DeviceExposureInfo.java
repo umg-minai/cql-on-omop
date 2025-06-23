@@ -16,14 +16,6 @@ public class DeviceExposureInfo implements DataTypeInfo {
         }
     }
 
-    public String columnForContext(final String contextPath, final Object contextValue) {
-        if (contextPath.equals("person") && (contextValue instanceof Person)) {
-            return "personId";
-        } else {
-            return null;
-        }
-    }
-
     public ContextInfo infoForContext(final String contextPath, final Object contextValue) {
         if (contextPath.equals("person") && (contextValue instanceof Person person)) {
             return new ContextInfo("personId", person.getPersonId());
