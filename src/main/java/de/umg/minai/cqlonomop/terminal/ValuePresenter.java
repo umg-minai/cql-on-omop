@@ -11,19 +11,14 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ValuePresenter {
-
-    private final Terminal terminal;
-
-    private final Theme theme;
+public class ValuePresenter extends AbstractPresenter {
 
     public ValuePresenter(final Terminal terminal, final Theme theme) {
-        this.terminal = terminal;
-        this.theme = theme;
+        super(terminal, theme);
     }
 
     public void presentValue(final Object value) {
-        presentValue(value, new ThemeAwareStringBuilder(this.theme)).print(terminal);
+        present(builder -> presentValue(value, builder));
     }
 
     public ThemeAwareStringBuilder presentValue(final Object value, final ThemeAwareStringBuilder builder) {

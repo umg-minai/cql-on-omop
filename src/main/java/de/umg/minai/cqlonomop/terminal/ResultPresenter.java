@@ -8,34 +8,28 @@ import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ResultPresenter {
+public class ResultPresenter extends AbstractPresenter {
 
     private final Set<String> seenResults = new HashSet<>();
-
-    private final Terminal terminal;
 
     private final SourcePresenter sourcePresenter;
 
     private final ValuePresenter valuePresenter;
 
-    private final Theme theme;
-
     public ResultPresenter(final Terminal terminal,
                            final Theme theme,
                            final SourcePresenter sourcePresenter,
                            final ValuePresenter valuePresenter) {
-        this.terminal = terminal;
+        super(terminal, theme);
         this.sourcePresenter = sourcePresenter;
         this.valuePresenter = valuePresenter;
-        this.theme = theme;
-    }
-
-    public ResultPresenter(final Terminal terminal, final Theme theme, final LibraryManager libraryManager) {
-        this(terminal, theme, new SourcePresenter(terminal, theme, libraryManager), new ValuePresenter(terminal, theme));
     }
 
     public void presentResult(final EvaluationResult result) {
-        final var builder = new ThemeAwareStringBuilder(this.theme);
+        present(builder -> presentResult(builder, result));
+    }
+
+    public void presentResult(final ThemeAwareStringBuilder builder, final EvaluationResult result) {
         // Messages
         final var debugResult = result.getDebugResult();
         if (debugResult != null) {
@@ -72,7 +66,6 @@ public class ResultPresenter {
                 this.valuePresenter.presentValue(value, builder);
             }
         });
-        builder.print(this.terminal);
     }
 
 }

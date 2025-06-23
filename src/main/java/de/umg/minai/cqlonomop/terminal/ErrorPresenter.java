@@ -16,23 +16,19 @@ import org.opencds.cqf.cql.engine.execution.Variable;
 
 import java.util.*;
 
-public class ErrorPresenter {
-
-    private final Terminal terminal;
+public class ErrorPresenter extends AbstractPresenter{
 
     private final SourcePresenter sourcePresenter;
 
     private final ValuePresenter valuePresenter;
 
-    private final Theme theme;
-
     public ErrorPresenter(final Terminal terminal,
                           final Theme theme,
-                          final LibraryManager libraryManager) {
-        this.terminal = terminal;
-        this.sourcePresenter = new SourcePresenter(terminal, theme, libraryManager);
-        this.valuePresenter = new ValuePresenter(terminal, theme);
-        this.theme = theme;
+                          final SourcePresenter sourcePresenter,
+                          final ValuePresenter valuePresenter) {
+        super(terminal, theme);
+        this.sourcePresenter = sourcePresenter;
+        this.valuePresenter = valuePresenter;
     }
 
     public void presentError(final Exception error) {
@@ -46,74 +42,73 @@ public class ErrorPresenter {
     }
 
     private void presentSpecificError(final Exception exception) {
-        new ThemeAwareStringBuilder(this.theme)
-                .withStyle(Theme.Element.ERROR,
-                        builder -> builder.append("Internal error:\n")
-                        .append(exception.toString()))
-                .println(terminal);
+        present(builder ->
+                builder.withStyle(Theme.Element.ERROR,
+                        builder2 -> builder2.append("Internal error:\n")
+                        .append(exception.toString())));
     }
 
     // Runtime Exceptions
 
     private void presentSpecificError(final CqlException exception) {
-        final var builder = new ThemeAwareStringBuilder(this.theme)
-                .withStyle(Theme.Element.ERROR, b ->
-                        b.append("CQL evaluation failed:\n\n").append(exception.getMessage()));
-        builder.append("\n\n");
-        final var frames = exception.getBacktrace().getFrames();
-        for (int i = frames.size() - 1; i >= 0; --i) {
-            final var frame = frames.get(i);
-            final var nextFrame = (i > 0) ? frames.get(i - 1) : null;
-            final var expression = frame.getExpression();
-            final TrackBack trackback = maybeGetTrackback(expression);
-            VersionedIdentifier library = trackback != null ? trackback.getLibrary() : null;
+        present(builder -> {
+            builder.withStyle(Theme.Element.ERROR, b ->
+                    b.append("CQL evaluation failed:\n\n").append(exception.getMessage()));
+            builder.append("\n\n");
+            final var frames = exception.getBacktrace().getFrames();
+            for (int i = frames.size() - 1; i >= 0; --i) {
+                final var frame = frames.get(i);
+                final var nextFrame = (i > 0) ? frames.get(i - 1) : null;
+                final var expression = frame.getExpression();
+                final TrackBack trackback = maybeGetTrackback(expression);
+                VersionedIdentifier library = trackback != null ? trackback.getLibrary() : null;
 
-            if (frame instanceof Backtrace.FunctionoidFrame functionFrame) {
-                final var functionoid = functionFrame.getDefinition();
-                if (library == null) {
-                    final var functionTrackback = maybeGetTrackback(functionFrame.getDefinition());
-                    if (functionTrackback != null) {
-                        library = functionTrackback.getLibrary();
-                    }
-                }
-                builder.append("\n  ")
-                        .append(library != null ? library.getId() : "«unknown library»")
-                        .append(".");
-                builder.withStyle(Theme.Element.DEFINITION_NAME, functionoid.getName());
-                if (functionoid instanceof FunctionDef functionDef) {
-                    builder.append("(");
-                    boolean isFirst = true;
-                    for (OperandDef operand : functionDef.getOperand()) {
-                        if (isFirst) {
-                            isFirst = false;
-                        } else {
-                            builder.append(", ");
+                if (frame instanceof Backtrace.FunctionoidFrame functionFrame) {
+                    final var functionoid = functionFrame.getDefinition();
+                    if (library == null) {
+                        final var functionTrackback = maybeGetTrackback(functionFrame.getDefinition());
+                        if (functionTrackback != null) {
+                            library = functionTrackback.getLibrary();
                         }
-                        builder.append(operand.getName());
-                        // TODO(jmoringe): find a good way to present the type
-                                /*.append(" ")
-                                .append(operand.getOperandTypeSpecifier().toString());*/
                     }
-                    builder.append(")");
+                    builder.append("\n  ")
+                            .append(library != null ? library.getId() : "«unknown library»")
+                            .append(".");
+                    builder.withStyle(Theme.Element.DEFINITION_NAME, functionoid.getName());
+                    if (functionoid instanceof FunctionDef functionDef) {
+                        builder.append("(");
+                        boolean isFirst = true;
+                        for (OperandDef operand : functionDef.getOperand()) {
+                            if (isFirst) {
+                                isFirst = false;
+                            } else {
+                                builder.append(", ");
+                            }
+                            builder.append(operand.getName());
+                            // TODO(jmoringe): find a good way to present the type
+                                    /*.append(" ")
+                                    .append(operand.getOperandTypeSpecifier().toString());*/
+                        }
+                        builder.append(")");
+                    }
+                    builder.append("\n");
+                    presentVariableList("    Arguments", functionFrame.getArguments(), builder);
+                    presentVariableList("    Local Variables", functionFrame.getLocalVariables(), builder);
+                    appendHeader("    Context", builder);
+                    appendBinding(functionFrame.getContextName(), functionFrame.getContextValue(), builder);
+                    builder.append("\n");
                 }
-                builder.append("\n");
-                presentVariableList("    Arguments", functionFrame.getArguments(), builder);
-                presentVariableList("    Local Variables", functionFrame.getLocalVariables(), builder);
-                appendHeader("    Context", builder);
-                appendBinding(functionFrame.getContextName(), functionFrame.getContextValue(), builder);
-                builder.append("\n");
-            }
-            appendHeader("    Source\n", builder);
-            if (nextFrame == null || nextFrame instanceof Backtrace.FunctionoidFrame) {
-                if (trackback != null) {
-                    final var sourceLines = this.sourcePresenter.fetchLibrarySource(library);
-                    this.sourcePresenter.presentSource(sourceLines, trackback, builder);
-                } else {
-                    builder.append("    <missing source>\n");
+                appendHeader("    Source\n", builder);
+                if (nextFrame == null || nextFrame instanceof Backtrace.FunctionoidFrame) {
+                    if (trackback != null) {
+                        final var sourceLines = this.sourcePresenter.fetchLibrarySource(library);
+                        this.sourcePresenter.presentSource(sourceLines, trackback, builder);
+                    } else {
+                        builder.append("    <missing source>\n");
+                    }
                 }
             }
-        }
-        builder.println(terminal);
+        });
     }
 
     private ThemeAwareStringBuilder appendHeader(final String title, final ThemeAwareStringBuilder builder) {
@@ -144,11 +139,11 @@ public class ErrorPresenter {
     // Compilation errors
 
     private void presentSpecificError(final CompilationFailedException exception) {
-        final var builder = new ThemeAwareStringBuilder(this.theme)
-                .withStyle(Theme.Element.ERROR, "CQL compilation failed:\n");
-        groupErrorByLibrary(exception).forEach((library, errors) ->
-                presentErrorsForLibrary(library, errors, builder));
-        builder.println(terminal);
+        present(builder -> {
+            builder.withStyle(Theme.Element.ERROR, "CQL compilation failed:\n");
+            groupErrorByLibrary(exception).forEach((library, errors) ->
+                    presentErrorsForLibrary(library, errors, builder));
+        });
     }
 
     private void presentErrorsForLibrary(final VersionedIdentifier library,
