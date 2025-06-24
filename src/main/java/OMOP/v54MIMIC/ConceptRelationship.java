@@ -1,0 +1,154 @@
+package OMOP.v54MIMIC;
+
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+@Entity
+@Table(name = "concept_relationship", schema = "cds_cdm")
+public class ConceptRelationship {
+
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "concept_id_1", insertable = false, updatable = false,
+                nullable = false)
+        private Long conceptId1;
+
+        @Column(name = "concept_id_2", insertable = false, updatable = false,
+                nullable = false)
+        private Long conceptId2;
+
+        @Column(name = "relationship_id", insertable = false,
+                updatable = false, nullable = false)
+        private String relationshipId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.conceptId1, otherInstance.conceptId1)
+                            && Objects.equals(this.conceptId2, otherInstance.conceptId2)
+                            && Objects.equals(this.relationshipId, otherInstance.relationshipId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.conceptId1, this.conceptId2, this.relationshipId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("conceptId1=");
+            result.append(this.conceptId1);
+            result.append(", ");
+            result.append("conceptId2=");
+            result.append(this.conceptId2);
+            result.append(", ");
+            result.append("relationshipId=");
+            result.append(this.relationshipId);
+            result.append("}");
+            return result.toString();
+        }
+
+
+    }
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    public Long getConceptId1() {
+        return this.compoundId.conceptId1;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "concept_id_1")
+    @MapsId("conceptId1")
+    private Concept concept1;
+    
+    public Concept getConcept1() {
+        return this.concept1;
+    }
+
+    public Long getConceptId2() {
+        return this.compoundId.conceptId2;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "concept_id_2")
+    @MapsId("conceptId2")
+    private Concept concept2;
+    
+    public Concept getConcept2() {
+        return this.concept2;
+    }
+
+    @Column(name = "invalid_reason", insertable = false, updatable = false,
+            nullable = true)
+    private String invalidReason;
+    
+    public Optional<String> getInvalidReason() {
+        if (this.invalidReason != null) {
+            return Optional.of(this.invalidReason);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public String getRelationshipId() {
+        return this.compoundId.relationshipId;
+    }
+
+    @ManyToOne(targetEntity = Relationship.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "relationship_id")
+    @MapsId("relationshipId")
+    private Relationship relationship;
+    
+    public Relationship getRelationship() {
+        return this.relationship;
+    }
+
+    @Column(name = "valid_end_date", insertable = false, updatable = false,
+            nullable = false)
+    private ZonedDateTime validEndDate;
+    
+    public Date getValidEndDate() {
+        return new Date(this.validEndDate.toLocalDate());
+    }
+
+    @Column(name = "valid_start_date", insertable = false, updatable = false,
+            nullable = false)
+    private ZonedDateTime validStartDate;
+    
+    public Date getValidStartDate() {
+        return new Date(this.validStartDate.toLocalDate());
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptRelationship{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
+}

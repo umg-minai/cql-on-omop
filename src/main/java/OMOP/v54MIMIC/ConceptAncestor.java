@@ -1,0 +1,121 @@
+package OMOP.v54MIMIC;
+
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+@Entity
+@Table(name = "concept_ancestor", schema = "cds_cdm")
+public class ConceptAncestor {
+
+    @Embeddable
+    private static class CompoundId {
+
+        @Column(name = "ancestor_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Long ancestorConceptId;
+
+        @Column(name = "descendant_concept_id", insertable = false,
+                updatable = false, nullable = false)
+        private Long descendantConceptId;
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) {
+                return true;
+            } else {
+                if (other instanceof CompoundId otherInstance) {
+                    return (other.getClass() == this.getClass()
+                            && Objects.equals(this.ancestorConceptId, otherInstance.ancestorConceptId)
+                            && Objects.equals(this.descendantConceptId, otherInstance.descendantConceptId));
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.ancestorConceptId, this.descendantConceptId);
+        }
+
+        @Override
+        public String toString() {
+            final var result = new StringBuilder();
+            result.append("CompoundId{");
+            result.append("ancestorConceptId=");
+            result.append(this.ancestorConceptId);
+            result.append(", ");
+            result.append("descendantConceptId=");
+            result.append(this.descendantConceptId);
+            result.append("}");
+            return result.toString();
+        }
+
+
+    }
+
+    @EmbeddedId
+    private CompoundId compoundId;
+
+    public Long getAncestorConceptId() {
+        return this.compoundId.ancestorConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ancestor_concept_id")
+    @MapsId("ancestorConceptId")
+    private Concept ancestorConcept;
+    
+    public Concept getAncestorConcept() {
+        return this.ancestorConcept;
+    }
+
+    public Long getDescendantConceptId() {
+        return this.compoundId.descendantConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "descendant_concept_id")
+    @MapsId("descendantConceptId")
+    private Concept descendantConcept;
+    
+    public Concept getDescendantConcept() {
+        return this.descendantConcept;
+    }
+
+    @Column(name = "max_levels_of_separation", insertable = false,
+            updatable = false, nullable = false)
+    private Long maxLevelsOfSeparation;
+    
+    public Long getMaxLevelsOfSeparation() {
+        return this.maxLevelsOfSeparation;
+    }
+
+    @Column(name = "min_levels_of_separation", insertable = false,
+            updatable = false, nullable = false)
+    private Long minLevelsOfSeparation;
+    
+    public Long getMinLevelsOfSeparation() {
+        return this.minLevelsOfSeparation;
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("ConceptAncestor{");
+        result.append("id=");
+        result.append(this.compoundId);
+        result.append("}");
+        return result.toString();
+    }
+
+
+}
