@@ -1,12 +1,9 @@
-package de.umg.minai.cqlonomop;
+package de.umg.minai.cqlonomop.repl;
 
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
 import de.umg.minai.cqlonomop.engine.Configuration;
-import de.umg.minai.cqlonomop.repl.CommandProcessor;
-import de.umg.minai.cqlonomop.repl.Completer;
-import de.umg.minai.cqlonomop.repl.Evaluator;
 import de.umg.minai.cqlonomop.terminal.*;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -16,14 +13,10 @@ import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 
 @CommandLine.Command(
-        name = "REPL",
-        version = "REPL 0.1",
-        mixinStandardHelpOptions = true
+        name = "repl",
+        description = "Run an interactive Read Eval Print Loop (REPL)"
 )
 public class Repl implements Runnable {
 
@@ -131,11 +124,6 @@ public class Repl implements Runnable {
                 System.err.printf("Error saving REPL history %s\n", e);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        int exitCode = new CommandLine(new Repl()).execute(args);
-        System.exit(exitCode);
     }
 
 }
