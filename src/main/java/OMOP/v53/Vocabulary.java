@@ -1,0 +1,87 @@
+package OMOP.v53;
+
+import jakarta.persistence.*;
+import org.opencds.cqf.cql.engine.runtime.Date;
+import org.opencds.cqf.cql.engine.runtime.DateTime;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+@Entity
+@Table(name = "vocabulary", schema = "cds_cdm")
+public class Vocabulary {
+
+    @Column(name = "vocabulary_concept_id", insertable = false,
+            updatable = false, nullable = false)
+    private Integer vocabularyConceptId;
+    
+    public Integer getVocabularyConceptId() {
+        return this.vocabularyConceptId;
+    }
+
+    @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "vocabulary_concept_id")
+    private Concept vocabularyConcept;
+    
+    public Concept getVocabularyConcept() {
+        return this.vocabularyConcept;
+    }
+
+    @Id
+    @Column(name = "vocabulary_id", insertable = false, updatable = false,
+            nullable = false)
+    private String vocabularyId;
+    
+    public String getVocabularyId() {
+        return this.vocabularyId;
+    }
+
+    @Column(name = "vocabulary_name", insertable = false, updatable = false,
+            nullable = false)
+    private String vocabularyName;
+    
+    public String getVocabularyName() {
+        return this.vocabularyName;
+    }
+
+    @Column(name = "vocabulary_reference", insertable = false,
+            updatable = false, nullable = false)
+    private String vocabularyReference;
+    
+    public String getVocabularyReference() {
+        return this.vocabularyReference;
+    }
+
+    @Column(name = "vocabulary_version", insertable = false, updatable = false,
+            nullable = true)
+    private String vocabularyVersion;
+    
+    public Optional<String> getVocabularyVersion() {
+        if (this.vocabularyVersion != null) {
+            return Optional.of(this.vocabularyVersion);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public String toString() {
+        final var result = new StringBuilder();
+        result.append("Vocabulary{");
+        result.append("id=");
+        result.append(this.vocabularyId);
+        {
+            result.append(", concept='");
+            result.append(this.getVocabularyConcept().getConceptName());
+            result.append("'");
+
+        }result.append("}");
+        return result.toString();
+    }
+
+
+}
