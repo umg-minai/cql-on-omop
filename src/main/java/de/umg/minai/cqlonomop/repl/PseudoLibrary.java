@@ -73,9 +73,9 @@ public class PseudoLibrary {
         input.append(String.format("""
         using "OMOP" version '%s'
 
-        include "OMOPHelpers%s" called "OMOPHelpers"
-        include "OMOPFunctions" called "OMOPFunctions"
-        """, this.omopVersion, this.omopVersion));
+        include OMOPHelpers
+        include OMOPFunctions
+        """, this.omopVersion));
         this.include.forEach(statement -> input.append(statement).append("\n"));
         input.append(String.format("codesystem OMOPSV: '%s' // SV = Standardized Vocabulary\n", Constants.OMOP_CODESYSTEM_URI));
         Constants.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.forEach((url, name) ->

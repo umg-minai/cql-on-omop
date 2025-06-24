@@ -10,12 +10,18 @@ import java.io.InputStream;
  */
 public class BuiltinLibrariesSourceProvider implements LibrarySourceProvider {
 
+    private final String omopVersion;
+
+    public BuiltinLibrariesSourceProvider(final String omopVersion) {
+        this.omopVersion = omopVersion;
+    }
+
     @Override
     public InputStream getLibrarySource(final VersionedIdentifier versionedIdentifier) {
         // TODO: check version
         final var id = versionedIdentifier.getId();
-        if (id.startsWith("OMOPHelpers") || id.startsWith("OMOPFunctions")) {
-            return tryResource(id);
+        if (id.equals("OMOPHelpers") || id.equals("OMOPFunctions")) {
+            return tryResource(id + omopVersion);
         }
         else {
             return null;

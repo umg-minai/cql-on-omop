@@ -2,11 +2,12 @@ library OMOPFunctions version '1.0'
 
 using OMOP version 'v5.4'
 
-include "OMOPHelpersv5.4" called OMOPHelpers
+include OMOPHelpers
 
 // Conversion to OMOP.Concept
 
 define function ToOMOPConcept(SystemCode System.Code):
+  // TODO could do this without retrieve if system is OMOPSV
   singleton from ([OMOP.Concept: SystemCode] c return all c)
 
 // Standard concept
@@ -21,6 +22,18 @@ define function StandardConcept(AConcept OMOP.Concept):
     singleton from ((AConcept.relationships)
                       r where r.relationshipId = 'Maps to'
                       return all r.concept2)
+
+define function StandardConcept(Id String):
+  singleton from ([OMOP.Concept: Code{code: Id, system: 'https://fhir-terminology.ohdsi.org'}])
+
+define function SC(Id String):
+  StandardConcept(Id)
+
+define function StandardConcept(Id Integer):
+  StandardConcept(convert Id to String)
+
+define function SC(Id Integer):
+  StandardConcept(Id)
 
 // Concept relationships
 

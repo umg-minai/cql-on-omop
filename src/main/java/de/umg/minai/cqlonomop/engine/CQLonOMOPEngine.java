@@ -53,7 +53,7 @@ public class CQLonOMOPEngine {
                 //.withOptions(CqlCompilerOptions.Options.EnableDetailedErrors);
         this.libraryManager = new LibraryManager(modelManager, options, libraryCache);
         final var loader = this.libraryManager.getLibrarySourceLoader();
-        loader.registerProvider(new BuiltinLibrariesSourceProvider());
+        loader.registerProvider(new BuiltinLibrariesSourceProvider(version));
         librarySourceProviders.forEach(loader::registerProvider);
         this.terminologyProvider = new OMOPTerminologyProvider();
     }
