@@ -1,5 +1,8 @@
 package de.umg.minai.cqlonomop;
 
+import de.umg.minai.cqlonomop.commandline.CqlOptions;
+import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
+import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.repl.CommandProcessor;
 import de.umg.minai.cqlonomop.repl.Completer;
@@ -27,89 +30,11 @@ public class Repl implements Runnable {
     @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
     DatabaseOptions databaseOptions = new DatabaseOptions();
 
-    static class DatabaseOptions {
-        @CommandLine.Option(
-                names = {"-h", "--host"},
-                defaultValue = "localhost",
-                description = "The hostname of the database server from which to retrieve the OMOP data."
-        )
-        private String host = "localhost";
-
-        @CommandLine.Option(
-                names = {"-p", "--port"},
-                defaultValue = "5434",
-                description = "The post on which the database server from which to retrieve the OMOP data listens."
-        )
-        private int port = 5434;
-
-        @CommandLine.Option(
-                names = {"-u", "--user"},
-                description = "The username of the database server account that should be used to retrieve the OMOP data."
-        )
-        private String user = "postgres";
-
-        @CommandLine.Option(
-                names = {"--password"},
-                defaultValue = "${env:CQL_ON_OMOP_DATABASE_PASSWORD}",
-                description = "The password for the database server account."
-        )
-        private String password;
-
-        @CommandLine.Option(
-                names = {"-d", "--database"},
-                required = true,
-                description = "The name of the database from which OMOP data should be retrieved."
-        )
-        private String database;
-
-        @CommandLine.Option(
-                names = {"-s", "--show-sql"},
-                defaultValue = "false",
-                description = "Show the generated SQL statements as they are sent to the database server."
-        )
-        private boolean showSQL = false;
-    }
-
     @CommandLine.ArgGroup(validate = false, heading = "CQL Options%n")
-    CQLOptions cqlOptions;
-
-    static class CQLOptions {
-
-        @CommandLine.Option(
-                names = {"-I"},
-                paramLabel = "<directory>",
-                description = "Search the specified directory for CQL libraries when processing CQL include statements. This option can be supplied multiple times."
-        )
-        private List<Path> librarySearchPath = List.of();
-
-        @CommandLine.Option(
-                names = {"-l", "--load"},
-                paramLabel = "<library-file>",
-                description = "Load the specified file as CQL code."
-        )
-        private List<Path> load = List.of();
-
-        @CommandLine.Option(
-                names = {"-D"},
-                description = "Bind parameters of the CQL library to specific values. A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is evaluated to produce the CQL value that is assigned to the parameter named NAME. "
-        )
-        private Map<String, String> parameterBindings = Map.of();
-
-        // TODO(jmoringe): context and focus
-
-    }
+    CqlOptions cqlOptions;
 
     @CommandLine.ArgGroup(validate = false, heading = "Other Options%n")
-    OtherOptions otherOptions;
-
-    static class OtherOptions {
-
-        @CommandLine.Option(
-                names = {"-n", "--threads"},
-                description = "Use the specified number of threads when evaluating CQL expressions for multiple context values (typically patients) in parallel. If this option is not supplied, try to determine a suitable number of threads automatically."
-        )
-        private Integer threadCount;
-    }
+    ExecutionOptions otherOptions;
 
     private Terminal terminal;
     private LineReader reader;
@@ -144,20 +69,12 @@ public class Repl implements Runnable {
     @Override
     public void run() {
         // Configure and create evaluator.
-        var configuration = new Configuration()
-                .withDatabaseHost(databaseOptions.host)
-                .withDatabasePort(databaseOptions.port)
-                .withDatabaseUser(databaseOptions.user)
-                .withDatabasePassword(databaseOptions.password)
-                .withDatabaseName(databaseOptions.database)
-                .withShowSQL(databaseOptions.showSQL);
+        var configuration = databaseOptions.applyToConfiguration(new Configuration());
         if (cqlOptions != null) {
-            configuration = configuration
-                    .withLibrarySearchPath(cqlOptions.librarySearchPath);
+            configuration = cqlOptions.applyToConfiguration(configuration);
         }
         if (otherOptions != null) {
-            configuration = configuration
-                    .withThreadCount(otherOptions.threadCount);
+            configuration = otherOptions.applyToConfiguration(configuration);
         }
         this.evaluator = new Evaluator(configuration);
         if (cqlOptions != null) {
