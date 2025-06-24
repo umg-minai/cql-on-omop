@@ -13,6 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>2.0.20</kotlin.version>
+        <cqframework.version>3.27.0-SNAPSHOT</cqframework.version>
     </properties>
 
     <dependencies>
@@ -26,25 +27,25 @@
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>engine</artifactId>
-            <version>3.25.0-SNAPSHOT</version>
+            <version>${cqframework.version}</version>
         </dependency>
         <!-- TODO: maybe not needed -->
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>elm</artifactId>
-            <version>3.25.0-SNAPSHOT</version>
+            <version>${cqframework.version}</version>
         </dependency>
         <!-- TODO: maybe not needed -->
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>elm-jaxb</artifactId>
-            <version>3.25.0-SNAPSHOT</version>
+            <version>${cqframework.version}</version>
         </dependency>
 
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>model</artifactId>
-            <version>3.25.0-SNAPSHOT</version>
+            <version>${cqframework.version}</version>
         </dependency>
 
         <!--
@@ -70,7 +71,7 @@
         <dependency>
             <groupId>info.cqframework</groupId>
             <artifactId>model-jaxb</artifactId>
-            <version>3.25.0-SNAPSHOT</version>
+            <version>${cqframework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
