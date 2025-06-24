@@ -9,7 +9,25 @@ import java.util.Map;
 
 public class CqlOptions {
 
-    // TODO(jmoringe): omopversion or datamodel
+    public enum OmopVersion {
+        OMOP_CDM_V53("v5.3"),
+        OMOP_CDM_V54("v5.4"),
+        OMOP_CDM_V54_MIMIC("v5.4.MIMIC");
+
+        public final String versionString;
+
+        OmopVersion(final String versionString) {
+            this.versionString = versionString;
+        }
+
+    }
+
+    @Option(
+            names = {"--omop-version"},
+            paramLabel = "<omop-version>",
+            description = "TODO"
+    )
+    public OmopVersion omopVersion;
 
     @Option(
             names = {"-I"},
@@ -34,7 +52,9 @@ public class CqlOptions {
     // TODO(jmoringe): context and focus
 
     public Configuration applyToConfiguration(final Configuration configuration) {
-        return configuration.withLibrarySearchPath(this.librarySearchPath);
+        return configuration
+                .withOmopVersion(this.omopVersion.versionString)
+                .withLibrarySearchPath(this.librarySearchPath);
     }
 
 }
