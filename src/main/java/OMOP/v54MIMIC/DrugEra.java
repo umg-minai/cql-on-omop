@@ -17,9 +17,9 @@ public class DrugEra {
 
     @Column(name = "drug_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long drugConceptId;
-    
-    public Long getDrugConceptId() {
+    private Integer drugConceptId;
+
+    public Integer getDrugConceptId() {
         return this.drugConceptId;
     }
 
@@ -58,9 +58,9 @@ public class DrugEra {
 
     @Column(name = "drug_exposure_count", insertable = false,
             updatable = false, nullable = true)
-    private Long drugExposureCount;
-    
-    public Optional<Long> getDrugExposureCount() {
+    private Integer drugExposureCount;
+
+    public Optional<Integer> getDrugExposureCount() {
         if (this.drugExposureCount != null) {
             return Optional.of(this.drugExposureCount);
         } else {
@@ -70,9 +70,9 @@ public class DrugEra {
 
     @Column(name = "gap_days", insertable = false, updatable = false,
             nullable = true)
-    private Long gapDays;
-    
-    public Optional<Long> getGapDays() {
+    private Integer gapDays;
+
+    public Optional<Integer> getGapDays() {
         if (this.gapDays != null) {
             return Optional.of(this.gapDays);
         } else {

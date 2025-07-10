@@ -53,9 +53,9 @@ public class Location {
 
     @Column(name = "country_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long countryConceptId;
-    
-    public Optional<Long> getCountryConceptId() {
+    private Integer countryConceptId;
+
+    public Optional<Integer> getCountryConceptId() {
         if (this.countryConceptId != null) {
             return Optional.of(this.countryConceptId);
         } else {

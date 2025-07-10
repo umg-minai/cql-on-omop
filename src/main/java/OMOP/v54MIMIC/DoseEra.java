@@ -50,9 +50,9 @@ public class DoseEra {
 
     @Column(name = "drug_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long drugConceptId;
-    
-    public Long getDrugConceptId() {
+    private Integer drugConceptId;
+
+    public Integer getDrugConceptId() {
         return this.drugConceptId;
     }
 
@@ -82,9 +82,9 @@ public class DoseEra {
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long unitConceptId;
-    
-    public Long getUnitConceptId() {
+    private Integer unitConceptId;
+
+    public Integer getUnitConceptId() {
         return this.unitConceptId;
     }
 

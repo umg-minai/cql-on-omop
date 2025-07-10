@@ -29,9 +29,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "payer_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long payerConceptId;
-    
-    public Optional<Long> getPayerConceptId() {
+    private Integer payerConceptId;
+
+    public Optional<Integer> getPayerConceptId() {
         if (this.payerConceptId != null) {
             return Optional.of(this.payerConceptId);
         } else {
@@ -74,9 +74,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "payer_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long payerSourceConceptId;
-    
-    public Optional<Long> getPayerSourceConceptId() {
+    private Integer payerSourceConceptId;
+
+    public Optional<Integer> getPayerSourceConceptId() {
         if (this.payerSourceConceptId != null) {
             return Optional.of(this.payerSourceConceptId);
         } else {
@@ -122,9 +122,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "plan_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long planConceptId;
-    
-    public Optional<Long> getPlanConceptId() {
+    private Integer planConceptId;
+
+    public Optional<Integer> getPlanConceptId() {
         if (this.planConceptId != null) {
             return Optional.of(this.planConceptId);
         } else {
@@ -142,9 +142,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "plan_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long planSourceConceptId;
-    
-    public Optional<Long> getPlanSourceConceptId() {
+    private Integer planSourceConceptId;
+
+    public Optional<Integer> getPlanSourceConceptId() {
         if (this.planSourceConceptId != null) {
             return Optional.of(this.planSourceConceptId);
         } else {
@@ -174,9 +174,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "sponsor_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long sponsorConceptId;
-    
-    public Optional<Long> getSponsorConceptId() {
+    private Integer sponsorConceptId;
+
+    public Optional<Integer> getSponsorConceptId() {
         if (this.sponsorConceptId != null) {
             return Optional.of(this.sponsorConceptId);
         } else {
@@ -194,9 +194,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "sponsor_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long sponsorSourceConceptId;
-    
-    public Optional<Long> getSponsorSourceConceptId() {
+    private Integer sponsorSourceConceptId;
+
+    public Optional<Integer> getSponsorSourceConceptId() {
         if (this.sponsorSourceConceptId != null) {
             return Optional.of(this.sponsorSourceConceptId);
         } else {
@@ -226,9 +226,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "stop_reason_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long stopReasonConceptId;
-    
-    public Optional<Long> getStopReasonConceptId() {
+    private Integer stopReasonConceptId;
+
+    public Optional<Integer> getStopReasonConceptId() {
         if (this.stopReasonConceptId != null) {
             return Optional.of(this.stopReasonConceptId);
         } else {
@@ -246,9 +246,9 @@ public class PayerPlanPeriod {
 
     @Column(name = "stop_reason_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long stopReasonSourceConceptId;
-    
-    public Optional<Long> getStopReasonSourceConceptId() {
+    private Integer stopReasonSourceConceptId;
+
+    public Optional<Integer> getStopReasonSourceConceptId() {
         if (this.stopReasonSourceConceptId != null) {
             return Optional.of(this.stopReasonSourceConceptId);
         } else {

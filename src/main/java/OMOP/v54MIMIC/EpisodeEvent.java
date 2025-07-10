@@ -20,7 +20,7 @@ public class EpisodeEvent {
 
         @Column(name = "episode_event_field_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long episodeEventFieldConceptId;
+        private Integer episodeEventFieldConceptId;
 
         @Column(name = "episode_id", insertable = false, updatable = false,
                 nullable = false)
@@ -65,7 +65,7 @@ public class EpisodeEvent {
     @EmbeddedId
     private CompoundId compoundId;
 
-    public Long getEpisodeEventFieldConceptId() {
+    public Integer getEpisodeEventFieldConceptId() {
         return this.compoundId.episodeEventFieldConceptId;
     }
 

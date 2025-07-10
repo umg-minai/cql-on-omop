@@ -20,15 +20,15 @@ public class FactRelationship {
 
         @Column(name = "domain_concept_id_1", insertable = false,
                 updatable = false, nullable = false)
-        private Long domainConceptId1;
+        private Integer domainConceptId1;
 
         @Column(name = "domain_concept_id_2", insertable = false,
                 updatable = false, nullable = false)
-        private Long domainConceptId2;
+        private Integer domainConceptId2;
 
         @Column(name = "relationship_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long relationshipConceptId;
+        private Integer relationshipConceptId;
 
         @Override
         public boolean equals(final Object other) {
@@ -73,7 +73,7 @@ public class FactRelationship {
     @EmbeddedId
     private CompoundId compoundId;
 
-    public Long getDomainConceptId1() {
+    public Integer getDomainConceptId1() {
         return this.compoundId.domainConceptId1;
     }
 
@@ -86,7 +86,7 @@ public class FactRelationship {
         return this.domainConcept1;
     }
 
-    public Long getDomainConceptId2() {
+    public Integer getDomainConceptId2() {
         return this.compoundId.domainConceptId2;
     }
 
@@ -115,7 +115,7 @@ public class FactRelationship {
         return this.factId2;
     }
 
-    public Long getRelationshipConceptId() {
+    public Integer getRelationshipConceptId() {
         return this.compoundId.relationshipConceptId;
     }
 

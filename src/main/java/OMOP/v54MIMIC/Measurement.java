@@ -17,9 +17,9 @@ public class Measurement {
 
     @Column(name = "meas_event_field_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long measEventFieldConceptId;
-    
-    public Optional<Long> getMeasEventFieldConceptId() {
+    private Integer measEventFieldConceptId;
+
+    public Optional<Integer> getMeasEventFieldConceptId() {
         if (this.measEventFieldConceptId != null) {
             return Optional.of(this.measEventFieldConceptId);
         } else {
@@ -37,9 +37,9 @@ public class Measurement {
 
     @Column(name = "measurement_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long measurementConceptId;
-    
-    public Long getMeasurementConceptId() {
+    private Integer measurementConceptId;
+
+    public Integer getMeasurementConceptId() {
         return this.measurementConceptId;
     }
 
@@ -94,9 +94,9 @@ public class Measurement {
 
     @Column(name = "measurement_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long measurementSourceConceptId;
-    
-    public Optional<Long> getMeasurementSourceConceptId() {
+    private Integer measurementSourceConceptId;
+
+    public Optional<Integer> getMeasurementSourceConceptId() {
         if (this.measurementSourceConceptId != null) {
             return Optional.of(this.measurementSourceConceptId);
         } else {
@@ -138,9 +138,9 @@ public class Measurement {
 
     @Column(name = "measurement_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long measurementTypeConceptId;
-    
-    public Long getMeasurementTypeConceptId() {
+    private Integer measurementTypeConceptId;
+
+    public Integer getMeasurementTypeConceptId() {
         return this.measurementTypeConceptId;
     }
 
@@ -154,9 +154,9 @@ public class Measurement {
 
     @Column(name = "operator_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long operatorConceptId;
-    
-    public Optional<Long> getOperatorConceptId() {
+    private Integer operatorConceptId;
+
+    public Optional<Integer> getOperatorConceptId() {
         if (this.operatorConceptId != null) {
             return Optional.of(this.operatorConceptId);
         } else {
@@ -234,9 +234,9 @@ public class Measurement {
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long unitConceptId;
-    
-    public Optional<Long> getUnitConceptId() {
+    private Integer unitConceptId;
+
+    public Optional<Integer> getUnitConceptId() {
         if (this.unitConceptId != null) {
             return Optional.of(this.unitConceptId);
         } else {
@@ -254,9 +254,9 @@ public class Measurement {
 
     @Column(name = "unit_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long unitSourceConceptId;
-    
-    public Optional<Long> getUnitSourceConceptId() {
+    private Integer unitSourceConceptId;
+
+    public Optional<Integer> getUnitSourceConceptId() {
         if (this.unitSourceConceptId != null) {
             return Optional.of(this.unitSourceConceptId);
         } else {
@@ -286,9 +286,9 @@ public class Measurement {
 
     @Column(name = "value_as_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long valueAsConceptId;
-    
-    public Optional<Long> getValueAsConceptId() {
+    private Integer valueAsConceptId;
+
+    public Optional<Integer> getValueAsConceptId() {
         if (this.valueAsConceptId != null) {
             return Optional.of(this.valueAsConceptId);
         } else {

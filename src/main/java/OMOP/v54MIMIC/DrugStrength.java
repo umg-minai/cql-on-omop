@@ -20,11 +20,11 @@ public class DrugStrength {
 
         @Column(name = "drug_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long drugConceptId;
+        private Integer drugConceptId;
 
         @Column(name = "ingredient_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long ingredientConceptId;
+        private Integer ingredientConceptId;
 
         @Override
         public boolean equals(final Object other) {
@@ -67,9 +67,9 @@ public class DrugStrength {
 
     @Column(name = "amount_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long amountUnitConceptId;
-    
-    public Optional<Long> getAmountUnitConceptId() {
+    private Integer amountUnitConceptId;
+
+    public Optional<Integer> getAmountUnitConceptId() {
         if (this.amountUnitConceptId != null) {
             return Optional.of(this.amountUnitConceptId);
         } else {
@@ -99,9 +99,9 @@ public class DrugStrength {
 
     @Column(name = "box_size", insertable = false, updatable = false,
             nullable = true)
-    private Long boxSize;
-    
-    public Optional<Long> getBoxSize() {
+    private Integer boxSize;
+
+    public Optional<Integer> getBoxSize() {
         if (this.boxSize != null) {
             return Optional.of(this.boxSize);
         } else {
@@ -111,9 +111,9 @@ public class DrugStrength {
 
     @Column(name = "denominator_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long denominatorUnitConceptId;
-    
-    public Optional<Long> getDenominatorUnitConceptId() {
+    private Integer denominatorUnitConceptId;
+
+    public Optional<Integer> getDenominatorUnitConceptId() {
         if (this.denominatorUnitConceptId != null) {
             return Optional.of(this.denominatorUnitConceptId);
         } else {
@@ -141,7 +141,7 @@ public class DrugStrength {
         }
     }
 
-    public Long getDrugConceptId() {
+    public Integer getDrugConceptId() {
         return this.compoundId.drugConceptId;
     }
 
@@ -154,7 +154,7 @@ public class DrugStrength {
         return this.drugConcept;
     }
 
-    public Long getIngredientConceptId() {
+    public Integer getIngredientConceptId() {
         return this.compoundId.ingredientConceptId;
     }
 
@@ -181,9 +181,9 @@ public class DrugStrength {
 
     @Column(name = "numerator_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long numeratorUnitConceptId;
-    
-    public Optional<Long> getNumeratorUnitConceptId() {
+    private Integer numeratorUnitConceptId;
+
+    public Optional<Integer> getNumeratorUnitConceptId() {
         if (this.numeratorUnitConceptId != null) {
             return Optional.of(this.numeratorUnitConceptId);
         } else {

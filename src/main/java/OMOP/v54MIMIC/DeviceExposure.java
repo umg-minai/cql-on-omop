@@ -17,9 +17,9 @@ public class DeviceExposure {
 
     @Column(name = "device_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long deviceConceptId;
-    
-    public Long getDeviceConceptId() {
+    private Integer deviceConceptId;
+
+    public Integer getDeviceConceptId() {
         return this.deviceConceptId;
     }
 
@@ -86,9 +86,9 @@ public class DeviceExposure {
 
     @Column(name = "device_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long deviceSourceConceptId;
-    
-    public Optional<Long> getDeviceSourceConceptId() {
+    private Integer deviceSourceConceptId;
+
+    public Optional<Integer> getDeviceSourceConceptId() {
         if (this.deviceSourceConceptId != null) {
             return Optional.of(this.deviceSourceConceptId);
         } else {
@@ -118,9 +118,9 @@ public class DeviceExposure {
 
     @Column(name = "device_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long deviceTypeConceptId;
-    
-    public Long getDeviceTypeConceptId() {
+    private Integer deviceTypeConceptId;
+
+    public Integer getDeviceTypeConceptId() {
         return this.deviceTypeConceptId;
     }
 
@@ -182,9 +182,9 @@ public class DeviceExposure {
 
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
-    private Long quantity;
-    
-    public Optional<Long> getQuantity() {
+    private Integer quantity;
+
+    public Optional<Integer> getQuantity() {
         if (this.quantity != null) {
             return Optional.of(this.quantity);
         } else {
@@ -206,9 +206,9 @@ public class DeviceExposure {
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long unitConceptId;
-    
-    public Optional<Long> getUnitConceptId() {
+    private Integer unitConceptId;
+
+    public Optional<Integer> getUnitConceptId() {
         if (this.unitConceptId != null) {
             return Optional.of(this.unitConceptId);
         } else {
@@ -226,9 +226,9 @@ public class DeviceExposure {
 
     @Column(name = "unit_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long unitSourceConceptId;
-    
-    public Optional<Long> getUnitSourceConceptId() {
+    private Integer unitSourceConceptId;
+
+    public Optional<Integer> getUnitSourceConceptId() {
         if (this.unitSourceConceptId != null) {
             return Optional.of(this.unitSourceConceptId);
         } else {

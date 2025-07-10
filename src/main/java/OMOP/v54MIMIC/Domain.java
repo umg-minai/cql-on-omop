@@ -17,9 +17,9 @@ public class Domain {
 
     @Column(name = "domain_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long domainConceptId;
-    
-    public Long getDomainConceptId() {
+    private Integer domainConceptId;
+
+    public Integer getDomainConceptId() {
         return this.domainConceptId;
     }
 

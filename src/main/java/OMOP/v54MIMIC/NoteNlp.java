@@ -65,9 +65,9 @@ public class NoteNlp {
 
     @Column(name = "note_nlp_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long noteNlpConceptId;
-    
-    public Optional<Long> getNoteNlpConceptId() {
+    private Integer noteNlpConceptId;
+
+    public Optional<Integer> getNoteNlpConceptId() {
         if (this.noteNlpConceptId != null) {
             return Optional.of(this.noteNlpConceptId);
         } else {
@@ -94,9 +94,9 @@ public class NoteNlp {
 
     @Column(name = "note_nlp_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long noteNlpSourceConceptId;
-    
-    public Optional<Long> getNoteNlpSourceConceptId() {
+    private Integer noteNlpSourceConceptId;
+
+    public Optional<Integer> getNoteNlpSourceConceptId() {
         if (this.noteNlpSourceConceptId != null) {
             return Optional.of(this.noteNlpSourceConceptId);
         } else {
@@ -126,9 +126,9 @@ public class NoteNlp {
 
     @Column(name = "section_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long sectionConceptId;
-    
-    public Optional<Long> getSectionConceptId() {
+    private Integer sectionConceptId;
+
+    public Optional<Integer> getSectionConceptId() {
         if (this.sectionConceptId != null) {
             return Optional.of(this.sectionConceptId);
         } else {

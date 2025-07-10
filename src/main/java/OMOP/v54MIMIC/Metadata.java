@@ -17,9 +17,9 @@ public class Metadata {
 
     @Column(name = "metadata_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long metadataConceptId;
-    
-    public Long getMetadataConceptId() {
+    private Integer metadataConceptId;
+
+    public Integer getMetadataConceptId() {
         return this.metadataConceptId;
     }
 
@@ -66,9 +66,9 @@ public class Metadata {
 
     @Column(name = "metadata_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long metadataTypeConceptId;
-    
-    public Long getMetadataTypeConceptId() {
+    private Integer metadataTypeConceptId;
+
+    public Integer getMetadataTypeConceptId() {
         return this.metadataTypeConceptId;
     }
 
@@ -90,9 +90,9 @@ public class Metadata {
 
     @Column(name = "value_as_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long valueAsConceptId;
-    
-    public Optional<Long> getValueAsConceptId() {
+    private Integer valueAsConceptId;
+
+    public Optional<Integer> getValueAsConceptId() {
         if (this.valueAsConceptId != null) {
             return Optional.of(this.valueAsConceptId);
         } else {

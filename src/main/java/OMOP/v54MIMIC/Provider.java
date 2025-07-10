@@ -49,9 +49,9 @@ public class Provider {
 
     @Column(name = "gender_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long genderConceptId;
-    
-    public Optional<Long> getGenderConceptId() {
+    private Integer genderConceptId;
+
+    public Optional<Integer> getGenderConceptId() {
         if (this.genderConceptId != null) {
             return Optional.of(this.genderConceptId);
         } else {
@@ -69,9 +69,9 @@ public class Provider {
 
     @Column(name = "gender_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long genderSourceConceptId;
-    
-    public Optional<Long> getGenderSourceConceptId() {
+    private Integer genderSourceConceptId;
+
+    public Optional<Integer> getGenderSourceConceptId() {
         if (this.genderSourceConceptId != null) {
             return Optional.of(this.genderSourceConceptId);
         } else {
@@ -146,9 +146,9 @@ public class Provider {
 
     @Column(name = "specialty_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long specialtyConceptId;
-    
-    public Optional<Long> getSpecialtyConceptId() {
+    private Integer specialtyConceptId;
+
+    public Optional<Integer> getSpecialtyConceptId() {
         if (this.specialtyConceptId != null) {
             return Optional.of(this.specialtyConceptId);
         } else {
@@ -166,9 +166,9 @@ public class Provider {
 
     @Column(name = "specialty_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long specialtySourceConceptId;
-    
-    public Optional<Long> getSpecialtySourceConceptId() {
+    private Integer specialtySourceConceptId;
+
+    public Optional<Integer> getSpecialtySourceConceptId() {
         if (this.specialtySourceConceptId != null) {
             return Optional.of(this.specialtySourceConceptId);
         } else {
@@ -198,9 +198,9 @@ public class Provider {
 
     @Column(name = "year_of_birth", insertable = false, updatable = false,
             nullable = true)
-    private Long yearOfBirth;
-    
-    public Optional<Long> getYearOfBirth() {
+    private Integer yearOfBirth;
+
+    public Optional<Integer> getYearOfBirth() {
         if (this.yearOfBirth != null) {
             return Optional.of(this.yearOfBirth);
         } else {

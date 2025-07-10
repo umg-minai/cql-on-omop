@@ -17,9 +17,9 @@ public class Vocabulary {
 
     @Column(name = "vocabulary_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long vocabularyConceptId;
-    
-    public Long getVocabularyConceptId() {
+    private Integer vocabularyConceptId;
+
+    public Integer getVocabularyConceptId() {
         return this.vocabularyConceptId;
     }
 

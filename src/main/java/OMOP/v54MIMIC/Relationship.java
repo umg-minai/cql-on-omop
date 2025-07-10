@@ -33,9 +33,9 @@ public class Relationship {
 
     @Column(name = "relationship_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long relationshipConceptId;
-    
-    public Long getRelationshipConceptId() {
+    private Integer relationshipConceptId;
+
+    public Integer getRelationshipConceptId() {
         return this.relationshipConceptId;
     }
 

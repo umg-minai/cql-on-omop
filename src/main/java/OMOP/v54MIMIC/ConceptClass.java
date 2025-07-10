@@ -17,9 +17,9 @@ public class ConceptClass {
 
     @Column(name = "concept_class_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long conceptClassConceptId;
-    
-    public Long getConceptClassConceptId() {
+    private Integer conceptClassConceptId;
+
+    public Integer getConceptClassConceptId() {
         return this.conceptClassConceptId;
     }
 

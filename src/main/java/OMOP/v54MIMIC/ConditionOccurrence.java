@@ -17,9 +17,9 @@ public class ConditionOccurrence {
 
     @Column(name = "condition_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long conditionConceptId;
-    
-    public Long getConditionConceptId() {
+    private Integer conditionConceptId;
+
+    public Integer getConditionConceptId() {
         return this.conditionConceptId;
     }
 
@@ -66,9 +66,9 @@ public class ConditionOccurrence {
 
     @Column(name = "condition_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long conditionSourceConceptId;
-    
-    public Optional<Long> getConditionSourceConceptId() {
+    private Integer conditionSourceConceptId;
+
+    public Optional<Integer> getConditionSourceConceptId() {
         if (this.conditionSourceConceptId != null) {
             return Optional.of(this.conditionSourceConceptId);
         } else {
@@ -118,9 +118,9 @@ public class ConditionOccurrence {
 
     @Column(name = "condition_status_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long conditionStatusConceptId;
-    
-    public Optional<Long> getConditionStatusConceptId() {
+    private Integer conditionStatusConceptId;
+
+    public Optional<Integer> getConditionStatusConceptId() {
         if (this.conditionStatusConceptId != null) {
             return Optional.of(this.conditionStatusConceptId);
         } else {
@@ -150,9 +150,9 @@ public class ConditionOccurrence {
 
     @Column(name = "condition_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long conditionTypeConceptId;
-    
-    public Long getConditionTypeConceptId() {
+    private Integer conditionTypeConceptId;
+
+    public Integer getConditionTypeConceptId() {
         return this.conditionTypeConceptId;
     }
 

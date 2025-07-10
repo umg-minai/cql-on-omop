@@ -20,11 +20,11 @@ public class ConceptRelationship {
 
         @Column(name = "concept_id_1", insertable = false, updatable = false,
                 nullable = false)
-        private Long conceptId1;
+        private Integer conceptId1;
 
         @Column(name = "concept_id_2", insertable = false, updatable = false,
                 nullable = false)
-        private Long conceptId2;
+        private Integer conceptId2;
 
         @Column(name = "relationship_id", insertable = false,
                 updatable = false, nullable = false)
@@ -73,7 +73,7 @@ public class ConceptRelationship {
     @EmbeddedId
     private CompoundId compoundId;
 
-    public Long getConceptId1() {
+    public Integer getConceptId1() {
         return this.compoundId.conceptId1;
     }
 
@@ -86,7 +86,7 @@ public class ConceptRelationship {
         return this.concept1;
     }
 
-    public Long getConceptId2() {
+    public Integer getConceptId2() {
         return this.compoundId.conceptId2;
     }
 

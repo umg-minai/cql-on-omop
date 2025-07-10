@@ -20,11 +20,11 @@ public class ConceptAncestor {
 
         @Column(name = "ancestor_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long ancestorConceptId;
+        private Integer ancestorConceptId;
 
         @Column(name = "descendant_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long descendantConceptId;
+        private Integer descendantConceptId;
 
         @Override
         public boolean equals(final Object other) {
@@ -65,7 +65,7 @@ public class ConceptAncestor {
     @EmbeddedId
     private CompoundId compoundId;
 
-    public Long getAncestorConceptId() {
+    public Integer getAncestorConceptId() {
         return this.compoundId.ancestorConceptId;
     }
 
@@ -78,7 +78,7 @@ public class ConceptAncestor {
         return this.ancestorConcept;
     }
 
-    public Long getDescendantConceptId() {
+    public Integer getDescendantConceptId() {
         return this.compoundId.descendantConceptId;
     }
 
@@ -93,17 +93,17 @@ public class ConceptAncestor {
 
     @Column(name = "max_levels_of_separation", insertable = false,
             updatable = false, nullable = false)
-    private Long maxLevelsOfSeparation;
-    
-    public Long getMaxLevelsOfSeparation() {
+    private Integer maxLevelsOfSeparation;
+
+    public Integer getMaxLevelsOfSeparation() {
         return this.maxLevelsOfSeparation;
     }
 
     @Column(name = "min_levels_of_separation", insertable = false,
             updatable = false, nullable = false)
-    private Long minLevelsOfSeparation;
-    
-    public Long getMinLevelsOfSeparation() {
+    private Integer minLevelsOfSeparation;
+
+    public Integer getMinLevelsOfSeparation() {
         return this.minLevelsOfSeparation;
     }
 

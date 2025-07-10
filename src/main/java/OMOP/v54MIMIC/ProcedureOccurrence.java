@@ -17,9 +17,9 @@ public class ProcedureOccurrence {
 
     @Column(name = "modifier_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long modifierConceptId;
-    
-    public Optional<Long> getModifierConceptId() {
+    private Integer modifierConceptId;
+
+    public Optional<Integer> getModifierConceptId() {
         if (this.modifierConceptId != null) {
             return Optional.of(this.modifierConceptId);
         } else {
@@ -65,9 +65,9 @@ public class ProcedureOccurrence {
 
     @Column(name = "procedure_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long procedureConceptId;
-    
-    public Long getProcedureConceptId() {
+    private Integer procedureConceptId;
+
+    public Integer getProcedureConceptId() {
         return this.procedureConceptId;
     }
 
@@ -134,9 +134,9 @@ public class ProcedureOccurrence {
 
     @Column(name = "procedure_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long procedureSourceConceptId;
-    
-    public Optional<Long> getProcedureSourceConceptId() {
+    private Integer procedureSourceConceptId;
+
+    public Optional<Integer> getProcedureSourceConceptId() {
         if (this.procedureSourceConceptId != null) {
             return Optional.of(this.procedureSourceConceptId);
         } else {
@@ -166,9 +166,9 @@ public class ProcedureOccurrence {
 
     @Column(name = "procedure_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long procedureTypeConceptId;
-    
-    public Long getProcedureTypeConceptId() {
+    private Integer procedureTypeConceptId;
+
+    public Integer getProcedureTypeConceptId() {
         return this.procedureTypeConceptId;
     }
 
@@ -202,9 +202,9 @@ public class ProcedureOccurrence {
 
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
-    private Long quantity;
-    
-    public Optional<Long> getQuantity() {
+    private Integer quantity;
+
+    public Optional<Integer> getQuantity() {
         if (this.quantity != null) {
             return Optional.of(this.quantity);
         } else {

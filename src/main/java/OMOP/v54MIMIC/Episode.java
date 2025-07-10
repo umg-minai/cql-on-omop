@@ -17,9 +17,9 @@ public class Episode {
 
     @Column(name = "episode_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long episodeConceptId;
-    
-    public Long getEpisodeConceptId() {
+    private Integer episodeConceptId;
+
+    public Integer getEpisodeConceptId() {
         return this.episodeConceptId;
     }
 
@@ -66,9 +66,9 @@ public class Episode {
 
     @Column(name = "episode_number", insertable = false, updatable = false,
             nullable = true)
-    private Long episodeNumber;
-    
-    public Optional<Long> getEpisodeNumber() {
+    private Integer episodeNumber;
+
+    public Optional<Integer> getEpisodeNumber() {
         if (this.episodeNumber != null) {
             return Optional.of(this.episodeNumber);
         } else {
@@ -78,9 +78,9 @@ public class Episode {
 
     @Column(name = "episode_object_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long episodeObjectConceptId;
-    
-    public Long getEpisodeObjectConceptId() {
+    private Integer episodeObjectConceptId;
+
+    public Integer getEpisodeObjectConceptId() {
         return this.episodeObjectConceptId;
     }
 
@@ -106,9 +106,9 @@ public class Episode {
 
     @Column(name = "episode_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long episodeSourceConceptId;
-    
-    public Optional<Long> getEpisodeSourceConceptId() {
+    private Integer episodeSourceConceptId;
+
+    public Optional<Integer> getEpisodeSourceConceptId() {
         if (this.episodeSourceConceptId != null) {
             return Optional.of(this.episodeSourceConceptId);
         } else {
@@ -158,9 +158,9 @@ public class Episode {
 
     @Column(name = "episode_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long episodeTypeConceptId;
-    
-    public Long getEpisodeTypeConceptId() {
+    private Integer episodeTypeConceptId;
+
+    public Integer getEpisodeTypeConceptId() {
         return this.episodeTypeConceptId;
     }
 

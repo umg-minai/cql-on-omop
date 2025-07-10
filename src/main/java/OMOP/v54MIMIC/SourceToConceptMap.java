@@ -20,11 +20,11 @@ public class SourceToConceptMap {
 
         @Column(name = "source_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long sourceConceptId;
+        private Integer sourceConceptId;
 
         @Column(name = "target_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long targetConceptId;
+        private Integer targetConceptId;
 
         @Column(name = "target_vocabulary_id", insertable = false,
                 updatable = false, nullable = false)
@@ -105,7 +105,7 @@ public class SourceToConceptMap {
         }
     }
 
-    public Long getSourceConceptId() {
+    public Integer getSourceConceptId() {
         return this.compoundId.sourceConceptId;
     }
 
@@ -126,7 +126,7 @@ public class SourceToConceptMap {
         return this.sourceVocabularyId;
     }
 
-    public Long getTargetConceptId() {
+    public Integer getTargetConceptId() {
         return this.compoundId.targetConceptId;
     }
 

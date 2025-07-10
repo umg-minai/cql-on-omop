@@ -20,11 +20,11 @@ public class CohortDefinition {
 
         @Column(name = "definition_type_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long definitionTypeConceptId;
+        private Integer definitionTypeConceptId;
 
         @Column(name = "subject_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long subjectConceptId;
+        private Integer subjectConceptId;
 
         @Override
         public boolean equals(final Object other) {
@@ -117,7 +117,7 @@ public class CohortDefinition {
         }
     }
 
-    public Long getDefinitionTypeConceptId() {
+    public Integer getDefinitionTypeConceptId() {
         return this.compoundId.definitionTypeConceptId;
     }
 
@@ -130,7 +130,7 @@ public class CohortDefinition {
         return this.definitionTypeConcept;
     }
 
-    public Long getSubjectConceptId() {
+    public Integer getSubjectConceptId() {
         return this.compoundId.subjectConceptId;
     }
 

@@ -17,9 +17,9 @@ public class DrugExposure {
 
     @Column(name = "days_supply", insertable = false, updatable = false,
             nullable = true)
-    private Long daysSupply;
-    
-    public Optional<Long> getDaysSupply() {
+    private Integer daysSupply;
+
+    public Optional<Integer> getDaysSupply() {
         if (this.daysSupply != null) {
             return Optional.of(this.daysSupply);
         } else {
@@ -41,9 +41,9 @@ public class DrugExposure {
 
     @Column(name = "drug_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long drugConceptId;
-    
-    public Long getDrugConceptId() {
+    private Integer drugConceptId;
+
+    public Integer getDrugConceptId() {
         return this.drugConceptId;
     }
 
@@ -106,9 +106,9 @@ public class DrugExposure {
 
     @Column(name = "drug_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long drugSourceConceptId;
-    
-    public Optional<Long> getDrugSourceConceptId() {
+    private Integer drugSourceConceptId;
+
+    public Optional<Integer> getDrugSourceConceptId() {
         if (this.drugSourceConceptId != null) {
             return Optional.of(this.drugSourceConceptId);
         } else {
@@ -138,9 +138,9 @@ public class DrugExposure {
 
     @Column(name = "drug_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long drugTypeConceptId;
-    
-    public Long getDrugTypeConceptId() {
+    private Integer drugTypeConceptId;
+
+    public Integer getDrugTypeConceptId() {
         return this.drugTypeConceptId;
     }
 
@@ -214,9 +214,9 @@ public class DrugExposure {
 
     @Column(name = "refills", insertable = false, updatable = false,
             nullable = true)
-    private Long refills;
-    
-    public Optional<Long> getRefills() {
+    private Integer refills;
+
+    public Optional<Integer> getRefills() {
         if (this.refills != null) {
             return Optional.of(this.refills);
         } else {
@@ -226,9 +226,9 @@ public class DrugExposure {
 
     @Column(name = "route_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long routeConceptId;
-    
-    public Optional<Long> getRouteConceptId() {
+    private Integer routeConceptId;
+
+    public Optional<Integer> getRouteConceptId() {
         if (this.routeConceptId != null) {
             return Optional.of(this.routeConceptId);
         } else {

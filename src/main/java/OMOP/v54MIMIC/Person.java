@@ -49,9 +49,9 @@ public class Person {
 
     @Column(name = "day_of_birth", insertable = false, updatable = false,
             nullable = true)
-    private Long dayOfBirth;
-    
-    public Optional<Long> getDayOfBirth() {
+    private Integer dayOfBirth;
+
+    public Optional<Integer> getDayOfBirth() {
         if (this.dayOfBirth != null) {
             return Optional.of(this.dayOfBirth);
         } else {
@@ -61,9 +61,9 @@ public class Person {
 
     @Column(name = "ethnicity_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long ethnicityConceptId;
-    
-    public Long getEthnicityConceptId() {
+    private Integer ethnicityConceptId;
+
+    public Integer getEthnicityConceptId() {
         return this.ethnicityConceptId;
     }
 
@@ -77,9 +77,9 @@ public class Person {
 
     @Column(name = "ethnicity_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long ethnicitySourceConceptId;
-    
-    public Optional<Long> getEthnicitySourceConceptId() {
+    private Integer ethnicitySourceConceptId;
+
+    public Optional<Integer> getEthnicitySourceConceptId() {
         if (this.ethnicitySourceConceptId != null) {
             return Optional.of(this.ethnicitySourceConceptId);
         } else {
@@ -109,9 +109,9 @@ public class Person {
 
     @Column(name = "gender_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long genderConceptId;
-    
-    public Long getGenderConceptId() {
+    private Integer genderConceptId;
+
+    public Integer getGenderConceptId() {
         return this.genderConceptId;
     }
 
@@ -125,9 +125,9 @@ public class Person {
 
     @Column(name = "gender_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long genderSourceConceptId;
-    
-    public Optional<Long> getGenderSourceConceptId() {
+    private Integer genderSourceConceptId;
+
+    public Optional<Integer> getGenderSourceConceptId() {
         if (this.genderSourceConceptId != null) {
             return Optional.of(this.genderSourceConceptId);
         } else {
@@ -177,9 +177,9 @@ public class Person {
 
     @Column(name = "month_of_birth", insertable = false, updatable = false,
             nullable = true)
-    private Long monthOfBirth;
-    
-    public Optional<Long> getMonthOfBirth() {
+    private Integer monthOfBirth;
+
+    public Optional<Integer> getMonthOfBirth() {
         if (this.monthOfBirth != null) {
             return Optional.of(this.monthOfBirth);
         } else {
@@ -230,9 +230,9 @@ public class Person {
 
     @Column(name = "race_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long raceConceptId;
-    
-    public Long getRaceConceptId() {
+    private Integer raceConceptId;
+
+    public Integer getRaceConceptId() {
         return this.raceConceptId;
     }
 
@@ -246,9 +246,9 @@ public class Person {
 
     @Column(name = "race_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long raceSourceConceptId;
-    
-    public Optional<Long> getRaceSourceConceptId() {
+    private Integer raceSourceConceptId;
+
+    public Optional<Integer> getRaceSourceConceptId() {
         if (this.raceSourceConceptId != null) {
             return Optional.of(this.raceSourceConceptId);
         } else {
@@ -278,9 +278,9 @@ public class Person {
 
     @Column(name = "year_of_birth", insertable = false, updatable = false,
             nullable = false)
-    private Long yearOfBirth;
-    
-    public Long getYearOfBirth() {
+    private Integer yearOfBirth;
+
+    public Integer getYearOfBirth() {
         return this.yearOfBirth;
     }
 

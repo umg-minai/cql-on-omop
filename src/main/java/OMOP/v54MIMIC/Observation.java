@@ -17,9 +17,9 @@ public class Observation {
 
     @Column(name = "obs_event_field_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long obsEventFieldConceptId;
-    
-    public Optional<Long> getObsEventFieldConceptId() {
+    private Integer obsEventFieldConceptId;
+
+    public Optional<Integer> getObsEventFieldConceptId() {
         if (this.obsEventFieldConceptId != null) {
             return Optional.of(this.obsEventFieldConceptId);
         } else {
@@ -37,9 +37,9 @@ public class Observation {
 
     @Column(name = "observation_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long observationConceptId;
-    
-    public Long getObservationConceptId() {
+    private Integer observationConceptId;
+
+    public Integer getObservationConceptId() {
         return this.observationConceptId;
     }
 
@@ -94,9 +94,9 @@ public class Observation {
 
     @Column(name = "observation_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long observationSourceConceptId;
-    
-    public Optional<Long> getObservationSourceConceptId() {
+    private Integer observationSourceConceptId;
+
+    public Optional<Integer> getObservationSourceConceptId() {
         if (this.observationSourceConceptId != null) {
             return Optional.of(this.observationSourceConceptId);
         } else {
@@ -126,9 +126,9 @@ public class Observation {
 
     @Column(name = "observation_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long observationTypeConceptId;
-    
-    public Long getObservationTypeConceptId() {
+    private Integer observationTypeConceptId;
+
+    public Integer getObservationTypeConceptId() {
         return this.observationTypeConceptId;
     }
 
@@ -178,9 +178,9 @@ public class Observation {
 
     @Column(name = "qualifier_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long qualifierConceptId;
-    
-    public Optional<Long> getQualifierConceptId() {
+    private Integer qualifierConceptId;
+
+    public Optional<Integer> getQualifierConceptId() {
         if (this.qualifierConceptId != null) {
             return Optional.of(this.qualifierConceptId);
         } else {
@@ -210,9 +210,9 @@ public class Observation {
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long unitConceptId;
-    
-    public Optional<Long> getUnitConceptId() {
+    private Integer unitConceptId;
+
+    public Optional<Integer> getUnitConceptId() {
         if (this.unitConceptId != null) {
             return Optional.of(this.unitConceptId);
         } else {
@@ -242,9 +242,9 @@ public class Observation {
 
     @Column(name = "value_as_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long valueAsConceptId;
-    
-    public Optional<Long> getValueAsConceptId() {
+    private Integer valueAsConceptId;
+
+    public Optional<Integer> getValueAsConceptId() {
         if (this.valueAsConceptId != null) {
             return Optional.of(this.valueAsConceptId);
         } else {

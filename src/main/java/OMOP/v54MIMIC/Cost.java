@@ -62,9 +62,9 @@ public class Cost {
 
     @Column(name = "cost_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long costTypeConceptId;
-    
-    public Long getCostTypeConceptId() {
+    private Integer costTypeConceptId;
+
+    public Integer getCostTypeConceptId() {
         return this.costTypeConceptId;
     }
 
@@ -78,9 +78,9 @@ public class Cost {
 
     @Column(name = "currency_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long currencyConceptId;
-    
-    public Optional<Long> getCurrencyConceptId() {
+    private Integer currencyConceptId;
+
+    public Optional<Integer> getCurrencyConceptId() {
         if (this.currencyConceptId != null) {
             return Optional.of(this.currencyConceptId);
         } else {
@@ -98,9 +98,9 @@ public class Cost {
 
     @Column(name = "drg_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long drgConceptId;
-    
-    public Optional<Long> getDrgConceptId() {
+    private Integer drgConceptId;
+
+    public Optional<Integer> getDrgConceptId() {
         if (this.drgConceptId != null) {
             return Optional.of(this.drgConceptId);
         } else {
@@ -238,9 +238,9 @@ public class Cost {
 
     @Column(name = "revenue_code_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long revenueCodeConceptId;
-    
-    public Optional<Long> getRevenueCodeConceptId() {
+    private Integer revenueCodeConceptId;
+
+    public Optional<Integer> getRevenueCodeConceptId() {
         if (this.revenueCodeConceptId != null) {
             return Optional.of(this.revenueCodeConceptId);
         } else {

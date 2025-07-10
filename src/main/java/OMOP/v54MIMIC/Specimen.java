@@ -17,9 +17,9 @@ public class Specimen {
 
     @Column(name = "anatomic_site_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long anatomicSiteConceptId;
-    
-    public Optional<Long> getAnatomicSiteConceptId() {
+    private Integer anatomicSiteConceptId;
+
+    public Optional<Integer> getAnatomicSiteConceptId() {
         if (this.anatomicSiteConceptId != null) {
             return Optional.of(this.anatomicSiteConceptId);
         } else {
@@ -49,9 +49,9 @@ public class Specimen {
 
     @Column(name = "disease_status_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long diseaseStatusConceptId;
-    
-    public Optional<Long> getDiseaseStatusConceptId() {
+    private Integer diseaseStatusConceptId;
+
+    public Optional<Integer> getDiseaseStatusConceptId() {
         if (this.diseaseStatusConceptId != null) {
             return Optional.of(this.diseaseStatusConceptId);
         } else {
@@ -109,9 +109,9 @@ public class Specimen {
 
     @Column(name = "specimen_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long specimenConceptId;
-    
-    public Long getSpecimenConceptId() {
+    private Integer specimenConceptId;
+
+    public Integer getSpecimenConceptId() {
         return this.specimenConceptId;
     }
 
@@ -178,9 +178,9 @@ public class Specimen {
 
     @Column(name = "specimen_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long specimenTypeConceptId;
-    
-    public Long getSpecimenTypeConceptId() {
+    private Integer specimenTypeConceptId;
+
+    public Integer getSpecimenTypeConceptId() {
         return this.specimenTypeConceptId;
     }
 
@@ -194,9 +194,9 @@ public class Specimen {
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long unitConceptId;
-    
-    public Optional<Long> getUnitConceptId() {
+    private Integer unitConceptId;
+
+    public Optional<Integer> getUnitConceptId() {
         if (this.unitConceptId != null) {
             return Optional.of(this.unitConceptId);
         } else {

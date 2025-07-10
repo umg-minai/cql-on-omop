@@ -20,11 +20,11 @@ public class ConceptSynonym {
 
         @Column(name = "concept_id", insertable = false, updatable = false,
                 nullable = false)
-        private Long conceptId;
+        private Integer conceptId;
 
         @Column(name = "language_concept_id", insertable = false,
                 updatable = false, nullable = false)
-        private Long languageConceptId;
+        private Integer languageConceptId;
 
         @Override
         public boolean equals(final Object other) {
@@ -65,7 +65,7 @@ public class ConceptSynonym {
     @EmbeddedId
     private CompoundId compoundId;
 
-    public Long getConceptId() {
+    public Integer getConceptId() {
         return this.compoundId.conceptId;
     }
 
@@ -86,7 +86,7 @@ public class ConceptSynonym {
         return this.conceptSynonymName;
     }
 
-    public Long getLanguageConceptId() {
+    public Integer getLanguageConceptId() {
         return this.compoundId.languageConceptId;
     }
 

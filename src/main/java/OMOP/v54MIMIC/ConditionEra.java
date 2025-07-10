@@ -17,9 +17,9 @@ public class ConditionEra {
 
     @Column(name = "condition_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long conditionConceptId;
-    
-    public Long getConditionConceptId() {
+    private Integer conditionConceptId;
+
+    public Integer getConditionConceptId() {
         return this.conditionConceptId;
     }
 
@@ -58,9 +58,9 @@ public class ConditionEra {
 
     @Column(name = "condition_occurrence_count", insertable = false,
             updatable = false, nullable = true)
-    private Long conditionOccurrenceCount;
-    
-    public Optional<Long> getConditionOccurrenceCount() {
+    private Integer conditionOccurrenceCount;
+
+    public Optional<Integer> getConditionOccurrenceCount() {
         if (this.conditionOccurrenceCount != null) {
             return Optional.of(this.conditionOccurrenceCount);
         } else {

@@ -42,9 +42,9 @@ public class ObservationPeriod {
 
     @Column(name = "period_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long periodTypeConceptId;
-    
-    public Long getPeriodTypeConceptId() {
+    private Integer periodTypeConceptId;
+
+    public Integer getPeriodTypeConceptId() {
         return this.periodTypeConceptId;
     }
 

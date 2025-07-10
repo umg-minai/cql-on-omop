@@ -42,9 +42,9 @@ public class Concept {
     @Id
     @Column(name = "concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long conceptId;
-    
-    public Long getConceptId() {
+    private Integer conceptId;
+
+    public Integer getConceptId() {
         return this.conceptId;
     }
 

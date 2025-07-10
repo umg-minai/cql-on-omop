@@ -17,9 +17,9 @@ public class Note {
 
     @Column(name = "encoding_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long encodingConceptId;
-    
-    public Long getEncodingConceptId() {
+    private Integer encodingConceptId;
+
+    public Integer getEncodingConceptId() {
         return this.encodingConceptId;
     }
 
@@ -33,9 +33,9 @@ public class Note {
 
     @Column(name = "language_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long languageConceptId;
-    
-    public Long getLanguageConceptId() {
+    private Integer languageConceptId;
+
+    public Integer getLanguageConceptId() {
         return this.languageConceptId;
     }
 
@@ -49,9 +49,9 @@ public class Note {
 
     @Column(name = "note_class_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long noteClassConceptId;
-    
-    public Long getNoteClassConceptId() {
+    private Integer noteClassConceptId;
+
+    public Integer getNoteClassConceptId() {
         return this.noteClassConceptId;
     }
 
@@ -85,9 +85,9 @@ public class Note {
 
     @Column(name = "note_event_field_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long noteEventFieldConceptId;
-    
-    public Optional<Long> getNoteEventFieldConceptId() {
+    private Integer noteEventFieldConceptId;
+
+    public Optional<Integer> getNoteEventFieldConceptId() {
         if (this.noteEventFieldConceptId != null) {
             return Optional.of(this.noteEventFieldConceptId);
         } else {
@@ -158,9 +158,9 @@ public class Note {
 
     @Column(name = "note_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long noteTypeConceptId;
-    
-    public Long getNoteTypeConceptId() {
+    private Integer noteTypeConceptId;
+
+    public Integer getNoteTypeConceptId() {
         return this.noteTypeConceptId;
     }
 

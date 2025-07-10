@@ -59,9 +59,9 @@ public class Death {
 
     @Column(name = "cause_concept_id", insertable = false, updatable = false,
             nullable = true)
-    private Long causeConceptId;
-    
-    public Optional<Long> getCauseConceptId() {
+    private Integer causeConceptId;
+
+    public Optional<Integer> getCauseConceptId() {
         if (this.causeConceptId != null) {
             return Optional.of(this.causeConceptId);
         } else {
@@ -79,9 +79,9 @@ public class Death {
 
     @Column(name = "cause_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long causeSourceConceptId;
-    
-    public Optional<Long> getCauseSourceConceptId() {
+    private Integer causeSourceConceptId;
+
+    public Optional<Integer> getCauseSourceConceptId() {
         if (this.causeSourceConceptId != null) {
             return Optional.of(this.causeSourceConceptId);
         } else {
@@ -131,9 +131,9 @@ public class Death {
 
     @Column(name = "death_type_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long deathTypeConceptId;
-    
-    public Optional<Long> getDeathTypeConceptId() {
+    private Integer deathTypeConceptId;
+
+    public Optional<Integer> getDeathTypeConceptId() {
         if (this.deathTypeConceptId != null) {
             return Optional.of(this.deathTypeConceptId);
         } else {

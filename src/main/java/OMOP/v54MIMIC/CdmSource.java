@@ -115,9 +115,9 @@ public class CdmSource {
 
     @Column(name = "cdm_version_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long cdmVersionConceptId;
-    
-    public Long getCdmVersionConceptId() {
+    private Integer cdmVersionConceptId;
+
+    public Integer getCdmVersionConceptId() {
         return this.cdmVersionConceptId;
     }
 

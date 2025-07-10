@@ -17,9 +17,9 @@ public class VisitOccurrence {
 
     @Column(name = "admitted_from_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long admittedFromConceptId;
-    
-    public Optional<Long> getAdmittedFromConceptId() {
+    private Integer admittedFromConceptId;
+
+    public Optional<Integer> getAdmittedFromConceptId() {
         if (this.admittedFromConceptId != null) {
             return Optional.of(this.admittedFromConceptId);
         } else {
@@ -69,9 +69,9 @@ public class VisitOccurrence {
 
     @Column(name = "discharged_to_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long dischargedToConceptId;
-    
-    public Optional<Long> getDischargedToConceptId() {
+    private Integer dischargedToConceptId;
+
+    public Optional<Integer> getDischargedToConceptId() {
         if (this.dischargedToConceptId != null) {
             return Optional.of(this.dischargedToConceptId);
         } else {
@@ -157,9 +157,9 @@ public class VisitOccurrence {
 
     @Column(name = "visit_concept_id", insertable = false, updatable = false,
             nullable = false)
-    private Long visitConceptId;
-    
-    public Long getVisitConceptId() {
+    private Integer visitConceptId;
+
+    public Integer getVisitConceptId() {
         return this.visitConceptId;
     }
 
@@ -202,9 +202,9 @@ public class VisitOccurrence {
 
     @Column(name = "visit_source_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long visitSourceConceptId;
-    
-    public Optional<Long> getVisitSourceConceptId() {
+    private Integer visitSourceConceptId;
+
+    public Optional<Integer> getVisitSourceConceptId() {
         if (this.visitSourceConceptId != null) {
             return Optional.of(this.visitSourceConceptId);
         } else {
@@ -254,9 +254,9 @@ public class VisitOccurrence {
 
     @Column(name = "visit_type_concept_id", insertable = false,
             updatable = false, nullable = false)
-    private Long visitTypeConceptId;
-    
-    public Long getVisitTypeConceptId() {
+    private Integer visitTypeConceptId;
+
+    public Integer getVisitTypeConceptId() {
         return this.visitTypeConceptId;
     }
 

@@ -70,9 +70,9 @@ public class CareSite {
 
     @Column(name = "place_of_service_concept_id", insertable = false,
             updatable = false, nullable = true)
-    private Long placeOfServiceConceptId;
-    
-    public Optional<Long> getPlaceOfServiceConceptId() {
+    private Integer placeOfServiceConceptId;
+
+    public Optional<Integer> getPlaceOfServiceConceptId() {
         if (this.placeOfServiceConceptId != null) {
             return Optional.of(this.placeOfServiceConceptId);
         } else {
