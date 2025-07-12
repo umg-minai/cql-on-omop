@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class ConceptSynonym {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getConceptId() {
         return this.compoundId.conceptId;
@@ -78,12 +79,21 @@ public class ConceptSynonym {
         return this.concept;
     }
 
+    public void setConcept(final Concept newValue) {
+        this.concept = newValue;
+        this.compoundId.conceptId = newValue.getConceptId();
+    }
+
     @Column(name = "concept_synonym_name", insertable = false,
             updatable = false, nullable = false)
     private String conceptSynonymName;
     
     public String getConceptSynonymName() {
         return this.conceptSynonymName;
+    }
+
+    public void setConceptSynonymName(final String newValue) {
+        this.conceptSynonymName = newValue;
     }
 
     public Integer getLanguageConceptId() {
@@ -97,6 +107,11 @@ public class ConceptSynonym {
     
     public Concept getLanguageConcept() {
         return this.languageConcept;
+    }
+
+    public void setLanguageConcept(final Concept newValue) {
+        this.languageConcept = newValue;
+        this.compoundId.languageConceptId = newValue.getConceptId();
     }
 
     @Override

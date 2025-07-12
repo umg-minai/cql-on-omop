@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class Metadata {
     @Column(name = "metadata_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer metadataConceptId;
-
+    
     public Integer getMetadataConceptId() {
         return this.metadataConceptId;
     }
@@ -31,6 +32,11 @@ public class Metadata {
         return this.metadataConcept;
     }
 
+    public void setMetadataConcept(final Concept newValue) {
+        this.metadataConcept = newValue;
+        this.metadataConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "metadata_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime metadataDate;
@@ -40,6 +46,14 @@ public class Metadata {
             return Optional.of(new Date(this.metadataDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setMetadataDate(final Date newValue) {
+        if (newValue == null) {
+            this.metadataDate = null;
+        } else {
+            this.metadataDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -55,7 +69,16 @@ public class Metadata {
         }
     }
 
+    public void setMetadataDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.metadataDatetime = null;
+        } else {
+            this.metadataDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "metadata_id", insertable = false, updatable = false,
             nullable = false)
     private Long metadataId;
@@ -67,7 +90,7 @@ public class Metadata {
     @Column(name = "metadata_type_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer metadataTypeConceptId;
-
+    
     public Integer getMetadataTypeConceptId() {
         return this.metadataTypeConceptId;
     }
@@ -80,6 +103,11 @@ public class Metadata {
         return this.metadataTypeConcept;
     }
 
+    public void setMetadataTypeConcept(final Concept newValue) {
+        this.metadataTypeConcept = newValue;
+        this.metadataTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "name", insertable = false, updatable = false,
             nullable = false)
     private String name;
@@ -88,10 +116,14 @@ public class Metadata {
         return this.name;
     }
 
+    public void setName(final String newValue) {
+        this.name = newValue;
+    }
+
     @Column(name = "value_as_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer valueAsConceptId;
-
+    
     public Optional<Integer> getValueAsConceptId() {
         if (this.valueAsConceptId != null) {
             return Optional.of(this.valueAsConceptId);
@@ -108,6 +140,16 @@ public class Metadata {
         return Optional.ofNullable(this.valueAsConcept);
     }
 
+    public void setValueAsConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.valueAsConcept = null;
+            this.valueAsConceptId = null;
+        } else {
+            this.valueAsConcept = newValue;
+            this.valueAsConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "value_as_number", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal valueAsNumber;
@@ -120,6 +162,10 @@ public class Metadata {
         }
     }
 
+    public void setValueAsNumber(final BigDecimal newValue) {
+        this.valueAsNumber = newValue;
+    }
+
     @Column(name = "value_as_string", insertable = false, updatable = false,
             nullable = true)
     private String valueAsString;
@@ -130,6 +176,10 @@ public class Metadata {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setValueAsString(final String newValue) {
+        this.valueAsString = newValue;
     }
 
     @Override

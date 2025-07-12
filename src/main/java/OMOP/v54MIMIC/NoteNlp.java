@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,12 +24,20 @@ public class NoteNlp {
         return this.lexicalVariant;
     }
 
+    public void setLexicalVariant(final String newValue) {
+        this.lexicalVariant = newValue;
+    }
+
     @Column(name = "nlp_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime nlpDate;
     
     public Date getNlpDate() {
         return new Date(this.nlpDate.toLocalDate());
+    }
+
+    public void setNlpDate(final Date newValue) {
+        this.nlpDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "nlp_datetime", insertable = false, updatable = false,
@@ -40,6 +49,14 @@ public class NoteNlp {
             return Optional.of(new DateTime(this.nlpDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setNlpDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.nlpDatetime = null;
+        } else {
+            this.nlpDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -55,6 +72,10 @@ public class NoteNlp {
         }
     }
 
+    public void setNlpSystem(final String newValue) {
+        this.nlpSystem = newValue;
+    }
+
     @Column(name = "note_id", insertable = false, updatable = false,
             nullable = false)
     private Long noteId;
@@ -63,10 +84,14 @@ public class NoteNlp {
         return this.noteId;
     }
 
+    public void setNoteId(final Long newValue) {
+        this.noteId = newValue;
+    }
+
     @Column(name = "note_nlp_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer noteNlpConceptId;
-
+    
     public Optional<Integer> getNoteNlpConceptId() {
         if (this.noteNlpConceptId != null) {
             return Optional.of(this.noteNlpConceptId);
@@ -83,7 +108,18 @@ public class NoteNlp {
         return Optional.ofNullable(this.noteNlpConcept);
     }
 
+    public void setNoteNlpConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.noteNlpConcept = null;
+            this.noteNlpConceptId = null;
+        } else {
+            this.noteNlpConcept = newValue;
+            this.noteNlpConceptId = newValue.getConceptId();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "note_nlp_id", insertable = false, updatable = false,
             nullable = false)
     private Long noteNlpId;
@@ -95,7 +131,7 @@ public class NoteNlp {
     @Column(name = "note_nlp_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer noteNlpSourceConceptId;
-
+    
     public Optional<Integer> getNoteNlpSourceConceptId() {
         if (this.noteNlpSourceConceptId != null) {
             return Optional.of(this.noteNlpSourceConceptId);
@@ -112,6 +148,16 @@ public class NoteNlp {
         return Optional.ofNullable(this.noteNlpSourceConcept);
     }
 
+    public void setNoteNlpSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.noteNlpSourceConcept = null;
+            this.noteNlpSourceConceptId = null;
+        } else {
+            this.noteNlpSourceConcept = newValue;
+            this.noteNlpSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "offset", insertable = false, updatable = false,
             nullable = true)
     private String offset;
@@ -124,10 +170,14 @@ public class NoteNlp {
         }
     }
 
+    public void setOffset(final String newValue) {
+        this.offset = newValue;
+    }
+
     @Column(name = "section_concept_id", insertable = false, updatable = false,
             nullable = true)
     private Integer sectionConceptId;
-
+    
     public Optional<Integer> getSectionConceptId() {
         if (this.sectionConceptId != null) {
             return Optional.of(this.sectionConceptId);
@@ -144,6 +194,16 @@ public class NoteNlp {
         return Optional.ofNullable(this.sectionConcept);
     }
 
+    public void setSectionConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.sectionConcept = null;
+            this.sectionConceptId = null;
+        } else {
+            this.sectionConcept = newValue;
+            this.sectionConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "snippet", insertable = false, updatable = false,
             nullable = true)
     private String snippet;
@@ -154,6 +214,10 @@ public class NoteNlp {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setSnippet(final String newValue) {
+        this.snippet = newValue;
     }
 
     @Column(name = "term_exists", insertable = false, updatable = false,
@@ -168,6 +232,10 @@ public class NoteNlp {
         }
     }
 
+    public void setTermExists(final String newValue) {
+        this.termExists = newValue;
+    }
+
     @Column(name = "term_modifiers", insertable = false, updatable = false,
             nullable = true)
     private String termModifiers;
@@ -180,6 +248,10 @@ public class NoteNlp {
         }
     }
 
+    public void setTermModifiers(final String newValue) {
+        this.termModifiers = newValue;
+    }
+
     @Column(name = "term_temporal", insertable = false, updatable = false,
             nullable = true)
     private String termTemporal;
@@ -190,6 +262,10 @@ public class NoteNlp {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setTermTemporal(final String newValue) {
+        this.termTemporal = newValue;
     }
 
     @Override

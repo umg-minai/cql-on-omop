@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class EpisodeEvent {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getEpisodeEventFieldConceptId() {
         return this.compoundId.episodeEventFieldConceptId;
@@ -76,6 +77,11 @@ public class EpisodeEvent {
     
     public Concept getEpisodeEventFieldConcept() {
         return this.episodeEventFieldConcept;
+    }
+
+    public void setEpisodeEventFieldConcept(final Concept newValue) {
+        this.episodeEventFieldConcept = newValue;
+        this.compoundId.episodeEventFieldConceptId = newValue.getConceptId();
     }
 
     public Long getEpisodeId() {
@@ -91,12 +97,21 @@ public class EpisodeEvent {
         return this.episode;
     }
 
+    public void setEpisode(final Episode newValue) {
+        this.episode = newValue;
+        this.compoundId.episodeId = newValue.getEpisodeId();
+    }
+
     @Column(name = "event_id", insertable = false, updatable = false,
             nullable = false)
     private Long eventId;
     
     public Long getEventId() {
         return this.eventId;
+    }
+
+    public void setEventId(final Long newValue) {
+        this.eventId = newValue;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class Concept {
         return this.conceptClass;
     }
 
+    public void setConceptClass(final ConceptClass newValue) {
+        this.conceptClass = newValue;
+        this.conceptClassId = newValue.getConceptClassId();
+    }
+
     @Column(name = "concept_code", insertable = false, updatable = false,
             nullable = false)
     private String conceptCode;
@@ -39,11 +45,16 @@ public class Concept {
         return this.conceptCode;
     }
 
+    public void setConceptCode(final String newValue) {
+        this.conceptCode = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concept_id", insertable = false, updatable = false,
             nullable = false)
     private Integer conceptId;
-
+    
     public Integer getConceptId() {
         return this.conceptId;
     }
@@ -54,6 +65,10 @@ public class Concept {
     
     public String getConceptName() {
         return this.conceptName;
+    }
+
+    public void setConceptName(final String newValue) {
+        this.conceptName = newValue;
     }
 
     @Column(name = "domain_id", insertable = false, updatable = false,
@@ -72,6 +87,11 @@ public class Concept {
         return this.domain;
     }
 
+    public void setDomain(final Domain newValue) {
+        this.domain = newValue;
+        this.domainId = newValue.getDomainId();
+    }
+
     @Column(name = "invalid_reason", insertable = false, updatable = false,
             nullable = true)
     private String invalidReason;
@@ -82,6 +102,10 @@ public class Concept {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setInvalidReason(final String newValue) {
+        this.invalidReason = newValue;
     }
 
     @Column(name = "standard_concept", insertable = false, updatable = false,
@@ -96,6 +120,10 @@ public class Concept {
         }
     }
 
+    public void setStandardConcept(final String newValue) {
+        this.standardConcept = newValue;
+    }
+
     @Column(name = "valid_end_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validEndDate;
@@ -104,12 +132,20 @@ public class Concept {
         return new Date(this.validEndDate.toLocalDate());
     }
 
+    public void setValidEndDate(final Date newValue) {
+        this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "valid_start_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {
         return new Date(this.validStartDate.toLocalDate());
+    }
+
+    public void setValidStartDate(final Date newValue) {
+        this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "vocabulary_id", insertable = false, updatable = false,
@@ -126,6 +162,11 @@ public class Concept {
     
     public Vocabulary getVocabulary() {
         return this.vocabulary;
+    }
+
+    public void setVocabulary(final Vocabulary newValue) {
+        this.vocabulary = newValue;
+        this.vocabularyId = newValue.getVocabularyId();
     }
 
     @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)

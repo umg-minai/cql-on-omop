@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -18,13 +19,17 @@ public class DrugExposure {
     @Column(name = "days_supply", insertable = false, updatable = false,
             nullable = true)
     private Integer daysSupply;
-
+    
     public Optional<Integer> getDaysSupply() {
         if (this.daysSupply != null) {
             return Optional.of(this.daysSupply);
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDaysSupply(final Integer newValue) {
+        this.daysSupply = newValue;
     }
 
     @Column(name = "dose_unit_source_value", insertable = false,
@@ -39,10 +44,14 @@ public class DrugExposure {
         }
     }
 
+    public void setDoseUnitSourceValue(final String newValue) {
+        this.doseUnitSourceValue = newValue;
+    }
+
     @Column(name = "drug_concept_id", insertable = false, updatable = false,
             nullable = false)
     private Integer drugConceptId;
-
+    
     public Integer getDrugConceptId() {
         return this.drugConceptId;
     }
@@ -55,12 +64,21 @@ public class DrugExposure {
         return this.drugConcept;
     }
 
+    public void setDrugConcept(final Concept newValue) {
+        this.drugConcept = newValue;
+        this.drugConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "drug_exposure_end_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime drugExposureEndDate;
     
     public Date getDrugExposureEndDate() {
         return new Date(this.drugExposureEndDate.toLocalDate());
+    }
+
+    public void setDrugExposureEndDate(final Date newValue) {
+        this.drugExposureEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "drug_exposure_end_datetime", insertable = false,
@@ -75,7 +93,16 @@ public class DrugExposure {
         }
     }
 
+    public void setDrugExposureEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.drugExposureEndDatetime = null;
+        } else {
+            this.drugExposureEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "drug_exposure_id", insertable = false, updatable = false,
             nullable = false)
     private Long drugExposureId;
@@ -92,6 +119,10 @@ public class DrugExposure {
         return new Date(this.drugExposureStartDate.toLocalDate());
     }
 
+    public void setDrugExposureStartDate(final Date newValue) {
+        this.drugExposureStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "drug_exposure_start_datetime", insertable = false,
             updatable = false, nullable = true)
     private ZonedDateTime drugExposureStartDatetime;
@@ -104,10 +135,18 @@ public class DrugExposure {
         }
     }
 
+    public void setDrugExposureStartDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.drugExposureStartDatetime = null;
+        } else {
+            this.drugExposureStartDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Column(name = "drug_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer drugSourceConceptId;
-
+    
     public Optional<Integer> getDrugSourceConceptId() {
         if (this.drugSourceConceptId != null) {
             return Optional.of(this.drugSourceConceptId);
@@ -124,6 +163,16 @@ public class DrugExposure {
         return Optional.ofNullable(this.drugSourceConcept);
     }
 
+    public void setDrugSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.drugSourceConcept = null;
+            this.drugSourceConceptId = null;
+        } else {
+            this.drugSourceConcept = newValue;
+            this.drugSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "drug_source_value", insertable = false, updatable = false,
             nullable = true)
     private String drugSourceValue;
@@ -136,10 +185,14 @@ public class DrugExposure {
         }
     }
 
+    public void setDrugSourceValue(final String newValue) {
+        this.drugSourceValue = newValue;
+    }
+
     @Column(name = "drug_type_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer drugTypeConceptId;
-
+    
     public Integer getDrugTypeConceptId() {
         return this.drugTypeConceptId;
     }
@@ -152,6 +205,11 @@ public class DrugExposure {
         return this.drugTypeConcept;
     }
 
+    public void setDrugTypeConcept(final Concept newValue) {
+        this.drugTypeConcept = newValue;
+        this.drugTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "lot_number", insertable = false, updatable = false,
             nullable = true)
     private String lotNumber;
@@ -162,6 +220,10 @@ public class DrugExposure {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setLotNumber(final String newValue) {
+        this.lotNumber = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -178,6 +240,11 @@ public class DrugExposure {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -200,6 +267,16 @@ public class DrugExposure {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal quantity;
@@ -212,10 +289,14 @@ public class DrugExposure {
         }
     }
 
+    public void setQuantity(final BigDecimal newValue) {
+        this.quantity = newValue;
+    }
+
     @Column(name = "refills", insertable = false, updatable = false,
             nullable = true)
     private Integer refills;
-
+    
     public Optional<Integer> getRefills() {
         if (this.refills != null) {
             return Optional.of(this.refills);
@@ -224,10 +305,14 @@ public class DrugExposure {
         }
     }
 
+    public void setRefills(final Integer newValue) {
+        this.refills = newValue;
+    }
+
     @Column(name = "route_concept_id", insertable = false, updatable = false,
             nullable = true)
     private Integer routeConceptId;
-
+    
     public Optional<Integer> getRouteConceptId() {
         if (this.routeConceptId != null) {
             return Optional.of(this.routeConceptId);
@@ -244,6 +329,16 @@ public class DrugExposure {
         return Optional.ofNullable(this.routeConcept);
     }
 
+    public void setRouteConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.routeConcept = null;
+            this.routeConceptId = null;
+        } else {
+            this.routeConcept = newValue;
+            this.routeConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "route_source_value", insertable = false, updatable = false,
             nullable = true)
     private String routeSourceValue;
@@ -254,6 +349,10 @@ public class DrugExposure {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setRouteSourceValue(final String newValue) {
+        this.routeSourceValue = newValue;
     }
 
     @Column(name = "sig", insertable = false, updatable = false,
@@ -268,6 +367,10 @@ public class DrugExposure {
         }
     }
 
+    public void setSig(final String newValue) {
+        this.sig = newValue;
+    }
+
     @Column(name = "stop_reason", insertable = false, updatable = false,
             nullable = true)
     private String stopReason;
@@ -280,6 +383,10 @@ public class DrugExposure {
         }
     }
 
+    public void setStopReason(final String newValue) {
+        this.stopReason = newValue;
+    }
+
     @Column(name = "verbatim_end_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime verbatimEndDate;
@@ -289,6 +396,14 @@ public class DrugExposure {
             return Optional.of(new Date(this.verbatimEndDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setVerbatimEndDate(final Date newValue) {
+        if (newValue == null) {
+            this.verbatimEndDate = null;
+        } else {
+            this.verbatimEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -312,6 +427,16 @@ public class DrugExposure {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Long visitOccurrenceId;
@@ -330,6 +455,16 @@ public class DrugExposure {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

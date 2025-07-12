@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class CareSite {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "care_site_id", insertable = false, updatable = false,
             nullable = false)
     private Long careSiteId;
@@ -36,6 +38,10 @@ public class CareSite {
         }
     }
 
+    public void setCareSiteName(final String newValue) {
+        this.careSiteName = newValue;
+    }
+
     @Column(name = "care_site_source_value", insertable = false,
             updatable = false, nullable = true)
     private String careSiteSourceValue;
@@ -46,6 +52,10 @@ public class CareSite {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setCareSiteSourceValue(final String newValue) {
+        this.careSiteSourceValue = newValue;
     }
 
     @Column(name = "location_id", insertable = false, updatable = false,
@@ -68,10 +78,20 @@ public class CareSite {
         return Optional.ofNullable(this.location);
     }
 
+    public void setLocation(final Location newValue) {
+        if (newValue == null) {
+            this.location = null;
+            this.locationId = null;
+        } else {
+            this.location = newValue;
+            this.locationId = newValue.getLocationId();
+        }
+    }
+
     @Column(name = "place_of_service_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer placeOfServiceConceptId;
-
+    
     public Optional<Integer> getPlaceOfServiceConceptId() {
         if (this.placeOfServiceConceptId != null) {
             return Optional.of(this.placeOfServiceConceptId);
@@ -88,6 +108,16 @@ public class CareSite {
         return Optional.ofNullable(this.placeOfServiceConcept);
     }
 
+    public void setPlaceOfServiceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.placeOfServiceConcept = null;
+            this.placeOfServiceConceptId = null;
+        } else {
+            this.placeOfServiceConcept = newValue;
+            this.placeOfServiceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "place_of_service_source_value", insertable = false,
             updatable = false, nullable = true)
     private String placeOfServiceSourceValue;
@@ -98,6 +128,10 @@ public class CareSite {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPlaceOfServiceSourceValue(final String newValue) {
+        this.placeOfServiceSourceValue = newValue;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class ConceptAncestor {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getAncestorConceptId() {
         return this.compoundId.ancestorConceptId;
@@ -76,6 +77,11 @@ public class ConceptAncestor {
     
     public Concept getAncestorConcept() {
         return this.ancestorConcept;
+    }
+
+    public void setAncestorConcept(final Concept newValue) {
+        this.ancestorConcept = newValue;
+        this.compoundId.ancestorConceptId = newValue.getConceptId();
     }
 
     public Integer getDescendantConceptId() {
@@ -91,20 +97,33 @@ public class ConceptAncestor {
         return this.descendantConcept;
     }
 
+    public void setDescendantConcept(final Concept newValue) {
+        this.descendantConcept = newValue;
+        this.compoundId.descendantConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "max_levels_of_separation", insertable = false,
             updatable = false, nullable = false)
     private Integer maxLevelsOfSeparation;
-
+    
     public Integer getMaxLevelsOfSeparation() {
         return this.maxLevelsOfSeparation;
+    }
+
+    public void setMaxLevelsOfSeparation(final Integer newValue) {
+        this.maxLevelsOfSeparation = newValue;
     }
 
     @Column(name = "min_levels_of_separation", insertable = false,
             updatable = false, nullable = false)
     private Integer minLevelsOfSeparation;
-
+    
     public Integer getMinLevelsOfSeparation() {
         return this.minLevelsOfSeparation;
+    }
+
+    public void setMinLevelsOfSeparation(final Integer newValue) {
+        this.minLevelsOfSeparation = newValue;
     }
 
     @Override

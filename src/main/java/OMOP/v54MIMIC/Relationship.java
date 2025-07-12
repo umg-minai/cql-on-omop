@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,10 @@ public class Relationship {
         return this.definesAncestry;
     }
 
+    public void setDefinesAncestry(final String newValue) {
+        this.definesAncestry = newValue;
+    }
+
     @Column(name = "is_hierarchical", insertable = false, updatable = false,
             nullable = false)
     private String isHierarchical;
@@ -31,10 +36,14 @@ public class Relationship {
         return this.isHierarchical;
     }
 
+    public void setIsHierarchical(final String newValue) {
+        this.isHierarchical = newValue;
+    }
+
     @Column(name = "relationship_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer relationshipConceptId;
-
+    
     public Integer getRelationshipConceptId() {
         return this.relationshipConceptId;
     }
@@ -47,7 +56,13 @@ public class Relationship {
         return this.relationshipConcept;
     }
 
+    public void setRelationshipConcept(final Concept newValue) {
+        this.relationshipConcept = newValue;
+        this.relationshipConceptId = newValue.getConceptId();
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "relationship_id", insertable = false, updatable = false,
             nullable = false)
     private String relationshipId;
@@ -64,12 +79,20 @@ public class Relationship {
         return this.relationshipName;
     }
 
+    public void setRelationshipName(final String newValue) {
+        this.relationshipName = newValue;
+    }
+
     @Column(name = "reverse_relationship_id", insertable = false,
             updatable = false, nullable = false)
     private String reverseRelationshipId;
     
     public String getReverseRelationshipId() {
         return this.reverseRelationshipId;
+    }
+
+    public void setReverseRelationshipId(final String newValue) {
+        this.reverseRelationshipId = newValue;
     }
 
     @Override

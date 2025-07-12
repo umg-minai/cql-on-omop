@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -27,10 +28,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    public void setFamilySourceValue(final String newValue) {
+        this.familySourceValue = newValue;
+    }
+
     @Column(name = "payer_concept_id", insertable = false, updatable = false,
             nullable = true)
     private Integer payerConceptId;
-
+    
     public Optional<Integer> getPayerConceptId() {
         if (this.payerConceptId != null) {
             return Optional.of(this.payerConceptId);
@@ -47,6 +52,16 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.payerConcept);
     }
 
+    public void setPayerConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.payerConcept = null;
+            this.payerConceptId = null;
+        } else {
+            this.payerConcept = newValue;
+            this.payerConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "payer_plan_period_end_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime payerPlanPeriodEndDate;
@@ -55,7 +70,12 @@ public class PayerPlanPeriod {
         return new Date(this.payerPlanPeriodEndDate.toLocalDate());
     }
 
+    public void setPayerPlanPeriodEndDate(final Date newValue) {
+        this.payerPlanPeriodEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payer_plan_period_id", insertable = false,
             updatable = false, nullable = false)
     private Long payerPlanPeriodId;
@@ -72,10 +92,14 @@ public class PayerPlanPeriod {
         return new Date(this.payerPlanPeriodStartDate.toLocalDate());
     }
 
+    public void setPayerPlanPeriodStartDate(final Date newValue) {
+        this.payerPlanPeriodStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "payer_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer payerSourceConceptId;
-
+    
     public Optional<Integer> getPayerSourceConceptId() {
         if (this.payerSourceConceptId != null) {
             return Optional.of(this.payerSourceConceptId);
@@ -92,6 +116,16 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.payerSourceConcept);
     }
 
+    public void setPayerSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.payerSourceConcept = null;
+            this.payerSourceConceptId = null;
+        } else {
+            this.payerSourceConcept = newValue;
+            this.payerSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "payer_source_value", insertable = false, updatable = false,
             nullable = true)
     private String payerSourceValue;
@@ -102,6 +136,10 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPayerSourceValue(final String newValue) {
+        this.payerSourceValue = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -120,10 +158,15 @@ public class PayerPlanPeriod {
         return this.person;
     }
 
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
+    }
+
     @Column(name = "plan_concept_id", insertable = false, updatable = false,
             nullable = true)
     private Integer planConceptId;
-
+    
     public Optional<Integer> getPlanConceptId() {
         if (this.planConceptId != null) {
             return Optional.of(this.planConceptId);
@@ -140,10 +183,20 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.planConcept);
     }
 
+    public void setPlanConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.planConcept = null;
+            this.planConceptId = null;
+        } else {
+            this.planConcept = newValue;
+            this.planConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "plan_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer planSourceConceptId;
-
+    
     public Optional<Integer> getPlanSourceConceptId() {
         if (this.planSourceConceptId != null) {
             return Optional.of(this.planSourceConceptId);
@@ -160,6 +213,16 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.planSourceConcept);
     }
 
+    public void setPlanSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.planSourceConcept = null;
+            this.planSourceConceptId = null;
+        } else {
+            this.planSourceConcept = newValue;
+            this.planSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "plan_source_value", insertable = false, updatable = false,
             nullable = true)
     private String planSourceValue;
@@ -172,10 +235,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    public void setPlanSourceValue(final String newValue) {
+        this.planSourceValue = newValue;
+    }
+
     @Column(name = "sponsor_concept_id", insertable = false, updatable = false,
             nullable = true)
     private Integer sponsorConceptId;
-
+    
     public Optional<Integer> getSponsorConceptId() {
         if (this.sponsorConceptId != null) {
             return Optional.of(this.sponsorConceptId);
@@ -192,10 +259,20 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.sponsorConcept);
     }
 
+    public void setSponsorConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.sponsorConcept = null;
+            this.sponsorConceptId = null;
+        } else {
+            this.sponsorConcept = newValue;
+            this.sponsorConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "sponsor_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer sponsorSourceConceptId;
-
+    
     public Optional<Integer> getSponsorSourceConceptId() {
         if (this.sponsorSourceConceptId != null) {
             return Optional.of(this.sponsorSourceConceptId);
@@ -212,6 +289,16 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.sponsorSourceConcept);
     }
 
+    public void setSponsorSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.sponsorSourceConcept = null;
+            this.sponsorSourceConceptId = null;
+        } else {
+            this.sponsorSourceConcept = newValue;
+            this.sponsorSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "sponsor_source_value", insertable = false,
             updatable = false, nullable = true)
     private String sponsorSourceValue;
@@ -224,10 +311,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    public void setSponsorSourceValue(final String newValue) {
+        this.sponsorSourceValue = newValue;
+    }
+
     @Column(name = "stop_reason_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer stopReasonConceptId;
-
+    
     public Optional<Integer> getStopReasonConceptId() {
         if (this.stopReasonConceptId != null) {
             return Optional.of(this.stopReasonConceptId);
@@ -244,10 +335,20 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.stopReasonConcept);
     }
 
+    public void setStopReasonConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.stopReasonConcept = null;
+            this.stopReasonConceptId = null;
+        } else {
+            this.stopReasonConcept = newValue;
+            this.stopReasonConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "stop_reason_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer stopReasonSourceConceptId;
-
+    
     public Optional<Integer> getStopReasonSourceConceptId() {
         if (this.stopReasonSourceConceptId != null) {
             return Optional.of(this.stopReasonSourceConceptId);
@@ -264,6 +365,16 @@ public class PayerPlanPeriod {
         return Optional.ofNullable(this.stopReasonSourceConcept);
     }
 
+    public void setStopReasonSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.stopReasonSourceConcept = null;
+            this.stopReasonSourceConceptId = null;
+        } else {
+            this.stopReasonSourceConcept = newValue;
+            this.stopReasonSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "stop_reason_source_value", insertable = false,
             updatable = false, nullable = true)
     private String stopReasonSourceValue;
@@ -274,6 +385,10 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setStopReasonSourceValue(final String newValue) {
+        this.stopReasonSourceValue = newValue;
     }
 
     @Override

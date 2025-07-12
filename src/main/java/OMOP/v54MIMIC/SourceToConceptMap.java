@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class SourceToConceptMap {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "invalid_reason", insertable = false, updatable = false,
             nullable = true)
@@ -85,12 +86,20 @@ public class SourceToConceptMap {
         }
     }
 
+    public void setInvalidReason(final String newValue) {
+        this.invalidReason = newValue;
+    }
+
     @Column(name = "source_code", insertable = false, updatable = false,
             nullable = false)
     private String sourceCode;
     
     public String getSourceCode() {
         return this.sourceCode;
+    }
+
+    public void setSourceCode(final String newValue) {
+        this.sourceCode = newValue;
     }
 
     @Column(name = "source_code_description", insertable = false,
@@ -103,6 +112,10 @@ public class SourceToConceptMap {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setSourceCodeDescription(final String newValue) {
+        this.sourceCodeDescription = newValue;
     }
 
     public Integer getSourceConceptId() {
@@ -118,12 +131,21 @@ public class SourceToConceptMap {
         return this.sourceConcept;
     }
 
+    public void setSourceConcept(final Concept newValue) {
+        this.sourceConcept = newValue;
+        this.compoundId.sourceConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "source_vocabulary_id", insertable = false,
             updatable = false, nullable = false)
     private String sourceVocabularyId;
     
     public String getSourceVocabularyId() {
         return this.sourceVocabularyId;
+    }
+
+    public void setSourceVocabularyId(final String newValue) {
+        this.sourceVocabularyId = newValue;
     }
 
     public Integer getTargetConceptId() {
@@ -139,6 +161,11 @@ public class SourceToConceptMap {
         return this.targetConcept;
     }
 
+    public void setTargetConcept(final Concept newValue) {
+        this.targetConcept = newValue;
+        this.compoundId.targetConceptId = newValue.getConceptId();
+    }
+
     public String getTargetVocabularyId() {
         return this.compoundId.targetVocabularyId;
     }
@@ -152,6 +179,11 @@ public class SourceToConceptMap {
         return this.targetVocabulary;
     }
 
+    public void setTargetVocabulary(final Vocabulary newValue) {
+        this.targetVocabulary = newValue;
+        this.compoundId.targetVocabularyId = newValue.getVocabularyId();
+    }
+
     @Column(name = "valid_end_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validEndDate;
@@ -160,12 +192,20 @@ public class SourceToConceptMap {
         return new Date(this.validEndDate.toLocalDate());
     }
 
+    public void setValidEndDate(final Date newValue) {
+        this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "valid_start_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {
         return new Date(this.validStartDate.toLocalDate());
+    }
+
+    public void setValidStartDate(final Date newValue) {
+        this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Override

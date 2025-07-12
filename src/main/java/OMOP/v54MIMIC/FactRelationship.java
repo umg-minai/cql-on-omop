@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class FactRelationship {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getDomainConceptId1() {
         return this.compoundId.domainConceptId1;
@@ -84,6 +85,11 @@ public class FactRelationship {
     
     public Concept getDomainConcept1() {
         return this.domainConcept1;
+    }
+
+    public void setDomainConcept1(final Concept newValue) {
+        this.domainConcept1 = newValue;
+        this.compoundId.domainConceptId1 = newValue.getConceptId();
     }
 
     public Integer getDomainConceptId2() {
@@ -99,6 +105,11 @@ public class FactRelationship {
         return this.domainConcept2;
     }
 
+    public void setDomainConcept2(final Concept newValue) {
+        this.domainConcept2 = newValue;
+        this.compoundId.domainConceptId2 = newValue.getConceptId();
+    }
+
     @Column(name = "fact_id_1", insertable = false, updatable = false,
             nullable = false)
     private Long factId1;
@@ -107,12 +118,20 @@ public class FactRelationship {
         return this.factId1;
     }
 
+    public void setFactId1(final Long newValue) {
+        this.factId1 = newValue;
+    }
+
     @Column(name = "fact_id_2", insertable = false, updatable = false,
             nullable = false)
     private Long factId2;
     
     public Long getFactId2() {
         return this.factId2;
+    }
+
+    public void setFactId2(final Long newValue) {
+        this.factId2 = newValue;
     }
 
     public Integer getRelationshipConceptId() {
@@ -126,6 +145,11 @@ public class FactRelationship {
     
     public Concept getRelationshipConcept() {
         return this.relationshipConcept;
+    }
+
+    public void setRelationshipConcept(final Concept newValue) {
+        this.relationshipConcept = newValue;
+        this.compoundId.relationshipConceptId = newValue.getConceptId();
     }
 
     @Override

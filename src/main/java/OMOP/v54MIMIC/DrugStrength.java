@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,12 +64,12 @@ public class DrugStrength {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "amount_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer amountUnitConceptId;
-
+    
     public Optional<Integer> getAmountUnitConceptId() {
         if (this.amountUnitConceptId != null) {
             return Optional.of(this.amountUnitConceptId);
@@ -85,6 +86,16 @@ public class DrugStrength {
         return Optional.ofNullable(this.amountUnitConcept);
     }
 
+    public void setAmountUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.amountUnitConcept = null;
+            this.amountUnitConceptId = null;
+        } else {
+            this.amountUnitConcept = newValue;
+            this.amountUnitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "amount_value", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal amountValue;
@@ -97,10 +108,14 @@ public class DrugStrength {
         }
     }
 
+    public void setAmountValue(final BigDecimal newValue) {
+        this.amountValue = newValue;
+    }
+
     @Column(name = "box_size", insertable = false, updatable = false,
             nullable = true)
     private Integer boxSize;
-
+    
     public Optional<Integer> getBoxSize() {
         if (this.boxSize != null) {
             return Optional.of(this.boxSize);
@@ -109,10 +124,14 @@ public class DrugStrength {
         }
     }
 
+    public void setBoxSize(final Integer newValue) {
+        this.boxSize = newValue;
+    }
+
     @Column(name = "denominator_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer denominatorUnitConceptId;
-
+    
     public Optional<Integer> getDenominatorUnitConceptId() {
         if (this.denominatorUnitConceptId != null) {
             return Optional.of(this.denominatorUnitConceptId);
@@ -129,6 +148,16 @@ public class DrugStrength {
         return Optional.ofNullable(this.denominatorUnitConcept);
     }
 
+    public void setDenominatorUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.denominatorUnitConcept = null;
+            this.denominatorUnitConceptId = null;
+        } else {
+            this.denominatorUnitConcept = newValue;
+            this.denominatorUnitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "denominator_value", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal denominatorValue;
@@ -139,6 +168,10 @@ public class DrugStrength {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDenominatorValue(final BigDecimal newValue) {
+        this.denominatorValue = newValue;
     }
 
     public Integer getDrugConceptId() {
@@ -154,6 +187,11 @@ public class DrugStrength {
         return this.drugConcept;
     }
 
+    public void setDrugConcept(final Concept newValue) {
+        this.drugConcept = newValue;
+        this.compoundId.drugConceptId = newValue.getConceptId();
+    }
+
     public Integer getIngredientConceptId() {
         return this.compoundId.ingredientConceptId;
     }
@@ -165,6 +203,11 @@ public class DrugStrength {
     
     public Concept getIngredientConcept() {
         return this.ingredientConcept;
+    }
+
+    public void setIngredientConcept(final Concept newValue) {
+        this.ingredientConcept = newValue;
+        this.compoundId.ingredientConceptId = newValue.getConceptId();
     }
 
     @Column(name = "invalid_reason", insertable = false, updatable = false,
@@ -179,10 +222,14 @@ public class DrugStrength {
         }
     }
 
+    public void setInvalidReason(final String newValue) {
+        this.invalidReason = newValue;
+    }
+
     @Column(name = "numerator_unit_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer numeratorUnitConceptId;
-
+    
     public Optional<Integer> getNumeratorUnitConceptId() {
         if (this.numeratorUnitConceptId != null) {
             return Optional.of(this.numeratorUnitConceptId);
@@ -199,6 +246,16 @@ public class DrugStrength {
         return Optional.ofNullable(this.numeratorUnitConcept);
     }
 
+    public void setNumeratorUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.numeratorUnitConcept = null;
+            this.numeratorUnitConceptId = null;
+        } else {
+            this.numeratorUnitConcept = newValue;
+            this.numeratorUnitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "numerator_value", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal numeratorValue;
@@ -211,6 +268,10 @@ public class DrugStrength {
         }
     }
 
+    public void setNumeratorValue(final BigDecimal newValue) {
+        this.numeratorValue = newValue;
+    }
+
     @Column(name = "valid_end_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validEndDate;
@@ -219,12 +280,20 @@ public class DrugStrength {
         return new Date(this.validEndDate.toLocalDate());
     }
 
+    public void setValidEndDate(final Date newValue) {
+        this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "valid_start_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {
         return new Date(this.validStartDate.toLocalDate());
+    }
+
+    public void setValidStartDate(final Date newValue) {
+        this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Override

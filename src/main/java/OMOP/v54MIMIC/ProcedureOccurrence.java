@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class ProcedureOccurrence {
     @Column(name = "modifier_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer modifierConceptId;
-
+    
     public Optional<Integer> getModifierConceptId() {
         if (this.modifierConceptId != null) {
             return Optional.of(this.modifierConceptId);
@@ -35,6 +36,16 @@ public class ProcedureOccurrence {
         return Optional.ofNullable(this.modifierConcept);
     }
 
+    public void setModifierConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.modifierConcept = null;
+            this.modifierConceptId = null;
+        } else {
+            this.modifierConcept = newValue;
+            this.modifierConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "modifier_source_value", insertable = false,
             updatable = false, nullable = true)
     private String modifierSourceValue;
@@ -45,6 +56,10 @@ public class ProcedureOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setModifierSourceValue(final String newValue) {
+        this.modifierSourceValue = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -63,10 +78,15 @@ public class ProcedureOccurrence {
         return this.person;
     }
 
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
+    }
+
     @Column(name = "procedure_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer procedureConceptId;
-
+    
     public Integer getProcedureConceptId() {
         return this.procedureConceptId;
     }
@@ -79,12 +99,21 @@ public class ProcedureOccurrence {
         return this.procedureConcept;
     }
 
+    public void setProcedureConcept(final Concept newValue) {
+        this.procedureConcept = newValue;
+        this.procedureConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "procedure_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime procedureDate;
     
     public Date getProcedureDate() {
         return new Date(this.procedureDate.toLocalDate());
+    }
+
+    public void setProcedureDate(final Date newValue) {
+        this.procedureDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "procedure_datetime", insertable = false, updatable = false,
@@ -96,6 +125,14 @@ public class ProcedureOccurrence {
             return Optional.of(new DateTime(this.procedureDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setProcedureDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.procedureDatetime = null;
+        } else {
+            this.procedureDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -111,6 +148,14 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setProcedureEndDate(final Date newValue) {
+        if (newValue == null) {
+            this.procedureEndDate = null;
+        } else {
+            this.procedureEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+        }
+    }
+
     @Column(name = "procedure_end_datetime", insertable = false,
             updatable = false, nullable = true)
     private ZonedDateTime procedureEndDatetime;
@@ -123,7 +168,16 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setProcedureEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.procedureEndDatetime = null;
+        } else {
+            this.procedureEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "procedure_occurrence_id", insertable = false,
             updatable = false, nullable = false)
     private Long procedureOccurrenceId;
@@ -135,7 +189,7 @@ public class ProcedureOccurrence {
     @Column(name = "procedure_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer procedureSourceConceptId;
-
+    
     public Optional<Integer> getProcedureSourceConceptId() {
         if (this.procedureSourceConceptId != null) {
             return Optional.of(this.procedureSourceConceptId);
@@ -152,6 +206,16 @@ public class ProcedureOccurrence {
         return Optional.ofNullable(this.procedureSourceConcept);
     }
 
+    public void setProcedureSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.procedureSourceConcept = null;
+            this.procedureSourceConceptId = null;
+        } else {
+            this.procedureSourceConcept = newValue;
+            this.procedureSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "procedure_source_value", insertable = false,
             updatable = false, nullable = true)
     private String procedureSourceValue;
@@ -164,10 +228,14 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setProcedureSourceValue(final String newValue) {
+        this.procedureSourceValue = newValue;
+    }
+
     @Column(name = "procedure_type_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer procedureTypeConceptId;
-
+    
     public Integer getProcedureTypeConceptId() {
         return this.procedureTypeConceptId;
     }
@@ -178,6 +246,11 @@ public class ProcedureOccurrence {
     
     public Concept getProcedureTypeConcept() {
         return this.procedureTypeConcept;
+    }
+
+    public void setProcedureTypeConcept(final Concept newValue) {
+        this.procedureTypeConcept = newValue;
+        this.procedureTypeConceptId = newValue.getConceptId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -200,16 +273,30 @@ public class ProcedureOccurrence {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
     private Integer quantity;
-
+    
     public Optional<Integer> getQuantity() {
         if (this.quantity != null) {
             return Optional.of(this.quantity);
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setQuantity(final Integer newValue) {
+        this.quantity = newValue;
     }
 
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
@@ -232,6 +319,16 @@ public class ProcedureOccurrence {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Long visitOccurrenceId;
@@ -250,6 +347,16 @@ public class ProcedureOccurrence {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override
