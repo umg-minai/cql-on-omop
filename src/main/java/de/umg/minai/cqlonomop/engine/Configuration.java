@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Configuration {
 
+    public final static String DEFAULT_OMOP_VERSION = "v5.4";
+
     private String databaseHost;
 
     private int databasePort;
@@ -15,13 +17,17 @@ public class Configuration {
 
     private String databaseName;
 
-    private Integer threadCount;
+    private Integer threadCount = defaultThreadCount();
 
     private Boolean showSQL = false;
 
-    private String omopVersion = "v5.4";
+    private String omopVersion = DEFAULT_OMOP_VERSION;
 
     private List<Path> librarySearchPath = List.of();
+
+    public static int defaultThreadCount() {
+        return Runtime.getRuntime().availableProcessors();
+    }
 
     public String getDatabaseHost() {
         return this.databaseHost;

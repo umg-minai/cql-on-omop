@@ -1,9 +1,11 @@
 package de.umg.minai.cqlonomop.commandline;
 
 import de.umg.minai.cqlonomop.engine.Configuration;
+import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +24,36 @@ public class CqlOptions {
 
     }
 
+    private static class OmopVersionConverter implements CommandLine.ITypeConverter<OmopVersion> {
+
+        @Override
+        public OmopVersion convert(final String value) throws Exception {
+            return Arrays.stream(OmopVersion.values())
+                    .filter(element -> element.versionString.equals(value))
+                    .findFirst()
+                    .orElseThrow(() -> {
+                        final var message = new StringBuilder(String.format("Invalid OMOP Version: '%s'; valid version are ", value));
+                        final boolean[] first = {true};
+                        Arrays.stream(OmopVersion.values())
+                                .forEach(v -> {
+                                    if (first[0]) {
+                                        first[0] = false;
+                                    } else {
+                                        message.append(", ");
+                                    }
+                                    message.append(v.versionString);
+                                });
+                        return new RuntimeException(message.toString());
+                    });
+        }
+
+    }
+
     @Option(
             names = {"--omop-version"},
             paramLabel = "<omop-version>",
-            description = "TODO"
+            description = "The version of the OMOP CDM that should be selected as the CQL data model. CQL library code should say `using OMOP version 'v5.4'` regardless of the version selected here. Default: ${DEFAULT-VALUE}",
+            converter = OmopVersionConverter.class
     )
     public OmopVersion omopVersion;
 

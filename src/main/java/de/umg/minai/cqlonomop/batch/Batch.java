@@ -4,6 +4,7 @@ import OMOP.MappingInfo;
 import OMOP.v54.Person;
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
+import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
@@ -22,7 +23,8 @@ import java.util.List;
 
 @Command(
         name = "batch",
-        description = "Evaluate CQL code and print the results"
+        description = "Evaluate CQL code and print the results",
+        defaultValueProvider = DefaultValueProvider.class
 )
 public class Batch implements Runnable {
 

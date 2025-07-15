@@ -2,6 +2,7 @@ package de.umg.minai.cqlonomop.repl;
 
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
+import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.terminal.*;
@@ -16,7 +17,8 @@ import java.io.IOException;
 
 @CommandLine.Command(
         name = "repl",
-        description = "Run an interactive Read Eval Print Loop (REPL)"
+        description = "Run an interactive Read Eval Print Loop (REPL)",
+        defaultValueProvider = DefaultValueProvider.class
 )
 public class Repl implements Runnable {
 
