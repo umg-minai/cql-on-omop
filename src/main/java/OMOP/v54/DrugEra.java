@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class DrugEra {
         return this.drugConcept;
     }
 
+    public void setDrugConcept(final Concept newValue) {
+        this.drugConcept = newValue;
+        this.drugConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "drug_era_end_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime drugEraEndDate;
@@ -39,7 +45,12 @@ public class DrugEra {
         return new Date(this.drugEraEndDate.toLocalDate());
     }
 
+    public void setDrugEraEndDate(final Date newValue) {
+        this.drugEraEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "drug_era_id", insertable = false, updatable = false,
             nullable = false)
     private Integer drugEraId;
@@ -56,6 +67,10 @@ public class DrugEra {
         return new Date(this.drugEraStartDate.toLocalDate());
     }
 
+    public void setDrugEraStartDate(final Date newValue) {
+        this.drugEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "drug_exposure_count", insertable = false,
             updatable = false, nullable = true)
     private Integer drugExposureCount;
@@ -68,6 +83,10 @@ public class DrugEra {
         }
     }
 
+    public void setDrugExposureCount(final Integer newValue) {
+        this.drugExposureCount = newValue;
+    }
+
     @Column(name = "gap_days", insertable = false, updatable = false,
             nullable = true)
     private Integer gapDays;
@@ -78,6 +97,10 @@ public class DrugEra {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setGapDays(final Integer newValue) {
+        this.gapDays = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -94,6 +117,11 @@ public class DrugEra {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Override

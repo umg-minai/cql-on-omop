@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class ConceptRelationship {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getConceptId1() {
         return this.compoundId.conceptId1;
@@ -84,6 +85,11 @@ public class ConceptRelationship {
     
     public Concept getConcept1() {
         return this.concept1;
+    }
+
+    public void setConcept1(final Concept newValue) {
+        this.concept1 = newValue;
+        this.compoundId.conceptId1 = newValue.getConceptId();
     }
 
     public Integer getConceptId2() {
@@ -99,6 +105,11 @@ public class ConceptRelationship {
         return this.concept2;
     }
 
+    public void setConcept2(final Concept newValue) {
+        this.concept2 = newValue;
+        this.compoundId.conceptId2 = newValue.getConceptId();
+    }
+
     @Column(name = "invalid_reason", insertable = false, updatable = false,
             nullable = true)
     private String invalidReason;
@@ -109,6 +120,10 @@ public class ConceptRelationship {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setInvalidReason(final String newValue) {
+        this.invalidReason = newValue;
     }
 
     public String getRelationshipId() {
@@ -124,6 +139,11 @@ public class ConceptRelationship {
         return this.relationship;
     }
 
+    public void setRelationship(final Relationship newValue) {
+        this.relationship = newValue;
+        this.compoundId.relationshipId = newValue.getRelationshipId();
+    }
+
     @Column(name = "valid_end_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validEndDate;
@@ -132,12 +152,20 @@ public class ConceptRelationship {
         return new Date(this.validEndDate.toLocalDate());
     }
 
+    public void setValidEndDate(final Date newValue) {
+        this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "valid_start_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {
         return new Date(this.validStartDate.toLocalDate());
+    }
+
+    public void setValidStartDate(final Date newValue) {
+        this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Override

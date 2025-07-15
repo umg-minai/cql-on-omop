@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,12 @@ public class ObservationPeriod {
         return new Date(this.observationPeriodEndDate.toLocalDate());
     }
 
+    public void setObservationPeriodEndDate(final Date newValue) {
+        this.observationPeriodEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "observation_period_id", insertable = false,
             updatable = false, nullable = false)
     private Integer observationPeriodId;
@@ -38,6 +44,10 @@ public class ObservationPeriod {
     
     public Date getObservationPeriodStartDate() {
         return new Date(this.observationPeriodStartDate.toLocalDate());
+    }
+
+    public void setObservationPeriodStartDate(final Date newValue) {
+        this.observationPeriodStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "period_type_concept_id", insertable = false,
@@ -56,6 +66,11 @@ public class ObservationPeriod {
         return this.periodTypeConcept;
     }
 
+    public void setPeriodTypeConcept(final Concept newValue) {
+        this.periodTypeConcept = newValue;
+        this.periodTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -70,6 +85,11 @@ public class ObservationPeriod {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Override

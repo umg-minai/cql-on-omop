@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,16 @@ public class Measurement {
         return Optional.ofNullable(this.measEventFieldConcept);
     }
 
+    public void setMeasEventFieldConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.measEventFieldConcept = null;
+            this.measEventFieldConceptId = null;
+        } else {
+            this.measEventFieldConcept = newValue;
+            this.measEventFieldConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "measurement_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer measurementConceptId;
@@ -51,12 +62,21 @@ public class Measurement {
         return this.measurementConcept;
     }
 
+    public void setMeasurementConcept(final Concept newValue) {
+        this.measurementConcept = newValue;
+        this.measurementConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "measurement_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime measurementDate;
     
     public Date getMeasurementDate() {
         return new Date(this.measurementDate.toLocalDate());
+    }
+
+    public void setMeasurementDate(final Date newValue) {
+        this.measurementDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "measurement_datetime", insertable = false,
@@ -68,6 +88,14 @@ public class Measurement {
             return Optional.of(new DateTime(this.measurementDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setMeasurementDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.measurementDatetime = null;
+        } else {
+            this.measurementDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -83,7 +111,12 @@ public class Measurement {
         }
     }
 
+    public void setMeasurementEventId(final Integer newValue) {
+        this.measurementEventId = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "measurement_id", insertable = false, updatable = false,
             nullable = false)
     private Integer measurementId;
@@ -112,6 +145,16 @@ public class Measurement {
         return Optional.ofNullable(this.measurementSourceConcept);
     }
 
+    public void setMeasurementSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.measurementSourceConcept = null;
+            this.measurementSourceConceptId = null;
+        } else {
+            this.measurementSourceConcept = newValue;
+            this.measurementSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "measurement_source_value", insertable = false,
             updatable = false, nullable = true)
     private String measurementSourceValue;
@@ -124,6 +167,10 @@ public class Measurement {
         }
     }
 
+    public void setMeasurementSourceValue(final String newValue) {
+        this.measurementSourceValue = newValue;
+    }
+
     @Column(name = "measurement_time", insertable = false, updatable = false,
             nullable = true)
     private String measurementTime;
@@ -134,6 +181,10 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setMeasurementTime(final String newValue) {
+        this.measurementTime = newValue;
     }
 
     @Column(name = "measurement_type_concept_id", insertable = false,
@@ -150,6 +201,11 @@ public class Measurement {
     
     public Concept getMeasurementTypeConcept() {
         return this.measurementTypeConcept;
+    }
+
+    public void setMeasurementTypeConcept(final Concept newValue) {
+        this.measurementTypeConcept = newValue;
+        this.measurementTypeConceptId = newValue.getConceptId();
     }
 
     @Column(name = "operator_concept_id", insertable = false,
@@ -172,6 +228,16 @@ public class Measurement {
         return Optional.ofNullable(this.operatorConcept);
     }
 
+    public void setOperatorConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.operatorConcept = null;
+            this.operatorConceptId = null;
+        } else {
+            this.operatorConcept = newValue;
+            this.operatorConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -186,6 +252,11 @@ public class Measurement {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -208,6 +279,16 @@ public class Measurement {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "range_high", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal rangeHigh;
@@ -220,6 +301,10 @@ public class Measurement {
         }
     }
 
+    public void setRangeHigh(final BigDecimal newValue) {
+        this.rangeHigh = newValue;
+    }
+
     @Column(name = "range_low", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal rangeLow;
@@ -230,6 +315,10 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setRangeLow(final BigDecimal newValue) {
+        this.rangeLow = newValue;
     }
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
@@ -252,6 +341,16 @@ public class Measurement {
         return Optional.ofNullable(this.unitConcept);
     }
 
+    public void setUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.unitConcept = null;
+            this.unitConceptId = null;
+        } else {
+            this.unitConcept = newValue;
+            this.unitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "unit_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer unitSourceConceptId;
@@ -272,6 +371,16 @@ public class Measurement {
         return Optional.ofNullable(this.unitSourceConcept);
     }
 
+    public void setUnitSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.unitSourceConcept = null;
+            this.unitSourceConceptId = null;
+        } else {
+            this.unitSourceConcept = newValue;
+            this.unitSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "unit_source_value", insertable = false, updatable = false,
             nullable = true)
     private String unitSourceValue;
@@ -282,6 +391,10 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setUnitSourceValue(final String newValue) {
+        this.unitSourceValue = newValue;
     }
 
     @Column(name = "value_as_concept_id", insertable = false,
@@ -304,6 +417,16 @@ public class Measurement {
         return Optional.ofNullable(this.valueAsConcept);
     }
 
+    public void setValueAsConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.valueAsConcept = null;
+            this.valueAsConceptId = null;
+        } else {
+            this.valueAsConcept = newValue;
+            this.valueAsConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "value_as_number", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal valueAsNumber;
@@ -316,6 +439,10 @@ public class Measurement {
         }
     }
 
+    public void setValueAsNumber(final BigDecimal newValue) {
+        this.valueAsNumber = newValue;
+    }
+
     @Column(name = "value_source_value", insertable = false, updatable = false,
             nullable = true)
     private String valueSourceValue;
@@ -326,6 +453,10 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setValueSourceValue(final String newValue) {
+        this.valueSourceValue = newValue;
     }
 
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
@@ -348,6 +479,16 @@ public class Measurement {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -366,6 +507,16 @@ public class Measurement {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

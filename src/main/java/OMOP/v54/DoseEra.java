@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,12 @@ public class DoseEra {
         return new Date(this.doseEraEndDate.toLocalDate());
     }
 
+    public void setDoseEraEndDate(final Date newValue) {
+        this.doseEraEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dose_era_id", insertable = false, updatable = false,
             nullable = false)
     private Integer doseEraId;
@@ -40,12 +46,20 @@ public class DoseEra {
         return new Date(this.doseEraStartDate.toLocalDate());
     }
 
+    public void setDoseEraStartDate(final Date newValue) {
+        this.doseEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "dose_value", insertable = false, updatable = false,
             nullable = false)
     private BigDecimal doseValue;
     
     public BigDecimal getDoseValue() {
         return this.doseValue;
+    }
+
+    public void setDoseValue(final BigDecimal newValue) {
+        this.doseValue = newValue;
     }
 
     @Column(name = "drug_concept_id", insertable = false, updatable = false,
@@ -64,6 +78,11 @@ public class DoseEra {
         return this.drugConcept;
     }
 
+    public void setDrugConcept(final Concept newValue) {
+        this.drugConcept = newValue;
+        this.drugConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -80,6 +99,11 @@ public class DoseEra {
         return this.person;
     }
 
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
+    }
+
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
             nullable = false)
     private Integer unitConceptId;
@@ -94,6 +118,11 @@ public class DoseEra {
     
     public Concept getUnitConcept() {
         return this.unitConcept;
+    }
+
+    public void setUnitConcept(final Concept newValue) {
+        this.unitConcept = newValue;
+        this.unitConceptId = newValue.getConceptId();
     }
 
     @Override

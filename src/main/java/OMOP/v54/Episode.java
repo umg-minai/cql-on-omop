@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class Episode {
         return this.episodeConcept;
     }
 
+    public void setEpisodeConcept(final Concept newValue) {
+        this.episodeConcept = newValue;
+        this.episodeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "episode_end_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime episodeEndDate;
@@ -40,6 +46,14 @@ public class Episode {
             return Optional.of(new Date(this.episodeEndDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setEpisodeEndDate(final Date newValue) {
+        if (newValue == null) {
+            this.episodeEndDate = null;
+        } else {
+            this.episodeEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -55,7 +69,16 @@ public class Episode {
         }
     }
 
+    public void setEpisodeEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.episodeEndDatetime = null;
+        } else {
+            this.episodeEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "episode_id", insertable = false, updatable = false,
             nullable = false)
     private Integer episodeId;
@@ -76,6 +99,10 @@ public class Episode {
         }
     }
 
+    public void setEpisodeNumber(final Integer newValue) {
+        this.episodeNumber = newValue;
+    }
+
     @Column(name = "episode_object_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer episodeObjectConceptId;
@@ -92,6 +119,11 @@ public class Episode {
         return this.episodeObjectConcept;
     }
 
+    public void setEpisodeObjectConcept(final Concept newValue) {
+        this.episodeObjectConcept = newValue;
+        this.episodeObjectConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "episode_parent_id", insertable = false, updatable = false,
             nullable = true)
     private Integer episodeParentId;
@@ -102,6 +134,10 @@ public class Episode {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setEpisodeParentId(final Integer newValue) {
+        this.episodeParentId = newValue;
     }
 
     @Column(name = "episode_source_concept_id", insertable = false,
@@ -124,6 +160,16 @@ public class Episode {
         return Optional.ofNullable(this.episodeSourceConcept);
     }
 
+    public void setEpisodeSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.episodeSourceConcept = null;
+            this.episodeSourceConceptId = null;
+        } else {
+            this.episodeSourceConcept = newValue;
+            this.episodeSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "episode_source_value", insertable = false,
             updatable = false, nullable = true)
     private String episodeSourceValue;
@@ -136,12 +182,20 @@ public class Episode {
         }
     }
 
+    public void setEpisodeSourceValue(final String newValue) {
+        this.episodeSourceValue = newValue;
+    }
+
     @Column(name = "episode_start_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime episodeStartDate;
     
     public Date getEpisodeStartDate() {
         return new Date(this.episodeStartDate.toLocalDate());
+    }
+
+    public void setEpisodeStartDate(final Date newValue) {
+        this.episodeStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "episode_start_datetime", insertable = false,
@@ -153,6 +207,14 @@ public class Episode {
             return Optional.of(new DateTime(this.episodeStartDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setEpisodeStartDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.episodeStartDatetime = null;
+        } else {
+            this.episodeStartDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -172,6 +234,11 @@ public class Episode {
         return this.episodeTypeConcept;
     }
 
+    public void setEpisodeTypeConcept(final Concept newValue) {
+        this.episodeTypeConcept = newValue;
+        this.episodeTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -186,6 +253,11 @@ public class Episode {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Override

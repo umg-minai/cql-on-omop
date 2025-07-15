@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,14 @@ public class Person {
             return Optional.of(new DateTime(this.birthDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setBirthDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.birthDatetime = null;
+        } else {
+            this.birthDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -47,6 +56,16 @@ public class Person {
         return Optional.ofNullable(this.careSite);
     }
 
+    public void setCareSite(final CareSite newValue) {
+        if (newValue == null) {
+            this.careSite = null;
+            this.careSiteId = null;
+        } else {
+            this.careSite = newValue;
+            this.careSiteId = newValue.getCareSiteId();
+        }
+    }
+
     @Column(name = "day_of_birth", insertable = false, updatable = false,
             nullable = true)
     private Integer dayOfBirth;
@@ -57,6 +76,10 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDayOfBirth(final Integer newValue) {
+        this.dayOfBirth = newValue;
     }
 
     @Column(name = "ethnicity_concept_id", insertable = false,
@@ -73,6 +96,11 @@ public class Person {
     
     public Concept getEthnicityConcept() {
         return this.ethnicityConcept;
+    }
+
+    public void setEthnicityConcept(final Concept newValue) {
+        this.ethnicityConcept = newValue;
+        this.ethnicityConceptId = newValue.getConceptId();
     }
 
     @Column(name = "ethnicity_source_concept_id", insertable = false,
@@ -95,6 +123,16 @@ public class Person {
         return Optional.ofNullable(this.ethnicitySourceConcept);
     }
 
+    public void setEthnicitySourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.ethnicitySourceConcept = null;
+            this.ethnicitySourceConceptId = null;
+        } else {
+            this.ethnicitySourceConcept = newValue;
+            this.ethnicitySourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "ethnicity_source_value", insertable = false,
             updatable = false, nullable = true)
     private String ethnicitySourceValue;
@@ -105,6 +143,10 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setEthnicitySourceValue(final String newValue) {
+        this.ethnicitySourceValue = newValue;
     }
 
     @Column(name = "gender_concept_id", insertable = false, updatable = false,
@@ -121,6 +163,11 @@ public class Person {
     
     public Concept getGenderConcept() {
         return this.genderConcept;
+    }
+
+    public void setGenderConcept(final Concept newValue) {
+        this.genderConcept = newValue;
+        this.genderConceptId = newValue.getConceptId();
     }
 
     @Column(name = "gender_source_concept_id", insertable = false,
@@ -143,6 +190,16 @@ public class Person {
         return Optional.ofNullable(this.genderSourceConcept);
     }
 
+    public void setGenderSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.genderSourceConcept = null;
+            this.genderSourceConceptId = null;
+        } else {
+            this.genderSourceConcept = newValue;
+            this.genderSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "gender_source_value", insertable = false,
             updatable = false, nullable = true)
     private String genderSourceValue;
@@ -153,6 +210,10 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setGenderSourceValue(final String newValue) {
+        this.genderSourceValue = newValue;
     }
 
     @Column(name = "location_id", insertable = false, updatable = false,
@@ -175,6 +236,16 @@ public class Person {
         return Optional.ofNullable(this.location);
     }
 
+    public void setLocation(final Location newValue) {
+        if (newValue == null) {
+            this.location = null;
+            this.locationId = null;
+        } else {
+            this.location = newValue;
+            this.locationId = newValue.getLocationId();
+        }
+    }
+
     @Column(name = "month_of_birth", insertable = false, updatable = false,
             nullable = true)
     private Integer monthOfBirth;
@@ -187,7 +258,12 @@ public class Person {
         }
     }
 
+    public void setMonthOfBirth(final Integer newValue) {
+        this.monthOfBirth = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -206,6 +282,10 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPersonSourceValue(final String newValue) {
+        this.personSourceValue = newValue;
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -228,6 +308,16 @@ public class Person {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "race_concept_id", insertable = false, updatable = false,
             nullable = false)
     private Integer raceConceptId;
@@ -242,6 +332,11 @@ public class Person {
     
     public Concept getRaceConcept() {
         return this.raceConcept;
+    }
+
+    public void setRaceConcept(final Concept newValue) {
+        this.raceConcept = newValue;
+        this.raceConceptId = newValue.getConceptId();
     }
 
     @Column(name = "race_source_concept_id", insertable = false,
@@ -264,6 +359,16 @@ public class Person {
         return Optional.ofNullable(this.raceSourceConcept);
     }
 
+    public void setRaceSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.raceSourceConcept = null;
+            this.raceSourceConceptId = null;
+        } else {
+            this.raceSourceConcept = newValue;
+            this.raceSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "race_source_value", insertable = false, updatable = false,
             nullable = true)
     private String raceSourceValue;
@@ -276,12 +381,20 @@ public class Person {
         }
     }
 
+    public void setRaceSourceValue(final String newValue) {
+        this.raceSourceValue = newValue;
+    }
+
     @Column(name = "year_of_birth", insertable = false, updatable = false,
             nullable = false)
     private Integer yearOfBirth;
     
     public Integer getYearOfBirth() {
         return this.yearOfBirth;
+    }
+
+    public void setYearOfBirth(final Integer newValue) {
+        this.yearOfBirth = newValue;
     }
 
     @Override

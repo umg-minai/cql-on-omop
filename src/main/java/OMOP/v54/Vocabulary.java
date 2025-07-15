@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,13 @@ public class Vocabulary {
         return this.vocabularyConcept;
     }
 
+    public void setVocabularyConcept(final Concept newValue) {
+        this.vocabularyConcept = newValue;
+        this.vocabularyConceptId = newValue.getConceptId();
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vocabulary_id", insertable = false, updatable = false,
             nullable = false)
     private String vocabularyId;
@@ -48,6 +55,10 @@ public class Vocabulary {
         return this.vocabularyName;
     }
 
+    public void setVocabularyName(final String newValue) {
+        this.vocabularyName = newValue;
+    }
+
     @Column(name = "vocabulary_reference", insertable = false,
             updatable = false, nullable = true)
     private String vocabularyReference;
@@ -60,6 +71,10 @@ public class Vocabulary {
         }
     }
 
+    public void setVocabularyReference(final String newValue) {
+        this.vocabularyReference = newValue;
+    }
+
     @Column(name = "vocabulary_version", insertable = false, updatable = false,
             nullable = true)
     private String vocabularyVersion;
@@ -70,6 +85,10 @@ public class Vocabulary {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setVocabularyVersion(final String newValue) {
+        this.vocabularyVersion = newValue;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +56,7 @@ public class Death {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "cause_concept_id", insertable = false, updatable = false,
             nullable = true)
@@ -75,6 +76,16 @@ public class Death {
     
     public Optional<Concept> getCauseConcept() {
         return Optional.ofNullable(this.causeConcept);
+    }
+
+    public void setCauseConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.causeConcept = null;
+            this.causeConceptId = null;
+        } else {
+            this.causeConcept = newValue;
+            this.causeConceptId = newValue.getConceptId();
+        }
     }
 
     @Column(name = "cause_source_concept_id", insertable = false,
@@ -97,6 +108,16 @@ public class Death {
         return Optional.ofNullable(this.causeSourceConcept);
     }
 
+    public void setCauseSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.causeSourceConcept = null;
+            this.causeSourceConceptId = null;
+        } else {
+            this.causeSourceConcept = newValue;
+            this.causeSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "cause_source_value", insertable = false, updatable = false,
             nullable = true)
     private String causeSourceValue;
@@ -109,12 +130,20 @@ public class Death {
         }
     }
 
+    public void setCauseSourceValue(final String newValue) {
+        this.causeSourceValue = newValue;
+    }
+
     @Column(name = "death_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime deathDate;
     
     public Date getDeathDate() {
         return new Date(this.deathDate.toLocalDate());
+    }
+
+    public void setDeathDate(final Date newValue) {
+        this.deathDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "death_datetime", insertable = false, updatable = false,
@@ -126,6 +155,14 @@ public class Death {
             return Optional.of(new DateTime(this.deathDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setDeathDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.deathDatetime = null;
+        } else {
+            this.deathDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -149,6 +186,16 @@ public class Death {
         return Optional.ofNullable(this.deathTypeConcept);
     }
 
+    public void setDeathTypeConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.deathTypeConcept = null;
+            this.deathTypeConceptId = null;
+        } else {
+            this.deathTypeConcept = newValue;
+            this.deathTypeConceptId = newValue.getConceptId();
+        }
+    }
+
     public Integer getPersonId() {
         return this.compoundId.personId;
     }
@@ -160,6 +207,11 @@ public class Death {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.compoundId.personId = newValue.getPersonId();
     }
 
     @Override

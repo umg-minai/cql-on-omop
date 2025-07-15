@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class ConditionEra {
         return this.conditionConcept;
     }
 
+    public void setConditionConcept(final Concept newValue) {
+        this.conditionConcept = newValue;
+        this.conditionConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "condition_era_end_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime conditionEraEndDate;
@@ -39,7 +45,12 @@ public class ConditionEra {
         return new Date(this.conditionEraEndDate.toLocalDate());
     }
 
+    public void setConditionEraEndDate(final Date newValue) {
+        this.conditionEraEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "condition_era_id", insertable = false, updatable = false,
             nullable = false)
     private Integer conditionEraId;
@@ -56,6 +67,10 @@ public class ConditionEra {
         return new Date(this.conditionEraStartDate.toLocalDate());
     }
 
+    public void setConditionEraStartDate(final Date newValue) {
+        this.conditionEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "condition_occurrence_count", insertable = false,
             updatable = false, nullable = true)
     private Integer conditionOccurrenceCount;
@@ -66,6 +81,10 @@ public class ConditionEra {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setConditionOccurrenceCount(final Integer newValue) {
+        this.conditionOccurrenceCount = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -82,6 +101,11 @@ public class ConditionEra {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Override

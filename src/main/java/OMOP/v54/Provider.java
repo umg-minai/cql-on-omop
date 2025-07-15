@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,16 @@ public class Provider {
         return Optional.ofNullable(this.careSite);
     }
 
+    public void setCareSite(final CareSite newValue) {
+        if (newValue == null) {
+            this.careSite = null;
+            this.careSiteId = null;
+        } else {
+            this.careSite = newValue;
+            this.careSiteId = newValue.getCareSiteId();
+        }
+    }
+
     @Column(name = "dea", insertable = false, updatable = false,
             nullable = true)
     private String dea;
@@ -45,6 +56,10 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDea(final String newValue) {
+        this.dea = newValue;
     }
 
     @Column(name = "gender_concept_id", insertable = false, updatable = false,
@@ -67,6 +82,16 @@ public class Provider {
         return Optional.ofNullable(this.genderConcept);
     }
 
+    public void setGenderConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.genderConcept = null;
+            this.genderConceptId = null;
+        } else {
+            this.genderConcept = newValue;
+            this.genderConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "gender_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer genderSourceConceptId;
@@ -87,6 +112,16 @@ public class Provider {
         return Optional.ofNullable(this.genderSourceConcept);
     }
 
+    public void setGenderSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.genderSourceConcept = null;
+            this.genderSourceConceptId = null;
+        } else {
+            this.genderSourceConcept = newValue;
+            this.genderSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "gender_source_value", insertable = false,
             updatable = false, nullable = true)
     private String genderSourceValue;
@@ -97,6 +132,10 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setGenderSourceValue(final String newValue) {
+        this.genderSourceValue = newValue;
     }
 
     @Column(name = "npi", insertable = false, updatable = false,
@@ -111,7 +150,12 @@ public class Provider {
         }
     }
 
+    public void setNpi(final String newValue) {
+        this.npi = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "provider_id", insertable = false, updatable = false,
             nullable = false)
     private Integer providerId;
@@ -132,6 +176,10 @@ public class Provider {
         }
     }
 
+    public void setProviderName(final String newValue) {
+        this.providerName = newValue;
+    }
+
     @Column(name = "provider_source_value", insertable = false,
             updatable = false, nullable = true)
     private String providerSourceValue;
@@ -142,6 +190,10 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setProviderSourceValue(final String newValue) {
+        this.providerSourceValue = newValue;
     }
 
     @Column(name = "specialty_concept_id", insertable = false,
@@ -164,6 +216,16 @@ public class Provider {
         return Optional.ofNullable(this.specialtyConcept);
     }
 
+    public void setSpecialtyConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.specialtyConcept = null;
+            this.specialtyConceptId = null;
+        } else {
+            this.specialtyConcept = newValue;
+            this.specialtyConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "specialty_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer specialtySourceConceptId;
@@ -184,6 +246,16 @@ public class Provider {
         return Optional.ofNullable(this.specialtySourceConcept);
     }
 
+    public void setSpecialtySourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.specialtySourceConcept = null;
+            this.specialtySourceConceptId = null;
+        } else {
+            this.specialtySourceConcept = newValue;
+            this.specialtySourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "specialty_source_value", insertable = false,
             updatable = false, nullable = true)
     private String specialtySourceValue;
@@ -196,6 +268,10 @@ public class Provider {
         }
     }
 
+    public void setSpecialtySourceValue(final String newValue) {
+        this.specialtySourceValue = newValue;
+    }
+
     @Column(name = "year_of_birth", insertable = false, updatable = false,
             nullable = true)
     private Integer yearOfBirth;
@@ -206,6 +282,10 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setYearOfBirth(final Integer newValue) {
+        this.yearOfBirth = newValue;
     }
 
     @Override

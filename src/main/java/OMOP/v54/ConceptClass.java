@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,13 @@ public class ConceptClass {
         return this.conceptClassConcept;
     }
 
+    public void setConceptClassConcept(final Concept newValue) {
+        this.conceptClassConcept = newValue;
+        this.conceptClassConceptId = newValue.getConceptId();
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "concept_class_id", insertable = false, updatable = false,
             nullable = false)
     private String conceptClassId;
@@ -46,6 +53,10 @@ public class ConceptClass {
     
     public String getConceptClassName() {
         return this.conceptClassName;
+    }
+
+    public void setConceptClassName(final String newValue) {
+        this.conceptClassName = newValue;
     }
 
     @Override
