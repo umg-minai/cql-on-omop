@@ -35,6 +35,7 @@ public class Repl implements Runnable {
     private LineReader reader;
 
     private Evaluator evaluator;
+    private Processor processor;
     private CommandProcessor commandProcessor;
     private ResultPresenter resultPresenter;
     private ErrorPresenter errorPresenter;
@@ -52,14 +53,13 @@ public class Repl implements Runnable {
                 break;
             }
             try {
-                final var result = commandProcessor.process(input);
+                final var result = this.processor.process(input);
                 if (result != null) { // TODO(jmoringe): can this be null?
                     this.resultPresenter.presentResult(result);
                 }
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
             }
-
         }
     }
 
@@ -99,6 +99,7 @@ public class Repl implements Runnable {
         final var systemModelInfo = this.evaluator.getEngine().getModel("System").getModelInfo();
         final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
         this.commandProcessor = new CommandProcessor(evaluator);
+        this.processor = new Processor(this.commandProcessor, evaluator);
         try {
             this.terminal = TerminalBuilder.builder().build();
             // TODO(jmoringe): fallback directory if XDG variable is not set

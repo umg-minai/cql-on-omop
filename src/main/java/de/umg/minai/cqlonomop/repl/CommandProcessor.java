@@ -32,16 +32,7 @@ public class CommandProcessor {
         this.commands.put(command.getName(), command);
     }
 
-    public EvaluationResult process(final String command) throws Exception {
-        final var trimmed = command.trim();
-        if (trimmed.startsWith(",")) {
-            return processCommand(trimmed);
-        } else {
-            return evaluator.evaluate(trimmed);
-        }
-    }
-
-    private EvaluationResult processCommand(final String string) throws Exception {
+    public EvaluationResult process(final String string) throws Exception {
         final var commandAndArguments = string.substring(1).split("[ \t]+", 2);
         final var commandName = commandAndArguments[0];
         final var command = this.commands.get(commandName);
@@ -60,4 +51,5 @@ public class CommandProcessor {
             return command.run(argument);
         }
     }
+
 }
