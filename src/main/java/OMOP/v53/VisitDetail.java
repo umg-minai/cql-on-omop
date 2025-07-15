@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.admittingSourceConcept);
     }
 
+    public void setAdmittingSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.admittingSourceConcept = null;
+            this.admittingSourceConceptId = null;
+        } else {
+            this.admittingSourceConcept = newValue;
+            this.admittingSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "admitting_source_value", insertable = false,
             updatable = false, nullable = true)
     private String admittingSourceValue;
@@ -45,6 +56,10 @@ public class VisitDetail {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setAdmittingSourceValue(final String newValue) {
+        this.admittingSourceValue = newValue;
     }
 
     @Column(name = "care_site_id", insertable = false, updatable = false,
@@ -67,6 +82,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.careSite);
     }
 
+    public void setCareSite(final CareSite newValue) {
+        if (newValue == null) {
+            this.careSite = null;
+            this.careSiteId = null;
+        } else {
+            this.careSite = newValue;
+            this.careSiteId = newValue.getCareSiteId();
+        }
+    }
+
     @Column(name = "discharge_to_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer dischargeToConceptId;
@@ -87,6 +112,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.dischargeToConcept);
     }
 
+    public void setDischargeToConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.dischargeToConcept = null;
+            this.dischargeToConceptId = null;
+        } else {
+            this.dischargeToConcept = newValue;
+            this.dischargeToConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "discharge_to_source_value", insertable = false,
             updatable = false, nullable = true)
     private String dischargeToSourceValue;
@@ -97,6 +132,10 @@ public class VisitDetail {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDischargeToSourceValue(final String newValue) {
+        this.dischargeToSourceValue = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -113,6 +152,11 @@ public class VisitDetail {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "preceding_visit_detail_id", insertable = false,
@@ -135,6 +179,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.precedingVisitDetail);
     }
 
+    public void setPrecedingVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.precedingVisitDetail = null;
+            this.precedingVisitDetailId = null;
+        } else {
+            this.precedingVisitDetail = newValue;
+            this.precedingVisitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "provider_id", insertable = false, updatable = false,
             nullable = true)
     private Integer providerId;
@@ -155,6 +209,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "visit_detail_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer visitDetailConceptId;
@@ -171,12 +235,21 @@ public class VisitDetail {
         return this.visitDetailConcept;
     }
 
+    public void setVisitDetailConcept(final Concept newValue) {
+        this.visitDetailConcept = newValue;
+        this.visitDetailConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "visit_detail_end_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime visitDetailEndDate;
     
     public Date getVisitDetailEndDate() {
         return new Date(this.visitDetailEndDate.toLocalDate());
+    }
+
+    public void setVisitDetailEndDate(final Date newValue) {
+        this.visitDetailEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "visit_detail_end_datetime", insertable = false,
@@ -191,7 +264,16 @@ public class VisitDetail {
         }
     }
 
+    public void setVisitDetailEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.visitDetailEndDatetime = null;
+        } else {
+            this.visitDetailEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
             nullable = false)
     private Integer visitDetailId;
@@ -220,6 +302,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.visitDetailParent);
     }
 
+    public void setVisitDetailParent(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetailParent = null;
+            this.visitDetailParentId = null;
+        } else {
+            this.visitDetailParent = newValue;
+            this.visitDetailParentId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_detail_source_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitDetailSourceConceptId;
@@ -240,6 +332,16 @@ public class VisitDetail {
         return Optional.ofNullable(this.visitDetailSourceConcept);
     }
 
+    public void setVisitDetailSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.visitDetailSourceConcept = null;
+            this.visitDetailSourceConceptId = null;
+        } else {
+            this.visitDetailSourceConcept = newValue;
+            this.visitDetailSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "visit_detail_source_value", insertable = false,
             updatable = false, nullable = true)
     private String visitDetailSourceValue;
@@ -252,12 +354,20 @@ public class VisitDetail {
         }
     }
 
+    public void setVisitDetailSourceValue(final String newValue) {
+        this.visitDetailSourceValue = newValue;
+    }
+
     @Column(name = "visit_detail_start_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime visitDetailStartDate;
     
     public Date getVisitDetailStartDate() {
         return new Date(this.visitDetailStartDate.toLocalDate());
+    }
+
+    public void setVisitDetailStartDate(final Date newValue) {
+        this.visitDetailStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "visit_detail_start_datetime", insertable = false,
@@ -269,6 +379,14 @@ public class VisitDetail {
             return Optional.of(new DateTime(this.visitDetailStartDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setVisitDetailStartDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.visitDetailStartDatetime = null;
+        } else {
+            this.visitDetailStartDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -288,6 +406,11 @@ public class VisitDetail {
         return this.visitDetailTypeConcept;
     }
 
+    public void setVisitDetailTypeConcept(final Concept newValue) {
+        this.visitDetailTypeConcept = newValue;
+        this.visitDetailTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = false)
     private Integer visitOccurrenceId;
@@ -302,6 +425,11 @@ public class VisitDetail {
     
     public VisitOccurrence getVisitOccurrence() {
         return this.visitOccurrence;
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        this.visitOccurrence = newValue;
+        this.visitOccurrenceId = newValue.getVisitOccurrenceId();
     }
 
     @Override

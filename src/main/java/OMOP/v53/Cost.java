@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,10 @@ public class Cost {
         }
     }
 
+    public void setAmountAllowed(final BigDecimal newValue) {
+        this.amountAllowed = newValue;
+    }
+
     @Column(name = "cost_domain_id", insertable = false, updatable = false,
             nullable = false)
     private String costDomainId;
@@ -43,6 +48,11 @@ public class Cost {
         return this.costDomain;
     }
 
+    public void setCostDomain(final Domain newValue) {
+        this.costDomain = newValue;
+        this.costDomainId = newValue.getDomainId();
+    }
+
     @Column(name = "cost_event_id", insertable = false, updatable = false,
             nullable = false)
     private Integer costEventId;
@@ -51,7 +61,12 @@ public class Cost {
         return this.costEventId;
     }
 
+    public void setCostEventId(final Integer newValue) {
+        this.costEventId = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cost_id", insertable = false, updatable = false,
             nullable = false)
     private Integer costId;
@@ -76,6 +91,11 @@ public class Cost {
         return this.costTypeConcept;
     }
 
+    public void setCostTypeConcept(final Concept newValue) {
+        this.costTypeConcept = newValue;
+        this.costTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "currency_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer currencyConceptId;
@@ -94,6 +114,16 @@ public class Cost {
     
     public Optional<Concept> getCurrencyConcept() {
         return Optional.ofNullable(this.currencyConcept);
+    }
+
+    public void setCurrencyConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.currencyConcept = null;
+            this.currencyConceptId = null;
+        } else {
+            this.currencyConcept = newValue;
+            this.currencyConceptId = newValue.getConceptId();
+        }
     }
 
     @Column(name = "drg_concept_id", insertable = false, updatable = false,
@@ -116,6 +146,16 @@ public class Cost {
         return Optional.ofNullable(this.drgConcept);
     }
 
+    public void setDrgConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.drgConcept = null;
+            this.drgConceptId = null;
+        } else {
+            this.drgConcept = newValue;
+            this.drgConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "drg_source_value", insertable = false, updatable = false,
             nullable = true)
     private String drgSourceValue;
@@ -126,6 +166,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDrgSourceValue(final String newValue) {
+        this.drgSourceValue = newValue;
     }
 
     @Column(name = "paid_by_patient", insertable = false, updatable = false,
@@ -140,6 +184,10 @@ public class Cost {
         }
     }
 
+    public void setPaidByPatient(final BigDecimal newValue) {
+        this.paidByPatient = newValue;
+    }
+
     @Column(name = "paid_by_payer", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal paidByPayer;
@@ -150,6 +198,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPaidByPayer(final BigDecimal newValue) {
+        this.paidByPayer = newValue;
     }
 
     @Column(name = "paid_by_primary", insertable = false, updatable = false,
@@ -164,6 +216,10 @@ public class Cost {
         }
     }
 
+    public void setPaidByPrimary(final BigDecimal newValue) {
+        this.paidByPrimary = newValue;
+    }
+
     @Column(name = "paid_dispensing_fee", insertable = false,
             updatable = false, nullable = true)
     private BigDecimal paidDispensingFee;
@@ -174,6 +230,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPaidDispensingFee(final BigDecimal newValue) {
+        this.paidDispensingFee = newValue;
     }
 
     @Column(name = "paid_ingredient_cost", insertable = false,
@@ -188,6 +248,10 @@ public class Cost {
         }
     }
 
+    public void setPaidIngredientCost(final BigDecimal newValue) {
+        this.paidIngredientCost = newValue;
+    }
+
     @Column(name = "paid_patient_coinsurance", insertable = false,
             updatable = false, nullable = true)
     private BigDecimal paidPatientCoinsurance;
@@ -198,6 +262,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPaidPatientCoinsurance(final BigDecimal newValue) {
+        this.paidPatientCoinsurance = newValue;
     }
 
     @Column(name = "paid_patient_copay", insertable = false, updatable = false,
@@ -212,6 +280,10 @@ public class Cost {
         }
     }
 
+    public void setPaidPatientCopay(final BigDecimal newValue) {
+        this.paidPatientCopay = newValue;
+    }
+
     @Column(name = "paid_patient_deductible", insertable = false,
             updatable = false, nullable = true)
     private BigDecimal paidPatientDeductible;
@@ -224,6 +296,10 @@ public class Cost {
         }
     }
 
+    public void setPaidPatientDeductible(final BigDecimal newValue) {
+        this.paidPatientDeductible = newValue;
+    }
+
     @Column(name = "payer_plan_period_id", insertable = false,
             updatable = false, nullable = true)
     private Integer payerPlanPeriodId;
@@ -234,6 +310,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setPayerPlanPeriodId(final Integer newValue) {
+        this.payerPlanPeriodId = newValue;
     }
 
     @Column(name = "revenue_code_concept_id", insertable = false,
@@ -256,6 +336,16 @@ public class Cost {
         return Optional.ofNullable(this.revenueCodeConcept);
     }
 
+    public void setRevenueCodeConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.revenueCodeConcept = null;
+            this.revenueCodeConceptId = null;
+        } else {
+            this.revenueCodeConcept = newValue;
+            this.revenueCodeConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "revenue_code_source_value", insertable = false,
             updatable = false, nullable = true)
     private String revenueCodeSourceValue;
@@ -266,6 +356,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setRevenueCodeSourceValue(final String newValue) {
+        this.revenueCodeSourceValue = newValue;
     }
 
     @Column(name = "total_charge", insertable = false, updatable = false,
@@ -280,6 +374,10 @@ public class Cost {
         }
     }
 
+    public void setTotalCharge(final BigDecimal newValue) {
+        this.totalCharge = newValue;
+    }
+
     @Column(name = "total_cost", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal totalCost;
@@ -292,6 +390,10 @@ public class Cost {
         }
     }
 
+    public void setTotalCost(final BigDecimal newValue) {
+        this.totalCost = newValue;
+    }
+
     @Column(name = "total_paid", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal totalPaid;
@@ -302,6 +404,10 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setTotalPaid(final BigDecimal newValue) {
+        this.totalPaid = newValue;
     }
 
     @Override

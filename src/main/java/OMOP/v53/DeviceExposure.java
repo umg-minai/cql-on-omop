@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class DeviceExposure {
         return this.deviceConcept;
     }
 
+    public void setDeviceConcept(final Concept newValue) {
+        this.deviceConcept = newValue;
+        this.deviceConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "device_exposure_end_date", insertable = false,
             updatable = false, nullable = true)
     private ZonedDateTime deviceExposureEndDate;
@@ -40,6 +46,14 @@ public class DeviceExposure {
             return Optional.of(new Date(this.deviceExposureEndDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setDeviceExposureEndDate(final Date newValue) {
+        if (newValue == null) {
+            this.deviceExposureEndDate = null;
+        } else {
+            this.deviceExposureEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -55,7 +69,16 @@ public class DeviceExposure {
         }
     }
 
+    public void setDeviceExposureEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.deviceExposureEndDatetime = null;
+        } else {
+            this.deviceExposureEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "device_exposure_id", insertable = false, updatable = false,
             nullable = false)
     private Integer deviceExposureId;
@@ -72,6 +95,10 @@ public class DeviceExposure {
         return new Date(this.deviceExposureStartDate.toLocalDate());
     }
 
+    public void setDeviceExposureStartDate(final Date newValue) {
+        this.deviceExposureStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
     @Column(name = "device_exposure_start_datetime", insertable = false,
             updatable = false, nullable = true)
     private ZonedDateTime deviceExposureStartDatetime;
@@ -81,6 +108,14 @@ public class DeviceExposure {
             return Optional.of(new DateTime(this.deviceExposureStartDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setDeviceExposureStartDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.deviceExposureStartDatetime = null;
+        } else {
+            this.deviceExposureStartDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -104,6 +139,16 @@ public class DeviceExposure {
         return Optional.ofNullable(this.deviceSourceConcept);
     }
 
+    public void setDeviceSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.deviceSourceConcept = null;
+            this.deviceSourceConceptId = null;
+        } else {
+            this.deviceSourceConcept = newValue;
+            this.deviceSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "device_source_value", insertable = false,
             updatable = false, nullable = true)
     private String deviceSourceValue;
@@ -114,6 +159,10 @@ public class DeviceExposure {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDeviceSourceValue(final String newValue) {
+        this.deviceSourceValue = newValue;
     }
 
     @Column(name = "device_type_concept_id", insertable = false,
@@ -132,6 +181,11 @@ public class DeviceExposure {
         return this.deviceTypeConcept;
     }
 
+    public void setDeviceTypeConcept(final Concept newValue) {
+        this.deviceTypeConcept = newValue;
+        this.deviceTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -146,6 +200,11 @@ public class DeviceExposure {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -168,6 +227,16 @@ public class DeviceExposure {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
     private Integer quantity;
@@ -180,6 +249,10 @@ public class DeviceExposure {
         }
     }
 
+    public void setQuantity(final Integer newValue) {
+        this.quantity = newValue;
+    }
+
     @Column(name = "unique_device_id", insertable = false, updatable = false,
             nullable = true)
     private String uniqueDeviceId;
@@ -190,6 +263,10 @@ public class DeviceExposure {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setUniqueDeviceId(final String newValue) {
+        this.uniqueDeviceId = newValue;
     }
 
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
@@ -212,6 +289,16 @@ public class DeviceExposure {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -230,6 +317,16 @@ public class DeviceExposure {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,16 @@ public class ProcedureOccurrence {
         return Optional.ofNullable(this.modifierConcept);
     }
 
+    public void setModifierConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.modifierConcept = null;
+            this.modifierConceptId = null;
+        } else {
+            this.modifierConcept = newValue;
+            this.modifierConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "modifier_source_value", insertable = false,
             updatable = false, nullable = true)
     private String modifierSourceValue;
@@ -45,6 +56,10 @@ public class ProcedureOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setModifierSourceValue(final String newValue) {
+        this.modifierSourceValue = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -63,6 +78,11 @@ public class ProcedureOccurrence {
         return this.person;
     }
 
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
+    }
+
     @Column(name = "procedure_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer procedureConceptId;
@@ -79,12 +99,21 @@ public class ProcedureOccurrence {
         return this.procedureConcept;
     }
 
+    public void setProcedureConcept(final Concept newValue) {
+        this.procedureConcept = newValue;
+        this.procedureConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "procedure_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime procedureDate;
     
     public Date getProcedureDate() {
         return new Date(this.procedureDate.toLocalDate());
+    }
+
+    public void setProcedureDate(final Date newValue) {
+        this.procedureDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "procedure_datetime", insertable = false, updatable = false,
@@ -99,7 +128,16 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setProcedureDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.procedureDatetime = null;
+        } else {
+            this.procedureDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "procedure_occurrence_id", insertable = false,
             updatable = false, nullable = false)
     private Integer procedureOccurrenceId;
@@ -120,6 +158,10 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setProcedureSourceConceptId(final Integer newValue) {
+        this.procedureSourceConceptId = newValue;
+    }
+
     @Column(name = "procedure_source_value", insertable = false,
             updatable = false, nullable = true)
     private String procedureSourceValue;
@@ -130,6 +172,10 @@ public class ProcedureOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setProcedureSourceValue(final String newValue) {
+        this.procedureSourceValue = newValue;
     }
 
     @Column(name = "procedure_type_concept_id", insertable = false,
@@ -148,6 +194,11 @@ public class ProcedureOccurrence {
         return this.procedureTypeConcept;
     }
 
+    public void setProcedureTypeConcept(final Concept newValue) {
+        this.procedureTypeConcept = newValue;
+        this.procedureTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "provider_id", insertable = false, updatable = false,
             nullable = true)
     private Integer providerId;
@@ -158,6 +209,10 @@ public class ProcedureOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setProviderId(final Integer newValue) {
+        this.providerId = newValue;
     }
 
     @Column(name = "quantity", insertable = false, updatable = false,
@@ -172,6 +227,10 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setQuantity(final Integer newValue) {
+        this.quantity = newValue;
+    }
+
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
             nullable = true)
     private Integer visitDetailId;
@@ -184,6 +243,10 @@ public class ProcedureOccurrence {
         }
     }
 
+    public void setVisitDetailId(final Integer newValue) {
+        this.visitDetailId = newValue;
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -194,6 +257,10 @@ public class ProcedureOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setVisitOccurrenceId(final Integer newValue) {
+        this.visitOccurrenceId = newValue;
     }
 
     @Override

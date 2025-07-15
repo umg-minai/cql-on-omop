@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +56,7 @@ public class AttributeDefinition {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "attribute_definition_id", insertable = false,
             updatable = false, nullable = false)
@@ -63,6 +64,10 @@ public class AttributeDefinition {
     
     public Integer getAttributeDefinitionId() {
         return this.attributeDefinitionId;
+    }
+
+    public void setAttributeDefinitionId(final Integer newValue) {
+        this.attributeDefinitionId = newValue;
     }
 
     @Column(name = "attribute_description", insertable = false,
@@ -77,12 +82,20 @@ public class AttributeDefinition {
         }
     }
 
+    public void setAttributeDescription(final String newValue) {
+        this.attributeDescription = newValue;
+    }
+
     @Column(name = "attribute_name", insertable = false, updatable = false,
             nullable = false)
     private String attributeName;
     
     public String getAttributeName() {
         return this.attributeName;
+    }
+
+    public void setAttributeName(final String newValue) {
+        this.attributeName = newValue;
     }
 
     @Column(name = "attribute_syntax", insertable = false, updatable = false,
@@ -97,6 +110,10 @@ public class AttributeDefinition {
         }
     }
 
+    public void setAttributeSyntax(final String newValue) {
+        this.attributeSyntax = newValue;
+    }
+
     public Integer getAttributeTypeConceptId() {
         return this.compoundId.attributeTypeConceptId;
     }
@@ -108,6 +125,11 @@ public class AttributeDefinition {
     
     public Concept getAttributeTypeConcept() {
         return this.attributeTypeConcept;
+    }
+
+    public void setAttributeTypeConcept(final Concept newValue) {
+        this.attributeTypeConcept = newValue;
+        this.compoundId.attributeTypeConceptId = newValue.getConceptId();
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,12 +32,21 @@ public class Observation {
         return this.observationConcept;
     }
 
+    public void setObservationConcept(final Concept newValue) {
+        this.observationConcept = newValue;
+        this.observationConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "observation_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime observationDate;
     
     public Date getObservationDate() {
         return new Date(this.observationDate.toLocalDate());
+    }
+
+    public void setObservationDate(final Date newValue) {
+        this.observationDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "observation_datetime", insertable = false,
@@ -51,7 +61,16 @@ public class Observation {
         }
     }
 
+    public void setObservationDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.observationDatetime = null;
+        } else {
+            this.observationDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "observation_id", insertable = false, updatable = false,
             nullable = false)
     private Integer observationId;
@@ -80,6 +99,16 @@ public class Observation {
         return Optional.ofNullable(this.observationSourceConcept);
     }
 
+    public void setObservationSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.observationSourceConcept = null;
+            this.observationSourceConceptId = null;
+        } else {
+            this.observationSourceConcept = newValue;
+            this.observationSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "observation_source_value", insertable = false,
             updatable = false, nullable = true)
     private String observationSourceValue;
@@ -90,6 +119,10 @@ public class Observation {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setObservationSourceValue(final String newValue) {
+        this.observationSourceValue = newValue;
     }
 
     @Column(name = "observation_type_concept_id", insertable = false,
@@ -108,6 +141,11 @@ public class Observation {
         return this.observationTypeConcept;
     }
 
+    public void setObservationTypeConcept(final Concept newValue) {
+        this.observationTypeConcept = newValue;
+        this.observationTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -122,6 +160,11 @@ public class Observation {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -144,6 +187,16 @@ public class Observation {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "qualifier_concept_id", insertable = false,
             updatable = false, nullable = true)
     private Integer qualifierConceptId;
@@ -164,6 +217,16 @@ public class Observation {
         return Optional.ofNullable(this.qualifierConcept);
     }
 
+    public void setQualifierConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.qualifierConcept = null;
+            this.qualifierConceptId = null;
+        } else {
+            this.qualifierConcept = newValue;
+            this.qualifierConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "qualifier_source_value", insertable = false,
             updatable = false, nullable = true)
     private String qualifierSourceValue;
@@ -174,6 +237,10 @@ public class Observation {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setQualifierSourceValue(final String newValue) {
+        this.qualifierSourceValue = newValue;
     }
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
@@ -196,6 +263,16 @@ public class Observation {
         return Optional.ofNullable(this.unitConcept);
     }
 
+    public void setUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.unitConcept = null;
+            this.unitConceptId = null;
+        } else {
+            this.unitConcept = newValue;
+            this.unitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "unit_source_value", insertable = false, updatable = false,
             nullable = true)
     private String unitSourceValue;
@@ -206,6 +283,10 @@ public class Observation {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setUnitSourceValue(final String newValue) {
+        this.unitSourceValue = newValue;
     }
 
     @Column(name = "value_as_concept_id", insertable = false,
@@ -228,6 +309,16 @@ public class Observation {
         return Optional.ofNullable(this.valueAsConcept);
     }
 
+    public void setValueAsConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.valueAsConcept = null;
+            this.valueAsConceptId = null;
+        } else {
+            this.valueAsConcept = newValue;
+            this.valueAsConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "value_as_number", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal valueAsNumber;
@@ -240,6 +331,10 @@ public class Observation {
         }
     }
 
+    public void setValueAsNumber(final BigDecimal newValue) {
+        this.valueAsNumber = newValue;
+    }
+
     @Column(name = "value_as_string", insertable = false, updatable = false,
             nullable = true)
     private String valueAsString;
@@ -250,6 +345,10 @@ public class Observation {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setValueAsString(final String newValue) {
+        this.valueAsString = newValue;
     }
 
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
@@ -272,6 +371,16 @@ public class Observation {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -290,6 +399,16 @@ public class Observation {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

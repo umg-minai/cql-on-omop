@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class CdmSource {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "cdm_etl_reference", insertable = false, updatable = false,
             nullable = true)
@@ -75,6 +76,10 @@ public class CdmSource {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setCdmEtlReference(final String newValue) {
+        this.cdmEtlReference = newValue;
     }
 
     @Column(name = "cdm_holder", insertable = false, updatable = false,
@@ -89,6 +94,10 @@ public class CdmSource {
         }
     }
 
+    public void setCdmHolder(final String newValue) {
+        this.cdmHolder = newValue;
+    }
+
     @Column(name = "cdm_release_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime cdmReleaseDate;
@@ -98,6 +107,14 @@ public class CdmSource {
             return Optional.of(new Date(this.cdmReleaseDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setCdmReleaseDate(final Date newValue) {
+        if (newValue == null) {
+            this.cdmReleaseDate = null;
+        } else {
+            this.cdmReleaseDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -113,8 +130,16 @@ public class CdmSource {
         }
     }
 
+    public void setCdmSourceAbbreviation(final String newValue) {
+        this.cdmSourceAbbreviation = newValue;
+    }
+
     public String getCdmSourceName() {
         return this.compoundId.cdmSourceName;
+    }
+
+    public void setCdmSourceName(final String newValue) {
+        this.compoundId.cdmSourceName = newValue;
     }
 
     public Optional<String> getCdmVersion() {
@@ -123,6 +148,10 @@ public class CdmSource {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setCdmVersion(final String newValue) {
+        this.compoundId.cdmVersion = newValue;
     }
 
     @Column(name = "source_description", insertable = false, updatable = false,
@@ -137,6 +166,10 @@ public class CdmSource {
         }
     }
 
+    public void setSourceDescription(final String newValue) {
+        this.sourceDescription = newValue;
+    }
+
     @Column(name = "source_documentation_reference", insertable = false,
             updatable = false, nullable = true)
     private String sourceDocumentationReference;
@@ -147,6 +180,10 @@ public class CdmSource {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setSourceDocumentationReference(final String newValue) {
+        this.sourceDocumentationReference = newValue;
     }
 
     @Column(name = "source_release_date", insertable = false,
@@ -161,6 +198,14 @@ public class CdmSource {
         }
     }
 
+    public void setSourceReleaseDate(final Date newValue) {
+        if (newValue == null) {
+            this.sourceReleaseDate = null;
+        } else {
+            this.sourceReleaseDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+        }
+    }
+
     @Column(name = "vocabulary_version", insertable = false, updatable = false,
             nullable = true)
     private String vocabularyVersion;
@@ -171,6 +216,10 @@ public class CdmSource {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setVocabularyVersion(final String newValue) {
+        this.vocabularyVersion = newValue;
     }
 
     @Override

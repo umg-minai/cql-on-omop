@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class CohortDefinition {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     @Column(name = "cohort_definition_description", insertable = false,
             updatable = false, nullable = true)
@@ -77,6 +78,10 @@ public class CohortDefinition {
         }
     }
 
+    public void setCohortDefinitionDescription(final String newValue) {
+        this.cohortDefinitionDescription = newValue;
+    }
+
     @Column(name = "cohort_definition_id", insertable = false,
             updatable = false, nullable = false)
     private Integer cohortDefinitionId;
@@ -85,12 +90,20 @@ public class CohortDefinition {
         return this.cohortDefinitionId;
     }
 
+    public void setCohortDefinitionId(final Integer newValue) {
+        this.cohortDefinitionId = newValue;
+    }
+
     @Column(name = "cohort_definition_name", insertable = false,
             updatable = false, nullable = false)
     private String cohortDefinitionName;
     
     public String getCohortDefinitionName() {
         return this.cohortDefinitionName;
+    }
+
+    public void setCohortDefinitionName(final String newValue) {
+        this.cohortDefinitionName = newValue;
     }
 
     @Column(name = "cohort_definition_syntax", insertable = false,
@@ -105,6 +118,10 @@ public class CohortDefinition {
         }
     }
 
+    public void setCohortDefinitionSyntax(final String newValue) {
+        this.cohortDefinitionSyntax = newValue;
+    }
+
     @Column(name = "cohort_initiation_date", insertable = false,
             updatable = false, nullable = true)
     private ZonedDateTime cohortInitiationDate;
@@ -114,6 +131,14 @@ public class CohortDefinition {
             return Optional.of(new Date(this.cohortInitiationDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setCohortInitiationDate(final Date newValue) {
+        if (newValue == null) {
+            this.cohortInitiationDate = null;
+        } else {
+            this.cohortInitiationDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -130,6 +155,11 @@ public class CohortDefinition {
         return this.definitionTypeConcept;
     }
 
+    public void setDefinitionTypeConcept(final Concept newValue) {
+        this.definitionTypeConcept = newValue;
+        this.compoundId.definitionTypeConceptId = newValue.getConceptId();
+    }
+
     public Integer getSubjectConceptId() {
         return this.compoundId.subjectConceptId;
     }
@@ -141,6 +171,11 @@ public class CohortDefinition {
     
     public Concept getSubjectConcept() {
         return this.subjectConcept;
+    }
+
+    public void setSubjectConcept(final Concept newValue) {
+        this.subjectConcept = newValue;
+        this.compoundId.subjectConceptId = newValue.getConceptId();
     }
 
     @Override

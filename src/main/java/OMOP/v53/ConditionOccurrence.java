@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class ConditionOccurrence {
         return this.conditionConcept;
     }
 
+    public void setConditionConcept(final Concept newValue) {
+        this.conditionConcept = newValue;
+        this.conditionConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "condition_end_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime conditionEndDate;
@@ -40,6 +46,14 @@ public class ConditionOccurrence {
             return Optional.of(new Date(this.conditionEndDate.toLocalDate()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setConditionEndDate(final Date newValue) {
+        if (newValue == null) {
+            this.conditionEndDate = null;
+        } else {
+            this.conditionEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
         }
     }
 
@@ -55,7 +69,16 @@ public class ConditionOccurrence {
         }
     }
 
+    public void setConditionEndDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.conditionEndDatetime = null;
+        } else {
+            this.conditionEndDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "condition_occurrence_id", insertable = false,
             updatable = false, nullable = false)
     private Integer conditionOccurrenceId;
@@ -84,6 +107,16 @@ public class ConditionOccurrence {
         return Optional.ofNullable(this.conditionSourceConcept);
     }
 
+    public void setConditionSourceConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.conditionSourceConcept = null;
+            this.conditionSourceConceptId = null;
+        } else {
+            this.conditionSourceConcept = newValue;
+            this.conditionSourceConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "condition_source_value", insertable = false,
             updatable = false, nullable = true)
     private String conditionSourceValue;
@@ -96,12 +129,20 @@ public class ConditionOccurrence {
         }
     }
 
+    public void setConditionSourceValue(final String newValue) {
+        this.conditionSourceValue = newValue;
+    }
+
     @Column(name = "condition_start_date", insertable = false,
             updatable = false, nullable = false)
     private ZonedDateTime conditionStartDate;
     
     public Date getConditionStartDate() {
         return new Date(this.conditionStartDate.toLocalDate());
+    }
+
+    public void setConditionStartDate(final Date newValue) {
+        this.conditionStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "condition_start_datetime", insertable = false,
@@ -113,6 +154,14 @@ public class ConditionOccurrence {
             return Optional.of(new DateTime(this.conditionStartDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setConditionStartDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.conditionStartDatetime = null;
+        } else {
+            this.conditionStartDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -136,6 +185,16 @@ public class ConditionOccurrence {
         return Optional.ofNullable(this.conditionStatusConcept);
     }
 
+    public void setConditionStatusConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.conditionStatusConcept = null;
+            this.conditionStatusConceptId = null;
+        } else {
+            this.conditionStatusConcept = newValue;
+            this.conditionStatusConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "condition_status_source_value", insertable = false,
             updatable = false, nullable = true)
     private String conditionStatusSourceValue;
@@ -146,6 +205,10 @@ public class ConditionOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setConditionStatusSourceValue(final String newValue) {
+        this.conditionStatusSourceValue = newValue;
     }
 
     @Column(name = "condition_type_concept_id", insertable = false,
@@ -164,6 +227,11 @@ public class ConditionOccurrence {
         return this.conditionTypeConcept;
     }
 
+    public void setConditionTypeConcept(final Concept newValue) {
+        this.conditionTypeConcept = newValue;
+        this.conditionTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -178,6 +246,11 @@ public class ConditionOccurrence {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -200,6 +273,16 @@ public class ConditionOccurrence {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "stop_reason", insertable = false, updatable = false,
             nullable = true)
     private String stopReason;
@@ -210,6 +293,10 @@ public class ConditionOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setStopReason(final String newValue) {
+        this.stopReason = newValue;
     }
 
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
@@ -232,6 +319,16 @@ public class ConditionOccurrence {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -250,6 +347,16 @@ public class ConditionOccurrence {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

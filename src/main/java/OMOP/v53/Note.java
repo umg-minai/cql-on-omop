@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class Note {
         return this.encodingConcept;
     }
 
+    public void setEncodingConcept(final Concept newValue) {
+        this.encodingConcept = newValue;
+        this.encodingConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "language_concept_id", insertable = false,
             updatable = false, nullable = false)
     private Integer languageConceptId;
@@ -45,6 +51,11 @@ public class Note {
     
     public Concept getLanguageConcept() {
         return this.languageConcept;
+    }
+
+    public void setLanguageConcept(final Concept newValue) {
+        this.languageConcept = newValue;
+        this.languageConceptId = newValue.getConceptId();
     }
 
     @Column(name = "note_class_concept_id", insertable = false,
@@ -63,12 +74,21 @@ public class Note {
         return this.noteClassConcept;
     }
 
+    public void setNoteClassConcept(final Concept newValue) {
+        this.noteClassConcept = newValue;
+        this.noteClassConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "note_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime noteDate;
     
     public Date getNoteDate() {
         return new Date(this.noteDate.toLocalDate());
+    }
+
+    public void setNoteDate(final Date newValue) {
+        this.noteDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "note_datetime", insertable = false, updatable = false,
@@ -83,7 +103,16 @@ public class Note {
         }
     }
 
+    public void setNoteDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.noteDatetime = null;
+        } else {
+            this.noteDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "note_id", insertable = false, updatable = false,
             nullable = false)
     private Integer noteId;
@@ -104,12 +133,20 @@ public class Note {
         }
     }
 
+    public void setNoteSourceValue(final String newValue) {
+        this.noteSourceValue = newValue;
+    }
+
     @Column(name = "note_text", insertable = false, updatable = false,
             nullable = false)
     private String noteText;
     
     public String getNoteText() {
         return this.noteText;
+    }
+
+    public void setNoteText(final String newValue) {
+        this.noteText = newValue;
     }
 
     @Column(name = "note_title", insertable = false, updatable = false,
@@ -122,6 +159,10 @@ public class Note {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setNoteTitle(final String newValue) {
+        this.noteTitle = newValue;
     }
 
     @Column(name = "note_type_concept_id", insertable = false,
@@ -140,6 +181,11 @@ public class Note {
         return this.noteTypeConcept;
     }
 
+    public void setNoteTypeConcept(final Concept newValue) {
+        this.noteTypeConcept = newValue;
+        this.noteTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "person_id", insertable = false, updatable = false,
             nullable = false)
     private Integer personId;
@@ -154,6 +200,11 @@ public class Note {
     
     public Person getPerson() {
         return this.person;
+    }
+
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
     }
 
     @Column(name = "provider_id", insertable = false, updatable = false,
@@ -176,6 +227,16 @@ public class Note {
         return Optional.ofNullable(this.provider);
     }
 
+    public void setProvider(final Provider newValue) {
+        if (newValue == null) {
+            this.provider = null;
+            this.providerId = null;
+        } else {
+            this.provider = newValue;
+            this.providerId = newValue.getProviderId();
+        }
+    }
+
     @Column(name = "visit_detail_id", insertable = false, updatable = false,
             nullable = true)
     private Integer visitDetailId;
@@ -196,6 +257,16 @@ public class Note {
         return Optional.ofNullable(this.visitDetail);
     }
 
+    public void setVisitDetail(final VisitDetail newValue) {
+        if (newValue == null) {
+            this.visitDetail = null;
+            this.visitDetailId = null;
+        } else {
+            this.visitDetail = newValue;
+            this.visitDetailId = newValue.getVisitDetailId();
+        }
+    }
+
     @Column(name = "visit_occurrence_id", insertable = false,
             updatable = false, nullable = true)
     private Integer visitOccurrenceId;
@@ -214,6 +285,16 @@ public class Note {
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
         return Optional.ofNullable(this.visitOccurrence);
+    }
+
+    public void setVisitOccurrence(final VisitOccurrence newValue) {
+        if (newValue == null) {
+            this.visitOccurrence = null;
+            this.visitOccurrenceId = null;
+        } else {
+            this.visitOccurrence = newValue;
+            this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        }
     }
 
     @Override

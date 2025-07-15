@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,16 @@ public class Specimen {
         return Optional.ofNullable(this.anatomicSiteConcept);
     }
 
+    public void setAnatomicSiteConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.anatomicSiteConcept = null;
+            this.anatomicSiteConceptId = null;
+        } else {
+            this.anatomicSiteConcept = newValue;
+            this.anatomicSiteConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "anatomic_site_source_value", insertable = false,
             updatable = false, nullable = true)
     private String anatomicSiteSourceValue;
@@ -45,6 +56,10 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setAnatomicSiteSourceValue(final String newValue) {
+        this.anatomicSiteSourceValue = newValue;
     }
 
     @Column(name = "disease_status_concept_id", insertable = false,
@@ -67,6 +82,16 @@ public class Specimen {
         return Optional.ofNullable(this.diseaseStatusConcept);
     }
 
+    public void setDiseaseStatusConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.diseaseStatusConcept = null;
+            this.diseaseStatusConceptId = null;
+        } else {
+            this.diseaseStatusConcept = newValue;
+            this.diseaseStatusConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "disease_status_source_value", insertable = false,
             updatable = false, nullable = true)
     private String diseaseStatusSourceValue;
@@ -77,6 +102,10 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setDiseaseStatusSourceValue(final String newValue) {
+        this.diseaseStatusSourceValue = newValue;
     }
 
     @Column(name = "person_id", insertable = false, updatable = false,
@@ -95,6 +124,11 @@ public class Specimen {
         return this.person;
     }
 
+    public void setPerson(final Person newValue) {
+        this.person = newValue;
+        this.personId = newValue.getPersonId();
+    }
+
     @Column(name = "quantity", insertable = false, updatable = false,
             nullable = true)
     private BigDecimal quantity;
@@ -105,6 +139,10 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setQuantity(final BigDecimal newValue) {
+        this.quantity = newValue;
     }
 
     @Column(name = "specimen_concept_id", insertable = false,
@@ -123,12 +161,21 @@ public class Specimen {
         return this.specimenConcept;
     }
 
+    public void setSpecimenConcept(final Concept newValue) {
+        this.specimenConcept = newValue;
+        this.specimenConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "specimen_date", insertable = false, updatable = false,
             nullable = false)
     private ZonedDateTime specimenDate;
     
     public Date getSpecimenDate() {
         return new Date(this.specimenDate.toLocalDate());
+    }
+
+    public void setSpecimenDate(final Date newValue) {
+        this.specimenDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
     @Column(name = "specimen_datetime", insertable = false, updatable = false,
@@ -143,7 +190,16 @@ public class Specimen {
         }
     }
 
+    public void setSpecimenDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.specimenDatetime = null;
+        } else {
+            this.specimenDatetime = newValue.getDateTime().toZonedDateTime();
+        }
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_id", insertable = false, updatable = false,
             nullable = false)
     private Integer specimenId;
@@ -164,6 +220,10 @@ public class Specimen {
         }
     }
 
+    public void setSpecimenSourceId(final String newValue) {
+        this.specimenSourceId = newValue;
+    }
+
     @Column(name = "specimen_source_value", insertable = false,
             updatable = false, nullable = true)
     private String specimenSourceValue;
@@ -174,6 +234,10 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setSpecimenSourceValue(final String newValue) {
+        this.specimenSourceValue = newValue;
     }
 
     @Column(name = "specimen_type_concept_id", insertable = false,
@@ -190,6 +254,11 @@ public class Specimen {
     
     public Concept getSpecimenTypeConcept() {
         return this.specimenTypeConcept;
+    }
+
+    public void setSpecimenTypeConcept(final Concept newValue) {
+        this.specimenTypeConcept = newValue;
+        this.specimenTypeConceptId = newValue.getConceptId();
     }
 
     @Column(name = "unit_concept_id", insertable = false, updatable = false,
@@ -212,6 +281,16 @@ public class Specimen {
         return Optional.ofNullable(this.unitConcept);
     }
 
+    public void setUnitConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.unitConcept = null;
+            this.unitConceptId = null;
+        } else {
+            this.unitConcept = newValue;
+            this.unitConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "unit_source_value", insertable = false, updatable = false,
             nullable = true)
     private String unitSourceValue;
@@ -222,6 +301,10 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setUnitSourceValue(final String newValue) {
+        this.unitSourceValue = newValue;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,10 @@ public class Location {
         }
     }
 
+    public void setAddress1(final String newValue) {
+        this.address1 = newValue;
+    }
+
     @Column(name = "address_2", insertable = false, updatable = false,
             nullable = true)
     private String address2;
@@ -37,6 +42,10 @@ public class Location {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setAddress2(final String newValue) {
+        this.address2 = newValue;
     }
 
     @Column(name = "city", insertable = false, updatable = false,
@@ -51,6 +60,10 @@ public class Location {
         }
     }
 
+    public void setCity(final String newValue) {
+        this.city = newValue;
+    }
+
     @Column(name = "county", insertable = false, updatable = false,
             nullable = true)
     private String county;
@@ -63,7 +76,12 @@ public class Location {
         }
     }
 
+    public void setCounty(final String newValue) {
+        this.county = newValue;
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id", insertable = false, updatable = false,
             nullable = false)
     private Integer locationId;
@@ -84,6 +102,10 @@ public class Location {
         }
     }
 
+    public void setLocationSourceValue(final String newValue) {
+        this.locationSourceValue = newValue;
+    }
+
     @Column(name = "state", insertable = false, updatable = false,
             nullable = true)
     private String state;
@@ -96,6 +118,10 @@ public class Location {
         }
     }
 
+    public void setState(final String newValue) {
+        this.state = newValue;
+    }
+
     @Column(name = "zip", insertable = false, updatable = false,
             nullable = true)
     private String zip;
@@ -106,6 +132,10 @@ public class Location {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setZip(final String newValue) {
+        this.zip = newValue;
     }
 
     @Override

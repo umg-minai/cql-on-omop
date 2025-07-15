@@ -5,6 +5,7 @@ import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class Metadata {
     }
 
     @EmbeddedId
-    private CompoundId compoundId;
+    private CompoundId compoundId = new CompoundId();
 
     public Integer getMetadataConceptId() {
         return this.compoundId.metadataConceptId;
@@ -86,6 +87,11 @@ public class Metadata {
         return this.metadataConcept;
     }
 
+    public void setMetadataConcept(final Concept newValue) {
+        this.metadataConcept = newValue;
+        this.compoundId.metadataConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "metadata_date", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime metadataDate;
@@ -98,6 +104,14 @@ public class Metadata {
         }
     }
 
+    public void setMetadataDate(final Date newValue) {
+        if (newValue == null) {
+            this.metadataDate = null;
+        } else {
+            this.metadataDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+        }
+    }
+
     @Column(name = "metadata_datetime", insertable = false, updatable = false,
             nullable = true)
     private ZonedDateTime metadataDatetime;
@@ -107,6 +121,14 @@ public class Metadata {
             return Optional.of(new DateTime(this.metadataDatetime.toOffsetDateTime()));
         } else {
             return Optional.empty();
+        }
+    }
+
+    public void setMetadataDatetime(final DateTime newValue) {
+        if (newValue == null) {
+            this.metadataDatetime = null;
+        } else {
+            this.metadataDatetime = newValue.getDateTime().toZonedDateTime();
         }
     }
 
@@ -123,12 +145,21 @@ public class Metadata {
         return this.metadataTypeConcept;
     }
 
+    public void setMetadataTypeConcept(final Concept newValue) {
+        this.metadataTypeConcept = newValue;
+        this.compoundId.metadataTypeConceptId = newValue.getConceptId();
+    }
+
     @Column(name = "name", insertable = false, updatable = false,
             nullable = false)
     private String name;
     
     public String getName() {
         return this.name;
+    }
+
+    public void setName(final String newValue) {
+        this.name = newValue;
     }
 
     public Optional<Integer> getValueAsConceptId() {
@@ -148,6 +179,16 @@ public class Metadata {
         return Optional.ofNullable(this.valueAsConcept);
     }
 
+    public void setValueAsConcept(final Concept newValue) {
+        if (newValue == null) {
+            this.valueAsConcept = null;
+            this.compoundId.valueAsConceptId = null;
+        } else {
+            this.valueAsConcept = newValue;
+            this.compoundId.valueAsConceptId = newValue.getConceptId();
+        }
+    }
+
     @Column(name = "value_as_string", insertable = false, updatable = false,
             nullable = true)
     private String valueAsString;
@@ -158,6 +199,10 @@ public class Metadata {
         } else {
             return Optional.empty();
         }
+    }
+
+    public void setValueAsString(final String newValue) {
+        this.valueAsString = newValue;
     }
 
     @Override
