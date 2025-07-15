@@ -32,18 +32,18 @@ public class ThemeAwareStringBuilder extends AttributedStringBuilder {
                                              final Function<ThemeAwareStringBuilder, AttributedStringBuilder> continuation) {
         if (style != null) {
             final var oldStyle = style();
-            return (ThemeAwareStringBuilder) continuation.apply((ThemeAwareStringBuilder) elementStyle(style)).style(oldStyle);
+            return (ThemeAwareStringBuilder) continuation.apply(elementStyle(style)).style(oldStyle);
         } else {
             return (ThemeAwareStringBuilder) continuation.apply(this);
         }
     }
 
     public ThemeAwareStringBuilder withStyle(final AttributedStyle style, final String continuation) {
-        return withStyle(style, builder -> (ThemeAwareStringBuilder) builder.append(continuation));
+        return withStyle(style, builder -> builder.append(continuation));
     }
 
     public ThemeAwareStringBuilder withStyle(final Theme.Element style, final String continuation) {
-        return withStyle(style, builder -> (ThemeAwareStringBuilder) builder.append(continuation));
+        return withStyle(style, builder -> builder.append(continuation));
     }
 
 }

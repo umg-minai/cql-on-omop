@@ -45,7 +45,8 @@ public class ErrorPresenter extends AbstractPresenter{
     private void presentSpecificError(final ThemeAwareStringBuilder builder, final Exception exception) {
         builder.withStyle(Theme.Element.ERROR,
                 builder2 -> builder2.append("Internal error:\n")
-                .append(exception.toString()));
+                        .append(exception.toString())
+                        .append("\n"));
     }
 
     // Runtime Exceptions

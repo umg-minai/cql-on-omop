@@ -5,17 +5,17 @@ import org.jline.utils.AttributedStyle;
 public interface Theme {
 
     enum Element {
-        //
+        // Generic elements
         DEFAULT,
         INACTIVE,
         HEADING,
         WARNING,
         ERROR,
-        //
+        // Messages
         MESSAGE_OTHER,
         MESSAGE_INFO,
         MESSAGE_WARNING,
-        //
+        // Syntax elements
         KEYWORD,
         STRING_LITERAL,
         NUMBER_LITERAL,

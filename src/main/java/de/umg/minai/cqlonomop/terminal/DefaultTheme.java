@@ -44,16 +44,17 @@ public class DefaultTheme implements Theme {
     @Override
     public AttributedStyle styleForElement(Element element) {
         return switch (element) {
+            // Generic elements
             case DEFAULT         -> STYLE_DEFAULT;
             case INACTIVE        -> STYLE_INACTIVE;
             case HEADING         -> STYLE_HEADING;
             case WARNING         -> STYLE_WARNING;
             case ERROR           -> STYLE_ERROR;
-            //
+            // Messages
             case MESSAGE_OTHER   -> STYLE_MESSAGE_OTHER;
             case MESSAGE_INFO    -> STYLE_MESSAGE_INFO;
             case MESSAGE_WARNING -> STYLE_MESSAGE_WARNING;
-            //
+            // Syntax elements
             case KEYWORD         -> STYLE_KEYWORD;
             case STRING_LITERAL  -> STYLE_STRING_LITERAL;
             case NUMBER_LITERAL  -> STYLE_NUMBER_LITERAL;

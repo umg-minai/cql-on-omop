@@ -109,21 +109,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
 
         final var query = entityManager.createQuery(criteriaQuery);
-        if (mustFilterCodes) {
-            final Predicate<Object> filter = object -> {
-                final var objectCode = modelResolver.resolvePath(object, codePath);
-                for (final Object code : codes) {
-                    if (code == objectCode) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            return new RetrieveResult(query, filter);
-        } else {
-            return new RetrieveResult(query);
-        }
-
+        return new RetrieveResult(query);
     }
 
     private CriteriaQuery<?> dataTypeCriteria(final String dataType) {

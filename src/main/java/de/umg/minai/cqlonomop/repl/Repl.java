@@ -47,13 +47,15 @@ public class Repl implements Runnable {
             try {
                 final var prompt = String.format("[%s] ", i);
                 input = reader.readLine(prompt);
+            } catch (EndOfFileException _e) {
+                // User probably pressed C-d.
+                break;
+            }
+            try {
                 final var result = commandProcessor.process(input);
                 if (result != null) { // TODO(jmoringe): can this be null?
                     this.resultPresenter.presentResult(result);
                 }
-            } catch (EndOfFileException _e) {
-                // User probably pressed C-d.
-                break;
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
             }
@@ -117,8 +119,6 @@ public class Repl implements Runnable {
         this.errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
         try {
             repl();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         } finally {
             try {
                 this.reader.getHistory().save();

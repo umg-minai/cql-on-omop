@@ -45,20 +45,19 @@ public class CommandProcessor {
         final var commandAndArguments = string.substring(1).split("[ \t]+", 2);
         final var commandName = commandAndArguments[0];
         final var command = this.commands.get(commandName);
-        if (command != null) {
-            final var argument = commandAndArguments.length == 2 ? commandAndArguments[1] : null;
-            if (argument == null && !command.getArguments().isEmpty()) {
-                final var builder = new StringBuilder()
-                        .append("The command '")
-                        .append(commandName)
-                        .append("' expects the following arguments:");
-                command.getArguments().forEach(argument2 -> builder.append(" ").append(argument2));
-                throw new RuntimeException(builder.toString());
-            } else {
-                return command.run(argument);
-            }
-        } else {
+        if (command == null) {
             throw new RuntimeException(String.format("Unknown command %s", commandName));
+        }
+        final var argument = commandAndArguments.length == 2 ? commandAndArguments[1] : null;
+        if (argument == null && !command.getArguments().isEmpty()) {
+            final var builder = new StringBuilder()
+                    .append("The command '")
+                    .append(commandName)
+                    .append("' expects the following arguments:");
+            command.getArguments().forEach(argument2 -> builder.append(" ").append(argument2));
+            throw new RuntimeException(builder.toString());
+        } else {
+            return command.run(argument);
         }
     }
 }

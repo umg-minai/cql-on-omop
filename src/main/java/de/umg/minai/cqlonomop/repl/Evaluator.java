@@ -213,7 +213,6 @@ public class Evaluator {
             }
         });
 
-
         // Choose evaluation semantics based on the context object(s):
         // for no object or a single object, evaluate in the current
         // thread right away. For a list of objects, evaluate in

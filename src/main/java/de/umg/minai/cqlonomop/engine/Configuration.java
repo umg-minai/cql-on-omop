@@ -110,9 +110,4 @@ public class Configuration {
         return this;
     }
 
-    public Configuration addLibrarySearchPath(final Path searchPath) {
-        this.librarySearchPath.add(searchPath);
-        return this;
-    }
-
 }

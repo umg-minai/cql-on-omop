@@ -33,14 +33,10 @@ public class CQLonOMOPEngine {
     private final Map<VersionedIdentifier, CompiledLibrary> libraryCache = new HashMap<>();
 
     private final TerminologyProvider terminologyProvider;
-    //private final Environment environment;
 
     private SessionFactory sessionFactory;
 
     private MappingInfo mappingInfo;
-
-    // TODO(jmoringe): remove
-    private Map<String, DataProvider> dataProviders;
 
     private boolean isProfiling = false;
 
@@ -65,13 +61,6 @@ public class CQLonOMOPEngine {
         this(version, librarySourceProviders);
         this.sessionFactory = sessionFactory;
         this.mappingInfo = mappingInfo;
-    }
-
-    public CQLonOMOPEngine(final String version,
-                           final SessionFactory sessionFactory,
-                           final MappingInfo mappingInfo,
-                           final LibrarySourceProvider librarySourceProvider) {
-        this(version, sessionFactory, mappingInfo, List.of(librarySourceProvider));
     }
 
     public Model getModel(final ModelIdentifier modelIdentifier) {
@@ -160,9 +149,6 @@ public class CQLonOMOPEngine {
                     : engine.evaluate(library,
                     Pair.of("Patient", contextObject), // TODO(jmoringe): can we know the name of the context?
                     parameterBindings);
-//            result.expressionResults.forEach((name, expressionResult) -> {
-//                initializeProxies(expressionResult.value(), new HashSet<>());
-//            });
             return result;
         });
     }
@@ -172,54 +158,6 @@ public class CQLonOMOPEngine {
                 expressions.forEach((name, result) ->
                         cache.cacheExpression(library, name, result)));
         initialContents.getFunctionCache().forEach(cache::cacheFunctionDef);
-    }
-
-    private void initializeProxies(final Object object, final HashSet<Object> seen) {
-        object.toString(); // HACK(jmoringe): force some initialization
-
-        /*if (!seen.contains(object)) {
-            System.out.printf("Checking %s\n", object);
-            seen.add(object);
-            if (object instanceof HibernateProxy proxy) {
-                System.out.printf("Is a proxy %s\n", object);
-                if (!Hibernate.isInitialized(proxy)) {
-                    System.out.printf("Is not initialized %s\n", object);
-                    Hibernate.initialize(proxy);
-                } else {
-                    System.out.printf("Is initialized %s\n", object);
-                }
-                /final var d = new BeanDescriptor(proxy.getClass());
-                if (proxy instanceof Collection<?> collection) {
-                    collection.forEach(element -> initializeProxies(element, seen));
-                }/
-            } else if (object instanceof Iterable<?> iterable) {
-                for (var element : iterable) {
-                    initializeProxies(element, seen);
-                }
-            } else if (object instanceof Optional<?> optional) {
-                optional.ifPresent(value -> initializeProxies(value, seen));
-            } else {
-                System.out.printf("Not a proxy %s\n", object);
-            }
-            if (object.getClass().getPackageName().contains("OMOP")) {
-                // TODO(jmoringe): copied from ResultPresenter
-                final var clazz = object.getClass();
-                Arrays.stream(clazz.getMethods())
-                        .filter(method -> method.getName().startsWith("get")
-                                && !method.getName().equals("getClass"))
-                        .forEach(method -> {
-                            final var fieldName = method.getName().substring(3, 4).toLowerCase(Locale.ROOT)
-                                    + method.getName().substring(4);
-                            Object fieldValue;
-                            try {
-                                fieldValue = method.invoke(object);
-                            } catch (Exception e) {
-                                fieldValue = String.format("error accessing field: %s", e);
-                            }
-                            initializeProxies(fieldValue, seen);
-                        });
-            }
-        }*/
     }
 
     public EvaluationResult evaluateLibrary(final String library,
