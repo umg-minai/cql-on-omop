@@ -1,11 +1,7 @@
 package de.umg.minai.cqlonomop.repl;
 
-import OMOP.MappingInfo;
-import org.cqframework.cql.cql2elm.DefaultLibrarySourceProvider;
-import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
-import de.umg.minai.cqlonomop.engine.ConnectionFactory;
 import org.hl7.elm.r1.FunctionDef;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
@@ -60,16 +56,8 @@ public class Evaluator {
     public Evaluator(final Configuration configuration) {
         this.configuration = configuration;
         this.sourceProvider = new REPLSourceProvider();
-        final List<LibrarySourceProvider> sourceProviders = new LinkedList<>();
-        sourceProviders.add(this.sourceProvider);
-        configuration.getLibrarySearchPath().forEach(path ->
-                sourceProviders.add(new DefaultLibrarySourceProvider(path)));
-
-        final var omopVersion = configuration.getOmopVersion();
-        final var mappingInfo = MappingInfo.ensureVersion(omopVersion);
-        final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
-        this.engine = new CQLonOMOPEngine(omopVersion, sessionFactory, mappingInfo, sourceProviders);
-        this.state = new State(omopVersion);
+        this.engine = new CQLonOMOPEngine(configuration, List.of(this.sourceProvider));
+        this.state = new State(configuration.getOmopVersion());
         this.state.contextObjects.add("DummyContextObject"); // so that "context Patient" does not fail
     }
 

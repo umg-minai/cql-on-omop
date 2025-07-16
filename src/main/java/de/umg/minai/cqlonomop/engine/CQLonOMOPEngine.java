@@ -63,6 +63,26 @@ public class CQLonOMOPEngine {
         this.mappingInfo = mappingInfo;
     }
 
+    private static List<LibrarySourceProvider> computeSourceProvider(final Configuration configuration,
+                                                                     final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
+        final var sourceProviders = new LinkedList<LibrarySourceProvider>();
+        configuration.getLibrarySearchPath().forEach(path ->
+                sourceProviders.add(new DefaultLibrarySourceProvider(path)));
+        sourceProviders.addAll(additionalLibrarySourceProviders);
+        return sourceProviders;
+    }
+
+    public CQLonOMOPEngine(final Configuration configuration,
+                           final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
+        this(configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
+        this.mappingInfo = MappingInfo.ensureVersion(configuration.getOmopVersion());
+        this.sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
+    }
+
+    public CQLonOMOPEngine(final Configuration configuration) {
+        this(configuration, List.of());
+    }
+
     public Model getModel(final ModelIdentifier modelIdentifier) {
         return this.modelManager.resolveModel(modelIdentifier);
     }
@@ -80,6 +100,10 @@ public class CQLonOMOPEngine {
     }
 
     public Map<VersionedIdentifier, CompiledLibrary> getLibraryCache() { return this.libraryCache; }
+
+    public SessionFactory getSessionFactory() { // TODO(jmoringe): maybe remove later
+        return this.sessionFactory;
+    }
 
     public boolean isProfiling() {
         return this.isProfiling;

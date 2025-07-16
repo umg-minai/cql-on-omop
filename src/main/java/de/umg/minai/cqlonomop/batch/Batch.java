@@ -47,13 +47,7 @@ public class Batch implements Runnable {
             configuration = executionOptions.applyToConfiguration(configuration);
         }
         //
-        final var omopVersion = configuration.getOmopVersion();
-        final var mappingInfo = MappingInfo.ensureVersion(omopVersion);
-        final var sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
-        final List<LibrarySourceProvider> sourceProviders = new LinkedList<>();
-        configuration.getLibrarySearchPath().forEach(path ->
-                sourceProviders.add(new DefaultLibrarySourceProvider(path)));
-        final var engine = new CQLonOMOPEngine(omopVersion, sessionFactory, mappingInfo, sourceProviders);
+        final var engine = new CQLonOMOPEngine(configuration);
 
         final Terminal terminal;
         final Theme theme;
@@ -69,6 +63,7 @@ public class Batch implements Runnable {
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
 
         try {
+            final var sessionFactory = engine.getSessionFactory();
             final var entityManager = sessionFactory.createEntityManager();
             final var clazz = Person.class;
             final var criteria = entityManager.getCriteriaBuilder()
