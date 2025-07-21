@@ -31,8 +31,7 @@ public class CommandSet extends AbstractCommand {
         final var parameterAndExpression = arguments.split(" ", 2);
         final var parameter = parameterAndExpression[0];
         final var expression = parameterAndExpression[1];
-        final var object = this.evaluator.withoutState((_oldState) ->
-                this.evaluator.evaluateExpression(expression, "Unfiltered", new HashSet<>()));
+        final var object = this.evaluator.evaluateExpression(expression, "Unfiltered", new HashSet<>());
         System.out.printf("Assigning %s <- %s\n", parameter, object);
         this.evaluator.setParameter(parameter, object);
         return null;

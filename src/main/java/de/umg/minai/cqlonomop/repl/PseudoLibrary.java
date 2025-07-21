@@ -32,40 +32,16 @@ public class PseudoLibrary {
         this.omopVersion = omopVersion;
     }
 
-    public PseudoLibrary withOmopVersion(final String omopVersion) {
-        final var result = klone();
-        result.setOmopVersion(omopVersion);
-        return result;
-    }
-
     public void addInclude(final String include) {
         this.include.add(include);
-    }
-
-    public PseudoLibrary withAddedInclude(final String include) {
-        final var result = klone();
-        result.addInclude(include);
-        return result;
     }
 
     public void addPrelude(final String preludeStatement) {
         this.prelude.add(preludeStatement);
     }
 
-    public PseudoLibrary withAddedPrelude(final String preludeStatement) {
-        final var result = klone();
-        result.addPrelude(preludeStatement);
-        return result;
-    }
-
     public void addStatement(final String statement) {
         this.statements.add(statement);
-    }
-
-    public PseudoLibrary withAddedStatement(final String statement) {
-        final var result = klone();
-        result.addStatement(statement);
-        return result;
     }
 
     public String getCode() {

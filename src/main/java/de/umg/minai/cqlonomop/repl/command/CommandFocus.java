@@ -30,21 +30,20 @@ public class CommandFocus extends AbstractCommand {
     @Override
     public EvaluationResult run(String arguments) throws Exception {
         final var expression = arguments;
-        this.evaluator.withoutState((oldState) -> {
-            final var object = this.evaluator.evaluateExpression(expression, "Unfiltered", new HashSet<>());
-            System.out.print("Focussing on ");
+        final var object = this.evaluator.evaluateExpression(expression, "Unfiltered", new HashSet<>());
+        System.out.print("Focussing on ");
+        this.evaluator.withStateUpdateOnSuccess(state -> {
             if (object instanceof Iterable<?> iterable) {
-                oldState.contextObjects = new HashSet<>();
+                state.contextObjects = new HashSet<>();
                 iterable.forEach(element -> {
                     System.out.printf("%s, ", element);
-                    oldState.contextObjects.add(element);
+                    state.contextObjects.add(element);
                 });
                 System.out.println();
             } else {
                 System.out.printf("%s\n", object);
-                oldState.contextObjects = Set.of(object);
+                state.contextObjects = Set.of(object);
             }
-            return object;
         });
         return null;
     }

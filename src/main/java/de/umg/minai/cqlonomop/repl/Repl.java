@@ -88,7 +88,7 @@ public class Repl implements Runnable {
                 final var name = entry.getKey();
                 final var expression = entry.getValue();
                 try {
-                    this.evaluator.setParameter(name, expression);
+                    this.evaluator.setParameterToEvaluationResult(name, expression);
                 } catch (Exception e) {
                     throw new RuntimeException(String.format("Error setting parameter '%s' to '%s'", name, expression), e);
                 }

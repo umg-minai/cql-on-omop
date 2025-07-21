@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -28,10 +29,21 @@ public class Evaluator {
         public PseudoLibrary pseudoLibrary;
         public Set<Object> contextObjects = new HashSet<>();
         public Map<String, Object> parameterBindings = new HashMap<>();
-        public EvaluationResult previousResult = null;
+
+        public State(final PseudoLibrary pseudoLibrary) {
+            this.pseudoLibrary = pseudoLibrary;
+        }
 
         public State(final String omopVersion) {
-            this.pseudoLibrary = new PseudoLibrary(omopVersion);
+            this(new PseudoLibrary(omopVersion));
+        }
+
+        public State klone() {
+            final var result = new State(this.pseudoLibrary.klone());
+            result.expressionCount = this.expressionCount;
+            result.contextObjects = new HashSet<>(this.contextObjects);
+            result.parameterBindings = new HashMap<>(this.parameterBindings);
+            return result;
         }
 
     }
@@ -85,65 +97,112 @@ public class Evaluator {
         }
     }
 
-    public void setParameter(final String name, final String value) {
-        // TODO(jmoringe): make evaluateStandaloneExpression or similar
-        final var oldState = this.state;
-        this.state = new State(this.state.pseudoLibrary.omopVersion);
-        try {
-            final Object result = evaluateExpression(value);
-            this.setParameter(name, result);
-        } finally {
-            this.state = oldState;
-        }
+    public void setParameterToEvaluationResult(final String name, final String valueExpression) {
+        final var emptyState = new State(this.state.pseudoLibrary.omopVersion);
+        final Object value = internalEvaluate(emptyState, valueExpression);
+        withStateUpdateOnSuccess(state -> {
+            if (value == null) {
+                state.parameterBindings.remove(name);
+            } else {
+                state.parameterBindings.put(name, value);
+            }
+            internalEvaluate(state, null);
+        });
     }
 
     public EvaluationResult evaluate(final String command) {
-        final var oldPseudoLibrary = this.state.pseudoLibrary;
-        try {
-            final var trimmed = command.trim();
-            if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
-                if (trimmed.startsWith("include")) {
-                    return executeCQLIncludeStatement(trimmed);
-                } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
-                    return executeCQLPreludeStatement(trimmed);
-                } else {
-                    return executeCQLStatement(trimmed, null);
-                }
+        final var trimmed = command.trim();
+        if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
+            if (trimmed.startsWith("include")) {
+                return executeCQLIncludeStatement(trimmed);
+            } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
+                return executeCQLPreludeStatement(trimmed);
             } else {
-                return executeCQLExpression(trimmed);
+                return executeCQLStatement(trimmed);
             }
-        } catch (final Exception e) {
-            this.state.pseudoLibrary = oldPseudoLibrary;
-            throw e;
+        } else {
+            return executeCQLExpression(trimmed);
         }
     }
 
     private EvaluationResult executeCQLIncludeStatement(final String statement) {
-        this.state.pseudoLibrary = this.state.pseudoLibrary.withAddedInclude(statement);
-        return internalEvaluate(null);
+        return withStateUpdateOnSuccess(state -> {
+            state.pseudoLibrary.addInclude(statement);
+            return internalEvaluate(state,null);
+        });
     }
 
     private EvaluationResult executeCQLPreludeStatement(final String statement) {
-        this.state.pseudoLibrary = this .state.pseudoLibrary.withAddedPrelude(statement);
-        return internalEvaluate(null);
+        return withStateUpdateOnSuccess(state -> {
+            state.pseudoLibrary.addPrelude(statement);
+            return internalEvaluate(state, null);
+        });
     }
 
-    private EvaluationResult executeCQLStatement(final String statement, final String definitionName) {
-        this.state.pseudoLibrary = this.state.pseudoLibrary.withAddedStatement(statement);
-        this.state.previousResult = internalEvaluate(definitionName);
-        return this.state.previousResult;
+    private EvaluationResult executeCQLStatement(final String statement) {
+        return withStateUpdateOnSuccess(state -> {
+            state.pseudoLibrary.addStatement(statement);
+            return internalEvaluate(state, null);
+        });
     }
 
     public EvaluationResult executeCQLExpression(final String expression) {
-        final var definitionName = String.format("E%d", state.expressionCount);
-        this.state.expressionCount++;
-        final var statement = String.format("define %s: %s", definitionName, expression);
-        return executeCQLStatement(statement, definitionName);
+        return withStateUpdateOnSuccess(state -> {
+            final var definitionName = String.format("E%d", state.expressionCount);
+            state.expressionCount++;
+            final var statement = String.format("define %s: %s", definitionName, expression);
+            state.pseudoLibrary.addStatement(statement);
+            return internalEvaluate(state, definitionName);
+        });
     }
 
-    private EvaluationResult internalEvaluate(final String definitionName) {
+    public Object evaluateExpression(final String expression, final String context, final Set<Object> contextObjects) {
+        final var temporaryState = this.state.klone();
+        final var definitionName = String.format("Temporary%d", temporaryState.pseudoLibrary.statements.size());
+        final var statementBuilder = new StringBuilder();
+        if (context != null) {
+            statementBuilder.append(String.format("context %s\n", context));
+        }
+        statementBuilder.append(String.format("define %s: %s\n", definitionName, expression));
+        final var statement = statementBuilder.toString();
+        temporaryState.pseudoLibrary.addStatement(statement);
+        if (contextObjects != null) {
+            temporaryState.contextObjects = contextObjects;
+        }
+        final EvaluationResult result = internalEvaluate(temporaryState, definitionName);
+        return result.forExpression(definitionName).value();
+    }
+
+    public Object evaluateExpression(final String expression) {
+        return evaluateExpression(expression, null, null);
+    }
+
+    public Object withProfiling(final Supplier<Object> continuation) {
+        final var oldValue = this.isProfiling;
+        this.isProfiling = true;
+        try {
+            return continuation.get();
+        } finally {
+            this.isProfiling = oldValue;
+        }
+    }
+
+    public <R> R withStateUpdateOnSuccess(Function<State, R> continuation) {
+        final var newState = this.state.klone();
+        final R result = continuation.apply(newState);
+        this.state = newState;
+        return result;
+    }
+
+    public void withStateUpdateOnSuccess(Consumer<State> continuation) {
+        final var newState = this.state.klone();
+        continuation.accept(newState);
+        this.state = newState;
+    }
+
+    private EvaluationResult internalEvaluate(final State state, final String definitionName) {
         this.engine.setProfiling(this.isProfiling);
-        this.sourceProvider.setContent(this.state.pseudoLibrary.getCode());
+        this.sourceProvider.setContent(state.pseudoLibrary.getCode());
         final var libraryName = this.sourceProvider.libraryName();
         // Compile library. The compilation results will be
         // cached. This with parallel evaluation since compilation
@@ -205,20 +264,17 @@ public class Evaluator {
         // for no object or a single object, evaluate in the current
         // thread right away. For a list of objects, evaluate in
         // parallel using a thread pool and tasks.
-        final var contextObjects = this.state.contextObjects;
+        final var contextObjects = state.contextObjects;
         final EvaluationResult result;
         if (contextObjects.isEmpty()) {
-            result = engine.evaluateLibrary(libraryName, null, this.state.parameterBindings, unfilteredCache);
+            result = engine.evaluateLibrary(libraryName, null, state.parameterBindings, unfilteredCache);
         } else if (contextObjects.size() == 1) {
             result = engine.evaluateLibrary(libraryName,
                     contextObjects.iterator().next(),
-                    this.state.parameterBindings,
+                    state.parameterBindings,
                     unfilteredCache);
         } else {
             result = new EvaluationResult();
-            if (state.previousResult != null) {
-                result.expressionResults.putAll(state.previousResult.expressionResults);
-            }
             if (definitionName != null) { // TODO(jmoringe): when is this null?
                 final var allResults = new ConcurrentHashMap<String, Object>();
                 final boolean[] anyFailed = {false};
@@ -241,7 +297,7 @@ public class Evaluator {
                             try {
                                 final var results = engine.evaluateLibrary(libraryName,
                                         object,
-                                        this.state.parameterBindings,
+                                        state.parameterBindings,
                                         unfilteredCache);
                                 final var objectResult = results.forExpression(definitionName);
                                 // TODO(jmoringe): make this concurrent or just do it after the parallel part
@@ -303,54 +359,6 @@ public class Evaluator {
             result.getDebugResult().getProfile().merge(unfilteredProfile);
         }
         return result;
-    }
-
-    public Object evaluateExpression(final String expression, final String context, final Set<Object> contextObjects) {
-        final var definitionName = String.format("Temporary%d", this.state.pseudoLibrary.statements.size());
-        final var statementBuilder = new StringBuilder();
-        if (context != null) {
-            statementBuilder.append(String.format("context %s\n", context));
-        }
-        statementBuilder.append(String.format("define %s: %s\n",
-                definitionName, expression));
-        final var statement = statementBuilder.toString();
-        final var oldContextObjects = this.state.contextObjects;
-        if (contextObjects != null) {
-            this.state.contextObjects = contextObjects;
-        }
-        this.state.pseudoLibrary.addStatement(statement);
-        final EvaluationResult result;
-        try {
-            result = internalEvaluate(definitionName);
-        } finally {
-            this.state.pseudoLibrary.statements.remove(this.state.pseudoLibrary.statements.size() - 1);
-            this.state.contextObjects = oldContextObjects;
-        }
-        return result.forExpression(definitionName).value();
-    }
-
-    public Object evaluateExpression(final String expression) {
-        return evaluateExpression(expression, null, null);
-    }
-
-    public Object withoutState(final Function<State, Object> continuation) {
-        final var oldState = this.state;
-        this.state = new State(this.state.pseudoLibrary.omopVersion);
-        try {
-            return continuation.apply(oldState);
-        } finally {
-            this.state = oldState;
-        }
-    }
-
-    public Object withProfiling(final Supplier<Object> continuation) {
-        final var oldValue = this.isProfiling;
-        this.isProfiling = true;
-        try {
-            return continuation.get();
-        } finally {
-            this.isProfiling = oldValue;
-        }
     }
 
 }
