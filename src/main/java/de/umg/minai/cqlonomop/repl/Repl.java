@@ -53,10 +53,23 @@ public class Repl implements Runnable {
                 // User probably pressed C-d.
                 break;
             }
+            final var currentThread = Thread.currentThread();
+            final Terminal.SignalHandler[] oldHandler = {null};
+            oldHandler[0] = terminal.handle(Terminal.Signal.INT, signal -> {
+                System.out.println("Received SIGINT; Sending the signal again will cause immediate termination");
+                currentThread.interrupt();
+                // Repeated interruption uses original behavior
+                terminal.handle(Terminal.Signal.INT, oldHandler[0]);
+                oldHandler[0] = null;
+            });
             try {
                 this.processor.process(input);
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
+            } finally {
+                if (oldHandler[0] != null) {
+                    terminal.handle(Terminal.Signal.INT, oldHandler[0]);
+                }
             }
         }
     }
