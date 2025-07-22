@@ -31,15 +31,17 @@ public class ErrorPresenter extends AbstractPresenter{
     }
 
     public void presentError(final Exception error) {
-        present(builder -> {
-            if (error instanceof CompilationFailedException compilationFailedException) {
-                presentSpecificError(builder, compilationFailedException);
-            } else if (error instanceof CqlException cqlException) {
-                presentSpecificError(builder, cqlException);
-            } else {
-                presentSpecificError(builder, error);
-            }
-        });
+        present(builder -> presentError(builder, error));
+    }
+
+    public void presentError(final ThemeAwareStringBuilder builder, final Exception error) {
+        if (error instanceof CompilationFailedException compilationFailedException) {
+            presentSpecificError(builder, compilationFailedException);
+        } else if (error instanceof CqlException cqlException) {
+            presentSpecificError(builder, cqlException);
+        } else {
+            presentSpecificError(builder, error);
+        }
     }
 
     private void presentSpecificError(final ThemeAwareStringBuilder builder, final Exception exception) {

@@ -67,8 +67,17 @@ public class ResultPresenter extends AbstractPresenter {
         });
     }
 
+    public Set<String> getSeenResults() {
+        return Set.copyOf(this.seenResults);
+    }
+
     public void reset() {
         this.seenResults.clear();
+    }
+
+    public void reset(final Set<String> state) {
+        reset();
+        this.seenResults.addAll(state);
     }
 
 }
