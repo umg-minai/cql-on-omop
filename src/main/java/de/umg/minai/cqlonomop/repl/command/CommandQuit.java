@@ -23,7 +23,7 @@ public class CommandQuit extends AbstractCommand {
     }
 
     @Override
-    public EvaluationResult run(final String arguments) throws Exception {
+    public void run(final String arguments) throws Exception {
         throw new EndOfFileException();
     }
 

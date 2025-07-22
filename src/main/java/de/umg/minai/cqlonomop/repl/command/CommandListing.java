@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CommandListing extends AbstractCommand {
 
-    private Evaluator evaluator;
+    private final Evaluator evaluator;
 
     public CommandListing(final Evaluator evaluator) {
         super("listing");
@@ -26,10 +26,9 @@ public class CommandListing extends AbstractCommand {
     }
 
     @Override
-    public EvaluationResult run(String arguments) throws Exception {
+    public void run(String arguments) throws Exception {
         final var code = this.evaluator.getPseudoLibrary().getCode();
         System.out.println(code);
-        return null;
     }
 
 }

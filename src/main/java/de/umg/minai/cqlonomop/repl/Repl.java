@@ -5,6 +5,7 @@ import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
 import de.umg.minai.cqlonomop.engine.Configuration;
+import de.umg.minai.cqlonomop.repl.command.CommandProfile;
 import de.umg.minai.cqlonomop.terminal.*;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -53,10 +54,7 @@ public class Repl implements Runnable {
                 break;
             }
             try {
-                final var result = this.processor.process(input);
-                if (result != null) { // TODO(jmoringe): can this be null?
-                    this.resultPresenter.presentResult(result);
-                }
+                this.processor.process(input);
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
             }
@@ -99,7 +97,6 @@ public class Repl implements Runnable {
         final var systemModelInfo = this.evaluator.getEngine().getModel("System").getModelInfo();
         final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
         this.commandProcessor = new CommandProcessor(evaluator);
-        this.processor = new Processor(this.commandProcessor, evaluator);
         try {
             this.terminal = TerminalBuilder.builder().build();
             // TODO(jmoringe): fallback directory if XDG variable is not set
@@ -118,6 +115,10 @@ public class Repl implements Runnable {
         final var valuePresenter = new ValuePresenter(terminal, theme);
         this.resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
         this.errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
+        final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter);
+        this.processor = new Processor(this.commandProcessor, evaluator, outcomePresenter);
+        // CommandProfile is a bit special because it requires the outcome presenter.
+        this.commandProcessor.registerCommand(new CommandProfile(this.evaluator, outcomePresenter));
         try {
             repl();
         } finally {

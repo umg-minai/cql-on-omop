@@ -26,11 +26,10 @@ public class CommandUnset extends AbstractCommand{
     }
 
     @Override
-    public EvaluationResult run(final String arguments) throws Exception {
+    public void run(final String arguments) throws Exception {
         final var parameter = arguments;
         System.out.printf("Removing binding for %s\n", parameter);
         this.evaluator.setParameter(parameter, null);
-        return null;
     }
 
 }

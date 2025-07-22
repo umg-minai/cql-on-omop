@@ -1,7 +1,6 @@
 package de.umg.minai.cqlonomop.repl;
 
 import de.umg.minai.cqlonomop.repl.command.*;
-import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +18,6 @@ public class CommandProcessor {
         registerCommand(new CommandSet(this.evaluator));
         registerCommand(new CommandUnset(this.evaluator));
         registerCommand(new CommandGraph(this.evaluator));
-        registerCommand(new CommandProfile(this.evaluator));
         registerCommand(new CommandReload(this.evaluator));
         registerCommand(new CommandListing(this.evaluator));
     }
@@ -32,7 +30,7 @@ public class CommandProcessor {
         this.commands.put(command.getName(), command);
     }
 
-    public EvaluationResult process(final String string) throws Exception {
+    public void process(final String string) throws Exception {
         final var commandAndArguments = string.substring(1).split("[ \t]+", 2);
         final var commandName = commandAndArguments[0];
         final var command = this.commands.get(commandName);
@@ -48,7 +46,7 @@ public class CommandProcessor {
             command.getArguments().forEach(argument2 -> builder.append(" ").append(argument2));
             throw new RuntimeException(builder.toString());
         } else {
-            return command.run(argument);
+            command.run(argument);
         }
     }
 

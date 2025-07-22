@@ -14,6 +14,6 @@ public interface Command {
 
     String getSyntaxDescription();
 
-    EvaluationResult run(final String arguments) throws Exception;
+    void run(final String arguments) throws Exception;
 
 }

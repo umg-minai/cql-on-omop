@@ -1,30 +1,44 @@
 package de.umg.minai.cqlonomop.repl;
 
+import de.umg.minai.cqlonomop.terminal.OutcomePresenter;
 import org.jline.reader.ParsedLine;
-import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 
 public class Processor {
 
-    final CommandProcessor commandProcessor;
+    private final CommandProcessor commandProcessor;
 
-    final Evaluator evaluator;
+    private final Evaluator evaluator;
 
-    public Processor(final CommandProcessor commandProcessor, final Evaluator evaluator) {
+    private final OutcomePresenter outcomePresenter;
+
+    public Processor(final CommandProcessor commandProcessor,
+                     final Evaluator evaluator,
+                     final OutcomePresenter outcomePresenter) {
         this.commandProcessor = commandProcessor;
         this.evaluator = evaluator;
+        this.outcomePresenter = outcomePresenter;
     }
 
-    public EvaluationResult process(final ParsedLine input) throws Exception {
-        return process(input.line());
+    public void process(final ParsedLine input) throws Exception {
+        process(input.line());
     }
 
-    public EvaluationResult process(final String input) throws Exception {
+    public void process(final String input) throws Exception {
         final var trimmed = input.trim();
+        this.outcomePresenter.beginPresentation();
         if (trimmed.startsWith(",")) {
-            return this.commandProcessor.process(trimmed);
+            this.commandProcessor.process(trimmed);
         } else {
-            return evaluator.evaluate(trimmed);
+            this.evaluator.evaluate(trimmed,
+                    (object, outcome) -> {
+                        synchronized (this) {
+                            this.outcomePresenter.presentOutcome(object, outcome);
+                        }
+                        return 0;
+                    },
+                    intermediaResults -> 0);
         }
+        this.outcomePresenter.endPresentation(); // TODO: if failed
     }
 
 }

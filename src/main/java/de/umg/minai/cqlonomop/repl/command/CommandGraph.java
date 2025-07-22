@@ -31,7 +31,7 @@ public class CommandGraph extends AbstractCommand{
     }
 
     @Override
-    public EvaluationResult run(final String arguments) throws Exception {
+    public void run(final String arguments) throws Exception {
         final var filenameAndExpression = arguments.split(" ", 2);
         final var expression = filenameAndExpression[1];
         final var filename = filenameAndExpression[0];
@@ -69,7 +69,6 @@ public class CommandGraph extends AbstractCommand{
         } else {
             throw new RuntimeException(String.format("The expression evaluated to %s, not a tuple of shape Tuple{patient1 List<Interval<Date>> patient2 List<Interval<Date>> ...}", object));
         }
-        return null;
     }
 
 }

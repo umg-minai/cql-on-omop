@@ -28,7 +28,7 @@ public class CommandFocus extends AbstractCommand {
     }
 
     @Override
-    public EvaluationResult run(String arguments) throws Exception {
+    public void run(String arguments) throws Exception {
         final var expression = arguments;
         final var object = this.evaluator.evaluateExpression(expression, "Unfiltered", new HashSet<>());
         System.out.print("Focussing on ");
@@ -45,7 +45,6 @@ public class CommandFocus extends AbstractCommand {
                 state.contextObjects = Set.of(object);
             }
         });
-        return null;
     }
 
 }

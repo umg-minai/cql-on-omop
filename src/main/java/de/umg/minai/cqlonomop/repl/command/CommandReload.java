@@ -26,9 +26,8 @@ public class CommandReload extends AbstractCommand {
     }
 
     @Override
-    public EvaluationResult run(final String arguments) throws Exception {
+    public void run(final String arguments) throws Exception {
         this.evaluator.clearLibraryCache();
-        return null;
     }
 
 }
