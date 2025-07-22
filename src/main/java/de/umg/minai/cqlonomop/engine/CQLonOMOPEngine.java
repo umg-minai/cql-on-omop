@@ -130,6 +130,8 @@ public class CQLonOMOPEngine {
         return result;
     }
 
+    // TODO forgetLibrary
+
     private void prepareOneLibrary(final VersionedIdentifier libraryIdentifier,
                                    final List<CqlCompilerException> errors,
                                    final List<Library> result) {
@@ -178,6 +180,13 @@ public class CQLonOMOPEngine {
         }
     }
 
+    private void prefillCache(final Cache cache, final Cache initialContents) {
+        initialContents.getExpressions().forEach((library, expressions) ->
+                expressions.forEach((name, result) ->
+                        cache.cacheExpression(library, name, result)));
+        initialContents.getFunctionCache().forEach(cache::cacheFunctionDef);
+    }
+
     public <R> R withPreparedEngineSession(final Cache initialCache,
                                            final Function<EngineSession, R> continuation) {
         return withEngineSession(session -> {
@@ -207,20 +216,16 @@ public class CQLonOMOPEngine {
         });
     }
 
-    private void prefillCache(final Cache cache, final Cache initialContents) {
-        initialContents.getExpressions().forEach((library, expressions) ->
-                expressions.forEach((name, result) ->
-                        cache.cacheExpression(library, name, result)));
-        initialContents.getFunctionCache().forEach(cache::cacheFunctionDef);
-    }
-
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
                                             final Map<String, Object> parameterBindings,
                                             final Cache initialCache) {
-        return withEvaluationResult(library, contextObject, parameterBindings, initialCache, result -> result);
+        return withEvaluationResult(library,
+                contextObject,
+                parameterBindings,
+                initialCache,
+                result -> result);
     }
-
 
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
