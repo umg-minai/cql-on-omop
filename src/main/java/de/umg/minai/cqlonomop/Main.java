@@ -5,6 +5,7 @@ import de.umg.minai.cqlonomop.repl.Repl;
 import picocli.CommandLine;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @CommandLine.Command(
         name = "cql-on-omop",
@@ -15,7 +16,7 @@ import java.util.List;
         },
         mixinStandardHelpOptions = true
 )
-public class Main implements Runnable {
+public class Main implements Callable<Integer> {
 
     public static void main(String[] args) {
         final var exitCode = new CommandLine(new Main()).execute(args);
@@ -23,8 +24,9 @@ public class Main implements Runnable {
     }
 
     @Override
-    public void run() {
-        System.out.printf("Available sub-commands: %s%n", List.of("TODO"));
+    public Integer call() {
+        System.out.printf("Available sub-commands: %s%n", List.of("repl, main")); // TODO(jmoringe): obtain this programatically
+        return CommandLine.ExitCode.USAGE;
     }
 
 }
