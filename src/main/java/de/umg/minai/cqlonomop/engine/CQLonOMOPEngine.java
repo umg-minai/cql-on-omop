@@ -1,10 +1,12 @@
 package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
+import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.*;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.cql2elm.model.Model;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hl7.cql.model.ModelIdentifier;
 import org.hl7.cql.model.NamespaceManager;
@@ -22,6 +24,8 @@ import java.util.*;
 import java.util.function.Function;
 
 public class CQLonOMOPEngine {
+
+    public record EngineSession(CqlEngine cqlEngine, Session session, EntityManager entityManager) {}
 
     private final ModelIdentifier modelIdentifier;
 
@@ -114,8 +118,7 @@ public class CQLonOMOPEngine {
     }
 
     public List<Library> prepareLibrary(final VersionedIdentifier libraryIdentifier) {
-        // "Compilation" proceeds despite errors, collect errors in a
-        // list.
+        // "Compilation" proceeds despite errors, collect errors in a list.
         final var errors = new ArrayList<CqlCompilerException>();
         final var result = new LinkedList<Library>();
         prepareOneLibrary(libraryIdentifier, errors, result);
@@ -151,29 +154,56 @@ public class CQLonOMOPEngine {
     }
 
     public CqlEngine evaluateExpressionsIntoCache(final Map<VersionedIdentifier, Set<String>> expressions) {
-        return withCqlEngine(engine -> {
+        return withEngineSession(session -> {
+            final var engine = session.cqlEngine();
             engine.getCache().setExpressionCaching(true);
             expressions.forEach(engine::evaluate);
             return engine;
         });
     }
 
-    public EvaluationResult evaluateLibrary(final String library,
-                                            final Object contextObject,
-                                            final Map<String, Object> parameterBindings,
-                                            final Cache initialCache) {
-        return withCqlEngine((engine) -> {
+    public <R> R withEngineSession(final Function<EngineSession, R> continuation) {
+        try (var session = this.sessionFactory.openSession();
+             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
+            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
+            final var dataProviders = Map.<String, DataProvider>of(
+                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
+                    dataProvider);
+            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
+            final var options = this.isProfiling
+                    ? Set.of(CqlEngine.Options.EnableProfiling)
+                    : Set.<CqlEngine.Options>of();
+            final var engine = new CqlEngine(environment, options);
+            return continuation.apply(new EngineSession(engine, session, entityManager));
+        }
+    }
+
+    public <R> R withPreparedEngineSession(final Cache initialCache,
+                                           final Function<EngineSession, R> continuation) {
+        return withEngineSession(session -> {
+            final var engine = session.cqlEngine();
             final var cache = engine.getCache();
             cache.setExpressionCaching(true);
             if (initialCache != null) {
                 prefillCache(cache, initialCache);
             }
+            return continuation.apply(session);
+        });
+    }
+
+    public <R> R withEvaluationResult(final String library,
+                                      final Object contextObject,
+                                      final Map<String, Object> parameterBindings,
+                                      final Cache initialCache,
+                                      final Function<EvaluationResult, R> continuation) {
+        return withPreparedEngineSession(initialCache, session -> {
+            final var engine = session.cqlEngine();
             final var result = contextObject == null
                     ? engine.evaluate(library, parameterBindings)
                     : engine.evaluate(library,
                     Pair.of("Patient", contextObject), // TODO(jmoringe): can we know the name of the context?
                     parameterBindings);
-            return result;
+            return continuation.apply(result);
         });
     }
 
@@ -183,6 +213,14 @@ public class CQLonOMOPEngine {
                         cache.cacheExpression(library, name, result)));
         initialContents.getFunctionCache().forEach(cache::cacheFunctionDef);
     }
+
+    public EvaluationResult evaluateLibrary(final String library,
+                                            final Object contextObject,
+                                            final Map<String, Object> parameterBindings,
+                                            final Cache initialCache) {
+        return withEvaluationResult(library, contextObject, parameterBindings, initialCache, result -> result);
+    }
+
 
     public EvaluationResult evaluateLibrary(final String library,
                                             final Object contextObject,
@@ -196,22 +234,6 @@ public class CQLonOMOPEngine {
 
     public EvaluationResult evaluateLibrary(final String library) {
         return evaluateLibrary(library, null, Map.of());
-    }
-
-    private <R> R withCqlEngine(final Function<CqlEngine, R> continuation) {
-        try (var session = this.sessionFactory.openSession();
-             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
-            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
-            final var dataProviders = Map.<String, DataProvider>of(
-                    String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
-                    dataProvider);
-            final var environment = new Environment(this.libraryManager, dataProviders, this.terminologyProvider);
-            final var options = this.isProfiling
-                    ? Set.of(CqlEngine.Options.EnableProfiling)
-                    : Set.<CqlEngine.Options>of();
-            final var engine = new CqlEngine(environment, options);
-            return continuation.apply(engine);
-        }
     }
 
 }
