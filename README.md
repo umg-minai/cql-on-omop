@@ -85,11 +85,11 @@ E1 => Tuple Tuple {
 
 ### Batch Evaluation
 
-TODO explain how to specify which code to run.
+To non-interactively evaluate the definitions in a CQL library, information for the database connection as well as the name of the library has to be specified on the commandline:
 
 ```bash
 CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
-  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME
+  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME CQL-LIBRARY-NAME
 ```
 
 Evaluation results will be printed to the standard output stream of the process.

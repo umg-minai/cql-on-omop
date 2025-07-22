@@ -26,13 +26,18 @@ import java.util.concurrent.Callable;
 public class Batch implements Callable<Integer> {
 
     @ArgGroup(validate = false, heading = "Database Options%n")
-    DatabaseOptions databaseOptions = new DatabaseOptions();
+    private DatabaseOptions databaseOptions = new DatabaseOptions();
 
     @ArgGroup(validate = false, heading = "CQL Options%n")
-    CqlOptions cqlOptions;
+    private CqlOptions cqlOptions;
 
     @ArgGroup(validate = false, heading = "Other Options%n")
-    ExecutionOptions executionOptions;
+    private ExecutionOptions executionOptions;
+
+    @CommandLine.Parameters(
+            arity = "1"
+    )
+    String libraryToEvaluate;
 
     private static final int SUCCESS = 0;
     private static final int FAILURE = 1;
@@ -81,7 +86,7 @@ public class Batch implements Callable<Integer> {
             final var query = criteria.select(criteria.from(clazz));
             final var persons = entityManager.createQuery(query).getResultStream().toList();
             outcomePresenter.beginPresentation();
-            final var result = engine.prepareAndEvaluateLibraryMapReduce("15ProphylacticAnticoagulation",
+            final var result = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
                     persons,
                     Map.of(),
                     (contextObject, outcome) -> {
