@@ -1,25 +1,20 @@
 package de.umg.minai.cqlonomop.batch;
 
-import OMOP.MappingInfo;
 import OMOP.v54.Person;
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
-import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
-import de.umg.minai.cqlonomop.engine.ConnectionFactory;
+import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import de.umg.minai.cqlonomop.terminal.*;
-import org.cqframework.cql.cql2elm.DefaultLibrarySourceProvider;
-import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 
 @Command(
         name = "batch",
@@ -47,7 +42,7 @@ public class Batch implements Runnable {
             configuration = executionOptions.applyToConfiguration(configuration);
         }
         //
-        final var engine = new CQLonOMOPEngine(configuration);
+        final var engine = new MapReduceEngine(configuration);
 
         final Terminal terminal;
         final Theme theme;
@@ -61,7 +56,7 @@ public class Batch implements Runnable {
         final var valuePresenter = new ValuePresenter(terminal, theme);
         final var resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
-
+        final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter);
         try {
             final var sessionFactory = engine.getSessionFactory();
             final var entityManager = sessionFactory.createEntityManager();
@@ -70,13 +65,18 @@ public class Batch implements Runnable {
                     .createQuery(clazz);
             final var query = criteria.select(criteria.from(clazz));
             final var persons = entityManager.createQuery(query).getResultStream().toList();
-            persons.forEach(person -> {
-                System.out.printf("Context Object %s%n", person);
-                final var result = engine.evaluateLibrary("15ProphylacticAnticoagulation", person);
-                resultPresenter.reset();
-                resultPresenter.presentResult(result);
-                terminal.flush();
-            });
+            outcomePresenter.beginPresentation();
+            engine.prepareAndEvaluateLibraryMapReduce("15ProphylacticAnticoagulation",
+                    persons,
+                    Map.of(),
+                    (contextObject, outcome) -> {
+                        synchronized (this) {
+                            outcomePresenter.presentOutcome(contextObject, outcome);
+                        }
+                        return 0;
+                    },
+                    ignored -> 0);
+            outcomePresenter.endPresentation();
         } catch (Exception e) {
             errorPresenter.presentError(e);
         }
