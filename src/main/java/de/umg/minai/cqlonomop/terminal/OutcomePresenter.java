@@ -28,6 +28,12 @@ public class OutcomePresenter extends AbstractPresenter {
 
     private Set<String> newState = null;
 
+    private static final int SUCCESS = 0;
+    private static final int FAILURE = 1;
+    private final int[] counts = {0, 0};
+
+    private long startTime = 0;
+
     public OutcomePresenter(final Terminal terminal,
                             final Theme theme,
                             final ResultPresenter resultPresenter,
@@ -39,11 +45,33 @@ public class OutcomePresenter extends AbstractPresenter {
 
     public void beginPresentation() {
         this.newState = null;
+        this.counts[SUCCESS] = 0;
+        this.counts[FAILURE] = 0;
+        this.startTime = System.nanoTime();
     }
 
     public void endPresentation() {
         if (this.newState != null) {
             this.oldState = this.newState;
+        }
+        final var endTime = System.nanoTime();
+        final var elapsed = endTime - this.startTime;
+        if (counts[FAILURE] > 0 || (elapsed) > 2_000_000_000) {
+            final var builder = new ThemeAwareStringBuilder(this.theme)
+                    .style(this.theme.styleForElement(Theme.Element.INACTIVE))
+                    .append(String.format("%d ms", elapsed / 1_000_000))
+                    .append(", ")
+                    .append(String.valueOf(counts[SUCCESS]))
+                    .append(" ")
+                    .append(counts[SUCCESS] == 1 ? "success" : "successes")
+                    .append(", ");
+            if (counts[FAILURE] > 0) {
+                builder.style(this.theme.styleForElement(Theme.Element.ERROR));
+            }
+            builder.append(String.valueOf(counts[FAILURE]))
+                    .append(" ")
+                    .append(counts[FAILURE] == 1 ? "failure" : "failures")
+                    .println(this.terminal);
         }
     }
 
@@ -58,9 +86,11 @@ public class OutcomePresenter extends AbstractPresenter {
                     this.newState = this.resultPresenter.getSeenResults();
                 }
             }
+            this.counts[SUCCESS]++;
         } else if (outcome instanceof MapReduceEngine.Outcome.Failure failure) {
             printContextObject(builder, contextObject);
             this.errorPresenter.presentError(builder, failure.error());
+            this.counts[FAILURE]++;
         }
         builder.print(this.terminal);
         this.terminal.flush();
