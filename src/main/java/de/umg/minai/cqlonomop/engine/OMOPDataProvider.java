@@ -3,6 +3,9 @@ package de.umg.minai.cqlonomop.engine;
 import OMOP.MappingInfo;
 import jakarta.persistence.EntityManager;
 import org.opencds.cqf.cql.engine.data.CompositeDataProvider;
+import org.opencds.cqf.cql.engine.elm.executing.obfuscate.PHIObfuscator;
+
+import java.util.function.Supplier;
 
 public class OMOPDataProvider extends CompositeDataProvider {
 
@@ -23,6 +26,11 @@ public class OMOPDataProvider extends CompositeDataProvider {
 
     public MappingInfo getModelInfo() {
         return this.mappingInfo;
+    }
+
+    @Override
+    public Supplier<PHIObfuscator> phiObfuscationSupplier() {
+        return () -> (PHIObfuscator) Object::toString;
     }
 
 }
