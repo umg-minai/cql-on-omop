@@ -6,6 +6,7 @@ import org.opencds.cqf.cql.engine.model.ModelResolver;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class OMOPModelResolver implements ModelResolver {
@@ -76,7 +77,7 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public Object createInstance(String typeName) {
+    public Object createInstance(final String typeName) {
         final var clazz = mappingInfo.getDataTypeInfo(typeName).getClazz();
         final Constructor<?> constructor;
         try {
@@ -92,8 +93,19 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public void setValue(Object o, String s, Object o1) {
-        throw new RuntimeException(String.format("setValue(%s, %s, %s) not implemented", o, s, o1));
+    public void setValue(final Object object, final String field, final Object value) {
+        final var clazz = object.getClass();
+        final var methodName = "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
+        final var method = Arrays.stream(clazz.getMethods())
+                .filter(m -> m.getName().equals(methodName))
+                .findFirst().orElseThrow(() -> new RuntimeException(String.format("No setter method found for '%s' in object of type %s",
+                        field, object.getClass().getName())));
+        try {
+            method.invoke(object, value);
+        } catch (final Exception e) {
+            throw new RuntimeException(String.format("Could not set '%s' in object of type %s to %s using %s: %s",
+                    field, object.getClass().getName(), value, method, e), e);
+        }
     }
 
     @Override
@@ -107,8 +119,15 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
-    public String resolveId(Object o) {
-        throw new RuntimeException(String.format("resolveId(%s) not implemented", o));
+    public String resolveId(Object target) {
+        final var dataTypeInfo = mappingInfo.getDataTypeInfo(target.getClass().getSimpleName());
+        if (dataTypeInfo != null) {
+            final var contextInfo = dataTypeInfo.infoForContext("person", target);
+            if (contextInfo != null) {
+                return contextInfo.columnName();
+            }
+        }
+        throw new RuntimeException(String.format("resolveId(%s) not implemented", target));
     }
 
 }
