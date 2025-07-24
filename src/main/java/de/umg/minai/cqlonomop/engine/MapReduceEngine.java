@@ -7,6 +7,7 @@ import org.opencds.cqf.cql.engine.debug.DebugResult;
 import org.opencds.cqf.cql.engine.execution.Cache;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -163,8 +164,12 @@ public class MapReduceEngine extends CQLonOMOPEngine {
             }
             return reducer.apply(intermediateResults);
         } else {
-            return internalEvaluate(library, contextObject, parameterBindings, initialCache, outcome ->
-                    reducer.apply(Map.of(contextObject, mapper.apply(contextObject, outcome))));
+            // Roundabout creation and population of the map is due to the fact that it has to be mutable.
+            final var intermediate = new HashMap<Object, I>();
+            return internalEvaluate(library, contextObject, parameterBindings, initialCache, outcome -> {
+                intermediate.put(contextObject, mapper.apply(contextObject, outcome));
+                return reducer.apply(intermediate);
+            });
         }
     }
 
