@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "note", schema = "cds_cdm")
 public class Note {
 
-    @Column(name = "encoding_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "encoding_concept_id", updatable = false, nullable = false)
     private Integer encodingConceptId;
     
     public Integer getEncodingConceptId() {
@@ -25,7 +24,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "encoding_concept_id")
+    @JoinColumn(name = "encoding_concept_id", insertable = false,
+                updatable = false)
     private Concept encodingConcept;
     
     public Concept getEncodingConcept() {
@@ -37,8 +37,7 @@ public class Note {
         this.encodingConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "language_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "language_concept_id", updatable = false, nullable = false)
     private Integer languageConceptId;
     
     public Integer getLanguageConceptId() {
@@ -46,7 +45,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "language_concept_id")
+    @JoinColumn(name = "language_concept_id", insertable = false,
+                updatable = false)
     private Concept languageConcept;
     
     public Concept getLanguageConcept() {
@@ -58,8 +58,7 @@ public class Note {
         this.languageConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "note_class_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "note_class_concept_id", updatable = false, nullable = false)
     private Integer noteClassConceptId;
     
     public Integer getNoteClassConceptId() {
@@ -67,7 +66,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_class_concept_id")
+    @JoinColumn(name = "note_class_concept_id", insertable = false,
+                updatable = false)
     private Concept noteClassConcept;
     
     public Concept getNoteClassConcept() {
@@ -79,8 +79,7 @@ public class Note {
         this.noteClassConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "note_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "note_date", updatable = false, nullable = false)
     private ZonedDateTime noteDate;
     
     public Date getNoteDate() {
@@ -91,8 +90,7 @@ public class Note {
         this.noteDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "note_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "note_datetime", updatable = false, nullable = true)
     private ZonedDateTime noteDatetime;
     
     public Optional<DateTime> getNoteDatetime() {
@@ -111,8 +109,8 @@ public class Note {
         }
     }
 
-    @Column(name = "note_event_field_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "note_event_field_concept_id", updatable = false,
+            nullable = true)
     private Integer noteEventFieldConceptId;
     
     public Optional<Integer> getNoteEventFieldConceptId() {
@@ -124,7 +122,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_event_field_concept_id")
+    @JoinColumn(name = "note_event_field_concept_id", insertable = false,
+                updatable = false)
     private Concept noteEventFieldConcept;
     
     public Optional<Concept> getNoteEventFieldConcept() {
@@ -141,8 +140,7 @@ public class Note {
         }
     }
 
-    @Column(name = "note_event_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "note_event_id", updatable = false, nullable = true)
     private Integer noteEventId;
     
     public Optional<Integer> getNoteEventId() {
@@ -159,16 +157,14 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "note_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "note_id", updatable = false, nullable = false)
     private Integer noteId;
     
     public Integer getNoteId() {
         return this.noteId;
     }
 
-    @Column(name = "note_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "note_source_value", updatable = false, nullable = true)
     private String noteSourceValue;
     
     public Optional<String> getNoteSourceValue() {
@@ -183,8 +179,7 @@ public class Note {
         this.noteSourceValue = newValue;
     }
 
-    @Column(name = "note_text", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "note_text", updatable = false, nullable = false)
     private String noteText;
     
     public String getNoteText() {
@@ -195,8 +190,7 @@ public class Note {
         this.noteText = newValue;
     }
 
-    @Column(name = "note_title", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "note_title", updatable = false, nullable = true)
     private String noteTitle;
     
     public Optional<String> getNoteTitle() {
@@ -211,8 +205,7 @@ public class Note {
         this.noteTitle = newValue;
     }
 
-    @Column(name = "note_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "note_type_concept_id", updatable = false, nullable = false)
     private Integer noteTypeConceptId;
     
     public Integer getNoteTypeConceptId() {
@@ -220,7 +213,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_type_concept_id")
+    @JoinColumn(name = "note_type_concept_id", insertable = false,
+                updatable = false)
     private Concept noteTypeConcept;
     
     public Concept getNoteTypeConcept() {
@@ -232,8 +226,7 @@ public class Note {
         this.noteTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -241,7 +234,7 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -253,8 +246,7 @@ public class Note {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -266,7 +258,7 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -283,8 +275,7 @@ public class Note {
         }
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -296,7 +287,7 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -313,8 +304,7 @@ public class Note {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -326,7 +316,8 @@ public class Note {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

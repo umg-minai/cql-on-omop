@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "observation", schema = "cds_cdm")
 public class Observation {
 
-    @Column(name = "obs_event_field_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "obs_event_field_concept_id", updatable = false,
+            nullable = true)
     private Integer obsEventFieldConceptId;
     
     public Optional<Integer> getObsEventFieldConceptId() {
@@ -29,7 +29,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "obs_event_field_concept_id")
+    @JoinColumn(name = "obs_event_field_concept_id", insertable = false,
+                updatable = false)
     private Concept obsEventFieldConcept;
     
     public Optional<Concept> getObsEventFieldConcept() {
@@ -46,8 +47,8 @@ public class Observation {
         }
     }
 
-    @Column(name = "observation_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "observation_concept_id", updatable = false,
+            nullable = false)
     private Integer observationConceptId;
     
     public Integer getObservationConceptId() {
@@ -55,7 +56,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "observation_concept_id")
+    @JoinColumn(name = "observation_concept_id", insertable = false,
+                updatable = false)
     private Concept observationConcept;
     
     public Concept getObservationConcept() {
@@ -67,8 +69,7 @@ public class Observation {
         this.observationConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "observation_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "observation_date", updatable = false, nullable = false)
     private ZonedDateTime observationDate;
     
     public Date getObservationDate() {
@@ -79,8 +80,7 @@ public class Observation {
         this.observationDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "observation_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "observation_datetime", updatable = false, nullable = true)
     private ZonedDateTime observationDatetime;
     
     public Optional<DateTime> getObservationDatetime() {
@@ -99,8 +99,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "observation_event_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "observation_event_id", updatable = false, nullable = true)
     private Integer observationEventId;
     
     public Optional<Integer> getObservationEventId() {
@@ -117,16 +116,15 @@ public class Observation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "observation_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "observation_id", updatable = false, nullable = false)
     private Integer observationId;
     
     public Integer getObservationId() {
         return this.observationId;
     }
 
-    @Column(name = "observation_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "observation_source_concept_id", updatable = false,
+            nullable = true)
     private Integer observationSourceConceptId;
     
     public Optional<Integer> getObservationSourceConceptId() {
@@ -138,7 +136,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "observation_source_concept_id")
+    @JoinColumn(name = "observation_source_concept_id", insertable = false,
+                updatable = false)
     private Concept observationSourceConcept;
     
     public Optional<Concept> getObservationSourceConcept() {
@@ -155,8 +154,8 @@ public class Observation {
         }
     }
 
-    @Column(name = "observation_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "observation_source_value", updatable = false,
+            nullable = true)
     private String observationSourceValue;
     
     public Optional<String> getObservationSourceValue() {
@@ -171,8 +170,8 @@ public class Observation {
         this.observationSourceValue = newValue;
     }
 
-    @Column(name = "observation_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "observation_type_concept_id", updatable = false,
+            nullable = false)
     private Integer observationTypeConceptId;
     
     public Integer getObservationTypeConceptId() {
@@ -180,7 +179,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "observation_type_concept_id")
+    @JoinColumn(name = "observation_type_concept_id", insertable = false,
+                updatable = false)
     private Concept observationTypeConcept;
     
     public Concept getObservationTypeConcept() {
@@ -192,8 +192,7 @@ public class Observation {
         this.observationTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -201,7 +200,7 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -213,8 +212,7 @@ public class Observation {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -226,7 +224,7 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -243,8 +241,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "qualifier_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "qualifier_concept_id", updatable = false, nullable = true)
     private Integer qualifierConceptId;
     
     public Optional<Integer> getQualifierConceptId() {
@@ -256,7 +253,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "qualifier_concept_id")
+    @JoinColumn(name = "qualifier_concept_id", insertable = false,
+                updatable = false)
     private Concept qualifierConcept;
     
     public Optional<Concept> getQualifierConcept() {
@@ -273,8 +271,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "qualifier_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "qualifier_source_value", updatable = false, nullable = true)
     private String qualifierSourceValue;
     
     public Optional<String> getQualifierSourceValue() {
@@ -289,8 +286,7 @@ public class Observation {
         this.qualifierSourceValue = newValue;
     }
 
-    @Column(name = "unit_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_concept_id", updatable = false, nullable = true)
     private Integer unitConceptId;
     
     public Optional<Integer> getUnitConceptId() {
@@ -302,7 +298,7 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_concept_id")
+    @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
     
     public Optional<Concept> getUnitConcept() {
@@ -319,8 +315,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "unit_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_source_value", updatable = false, nullable = true)
     private String unitSourceValue;
     
     public Optional<String> getUnitSourceValue() {
@@ -335,8 +330,7 @@ public class Observation {
         this.unitSourceValue = newValue;
     }
 
-    @Column(name = "value_as_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "value_as_concept_id", updatable = false, nullable = true)
     private Integer valueAsConceptId;
     
     public Optional<Integer> getValueAsConceptId() {
@@ -348,7 +342,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "value_as_concept_id")
+    @JoinColumn(name = "value_as_concept_id", insertable = false,
+                updatable = false)
     private Concept valueAsConcept;
     
     public Optional<Concept> getValueAsConcept() {
@@ -365,8 +360,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "value_as_number", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_number", updatable = false, nullable = true)
     private BigDecimal valueAsNumber;
     
     public Optional<BigDecimal> getValueAsNumber() {
@@ -381,8 +375,7 @@ public class Observation {
         this.valueAsNumber = newValue;
     }
 
-    @Column(name = "value_as_string", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_string", updatable = false, nullable = true)
     private String valueAsString;
     
     public Optional<String> getValueAsString() {
@@ -397,8 +390,7 @@ public class Observation {
         this.valueAsString = newValue;
     }
 
-    @Column(name = "value_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_source_value", updatable = false, nullable = true)
     private String valueSourceValue;
     
     public Optional<String> getValueSourceValue() {
@@ -413,8 +405,7 @@ public class Observation {
         this.valueSourceValue = newValue;
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -426,7 +417,7 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -443,8 +434,7 @@ public class Observation {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -456,7 +446,8 @@ public class Observation {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

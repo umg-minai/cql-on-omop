@@ -19,16 +19,16 @@ public class FactRelationship {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "domain_concept_id_1", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "domain_concept_id_1", updatable = false,
+                nullable = false)
         private Integer domainConceptId1;
 
-        @Column(name = "domain_concept_id_2", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "domain_concept_id_2", updatable = false,
+                nullable = false)
         private Integer domainConceptId2;
 
-        @Column(name = "relationship_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "relationship_concept_id", updatable = false,
+                nullable = false)
         private Integer relationshipConceptId;
 
         @Override
@@ -79,7 +79,8 @@ public class FactRelationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "domain_concept_id_1")
+    @JoinColumn(name = "domain_concept_id_1", insertable = false,
+                updatable = false)
     @MapsId("domainConceptId1")
     private Concept domainConcept1;
     
@@ -97,7 +98,8 @@ public class FactRelationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "domain_concept_id_2")
+    @JoinColumn(name = "domain_concept_id_2", insertable = false,
+                updatable = false)
     @MapsId("domainConceptId2")
     private Concept domainConcept2;
     
@@ -110,8 +112,7 @@ public class FactRelationship {
         this.compoundId.domainConceptId2 = newValue.getConceptId();
     }
 
-    @Column(name = "fact_id_1", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "fact_id_1", updatable = false, nullable = false)
     private Integer factId1;
     
     public Integer getFactId1() {
@@ -122,8 +123,7 @@ public class FactRelationship {
         this.factId1 = newValue;
     }
 
-    @Column(name = "fact_id_2", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "fact_id_2", updatable = false, nullable = false)
     private Integer factId2;
     
     public Integer getFactId2() {
@@ -139,7 +139,8 @@ public class FactRelationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "relationship_concept_id")
+    @JoinColumn(name = "relationship_concept_id", insertable = false,
+                updatable = false)
     @MapsId("relationshipConceptId")
     private Concept relationshipConcept;
     

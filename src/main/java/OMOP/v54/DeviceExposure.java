@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "device_exposure", schema = "cds_cdm")
 public class DeviceExposure {
 
-    @Column(name = "device_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "device_concept_id", updatable = false, nullable = false)
     private Integer deviceConceptId;
     
     public Integer getDeviceConceptId() {
@@ -25,7 +24,8 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_concept_id")
+    @JoinColumn(name = "device_concept_id", insertable = false,
+                updatable = false)
     private Concept deviceConcept;
     
     public Concept getDeviceConcept() {
@@ -37,8 +37,8 @@ public class DeviceExposure {
         this.deviceConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "device_exposure_end_date", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "device_exposure_end_date", updatable = false,
+            nullable = true)
     private ZonedDateTime deviceExposureEndDate;
     
     public Optional<Date> getDeviceExposureEndDate() {
@@ -57,8 +57,8 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "device_exposure_end_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "device_exposure_end_datetime", updatable = false,
+            nullable = true)
     private ZonedDateTime deviceExposureEndDatetime;
     
     public Optional<DateTime> getDeviceExposureEndDatetime() {
@@ -79,16 +79,15 @@ public class DeviceExposure {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "device_exposure_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "device_exposure_id", updatable = false, nullable = false)
     private Integer deviceExposureId;
     
     public Integer getDeviceExposureId() {
         return this.deviceExposureId;
     }
 
-    @Column(name = "device_exposure_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "device_exposure_start_date", updatable = false,
+            nullable = false)
     private ZonedDateTime deviceExposureStartDate;
     
     public Date getDeviceExposureStartDate() {
@@ -99,8 +98,8 @@ public class DeviceExposure {
         this.deviceExposureStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "device_exposure_start_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "device_exposure_start_datetime", updatable = false,
+            nullable = true)
     private ZonedDateTime deviceExposureStartDatetime;
     
     public Optional<DateTime> getDeviceExposureStartDatetime() {
@@ -119,8 +118,8 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "device_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "device_source_concept_id", updatable = false,
+            nullable = true)
     private Integer deviceSourceConceptId;
     
     public Optional<Integer> getDeviceSourceConceptId() {
@@ -132,7 +131,8 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_source_concept_id")
+    @JoinColumn(name = "device_source_concept_id", insertable = false,
+                updatable = false)
     private Concept deviceSourceConcept;
     
     public Optional<Concept> getDeviceSourceConcept() {
@@ -149,8 +149,7 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "device_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "device_source_value", updatable = false, nullable = true)
     private String deviceSourceValue;
     
     public Optional<String> getDeviceSourceValue() {
@@ -165,8 +164,8 @@ public class DeviceExposure {
         this.deviceSourceValue = newValue;
     }
 
-    @Column(name = "device_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "device_type_concept_id", updatable = false,
+            nullable = false)
     private Integer deviceTypeConceptId;
     
     public Integer getDeviceTypeConceptId() {
@@ -174,7 +173,8 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_type_concept_id")
+    @JoinColumn(name = "device_type_concept_id", insertable = false,
+                updatable = false)
     private Concept deviceTypeConcept;
     
     public Concept getDeviceTypeConcept() {
@@ -186,8 +186,7 @@ public class DeviceExposure {
         this.deviceTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -195,7 +194,7 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -207,8 +206,7 @@ public class DeviceExposure {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "production_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "production_id", updatable = false, nullable = true)
     private String productionId;
     
     public Optional<String> getProductionId() {
@@ -223,8 +221,7 @@ public class DeviceExposure {
         this.productionId = newValue;
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -236,7 +233,7 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -253,8 +250,7 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "quantity", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "quantity", updatable = false, nullable = true)
     private Integer quantity;
     
     public Optional<Integer> getQuantity() {
@@ -269,8 +265,7 @@ public class DeviceExposure {
         this.quantity = newValue;
     }
 
-    @Column(name = "unique_device_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unique_device_id", updatable = false, nullable = true)
     private String uniqueDeviceId;
     
     public Optional<String> getUniqueDeviceId() {
@@ -285,8 +280,7 @@ public class DeviceExposure {
         this.uniqueDeviceId = newValue;
     }
 
-    @Column(name = "unit_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_concept_id", updatable = false, nullable = true)
     private Integer unitConceptId;
     
     public Optional<Integer> getUnitConceptId() {
@@ -298,7 +292,7 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_concept_id")
+    @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
     
     public Optional<Concept> getUnitConcept() {
@@ -315,8 +309,7 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "unit_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "unit_source_concept_id", updatable = false, nullable = true)
     private Integer unitSourceConceptId;
     
     public Optional<Integer> getUnitSourceConceptId() {
@@ -328,7 +321,8 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_source_concept_id")
+    @JoinColumn(name = "unit_source_concept_id", insertable = false,
+                updatable = false)
     private Concept unitSourceConcept;
     
     public Optional<Concept> getUnitSourceConcept() {
@@ -345,8 +339,7 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "unit_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_source_value", updatable = false, nullable = true)
     private String unitSourceValue;
     
     public Optional<String> getUnitSourceValue() {
@@ -361,8 +354,7 @@ public class DeviceExposure {
         this.unitSourceValue = newValue;
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -374,7 +366,7 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -391,8 +383,7 @@ public class DeviceExposure {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -404,7 +395,8 @@ public class DeviceExposure {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

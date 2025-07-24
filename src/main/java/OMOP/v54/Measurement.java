@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "measurement", schema = "cds_cdm")
 public class Measurement {
 
-    @Column(name = "meas_event_field_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "meas_event_field_concept_id", updatable = false,
+            nullable = true)
     private Integer measEventFieldConceptId;
     
     public Optional<Integer> getMeasEventFieldConceptId() {
@@ -29,7 +29,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "meas_event_field_concept_id")
+    @JoinColumn(name = "meas_event_field_concept_id", insertable = false,
+                updatable = false)
     private Concept measEventFieldConcept;
     
     public Optional<Concept> getMeasEventFieldConcept() {
@@ -46,8 +47,8 @@ public class Measurement {
         }
     }
 
-    @Column(name = "measurement_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "measurement_concept_id", updatable = false,
+            nullable = false)
     private Integer measurementConceptId;
     
     public Integer getMeasurementConceptId() {
@@ -55,7 +56,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "measurement_concept_id")
+    @JoinColumn(name = "measurement_concept_id", insertable = false,
+                updatable = false)
     private Concept measurementConcept;
     
     public Concept getMeasurementConcept() {
@@ -67,8 +69,7 @@ public class Measurement {
         this.measurementConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "measurement_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "measurement_date", updatable = false, nullable = false)
     private ZonedDateTime measurementDate;
     
     public Date getMeasurementDate() {
@@ -79,8 +80,7 @@ public class Measurement {
         this.measurementDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "measurement_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "measurement_datetime", updatable = false, nullable = true)
     private ZonedDateTime measurementDatetime;
     
     public Optional<DateTime> getMeasurementDatetime() {
@@ -99,8 +99,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "measurement_event_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "measurement_event_id", updatable = false, nullable = true)
     private Integer measurementEventId;
     
     public Optional<Integer> getMeasurementEventId() {
@@ -117,16 +116,15 @@ public class Measurement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "measurement_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "measurement_id", updatable = false, nullable = false)
     private Integer measurementId;
     
     public Integer getMeasurementId() {
         return this.measurementId;
     }
 
-    @Column(name = "measurement_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "measurement_source_concept_id", updatable = false,
+            nullable = true)
     private Integer measurementSourceConceptId;
     
     public Optional<Integer> getMeasurementSourceConceptId() {
@@ -138,7 +136,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "measurement_source_concept_id")
+    @JoinColumn(name = "measurement_source_concept_id", insertable = false,
+                updatable = false)
     private Concept measurementSourceConcept;
     
     public Optional<Concept> getMeasurementSourceConcept() {
@@ -155,8 +154,8 @@ public class Measurement {
         }
     }
 
-    @Column(name = "measurement_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "measurement_source_value", updatable = false,
+            nullable = true)
     private String measurementSourceValue;
     
     public Optional<String> getMeasurementSourceValue() {
@@ -171,8 +170,7 @@ public class Measurement {
         this.measurementSourceValue = newValue;
     }
 
-    @Column(name = "measurement_time", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "measurement_time", updatable = false, nullable = true)
     private String measurementTime;
     
     public Optional<String> getMeasurementTime() {
@@ -187,8 +185,8 @@ public class Measurement {
         this.measurementTime = newValue;
     }
 
-    @Column(name = "measurement_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "measurement_type_concept_id", updatable = false,
+            nullable = false)
     private Integer measurementTypeConceptId;
     
     public Integer getMeasurementTypeConceptId() {
@@ -196,7 +194,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "measurement_type_concept_id")
+    @JoinColumn(name = "measurement_type_concept_id", insertable = false,
+                updatable = false)
     private Concept measurementTypeConcept;
     
     public Concept getMeasurementTypeConcept() {
@@ -208,8 +207,7 @@ public class Measurement {
         this.measurementTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "operator_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "operator_concept_id", updatable = false, nullable = true)
     private Integer operatorConceptId;
     
     public Optional<Integer> getOperatorConceptId() {
@@ -221,7 +219,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "operator_concept_id")
+    @JoinColumn(name = "operator_concept_id", insertable = false,
+                updatable = false)
     private Concept operatorConcept;
     
     public Optional<Concept> getOperatorConcept() {
@@ -238,8 +237,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -247,7 +245,7 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -259,8 +257,7 @@ public class Measurement {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -272,7 +269,7 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -289,8 +286,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "range_high", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "range_high", updatable = false, nullable = true)
     private BigDecimal rangeHigh;
     
     public Optional<BigDecimal> getRangeHigh() {
@@ -305,8 +301,7 @@ public class Measurement {
         this.rangeHigh = newValue;
     }
 
-    @Column(name = "range_low", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "range_low", updatable = false, nullable = true)
     private BigDecimal rangeLow;
     
     public Optional<BigDecimal> getRangeLow() {
@@ -321,8 +316,7 @@ public class Measurement {
         this.rangeLow = newValue;
     }
 
-    @Column(name = "unit_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_concept_id", updatable = false, nullable = true)
     private Integer unitConceptId;
     
     public Optional<Integer> getUnitConceptId() {
@@ -334,7 +328,7 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_concept_id")
+    @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
     
     public Optional<Concept> getUnitConcept() {
@@ -351,8 +345,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "unit_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "unit_source_concept_id", updatable = false, nullable = true)
     private Integer unitSourceConceptId;
     
     public Optional<Integer> getUnitSourceConceptId() {
@@ -364,7 +357,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_source_concept_id")
+    @JoinColumn(name = "unit_source_concept_id", insertable = false,
+                updatable = false)
     private Concept unitSourceConcept;
     
     public Optional<Concept> getUnitSourceConcept() {
@@ -381,8 +375,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "unit_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_source_value", updatable = false, nullable = true)
     private String unitSourceValue;
     
     public Optional<String> getUnitSourceValue() {
@@ -397,8 +390,7 @@ public class Measurement {
         this.unitSourceValue = newValue;
     }
 
-    @Column(name = "value_as_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "value_as_concept_id", updatable = false, nullable = true)
     private Integer valueAsConceptId;
     
     public Optional<Integer> getValueAsConceptId() {
@@ -410,7 +402,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "value_as_concept_id")
+    @JoinColumn(name = "value_as_concept_id", insertable = false,
+                updatable = false)
     private Concept valueAsConcept;
     
     public Optional<Concept> getValueAsConcept() {
@@ -427,8 +420,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "value_as_number", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_number", updatable = false, nullable = true)
     private BigDecimal valueAsNumber;
     
     public Optional<BigDecimal> getValueAsNumber() {
@@ -443,8 +435,7 @@ public class Measurement {
         this.valueAsNumber = newValue;
     }
 
-    @Column(name = "value_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_source_value", updatable = false, nullable = true)
     private String valueSourceValue;
     
     public Optional<String> getValueSourceValue() {
@@ -459,8 +450,7 @@ public class Measurement {
         this.valueSourceValue = newValue;
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -472,7 +462,7 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -489,8 +479,7 @@ public class Measurement {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -502,7 +491,8 @@ public class Measurement {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

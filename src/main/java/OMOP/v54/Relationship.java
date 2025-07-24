@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "relationship", schema = "cds_cdm")
 public class Relationship {
 
-    @Column(name = "defines_ancestry", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "defines_ancestry", updatable = false, nullable = false)
     private String definesAncestry;
     
     public String getDefinesAncestry() {
@@ -28,8 +27,7 @@ public class Relationship {
         this.definesAncestry = newValue;
     }
 
-    @Column(name = "is_hierarchical", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "is_hierarchical", updatable = false, nullable = false)
     private String isHierarchical;
     
     public String getIsHierarchical() {
@@ -40,8 +38,8 @@ public class Relationship {
         this.isHierarchical = newValue;
     }
 
-    @Column(name = "relationship_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "relationship_concept_id", updatable = false,
+            nullable = false)
     private Integer relationshipConceptId;
     
     public Integer getRelationshipConceptId() {
@@ -49,7 +47,8 @@ public class Relationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "relationship_concept_id")
+    @JoinColumn(name = "relationship_concept_id", insertable = false,
+                updatable = false)
     private Concept relationshipConcept;
     
     public Concept getRelationshipConcept() {
@@ -63,16 +62,14 @@ public class Relationship {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "relationship_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "relationship_id", updatable = false, nullable = false)
     private String relationshipId;
     
     public String getRelationshipId() {
         return this.relationshipId;
     }
 
-    @Column(name = "relationship_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "relationship_name", updatable = false, nullable = false)
     private String relationshipName;
     
     public String getRelationshipName() {
@@ -83,8 +80,8 @@ public class Relationship {
         this.relationshipName = newValue;
     }
 
-    @Column(name = "reverse_relationship_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "reverse_relationship_id", updatable = false,
+            nullable = false)
     private String reverseRelationshipId;
     
     public String getReverseRelationshipId() {

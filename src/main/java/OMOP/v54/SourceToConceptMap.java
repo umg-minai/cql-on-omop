@@ -19,16 +19,14 @@ public class SourceToConceptMap {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "source_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "source_concept_id", updatable = false, nullable = false)
         private Integer sourceConceptId;
 
-        @Column(name = "target_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "target_concept_id", updatable = false, nullable = false)
         private Integer targetConceptId;
 
-        @Column(name = "target_vocabulary_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "target_vocabulary_id", updatable = false,
+                nullable = false)
         private String targetVocabularyId;
 
         @Override
@@ -74,8 +72,7 @@ public class SourceToConceptMap {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "invalid_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "invalid_reason", updatable = false, nullable = true)
     private String invalidReason;
     
     public Optional<String> getInvalidReason() {
@@ -90,8 +87,7 @@ public class SourceToConceptMap {
         this.invalidReason = newValue;
     }
 
-    @Column(name = "source_code", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "source_code", updatable = false, nullable = false)
     private String sourceCode;
     
     public String getSourceCode() {
@@ -102,8 +98,8 @@ public class SourceToConceptMap {
         this.sourceCode = newValue;
     }
 
-    @Column(name = "source_code_description", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "source_code_description", updatable = false,
+            nullable = true)
     private String sourceCodeDescription;
     
     public Optional<String> getSourceCodeDescription() {
@@ -123,7 +119,8 @@ public class SourceToConceptMap {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "source_concept_id")
+    @JoinColumn(name = "source_concept_id", insertable = false,
+                updatable = false)
     @MapsId("sourceConceptId")
     private Concept sourceConcept;
     
@@ -136,8 +133,7 @@ public class SourceToConceptMap {
         this.compoundId.sourceConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "source_vocabulary_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "source_vocabulary_id", updatable = false, nullable = false)
     private String sourceVocabularyId;
     
     public String getSourceVocabularyId() {
@@ -153,7 +149,8 @@ public class SourceToConceptMap {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_concept_id")
+    @JoinColumn(name = "target_concept_id", insertable = false,
+                updatable = false)
     @MapsId("targetConceptId")
     private Concept targetConcept;
     
@@ -171,7 +168,8 @@ public class SourceToConceptMap {
     }
 
     @ManyToOne(targetEntity = Vocabulary.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_vocabulary_id")
+    @JoinColumn(name = "target_vocabulary_id", insertable = false,
+                updatable = false)
     @MapsId("targetVocabularyId")
     private Vocabulary targetVocabulary;
     
@@ -184,8 +182,7 @@ public class SourceToConceptMap {
         this.compoundId.targetVocabularyId = newValue.getVocabularyId();
     }
 
-    @Column(name = "valid_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_end_date", updatable = false, nullable = false)
     private ZonedDateTime validEndDate;
     
     public Date getValidEndDate() {
@@ -196,8 +193,7 @@ public class SourceToConceptMap {
         this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "valid_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_start_date", updatable = false, nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {

@@ -19,12 +19,11 @@ public class EpisodeEvent {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "episode_event_field_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "episode_event_field_concept_id", updatable = false,
+                nullable = false)
         private Integer episodeEventFieldConceptId;
 
-        @Column(name = "episode_id", insertable = false, updatable = false,
-                nullable = false)
+        @Column(name = "episode_id", updatable = false, nullable = false)
         private Integer episodeId;
 
         @Override
@@ -71,7 +70,8 @@ public class EpisodeEvent {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_event_field_concept_id")
+    @JoinColumn(name = "episode_event_field_concept_id", insertable = false,
+                updatable = false)
     @MapsId("episodeEventFieldConceptId")
     private Concept episodeEventFieldConcept;
     
@@ -89,7 +89,7 @@ public class EpisodeEvent {
     }
 
     @ManyToOne(targetEntity = Episode.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_id")
+    @JoinColumn(name = "episode_id", insertable = false, updatable = false)
     @MapsId("episodeId")
     private Episode episode;
     
@@ -102,8 +102,7 @@ public class EpisodeEvent {
         this.compoundId.episodeId = newValue.getEpisodeId();
     }
 
-    @Column(name = "event_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "event_id", updatable = false, nullable = false)
     private Integer eventId;
     
     public Integer getEventId() {

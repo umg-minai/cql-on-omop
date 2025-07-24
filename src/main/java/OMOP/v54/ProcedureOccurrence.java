@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "procedure_occurrence", schema = "cds_cdm")
 public class ProcedureOccurrence {
 
-    @Column(name = "modifier_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "modifier_concept_id", updatable = false, nullable = true)
     private Integer modifierConceptId;
     
     public Optional<Integer> getModifierConceptId() {
@@ -29,7 +28,8 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "modifier_concept_id")
+    @JoinColumn(name = "modifier_concept_id", insertable = false,
+                updatable = false)
     private Concept modifierConcept;
     
     public Optional<Concept> getModifierConcept() {
@@ -46,8 +46,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "modifier_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "modifier_source_value", updatable = false, nullable = true)
     private String modifierSourceValue;
     
     public Optional<String> getModifierSourceValue() {
@@ -62,8 +61,7 @@ public class ProcedureOccurrence {
         this.modifierSourceValue = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -71,7 +69,7 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -83,8 +81,7 @@ public class ProcedureOccurrence {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "procedure_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "procedure_concept_id", updatable = false, nullable = false)
     private Integer procedureConceptId;
     
     public Integer getProcedureConceptId() {
@@ -92,7 +89,8 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "procedure_concept_id")
+    @JoinColumn(name = "procedure_concept_id", insertable = false,
+                updatable = false)
     private Concept procedureConcept;
     
     public Concept getProcedureConcept() {
@@ -104,8 +102,7 @@ public class ProcedureOccurrence {
         this.procedureConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "procedure_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "procedure_date", updatable = false, nullable = false)
     private ZonedDateTime procedureDate;
     
     public Date getProcedureDate() {
@@ -116,8 +113,7 @@ public class ProcedureOccurrence {
         this.procedureDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "procedure_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "procedure_datetime", updatable = false, nullable = true)
     private ZonedDateTime procedureDatetime;
     
     public Optional<DateTime> getProcedureDatetime() {
@@ -136,8 +132,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "procedure_end_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "procedure_end_date", updatable = false, nullable = true)
     private ZonedDateTime procedureEndDate;
     
     public Optional<Date> getProcedureEndDate() {
@@ -156,8 +151,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "procedure_end_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "procedure_end_datetime", updatable = false, nullable = true)
     private ZonedDateTime procedureEndDatetime;
     
     public Optional<DateTime> getProcedureEndDatetime() {
@@ -178,16 +172,16 @@ public class ProcedureOccurrence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "procedure_occurrence_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "procedure_occurrence_id", updatable = false,
+            nullable = false)
     private Integer procedureOccurrenceId;
     
     public Integer getProcedureOccurrenceId() {
         return this.procedureOccurrenceId;
     }
 
-    @Column(name = "procedure_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "procedure_source_concept_id", updatable = false,
+            nullable = true)
     private Integer procedureSourceConceptId;
     
     public Optional<Integer> getProcedureSourceConceptId() {
@@ -199,7 +193,8 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "procedure_source_concept_id")
+    @JoinColumn(name = "procedure_source_concept_id", insertable = false,
+                updatable = false)
     private Concept procedureSourceConcept;
     
     public Optional<Concept> getProcedureSourceConcept() {
@@ -216,8 +211,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "procedure_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "procedure_source_value", updatable = false, nullable = true)
     private String procedureSourceValue;
     
     public Optional<String> getProcedureSourceValue() {
@@ -232,8 +226,8 @@ public class ProcedureOccurrence {
         this.procedureSourceValue = newValue;
     }
 
-    @Column(name = "procedure_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "procedure_type_concept_id", updatable = false,
+            nullable = false)
     private Integer procedureTypeConceptId;
     
     public Integer getProcedureTypeConceptId() {
@@ -241,7 +235,8 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "procedure_type_concept_id")
+    @JoinColumn(name = "procedure_type_concept_id", insertable = false,
+                updatable = false)
     private Concept procedureTypeConcept;
     
     public Concept getProcedureTypeConcept() {
@@ -253,8 +248,7 @@ public class ProcedureOccurrence {
         this.procedureTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -266,7 +260,7 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -283,8 +277,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "quantity", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "quantity", updatable = false, nullable = true)
     private Integer quantity;
     
     public Optional<Integer> getQuantity() {
@@ -299,8 +292,7 @@ public class ProcedureOccurrence {
         this.quantity = newValue;
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -312,7 +304,7 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -329,8 +321,7 @@ public class ProcedureOccurrence {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -342,7 +333,8 @@ public class ProcedureOccurrence {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

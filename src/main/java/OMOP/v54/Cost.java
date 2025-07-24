@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "cost", schema = "cds_cdm")
 public class Cost {
 
-    @Column(name = "amount_allowed", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "amount_allowed", updatable = false, nullable = true)
     private BigDecimal amountAllowed;
     
     public Optional<BigDecimal> getAmountAllowed() {
@@ -32,8 +31,7 @@ public class Cost {
         this.amountAllowed = newValue;
     }
 
-    @Column(name = "cost_domain_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "cost_domain_id", updatable = false, nullable = false)
     private String costDomainId;
     
     public String getCostDomainId() {
@@ -41,7 +39,7 @@ public class Cost {
     }
 
     @ManyToOne(targetEntity = Domain.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cost_domain_id")
+    @JoinColumn(name = "cost_domain_id", insertable = false, updatable = false)
     private Domain costDomain;
     
     public Domain getCostDomain() {
@@ -53,8 +51,7 @@ public class Cost {
         this.costDomainId = newValue.getDomainId();
     }
 
-    @Column(name = "cost_event_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "cost_event_id", updatable = false, nullable = false)
     private Integer costEventId;
     
     public Integer getCostEventId() {
@@ -67,16 +64,14 @@ public class Cost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cost_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "cost_id", updatable = false, nullable = false)
     private Integer costId;
     
     public Integer getCostId() {
         return this.costId;
     }
 
-    @Column(name = "cost_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "cost_type_concept_id", updatable = false, nullable = false)
     private Integer costTypeConceptId;
     
     public Integer getCostTypeConceptId() {
@@ -84,7 +79,8 @@ public class Cost {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cost_type_concept_id")
+    @JoinColumn(name = "cost_type_concept_id", insertable = false,
+                updatable = false)
     private Concept costTypeConcept;
     
     public Concept getCostTypeConcept() {
@@ -96,8 +92,7 @@ public class Cost {
         this.costTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "currency_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "currency_concept_id", updatable = false, nullable = true)
     private Integer currencyConceptId;
     
     public Optional<Integer> getCurrencyConceptId() {
@@ -109,7 +104,8 @@ public class Cost {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_concept_id")
+    @JoinColumn(name = "currency_concept_id", insertable = false,
+                updatable = false)
     private Concept currencyConcept;
     
     public Optional<Concept> getCurrencyConcept() {
@@ -126,8 +122,7 @@ public class Cost {
         }
     }
 
-    @Column(name = "drg_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "drg_concept_id", updatable = false, nullable = true)
     private Integer drgConceptId;
     
     public Optional<Integer> getDrgConceptId() {
@@ -139,7 +134,7 @@ public class Cost {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drg_concept_id")
+    @JoinColumn(name = "drg_concept_id", insertable = false, updatable = false)
     private Concept drgConcept;
     
     public Optional<Concept> getDrgConcept() {
@@ -156,8 +151,7 @@ public class Cost {
         }
     }
 
-    @Column(name = "drg_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "drg_source_value", updatable = false, nullable = true)
     private String drgSourceValue;
     
     public Optional<String> getDrgSourceValue() {
@@ -172,8 +166,7 @@ public class Cost {
         this.drgSourceValue = newValue;
     }
 
-    @Column(name = "paid_by_patient", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "paid_by_patient", updatable = false, nullable = true)
     private BigDecimal paidByPatient;
     
     public Optional<BigDecimal> getPaidByPatient() {
@@ -188,8 +181,7 @@ public class Cost {
         this.paidByPatient = newValue;
     }
 
-    @Column(name = "paid_by_payer", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "paid_by_payer", updatable = false, nullable = true)
     private BigDecimal paidByPayer;
     
     public Optional<BigDecimal> getPaidByPayer() {
@@ -204,8 +196,7 @@ public class Cost {
         this.paidByPayer = newValue;
     }
 
-    @Column(name = "paid_by_primary", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "paid_by_primary", updatable = false, nullable = true)
     private BigDecimal paidByPrimary;
     
     public Optional<BigDecimal> getPaidByPrimary() {
@@ -220,8 +211,7 @@ public class Cost {
         this.paidByPrimary = newValue;
     }
 
-    @Column(name = "paid_dispensing_fee", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "paid_dispensing_fee", updatable = false, nullable = true)
     private BigDecimal paidDispensingFee;
     
     public Optional<BigDecimal> getPaidDispensingFee() {
@@ -236,8 +226,7 @@ public class Cost {
         this.paidDispensingFee = newValue;
     }
 
-    @Column(name = "paid_ingredient_cost", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "paid_ingredient_cost", updatable = false, nullable = true)
     private BigDecimal paidIngredientCost;
     
     public Optional<BigDecimal> getPaidIngredientCost() {
@@ -252,8 +241,8 @@ public class Cost {
         this.paidIngredientCost = newValue;
     }
 
-    @Column(name = "paid_patient_coinsurance", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "paid_patient_coinsurance", updatable = false,
+            nullable = true)
     private BigDecimal paidPatientCoinsurance;
     
     public Optional<BigDecimal> getPaidPatientCoinsurance() {
@@ -268,8 +257,7 @@ public class Cost {
         this.paidPatientCoinsurance = newValue;
     }
 
-    @Column(name = "paid_patient_copay", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "paid_patient_copay", updatable = false, nullable = true)
     private BigDecimal paidPatientCopay;
     
     public Optional<BigDecimal> getPaidPatientCopay() {
@@ -284,8 +272,8 @@ public class Cost {
         this.paidPatientCopay = newValue;
     }
 
-    @Column(name = "paid_patient_deductible", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "paid_patient_deductible", updatable = false,
+            nullable = true)
     private BigDecimal paidPatientDeductible;
     
     public Optional<BigDecimal> getPaidPatientDeductible() {
@@ -300,8 +288,7 @@ public class Cost {
         this.paidPatientDeductible = newValue;
     }
 
-    @Column(name = "payer_plan_period_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "payer_plan_period_id", updatable = false, nullable = true)
     private Integer payerPlanPeriodId;
     
     public Optional<Integer> getPayerPlanPeriodId() {
@@ -316,8 +303,8 @@ public class Cost {
         this.payerPlanPeriodId = newValue;
     }
 
-    @Column(name = "revenue_code_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "revenue_code_concept_id", updatable = false,
+            nullable = true)
     private Integer revenueCodeConceptId;
     
     public Optional<Integer> getRevenueCodeConceptId() {
@@ -329,7 +316,8 @@ public class Cost {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "revenue_code_concept_id")
+    @JoinColumn(name = "revenue_code_concept_id", insertable = false,
+                updatable = false)
     private Concept revenueCodeConcept;
     
     public Optional<Concept> getRevenueCodeConcept() {
@@ -346,8 +334,8 @@ public class Cost {
         }
     }
 
-    @Column(name = "revenue_code_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "revenue_code_source_value", updatable = false,
+            nullable = true)
     private String revenueCodeSourceValue;
     
     public Optional<String> getRevenueCodeSourceValue() {
@@ -362,8 +350,7 @@ public class Cost {
         this.revenueCodeSourceValue = newValue;
     }
 
-    @Column(name = "total_charge", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "total_charge", updatable = false, nullable = true)
     private BigDecimal totalCharge;
     
     public Optional<BigDecimal> getTotalCharge() {
@@ -378,8 +365,7 @@ public class Cost {
         this.totalCharge = newValue;
     }
 
-    @Column(name = "total_cost", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "total_cost", updatable = false, nullable = true)
     private BigDecimal totalCost;
     
     public Optional<BigDecimal> getTotalCost() {
@@ -394,8 +380,7 @@ public class Cost {
         this.totalCost = newValue;
     }
 
-    @Column(name = "total_paid", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "total_paid", updatable = false, nullable = true)
     private BigDecimal totalPaid;
     
     public Optional<BigDecimal> getTotalPaid() {

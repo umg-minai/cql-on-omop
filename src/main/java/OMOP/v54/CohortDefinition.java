@@ -19,12 +19,12 @@ public class CohortDefinition {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "definition_type_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "definition_type_concept_id", updatable = false,
+                nullable = false)
         private Integer definitionTypeConceptId;
 
-        @Column(name = "subject_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "subject_concept_id", updatable = false,
+                nullable = false)
         private Integer subjectConceptId;
 
         @Override
@@ -66,8 +66,8 @@ public class CohortDefinition {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "cohort_definition_description", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "cohort_definition_description", updatable = false,
+            nullable = true)
     private String cohortDefinitionDescription;
     
     public Optional<String> getCohortDefinitionDescription() {
@@ -82,8 +82,7 @@ public class CohortDefinition {
         this.cohortDefinitionDescription = newValue;
     }
 
-    @Column(name = "cohort_definition_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "cohort_definition_id", updatable = false, nullable = false)
     private Integer cohortDefinitionId;
     
     public Integer getCohortDefinitionId() {
@@ -94,8 +93,8 @@ public class CohortDefinition {
         this.cohortDefinitionId = newValue;
     }
 
-    @Column(name = "cohort_definition_name", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "cohort_definition_name", updatable = false,
+            nullable = false)
     private String cohortDefinitionName;
     
     public String getCohortDefinitionName() {
@@ -106,8 +105,8 @@ public class CohortDefinition {
         this.cohortDefinitionName = newValue;
     }
 
-    @Column(name = "cohort_definition_syntax", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "cohort_definition_syntax", updatable = false,
+            nullable = true)
     private String cohortDefinitionSyntax;
     
     public Optional<String> getCohortDefinitionSyntax() {
@@ -122,8 +121,7 @@ public class CohortDefinition {
         this.cohortDefinitionSyntax = newValue;
     }
 
-    @Column(name = "cohort_initiation_date", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "cohort_initiation_date", updatable = false, nullable = true)
     private ZonedDateTime cohortInitiationDate;
     
     public Optional<Date> getCohortInitiationDate() {
@@ -147,7 +145,8 @@ public class CohortDefinition {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "definition_type_concept_id")
+    @JoinColumn(name = "definition_type_concept_id", insertable = false,
+                updatable = false)
     @MapsId("definitionTypeConceptId")
     private Concept definitionTypeConcept;
     
@@ -165,7 +164,8 @@ public class CohortDefinition {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_concept_id")
+    @JoinColumn(name = "subject_concept_id", insertable = false,
+                updatable = false)
     @MapsId("subjectConceptId")
     private Concept subjectConcept;
     

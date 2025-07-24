@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "condition_era", schema = "cds_cdm")
 public class ConditionEra {
 
-    @Column(name = "condition_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_concept_id", updatable = false, nullable = false)
     private Integer conditionConceptId;
     
     public Integer getConditionConceptId() {
@@ -25,7 +24,8 @@ public class ConditionEra {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition_concept_id")
+    @JoinColumn(name = "condition_concept_id", insertable = false,
+                updatable = false)
     private Concept conditionConcept;
     
     public Concept getConditionConcept() {
@@ -37,8 +37,8 @@ public class ConditionEra {
         this.conditionConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "condition_era_end_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_era_end_date", updatable = false,
+            nullable = false)
     private ZonedDateTime conditionEraEndDate;
     
     public Date getConditionEraEndDate() {
@@ -51,16 +51,15 @@ public class ConditionEra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "condition_era_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "condition_era_id", updatable = false, nullable = false)
     private Integer conditionEraId;
     
     public Integer getConditionEraId() {
         return this.conditionEraId;
     }
 
-    @Column(name = "condition_era_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_era_start_date", updatable = false,
+            nullable = false)
     private ZonedDateTime conditionEraStartDate;
     
     public Date getConditionEraStartDate() {
@@ -71,8 +70,8 @@ public class ConditionEra {
         this.conditionEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "condition_occurrence_count", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_occurrence_count", updatable = false,
+            nullable = true)
     private Integer conditionOccurrenceCount;
     
     public Optional<Integer> getConditionOccurrenceCount() {
@@ -87,8 +86,7 @@ public class ConditionEra {
         this.conditionOccurrenceCount = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -96,7 +94,7 @@ public class ConditionEra {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
