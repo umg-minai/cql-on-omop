@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "provider", schema = "cds_cdm")
 public class Provider {
 
-    @Column(name = "care_site_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "care_site_id", updatable = false, nullable = true)
     private Integer careSiteId;
     
     public Optional<Integer> getCareSiteId() {
@@ -29,7 +28,7 @@ public class Provider {
     }
 
     @ManyToOne(targetEntity = CareSite.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "care_site_id")
+    @JoinColumn(name = "care_site_id", insertable = false, updatable = false)
     private CareSite careSite;
     
     public Optional<CareSite> getCareSite() {
@@ -46,8 +45,7 @@ public class Provider {
         }
     }
 
-    @Column(name = "dea", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "dea", updatable = false, nullable = true)
     private String dea;
     
     public Optional<String> getDea() {
@@ -62,8 +60,7 @@ public class Provider {
         this.dea = newValue;
     }
 
-    @Column(name = "gender_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "gender_concept_id", updatable = false, nullable = true)
     private Integer genderConceptId;
     
     public Optional<Integer> getGenderConceptId() {
@@ -75,7 +72,8 @@ public class Provider {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_concept_id")
+    @JoinColumn(name = "gender_concept_id", insertable = false,
+                updatable = false)
     private Concept genderConcept;
     
     public Optional<Concept> getGenderConcept() {
@@ -92,8 +90,8 @@ public class Provider {
         }
     }
 
-    @Column(name = "gender_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "gender_source_concept_id", updatable = false,
+            nullable = true)
     private Integer genderSourceConceptId;
     
     public Optional<Integer> getGenderSourceConceptId() {
@@ -105,7 +103,8 @@ public class Provider {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_source_concept_id")
+    @JoinColumn(name = "gender_source_concept_id", insertable = false,
+                updatable = false)
     private Concept genderSourceConcept;
     
     public Optional<Concept> getGenderSourceConcept() {
@@ -122,8 +121,7 @@ public class Provider {
         }
     }
 
-    @Column(name = "gender_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "gender_source_value", updatable = false, nullable = true)
     private String genderSourceValue;
     
     public Optional<String> getGenderSourceValue() {
@@ -138,8 +136,7 @@ public class Provider {
         this.genderSourceValue = newValue;
     }
 
-    @Column(name = "npi", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "npi", updatable = false, nullable = true)
     private String npi;
     
     public Optional<String> getNpi() {
@@ -156,16 +153,14 @@ public class Provider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "provider_id", updatable = false, nullable = false)
     private Integer providerId;
     
     public Integer getProviderId() {
         return this.providerId;
     }
 
-    @Column(name = "provider_name", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_name", updatable = false, nullable = true)
     private String providerName;
     
     public Optional<String> getProviderName() {
@@ -180,8 +175,7 @@ public class Provider {
         this.providerName = newValue;
     }
 
-    @Column(name = "provider_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "provider_source_value", updatable = false, nullable = true)
     private String providerSourceValue;
     
     public Optional<String> getProviderSourceValue() {
@@ -196,8 +190,7 @@ public class Provider {
         this.providerSourceValue = newValue;
     }
 
-    @Column(name = "specialty_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "specialty_concept_id", updatable = false, nullable = true)
     private Integer specialtyConceptId;
     
     public Optional<Integer> getSpecialtyConceptId() {
@@ -209,7 +202,8 @@ public class Provider {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "specialty_concept_id")
+    @JoinColumn(name = "specialty_concept_id", insertable = false,
+                updatable = false)
     private Concept specialtyConcept;
     
     public Optional<Concept> getSpecialtyConcept() {
@@ -226,8 +220,8 @@ public class Provider {
         }
     }
 
-    @Column(name = "specialty_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "specialty_source_concept_id", updatable = false,
+            nullable = true)
     private Integer specialtySourceConceptId;
     
     public Optional<Integer> getSpecialtySourceConceptId() {
@@ -239,7 +233,8 @@ public class Provider {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "specialty_source_concept_id")
+    @JoinColumn(name = "specialty_source_concept_id", insertable = false,
+                updatable = false)
     private Concept specialtySourceConcept;
     
     public Optional<Concept> getSpecialtySourceConcept() {
@@ -256,8 +251,7 @@ public class Provider {
         }
     }
 
-    @Column(name = "specialty_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "specialty_source_value", updatable = false, nullable = true)
     private String specialtySourceValue;
     
     public Optional<String> getSpecialtySourceValue() {
@@ -272,8 +266,7 @@ public class Provider {
         this.specialtySourceValue = newValue;
     }
 
-    @Column(name = "year_of_birth", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "year_of_birth", updatable = false, nullable = true)
     private Integer yearOfBirth;
     
     public Optional<Integer> getYearOfBirth() {

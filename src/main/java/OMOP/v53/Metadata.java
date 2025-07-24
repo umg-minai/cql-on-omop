@@ -19,16 +19,16 @@ public class Metadata {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "metadata_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "metadata_concept_id", updatable = false,
+                nullable = false)
         private Integer metadataConceptId;
 
-        @Column(name = "metadata_type_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "metadata_type_concept_id", updatable = false,
+                nullable = false)
         private Integer metadataTypeConceptId;
 
-        @Column(name = "value_as_concept_id", insertable = false,
-                updatable = false, nullable = true)
+        @Column(name = "value_as_concept_id", updatable = false,
+                nullable = true)
         private Integer valueAsConceptId;
 
         @Override
@@ -79,7 +79,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "metadata_concept_id")
+    @JoinColumn(name = "metadata_concept_id", insertable = false,
+                updatable = false)
     @MapsId("metadataConceptId")
     private Concept metadataConcept;
     
@@ -92,8 +93,7 @@ public class Metadata {
         this.compoundId.metadataConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "metadata_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "metadata_date", updatable = false, nullable = true)
     private ZonedDateTime metadataDate;
     
     public Optional<Date> getMetadataDate() {
@@ -112,8 +112,7 @@ public class Metadata {
         }
     }
 
-    @Column(name = "metadata_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "metadata_datetime", updatable = false, nullable = true)
     private ZonedDateTime metadataDatetime;
     
     public Optional<DateTime> getMetadataDatetime() {
@@ -137,7 +136,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "metadata_type_concept_id")
+    @JoinColumn(name = "metadata_type_concept_id", insertable = false,
+                updatable = false)
     @MapsId("metadataTypeConceptId")
     private Concept metadataTypeConcept;
     
@@ -150,8 +150,7 @@ public class Metadata {
         this.compoundId.metadataTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "name", updatable = false, nullable = false)
     private String name;
     
     public String getName() {
@@ -171,7 +170,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "value_as_concept_id")
+    @JoinColumn(name = "value_as_concept_id", insertable = false,
+                updatable = false)
     @MapsId("valueAsConceptId")
     private Concept valueAsConcept;
     
@@ -189,8 +189,7 @@ public class Metadata {
         }
     }
 
-    @Column(name = "value_as_string", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_string", updatable = false, nullable = true)
     private String valueAsString;
     
     public Optional<String> getValueAsString() {

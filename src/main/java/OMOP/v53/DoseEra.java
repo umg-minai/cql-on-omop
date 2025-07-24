@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "dose_era", schema = "cds_cdm")
 public class DoseEra {
 
-    @Column(name = "dose_era_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "dose_era_end_date", updatable = false, nullable = false)
     private ZonedDateTime doseEraEndDate;
     
     public Date getDoseEraEndDate() {
@@ -30,16 +29,14 @@ public class DoseEra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dose_era_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "dose_era_id", updatable = false, nullable = false)
     private Integer doseEraId;
     
     public Integer getDoseEraId() {
         return this.doseEraId;
     }
 
-    @Column(name = "dose_era_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "dose_era_start_date", updatable = false, nullable = false)
     private ZonedDateTime doseEraStartDate;
     
     public Date getDoseEraStartDate() {
@@ -50,8 +47,7 @@ public class DoseEra {
         this.doseEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "dose_value", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "dose_value", updatable = false, nullable = false)
     private BigDecimal doseValue;
     
     public BigDecimal getDoseValue() {
@@ -62,8 +58,7 @@ public class DoseEra {
         this.doseValue = newValue;
     }
 
-    @Column(name = "drug_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_concept_id", updatable = false, nullable = false)
     private Integer drugConceptId;
     
     public Integer getDrugConceptId() {
@@ -71,7 +66,7 @@ public class DoseEra {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_concept_id")
+    @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     private Concept drugConcept;
     
     public Concept getDrugConcept() {
@@ -83,8 +78,7 @@ public class DoseEra {
         this.drugConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -92,7 +86,7 @@ public class DoseEra {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -104,8 +98,7 @@ public class DoseEra {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "unit_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "unit_concept_id", updatable = false, nullable = false)
     private Integer unitConceptId;
     
     public Integer getUnitConceptId() {
@@ -113,7 +106,7 @@ public class DoseEra {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_concept_id")
+    @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
     
     public Concept getUnitConcept() {

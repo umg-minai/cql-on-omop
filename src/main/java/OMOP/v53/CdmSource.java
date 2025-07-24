@@ -19,12 +19,10 @@ public class CdmSource {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "cdm_source_name", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "cdm_source_name", updatable = false, nullable = false)
         private String cdmSourceName;
 
-        @Column(name = "cdm_version", insertable = false, updatable = false,
-                nullable = true)
+        @Column(name = "cdm_version", updatable = false, nullable = true)
         private String cdmVersion;
 
         @Override
@@ -66,8 +64,7 @@ public class CdmSource {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "cdm_etl_reference", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "cdm_etl_reference", updatable = false, nullable = true)
     private String cdmEtlReference;
     
     public Optional<String> getCdmEtlReference() {
@@ -82,8 +79,7 @@ public class CdmSource {
         this.cdmEtlReference = newValue;
     }
 
-    @Column(name = "cdm_holder", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "cdm_holder", updatable = false, nullable = true)
     private String cdmHolder;
     
     public Optional<String> getCdmHolder() {
@@ -98,8 +94,7 @@ public class CdmSource {
         this.cdmHolder = newValue;
     }
 
-    @Column(name = "cdm_release_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "cdm_release_date", updatable = false, nullable = true)
     private ZonedDateTime cdmReleaseDate;
     
     public Optional<Date> getCdmReleaseDate() {
@@ -118,8 +113,8 @@ public class CdmSource {
         }
     }
 
-    @Column(name = "cdm_source_abbreviation", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "cdm_source_abbreviation", updatable = false,
+            nullable = true)
     private String cdmSourceAbbreviation;
     
     public Optional<String> getCdmSourceAbbreviation() {
@@ -154,8 +149,7 @@ public class CdmSource {
         this.compoundId.cdmVersion = newValue;
     }
 
-    @Column(name = "source_description", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "source_description", updatable = false, nullable = true)
     private String sourceDescription;
     
     public Optional<String> getSourceDescription() {
@@ -170,8 +164,8 @@ public class CdmSource {
         this.sourceDescription = newValue;
     }
 
-    @Column(name = "source_documentation_reference", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "source_documentation_reference", updatable = false,
+            nullable = true)
     private String sourceDocumentationReference;
     
     public Optional<String> getSourceDocumentationReference() {
@@ -186,8 +180,7 @@ public class CdmSource {
         this.sourceDocumentationReference = newValue;
     }
 
-    @Column(name = "source_release_date", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "source_release_date", updatable = false, nullable = true)
     private ZonedDateTime sourceReleaseDate;
     
     public Optional<Date> getSourceReleaseDate() {
@@ -206,8 +199,7 @@ public class CdmSource {
         }
     }
 
-    @Column(name = "vocabulary_version", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "vocabulary_version", updatable = false, nullable = true)
     private String vocabularyVersion;
     
     public Optional<String> getVocabularyVersion() {

@@ -18,16 +18,14 @@ public class CareSite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "care_site_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "care_site_id", updatable = false, nullable = false)
     private Integer careSiteId;
     
     public Integer getCareSiteId() {
         return this.careSiteId;
     }
 
-    @Column(name = "care_site_name", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "care_site_name", updatable = false, nullable = true)
     private String careSiteName;
     
     public Optional<String> getCareSiteName() {
@@ -42,8 +40,7 @@ public class CareSite {
         this.careSiteName = newValue;
     }
 
-    @Column(name = "care_site_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "care_site_source_value", updatable = false, nullable = true)
     private String careSiteSourceValue;
     
     public Optional<String> getCareSiteSourceValue() {
@@ -58,8 +55,7 @@ public class CareSite {
         this.careSiteSourceValue = newValue;
     }
 
-    @Column(name = "location_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "location_id", updatable = false, nullable = true)
     private Integer locationId;
     
     public Optional<Integer> getLocationId() {
@@ -71,7 +67,7 @@ public class CareSite {
     }
 
     @ManyToOne(targetEntity = Location.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
     private Location location;
     
     public Optional<Location> getLocation() {
@@ -88,8 +84,8 @@ public class CareSite {
         }
     }
 
-    @Column(name = "place_of_service_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "place_of_service_concept_id", updatable = false,
+            nullable = true)
     private Integer placeOfServiceConceptId;
     
     public Optional<Integer> getPlaceOfServiceConceptId() {
@@ -101,7 +97,8 @@ public class CareSite {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_of_service_concept_id")
+    @JoinColumn(name = "place_of_service_concept_id", insertable = false,
+                updatable = false)
     private Concept placeOfServiceConcept;
     
     public Optional<Concept> getPlaceOfServiceConcept() {
@@ -118,8 +115,8 @@ public class CareSite {
         }
     }
 
-    @Column(name = "place_of_service_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "place_of_service_source_value", updatable = false,
+            nullable = true)
     private String placeOfServiceSourceValue;
     
     public Optional<String> getPlaceOfServiceSourceValue() {

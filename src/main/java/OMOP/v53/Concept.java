@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "concept", schema = "cds_cdm")
 public class Concept {
 
-    @Column(name = "concept_class_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_class_id", updatable = false, nullable = false)
     private String conceptClassId;
     
     public String getConceptClassId() {
@@ -25,7 +24,8 @@ public class Concept {
     }
 
     @ManyToOne(targetEntity = ConceptClass.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "concept_class_id")
+    @JoinColumn(name = "concept_class_id", insertable = false,
+                updatable = false)
     private ConceptClass conceptClass;
     
     public ConceptClass getConceptClass() {
@@ -37,8 +37,7 @@ public class Concept {
         this.conceptClassId = newValue.getConceptClassId();
     }
 
-    @Column(name = "concept_code", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_code", updatable = false, nullable = false)
     private String conceptCode;
     
     public String getConceptCode() {
@@ -51,16 +50,14 @@ public class Concept {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_id", updatable = false, nullable = false)
     private Integer conceptId;
     
     public Integer getConceptId() {
         return this.conceptId;
     }
 
-    @Column(name = "concept_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_name", updatable = false, nullable = false)
     private String conceptName;
     
     public String getConceptName() {
@@ -71,8 +68,7 @@ public class Concept {
         this.conceptName = newValue;
     }
 
-    @Column(name = "domain_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "domain_id", updatable = false, nullable = false)
     private String domainId;
     
     public String getDomainId() {
@@ -80,7 +76,7 @@ public class Concept {
     }
 
     @ManyToOne(targetEntity = Domain.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "domain_id")
+    @JoinColumn(name = "domain_id", insertable = false, updatable = false)
     private Domain domain;
     
     public Domain getDomain() {
@@ -92,8 +88,7 @@ public class Concept {
         this.domainId = newValue.getDomainId();
     }
 
-    @Column(name = "invalid_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "invalid_reason", updatable = false, nullable = true)
     private String invalidReason;
     
     public Optional<String> getInvalidReason() {
@@ -108,8 +103,7 @@ public class Concept {
         this.invalidReason = newValue;
     }
 
-    @Column(name = "standard_concept", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "standard_concept", updatable = false, nullable = true)
     private String standardConcept;
     
     public Optional<String> getStandardConcept() {
@@ -124,8 +118,7 @@ public class Concept {
         this.standardConcept = newValue;
     }
 
-    @Column(name = "valid_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_end_date", updatable = false, nullable = false)
     private ZonedDateTime validEndDate;
     
     public Date getValidEndDate() {
@@ -136,8 +129,7 @@ public class Concept {
         this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "valid_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_start_date", updatable = false, nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {
@@ -148,8 +140,7 @@ public class Concept {
         this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "vocabulary_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "vocabulary_id", updatable = false, nullable = false)
     private String vocabularyId;
     
     public String getVocabularyId() {
@@ -157,7 +148,7 @@ public class Concept {
     }
 
     @ManyToOne(targetEntity = Vocabulary.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "vocabulary_id")
+    @JoinColumn(name = "vocabulary_id", insertable = false, updatable = false)
     private Vocabulary vocabulary;
     
     public Vocabulary getVocabulary() {

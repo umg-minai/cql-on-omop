@@ -19,16 +19,13 @@ public class ConceptRelationship {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "concept_id_1", insertable = false, updatable = false,
-                nullable = false)
+        @Column(name = "concept_id_1", updatable = false, nullable = false)
         private Integer conceptId1;
 
-        @Column(name = "concept_id_2", insertable = false, updatable = false,
-                nullable = false)
+        @Column(name = "concept_id_2", updatable = false, nullable = false)
         private Integer conceptId2;
 
-        @Column(name = "relationship_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "relationship_id", updatable = false, nullable = false)
         private String relationshipId;
 
         @Override
@@ -79,7 +76,7 @@ public class ConceptRelationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "concept_id_1")
+    @JoinColumn(name = "concept_id_1", insertable = false, updatable = false)
     @MapsId("conceptId1")
     private Concept concept1;
     
@@ -97,7 +94,7 @@ public class ConceptRelationship {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "concept_id_2")
+    @JoinColumn(name = "concept_id_2", insertable = false, updatable = false)
     @MapsId("conceptId2")
     private Concept concept2;
     
@@ -110,8 +107,7 @@ public class ConceptRelationship {
         this.compoundId.conceptId2 = newValue.getConceptId();
     }
 
-    @Column(name = "invalid_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "invalid_reason", updatable = false, nullable = true)
     private String invalidReason;
     
     public Optional<String> getInvalidReason() {
@@ -131,7 +127,7 @@ public class ConceptRelationship {
     }
 
     @ManyToOne(targetEntity = Relationship.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "relationship_id")
+    @JoinColumn(name = "relationship_id", insertable = false, updatable = false)
     @MapsId("relationshipId")
     private Relationship relationship;
     
@@ -144,8 +140,7 @@ public class ConceptRelationship {
         this.compoundId.relationshipId = newValue.getRelationshipId();
     }
 
-    @Column(name = "valid_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_end_date", updatable = false, nullable = false)
     private ZonedDateTime validEndDate;
     
     public Date getValidEndDate() {
@@ -156,8 +151,7 @@ public class ConceptRelationship {
         this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "valid_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_start_date", updatable = false, nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {

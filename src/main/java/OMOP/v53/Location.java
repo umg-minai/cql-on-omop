@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "location", schema = "cds_cdm")
 public class Location {
 
-    @Column(name = "address_1", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "address_1", updatable = false, nullable = true)
     private String address1;
     
     public Optional<String> getAddress1() {
@@ -32,8 +31,7 @@ public class Location {
         this.address1 = newValue;
     }
 
-    @Column(name = "address_2", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "address_2", updatable = false, nullable = true)
     private String address2;
     
     public Optional<String> getAddress2() {
@@ -48,8 +46,7 @@ public class Location {
         this.address2 = newValue;
     }
 
-    @Column(name = "city", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "city", updatable = false, nullable = true)
     private String city;
     
     public Optional<String> getCity() {
@@ -64,8 +61,7 @@ public class Location {
         this.city = newValue;
     }
 
-    @Column(name = "county", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "county", updatable = false, nullable = true)
     private String county;
     
     public Optional<String> getCounty() {
@@ -82,16 +78,14 @@ public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "location_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "location_id", updatable = false, nullable = false)
     private Integer locationId;
     
     public Integer getLocationId() {
         return this.locationId;
     }
 
-    @Column(name = "location_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "location_source_value", updatable = false, nullable = true)
     private String locationSourceValue;
     
     public Optional<String> getLocationSourceValue() {
@@ -106,8 +100,7 @@ public class Location {
         this.locationSourceValue = newValue;
     }
 
-    @Column(name = "state", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "state", updatable = false, nullable = true)
     private String state;
     
     public Optional<String> getState() {
@@ -122,8 +115,7 @@ public class Location {
         this.state = newValue;
     }
 
-    @Column(name = "zip", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "zip", updatable = false, nullable = true)
     private String zip;
     
     public Optional<String> getZip() {

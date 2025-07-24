@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "vocabulary", schema = "cds_cdm")
 public class Vocabulary {
 
-    @Column(name = "vocabulary_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "vocabulary_concept_id", updatable = false, nullable = false)
     private Integer vocabularyConceptId;
     
     public Integer getVocabularyConceptId() {
@@ -25,7 +24,8 @@ public class Vocabulary {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "vocabulary_concept_id")
+    @JoinColumn(name = "vocabulary_concept_id", insertable = false,
+                updatable = false)
     private Concept vocabularyConcept;
     
     public Concept getVocabularyConcept() {
@@ -39,16 +39,14 @@ public class Vocabulary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "vocabulary_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "vocabulary_id", updatable = false, nullable = false)
     private String vocabularyId;
     
     public String getVocabularyId() {
         return this.vocabularyId;
     }
 
-    @Column(name = "vocabulary_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "vocabulary_name", updatable = false, nullable = false)
     private String vocabularyName;
     
     public String getVocabularyName() {
@@ -59,8 +57,7 @@ public class Vocabulary {
         this.vocabularyName = newValue;
     }
 
-    @Column(name = "vocabulary_reference", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "vocabulary_reference", updatable = false, nullable = false)
     private String vocabularyReference;
     
     public String getVocabularyReference() {
@@ -71,8 +68,7 @@ public class Vocabulary {
         this.vocabularyReference = newValue;
     }
 
-    @Column(name = "vocabulary_version", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "vocabulary_version", updatable = false, nullable = true)
     private String vocabularyVersion;
     
     public Optional<String> getVocabularyVersion() {

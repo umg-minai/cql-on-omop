@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "condition_occurrence", schema = "cds_cdm")
 public class ConditionOccurrence {
 
-    @Column(name = "condition_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_concept_id", updatable = false, nullable = false)
     private Integer conditionConceptId;
     
     public Integer getConditionConceptId() {
@@ -25,7 +24,8 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition_concept_id")
+    @JoinColumn(name = "condition_concept_id", insertable = false,
+                updatable = false)
     private Concept conditionConcept;
     
     public Concept getConditionConcept() {
@@ -37,8 +37,7 @@ public class ConditionOccurrence {
         this.conditionConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "condition_end_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "condition_end_date", updatable = false, nullable = true)
     private ZonedDateTime conditionEndDate;
     
     public Optional<Date> getConditionEndDate() {
@@ -57,8 +56,7 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "condition_end_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_end_datetime", updatable = false, nullable = true)
     private ZonedDateTime conditionEndDatetime;
     
     public Optional<DateTime> getConditionEndDatetime() {
@@ -79,16 +77,16 @@ public class ConditionOccurrence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "condition_occurrence_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_occurrence_id", updatable = false,
+            nullable = false)
     private Integer conditionOccurrenceId;
     
     public Integer getConditionOccurrenceId() {
         return this.conditionOccurrenceId;
     }
 
-    @Column(name = "condition_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_source_concept_id", updatable = false,
+            nullable = true)
     private Integer conditionSourceConceptId;
     
     public Optional<Integer> getConditionSourceConceptId() {
@@ -100,7 +98,8 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition_source_concept_id")
+    @JoinColumn(name = "condition_source_concept_id", insertable = false,
+                updatable = false)
     private Concept conditionSourceConcept;
     
     public Optional<Concept> getConditionSourceConcept() {
@@ -117,8 +116,7 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "condition_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_source_value", updatable = false, nullable = true)
     private String conditionSourceValue;
     
     public Optional<String> getConditionSourceValue() {
@@ -133,8 +131,7 @@ public class ConditionOccurrence {
         this.conditionSourceValue = newValue;
     }
 
-    @Column(name = "condition_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_start_date", updatable = false, nullable = false)
     private ZonedDateTime conditionStartDate;
     
     public Date getConditionStartDate() {
@@ -145,8 +142,8 @@ public class ConditionOccurrence {
         this.conditionStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "condition_start_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_start_datetime", updatable = false,
+            nullable = true)
     private ZonedDateTime conditionStartDatetime;
     
     public Optional<DateTime> getConditionStartDatetime() {
@@ -165,8 +162,8 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "condition_status_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_status_concept_id", updatable = false,
+            nullable = true)
     private Integer conditionStatusConceptId;
     
     public Optional<Integer> getConditionStatusConceptId() {
@@ -178,7 +175,8 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition_status_concept_id")
+    @JoinColumn(name = "condition_status_concept_id", insertable = false,
+                updatable = false)
     private Concept conditionStatusConcept;
     
     public Optional<Concept> getConditionStatusConcept() {
@@ -195,8 +193,8 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "condition_status_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "condition_status_source_value", updatable = false,
+            nullable = true)
     private String conditionStatusSourceValue;
     
     public Optional<String> getConditionStatusSourceValue() {
@@ -211,8 +209,8 @@ public class ConditionOccurrence {
         this.conditionStatusSourceValue = newValue;
     }
 
-    @Column(name = "condition_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "condition_type_concept_id", updatable = false,
+            nullable = false)
     private Integer conditionTypeConceptId;
     
     public Integer getConditionTypeConceptId() {
@@ -220,7 +218,8 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "condition_type_concept_id")
+    @JoinColumn(name = "condition_type_concept_id", insertable = false,
+                updatable = false)
     private Concept conditionTypeConcept;
     
     public Concept getConditionTypeConcept() {
@@ -232,8 +231,7 @@ public class ConditionOccurrence {
         this.conditionTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Integer personId;
     
     public Integer getPersonId() {
@@ -241,7 +239,7 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -253,8 +251,7 @@ public class ConditionOccurrence {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Integer providerId;
     
     public Optional<Integer> getProviderId() {
@@ -266,7 +263,7 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -283,8 +280,7 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "stop_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "stop_reason", updatable = false, nullable = true)
     private String stopReason;
     
     public Optional<String> getStopReason() {
@@ -299,8 +295,7 @@ public class ConditionOccurrence {
         this.stopReason = newValue;
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Integer visitDetailId;
     
     public Optional<Integer> getVisitDetailId() {
@@ -312,7 +307,7 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -329,8 +324,7 @@ public class ConditionOccurrence {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Integer visitOccurrenceId;
     
     public Optional<Integer> getVisitOccurrenceId() {
@@ -342,7 +336,8 @@ public class ConditionOccurrence {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {

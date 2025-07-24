@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "concept_class", schema = "cds_cdm")
 public class ConceptClass {
 
-    @Column(name = "concept_class_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "concept_class_concept_id", updatable = false,
+            nullable = false)
     private Integer conceptClassConceptId;
     
     public Integer getConceptClassConceptId() {
@@ -25,7 +25,8 @@ public class ConceptClass {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "concept_class_concept_id")
+    @JoinColumn(name = "concept_class_concept_id", insertable = false,
+                updatable = false)
     private Concept conceptClassConcept;
     
     public Concept getConceptClassConcept() {
@@ -39,16 +40,14 @@ public class ConceptClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "concept_class_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_class_id", updatable = false, nullable = false)
     private String conceptClassId;
     
     public String getConceptClassId() {
         return this.conceptClassId;
     }
 
-    @Column(name = "concept_class_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "concept_class_name", updatable = false, nullable = false)
     private String conceptClassName;
     
     public String getConceptClassName() {

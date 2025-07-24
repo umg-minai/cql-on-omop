@@ -19,8 +19,8 @@ public class AttributeDefinition {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "attribute_type_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "attribute_type_concept_id", updatable = false,
+                nullable = false)
         private Integer attributeTypeConceptId;
 
         @Override
@@ -58,8 +58,8 @@ public class AttributeDefinition {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "attribute_definition_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "attribute_definition_id", updatable = false,
+            nullable = false)
     private Integer attributeDefinitionId;
     
     public Integer getAttributeDefinitionId() {
@@ -70,8 +70,7 @@ public class AttributeDefinition {
         this.attributeDefinitionId = newValue;
     }
 
-    @Column(name = "attribute_description", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "attribute_description", updatable = false, nullable = true)
     private String attributeDescription;
     
     public Optional<String> getAttributeDescription() {
@@ -86,8 +85,7 @@ public class AttributeDefinition {
         this.attributeDescription = newValue;
     }
 
-    @Column(name = "attribute_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "attribute_name", updatable = false, nullable = false)
     private String attributeName;
     
     public String getAttributeName() {
@@ -98,8 +96,7 @@ public class AttributeDefinition {
         this.attributeName = newValue;
     }
 
-    @Column(name = "attribute_syntax", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "attribute_syntax", updatable = false, nullable = true)
     private String attributeSyntax;
     
     public Optional<String> getAttributeSyntax() {
@@ -119,7 +116,8 @@ public class AttributeDefinition {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "attribute_type_concept_id")
+    @JoinColumn(name = "attribute_type_concept_id", insertable = false,
+                updatable = false)
     @MapsId("attributeTypeConceptId")
     private Concept attributeTypeConcept;
     
