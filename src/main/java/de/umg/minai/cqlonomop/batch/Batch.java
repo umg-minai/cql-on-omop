@@ -36,17 +36,20 @@ public class Batch implements Callable<Integer> {
     @ArgGroup(validate = false, heading = "Other Options%n")
     private ExecutionOptions executionOptions;
 
+    @CommandLine.Parameters(
+            arity = "1",
+            description = "The id (without version) of a CQL library that should be evaluated. For a library named " +
+                    "NAME, a file named NAME.cql has to present in one of the directories specified via the -I option."
+    )
+    private String libraryToEvaluate;
+
     @CommandLine.Option(
             names = {"--profile"},
             paramLabel = "<svg-output-file>",
-            description = "Profile CQL evaluation and write a flamegraph representation of the captured profile into the specified SVG file."
+            description = "Profile CQL evaluation and write a flamegraph representation of the captured profile into " +
+                    "the specified SVG file."
     )
     private Path profilePath;
-
-    @CommandLine.Parameters(
-            arity = "1"
-    )
-    String libraryToEvaluate;
 
     private static final int SUCCESS = 0;
     private static final int FAILURE = 1;
@@ -55,8 +58,7 @@ public class Batch implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        // Prepare a configuration for the engine and check whether
-        // profiling and flamegraph writing has been requested.
+        // Prepare a configuration and instantiate the engine.
         var configuration = databaseOptions.applyToConfiguration(new Configuration());
         if (cqlOptions != null) {
             configuration = cqlOptions.applyToConfiguration(configuration);
@@ -64,7 +66,6 @@ public class Batch implements Callable<Integer> {
         if (executionOptions != null) {
             configuration = executionOptions.applyToConfiguration(configuration);
         }
-        //
         final var engine = new MapReduceEngine(configuration);
         // Initialize the terminal and result, error,
         // etc. presentation components.
