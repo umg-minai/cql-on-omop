@@ -264,6 +264,124 @@ define function ToConcept(OMOPObject OMOP.Vocabulary):
     codes: { ToCode(OMOPObject) }
   }
   
+// Conversion to System.Date
+
+define function ToDate(OMOPObject OMOP.CdmSource):
+  OMOPObject.cdmReleaseDate
+  
+define function ToDate(OMOPObject OMOP.CohortDefinition):
+  OMOPObject.cohortInitiationDate
+  
+define function ToDate(OMOPObject OMOP.Concept):
+  OMOPObject.validStartDate
+  
+define function ToDate(OMOPObject OMOP.ConceptRelationship):
+  OMOPObject.validStartDate
+  
+define function ToDate(OMOPObject OMOP.ConditionEra):
+  OMOPObject.conditionEraStartDate
+  
+define function ToDate(OMOPObject OMOP.ConditionOccurrence):
+  OMOPObject.conditionStartDate
+  
+define function ToDate(OMOPObject OMOP.Death):
+  OMOPObject.deathDate
+  
+define function ToDate(OMOPObject OMOP.DeviceExposure):
+  OMOPObject.deviceExposureStartDate
+  
+define function ToDate(OMOPObject OMOP.DoseEra):
+  OMOPObject.doseEraStartDate
+  
+define function ToDate(OMOPObject OMOP.DrugEra):
+  OMOPObject.drugEraStartDate
+  
+define function ToDate(OMOPObject OMOP.DrugExposure):
+  OMOPObject.drugExposureStartDate
+  
+define function ToDate(OMOPObject OMOP.DrugStrength):
+  OMOPObject.validStartDate
+  
+define function ToDate(OMOPObject OMOP.Measurement):
+  OMOPObject.measurementDate
+  
+define function ToDate(OMOPObject OMOP.Metadata):
+  OMOPObject.metadataDate
+  
+define function ToDate(OMOPObject OMOP.Note):
+  OMOPObject.noteDate
+  
+define function ToDate(OMOPObject OMOP.NoteNlp):
+  OMOPObject.nlpDate
+  
+define function ToDate(OMOPObject OMOP.Observation):
+  OMOPObject.observationDate
+  
+define function ToDate(OMOPObject OMOP.ObservationPeriod):
+  OMOPObject.observationPeriodStartDate
+  
+define function ToDate(OMOPObject OMOP.PayerPlanPeriod):
+  OMOPObject.payerPlanPeriodStartDate
+  
+define function ToDate(OMOPObject OMOP.ProcedureOccurrence):
+  OMOPObject.procedureDate
+  
+define function ToDate(OMOPObject OMOP.SourceToConceptMap):
+  OMOPObject.validStartDate
+  
+define function ToDate(OMOPObject OMOP.Specimen):
+  OMOPObject.specimenDate
+  
+define function ToDate(OMOPObject OMOP.VisitDetail):
+  OMOPObject.visitDetailStartDate
+  
+define function ToDate(OMOPObject OMOP.VisitOccurrence):
+  OMOPObject.visitStartDate
+  
+// Conversion to System.DateTime
+
+define function ToDateTime(OMOPObject OMOP.ConditionOccurrence):
+  OMOPObject.conditionStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Death):
+  OMOPObject.deathDatetime
+  
+define function ToDateTime(OMOPObject OMOP.DeviceExposure):
+  OMOPObject.deviceExposureStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.DrugExposure):
+  OMOPObject.drugExposureStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Measurement):
+  OMOPObject.measurementDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Metadata):
+  OMOPObject.metadataDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Note):
+  OMOPObject.noteDatetime
+  
+define function ToDateTime(OMOPObject OMOP.NoteNlp):
+  OMOPObject.nlpDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Observation):
+  OMOPObject.observationDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Person):
+  OMOPObject.birthDatetime
+  
+define function ToDateTime(OMOPObject OMOP.ProcedureOccurrence):
+  OMOPObject.procedureDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Specimen):
+  OMOPObject.specimenDatetime
+  
+define function ToDateTime(OMOPObject OMOP.VisitDetail):
+  OMOPObject.visitDetailStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.VisitOccurrence):
+  OMOPObject.visitStartDatetime
+  
 // Conversion to System.Quantity
 
 define function ToQuantity(OMOPObject OMOP.Measurement):
