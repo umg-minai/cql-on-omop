@@ -78,7 +78,7 @@ public class OutcomePresenter extends AbstractPresenter {
     public void presentOutcome(final Object contextObject, final MapReduceEngine.Outcome outcome) {
         final var builder = new ThemeAwareStringBuilder(this.theme);
         if (outcome instanceof MapReduceEngine.Outcome.Success success) {
-            if (!success.result().expressionResults.isEmpty()) {
+            if (this.resultPresenter != null && !success.result().expressionResults.isEmpty()) {
                 printContextObject(builder, contextObject);
                 this.resultPresenter.reset(this.oldState);
                 this.resultPresenter.presentResult(builder, success.result());
@@ -88,8 +88,10 @@ public class OutcomePresenter extends AbstractPresenter {
             }
             this.counts[SUCCESS]++;
         } else if (outcome instanceof MapReduceEngine.Outcome.Failure failure) {
-            printContextObject(builder, contextObject);
-            this.errorPresenter.presentError(builder, failure.error());
+            if (this.errorPresenter != null) {
+                printContextObject(builder, contextObject);
+                this.errorPresenter.presentError(builder, failure.error());
+            }
             this.counts[FAILURE]++;
         }
         builder.print(this.terminal);
