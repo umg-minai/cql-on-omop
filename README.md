@@ -12,6 +12,8 @@ The code in this repository can be compiled into a standalone Java application w
   Results can be handled in different ways.
   Some possibilities are
 
+  * Results are written into one or more CSV files
+
   * Results are written to the OMOP database
 
 ## Usage
@@ -158,3 +160,27 @@ Other options for further processing the results computed by CQL expressions inc
   For each selected expression, there will be one text file named like the expression but with the suffix `txt` and one image file named like the expression but with the suffix `png`.
 
   See the file `examples/output-histogram.cql` for an example CQL library that works with this sink.
+
+* Writing to a CSV file with `--sink csv` (final line contains the added options):
+
+  ```bash
+  CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
+  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME \
+  --sink csv --result-name 'RESULT-REGEX-1' --result-name 'RESULT-REGEX-2' CQL-LIBRARY-NAME
+  ```
+
+  This sink writes the objects that are the values of the CQL definitions selected by `RESULT-REGEX-1`, `RESULT-REGEX-2`, etc. into one or more CSV files.
+  The value of each matching expression definition is written to a CSV file that is named like the expression definition.
+  For example, the commandline options `--sink csv --result-name 'Population' --result-name 'Intervention' population-and-intervention` will evaluate the definitions in the CQL library `population-and-intervention.cql`, look for the definitions `Population` and `Intervention` in that library and store the values in the files `Population.csv` and `Intervention.csv` respectively.
+  This sink has a bit of logic for interpreting differently shaped results as columns and row of CSV files.
+  Generally, the following rules apply:
+
+  * The elements of a list turn into rows of the CSV file
+
+  * The elements of a tuple turn into columns of a row
+
+  * A "scalar" value turns into a single column of a row
+
+  * The results for different context values (such a `Person` instance) are turned into sequences of rows and concatenated into an overall sequence of rows
+
+  See the file `examples/output-csv.cql` for an example CQL library that works with this sink.

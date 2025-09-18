@@ -11,6 +11,7 @@ public class SinkConverter implements CommandLine.ITypeConverter<Class<? extends
             case "dbwrite" -> DatabaseWriterSink.class;
             case "histogram" -> TemporalHistogram.class;
             case "gnuplot" -> GnuplotHistogramSink.class;
+            case "csv" -> CSVWriterSink.class;
             default -> throw new RuntimeException(String.format("'%s' is not a valid result sink.", string));
         };
     }
