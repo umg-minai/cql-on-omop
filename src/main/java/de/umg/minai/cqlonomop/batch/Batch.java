@@ -1,13 +1,15 @@
 package de.umg.minai.cqlonomop.batch;
 
-import OMOP.v54.Person;
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
+import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
+import de.umg.minai.cqlonomop.engine.InMemoryLibrarySourceProvider;
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import de.umg.minai.cqlonomop.terminal.*;
+import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
@@ -44,12 +46,28 @@ public class Batch implements Callable<Integer> {
     private String libraryToEvaluate;
 
     @CommandLine.Option(
+            names = { "-c", "--context-value"},
+            paramLabel = "<cql-expression>",
+            description = "A CQL expression that is evaluated in the \"Unfiltered\" context to produce one or more " +
+                    "objects. The \"main\" evaluation, that is the evaluation of the CQL library specified as the " +
+                    "main argument of the batch operation, will be performed once for each context object. The " +
+                    "distinct evaluation results will be aggregated according by the specified result sink " +
+                    "(see --result-sink). The default is ${DEFAULT-VALUE} which performs the CQL evaluation for each " +
+                    "Person entry in the database."
+    )
+    private String contextExpression;
+
+    @CommandLine.Option(
             names = {"--profile"},
             paramLabel = "<svg-output-file>",
             description = "Profile CQL evaluation and write a flamegraph representation of the captured profile into " +
                     "the specified SVG file."
     )
     private Path profilePath;
+
+    // A temporary source provider that is used for evaluating stand-alone CQL expressions. We use this to compute
+    // the values of the CQL context object(s) and CQL parameters.
+    final InMemoryLibrarySourceProvider temporarySourceProvider = new InMemoryLibrarySourceProvider();
 
     private static final int SUCCESS = 0;
     private static final int FAILURE = 1;
@@ -67,6 +85,11 @@ public class Batch implements Callable<Integer> {
             configuration = executionOptions.applyToConfiguration(configuration);
         }
         final var engine = new MapReduceEngine(configuration);
+        // Add a source provider for evaluating stand-alone CQL
+        // expressions. We use this for computing the values of the
+        // CQL context object(s) and CQL parameters.
+        engine.getLibraryManager().getLibrarySourceLoader().registerProvider(temporarySourceProvider); // HACK
+
         // Initialize the terminal and result, error,
         // etc. presentation components.
         final Terminal terminal;
@@ -94,17 +117,16 @@ public class Batch implements Callable<Integer> {
         // finishes.
         boolean overallSuccess = false;
         try {
-            final var sessionFactory = engine.getSessionFactory();
-            final var entityManager = sessionFactory.createEntityManager();
-            final var clazz = Person.class;
-            final var criteria = entityManager.getCriteriaBuilder()
-                    .createQuery(clazz);
-            final var query = criteria.select(criteria.from(clazz));
-            final var persons = entityManager.createQuery(query).getResultStream().toList();
+            // Compute context object(s) from CQL expression provided via the commandline option.
+            Object contextObjects = null;
+            if (contextExpression != null) {
+                contextObjects = evaluateWithoutContext(engine, configuration, contextExpression);
+            }
+
             engine.setProfiling(profilePath != null);
             outcomePresenter.beginPresentation();
             final var resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
-                    persons,
+                    contextObjects,
                     Map.of(),
                     (contextObject, outcome) -> {
                         synchronized (this) {
@@ -144,6 +166,28 @@ public class Batch implements Callable<Integer> {
         }
         terminal.flush();
         return overallSuccess ? CommandLine.ExitCode.OK : CommandLine.ExitCode.SOFTWARE;
+    }
+
+    // For context object and parameters
+    private Object evaluateWithoutContext(final CQLonOMOPEngine engine,
+                                          final Configuration configuration,
+                                          final String expression) {
+        // TODO: The engine should provide this
+        engine.getLibraryCache().clear();
+        temporarySourceProvider.registerLibrary(new VersionedIdentifier().withId("Temporary"),
+                String.format("""
+                                library Temporary
+
+                                using "OMOP" version '%s'
+
+                                include OMOPHelpers
+                                include OMOPFunctions
+
+                                define Temporary: %s""",
+                        configuration.getOmopVersion(),
+                        expression));
+        final var result = engine.evaluateLibrary("Temporary");
+        return result.forExpression("Temporary").value();
     }
 
 }
