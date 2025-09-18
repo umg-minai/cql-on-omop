@@ -69,9 +69,21 @@ public class Batch implements Callable<Integer> {
     @CommandLine.Option(
             names = { "--sink" },
             paramLabel = "<sink>",
-            description = "Action that should be applied to evaluation results - either all results or the ones " +
-                    "selected via the --result-name option(s). The only possible values is \"noop\" (no operation). " +
-                    "The default is \"noop\".",
+            description = """
+                    Action that should be applied to evaluation results, either all results or the ones selected via \
+                    the --result-name option(s). Possible values are
+                    "noop" No operation.
+                    "dbwrite" Write result objects to OMOP database. The result for each expression selected via the \
+                    --result-name option(s) is inserted into the OMOP table which corresponds to the type of the \
+                    result. Result objects are translated into database rows according to the following rules \
+                      - The results for different context values (such as Person instances) are inserted independently
+                      - The elements of a list are inserted as individual rows
+                      - Instances of OMOP datatypes are inserted into the corresponding table
+                      - Other datatypes are not supported
+                      In other words, each selected definition has to evaluate to an instance of an OMOP datatype such \
+                    as Person or to a list of such like List<Person>.
+                    The default is "noop".
+                    """,
             converter = SinkConverter.class
     )
     private Class<? extends ResultSink> resultSinkClass = NoopSink.class;

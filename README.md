@@ -8,7 +8,11 @@ The code in this repository can be compiled into a standalone Java application w
 
 * An interactive Read Eval Print Loop (REPL) which reads CQL definitions and expressions from an interactive prompt, evaluates the CQL expressions and displays the results
 
-* Non-interactive batch processing of CQL libraries with evaluation results printed to the standard output stream
+* Non-interactive batch processing of CQL libraries.
+  Results can be handled in different ways.
+  Some possibilities are
+
+  * Results are written to the OMOP database
 
 ## Usage
 
@@ -108,4 +112,22 @@ CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/tar
   batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME CQL-LIBRARY-NAME
 ```
 
-Evaluation results will be printed to the standard output stream of the process.
+By default, evaluation results will be printed to the standard output stream of the process.
+Other options for further processing the results computed by CQL expressions include:
+
+* No processing with `--sink noop`, the default
+
+* Writing to the OMOP database with `--sink dbwrite` (final line contains the added options):
+
+  ```bash
+  CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
+  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME \
+  --sink dbwrite --result-name 'RESULT-REGEX-1' --result-name 'RESULT-REGEX-2' CQL-LIBRARY-NAME
+  ```
+
+  This sink writes the objects that are the values of the CQL definitions selected by `RESULT-REGEX-1`, `RESULT-REGEX-2`, etc. into the suitable tables of OMOP database.
+  The database tables are chosen based on the types of the objects.
+  For example, the commandline options `--sink dbwrite --result-name 'NewPersons' add-persons` will evaluate the definitions in the CQL library `add-persons.cql`, look for a definition `NewPersons` in that library and store the value in the `person` OMOP CDM table, assuming the value of the definition is of type `OMOP.v54.Person` (or some other version) or `List<OMOP.v54.Person>`.
+  Id fields will by populated when objects are stored in the database, so CQL libraries should not be concerned with those fields.
+
+  See the file `examples/create-patients.cql` for an example CQL library that works with this sink.
