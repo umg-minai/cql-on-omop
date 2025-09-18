@@ -12,7 +12,6 @@ import de.umg.minai.cqlonomop.terminal.*;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.opencds.cqf.cql.engine.debug.DebugResult;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
@@ -20,11 +19,12 @@ import picocli.CommandLine.Command;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Command(
         name = "batch",
-        description = "Evaluate CQL code and print the results",
+        description = "Evaluate CQL code and print or process the results",
         defaultValueProvider = DefaultValueProvider.class
 )
 public class Batch implements Callable<Integer> {
@@ -58,6 +58,25 @@ public class Batch implements Callable<Integer> {
     private String contextExpression;
 
     @CommandLine.Option(
+            names = { "--result-name" },
+            paramLabel = "<expression-definition-name>",
+            description = "Name of CQL expression definitions which should be processed. The processing is performed " +
+                    "by the \"result sink\" chose via the --sink option. If this option is supplied multiple times, " +
+                    "all specified results are selected for processing."
+    )
+    private List<String> resultNames;
+
+    @CommandLine.Option(
+            names = { "--sink" },
+            paramLabel = "<sink>",
+            description = "Action that should be applied to evaluation results - either all results or the ones " +
+                    "selected via the --result-name option(s). The only possible values is \"noop\" (no operation). " +
+                    "The default is \"noop\".",
+            converter = SinkConverter.class
+    )
+    private Class<? extends ResultSink> resultSinkClass = NoopSink.class;
+
+    @CommandLine.Option(
             names = {"--profile"},
             paramLabel = "<svg-output-file>",
             description = "Profile CQL evaluation and write a flamegraph representation of the captured profile into " +
@@ -68,11 +87,6 @@ public class Batch implements Callable<Integer> {
     // A temporary source provider that is used for evaluating stand-alone CQL expressions. We use this to compute
     // the values of the CQL context object(s) and CQL parameters.
     final InMemoryLibrarySourceProvider temporarySourceProvider = new InMemoryLibrarySourceProvider();
-
-    private static final int SUCCESS = 0;
-    private static final int FAILURE = 1;
-
-    private record ResultInfo(DebugResult debugResult, int[] outcomeCounts) {};
 
     @Override
     public Integer call() {
@@ -97,14 +111,27 @@ public class Batch implements Callable<Integer> {
         try {
             terminal = TerminalBuilder.builder().build();
             theme = new DefaultTheme();
-        } catch (IOException e) {
-            throw new RuntimeException(String.format("Error initializing terminal: %s%n", e));
+        } catch (final IOException e) {
+            throw new RuntimeException(String.format("Internal error initializing terminal: %s%n", e));
         }
         final var sourcePresenter = new SourcePresenter(terminal, theme, engine.getLibraryManager());
         final var valuePresenter = new ValuePresenter(terminal, theme);
         final var resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter);
+
+        // Prepare the requested result sink. The result sink will receive all evaluation results in the reduce step
+        // of the MapReduceEngine and extract the expressions for resultNames for processing. It will also compute
+        // the overall success of the batch processing.
+        final ResultSink resultSink;
+        try {
+            resultSink = resultSinkClass
+                    .getConstructor(MapReduceEngine.class, List.class)
+                    .newInstance(engine, resultNames);
+        } catch (final Exception e) {
+            throw new RuntimeException(String.format("Internal error while creating result sink: %s%n", e), e);
+        }
+
         // Evaluate the specified CQL code in an engine session. Apply
         // the outcomePresenter to all outcomes as they are
         // reported. For long-running, parallel evaluations, this
@@ -132,7 +159,12 @@ public class Batch implements Callable<Integer> {
                 System.out.printf("Assigning %s <- %s\n", name, value);
                 parameters.put(name, value);
             }
+            // Pass into everything to the engine: the library, the
+            // context information and the profiling flag.
             //
+            // Receive individual outcomes via the outcomePresenter
+            // and the overall result as well as debug info possibly
+            // including a profile via resultSink.
             engine.setProfiling(profilePath != null);
             outcomePresenter.beginPresentation();
             final var resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
@@ -144,32 +176,12 @@ public class Batch implements Callable<Integer> {
                         }
                         return outcome;
                     },
-                    intermediate -> {
-                        final int[] outcomeCounts = {0, 0}; // success, failure
-                        final var debugResult = new DebugResult();
-                        intermediate.forEach((contextObject, outcome) -> {
-                            if (outcome instanceof MapReduceEngine.Outcome.Success success) {
-                                if (profilePath != null) {
-                                    final var oneDebugResult = success.result().getDebugResult();
-                                    if (oneDebugResult != null) {
-                                        final var profile = oneDebugResult.getProfile();
-                                        if (profile != null) {
-                                            debugResult.ensureProfile().merge(profile);
-                                        }
-                                    }
-                                }
-                                outcomeCounts[SUCCESS]++;
-                            } else {
-                                outcomeCounts[FAILURE]++;
-                            }
-                        });
-                        return new ResultInfo(debugResult, outcomeCounts);
-                    });
+                    resultSink::processResults);
             outcomePresenter.endPresentation();
             if (profilePath != null) {
                 resultInfo.debugResult().getProfile().render(profilePath);
             }
-            overallSuccess = resultInfo.outcomeCounts()[FAILURE] == 0; // no failures
+            overallSuccess = resultInfo.isSuccess();
         } catch (final Exception e) {
             errorPresenter.presentError(e);
             // Note: overallSuccess remains false
