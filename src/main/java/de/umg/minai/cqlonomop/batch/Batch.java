@@ -138,7 +138,7 @@ public class Batch implements Callable<Integer> {
                 resultInfo.debugResult().getProfile().render(profilePath);
             }
             overallSuccess = resultInfo.outcomeCounts()[FAILURE] == 0; // no failures
-        } catch (Exception e) {
+        } catch (final Exception e) {
             errorPresenter.presentError(e);
             // Note: overallSuccess remains false
         }
