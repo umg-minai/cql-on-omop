@@ -145,3 +145,16 @@ Other options for further processing the results computed by CQL expressions inc
   Each selected expression has to evaluate to a CQL value of type `List<Date>`.
 
   See the file `examples/output-histogram.cql` for an example CQL library that works with this sink.
+
+* Plotting temporal histograms as image files for the CQL definitions selected by `RESULT-REGEX-1`, `RESULT-REGEX-2`, etc. into text files.
+
+  ```bash
+  CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
+  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME \
+  --sink gnuplot --result-name 'RESULT-REGEX-1' --result-name 'RESULT-REGEX-2' CQL-LIBRARY-NAME
+  ```
+
+  Like the `histogram` sink explained above but after writing the temporal histograms to text files, call the `gnuplot` program to render the histograms into image files.
+  For each selected expression, there will be one text file named like the expression but with the suffix `txt` and one image file named like the expression but with the suffix `png`.
+
+  See the file `examples/output-histogram.cql` for an example CQL library that works with this sink.

@@ -10,7 +10,7 @@ include "OMOPHelpers"
 
 define Conditions: [ConditionOccurrence]
 
-define OutputConditions:
+define "Output-Conditions":
   Flatten(
     (Conditions) c
       let DaysAsDateTime: expand (convert c to Interval<DateTime>) per day,
@@ -24,7 +24,7 @@ define Procedures:
     where p.procedureDatetime <= p.procedureEndDatetime
     return all p
 
-define OutputProcedures:
+define "Output-Procedures":
   Flatten(
     (Procedures) p
       let DaysAsDateTime: expand (convert p to Interval<DateTime>) per day,
