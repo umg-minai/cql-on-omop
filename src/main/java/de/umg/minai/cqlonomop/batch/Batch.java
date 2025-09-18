@@ -19,7 +19,7 @@ import picocli.CommandLine.Command;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 @Command(
@@ -122,12 +122,22 @@ public class Batch implements Callable<Integer> {
             if (contextExpression != null) {
                 contextObjects = evaluateWithoutContext(engine, configuration, contextExpression);
             }
-
+            // Compute CQL parameters from expression provided via the commandline option.
+            final var parameters = new HashMap<String, Object>();
+            for (var entry : cqlOptions.parameterBindings.entrySet()) {
+                final var name = entry.getKey();
+                final var expression = entry.getValue();
+                System.out.printf("Computing value for %s from %s\n", name, expression);
+                final var value = evaluateWithoutContext(engine, configuration, expression);
+                System.out.printf("Assigning %s <- %s\n", name, value);
+                parameters.put(name, value);
+            }
+            //
             engine.setProfiling(profilePath != null);
             outcomePresenter.beginPresentation();
             final var resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
                     contextObjects,
-                    Map.of(),
+                    parameters,
                     (contextObject, outcome) -> {
                         synchronized (this) {
                             outcomePresenter.presentOutcome(contextObject, outcome);
