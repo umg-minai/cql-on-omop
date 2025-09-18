@@ -82,6 +82,9 @@ public class Batch implements Callable<Integer> {
                       - Other datatypes are not supported
                       In other words, each selected definition has to evaluate to an instance of an OMOP datatype such \
                     as Person or to a list of such like List<Person>.
+                    "histogram" Write a temporal histogram to one or more files. The output is human-readable and also \
+                    suitable for plotting with gnuplot. Each expression selected by --result-name is written into a \
+                    file EXPRESSION_NAME.txt.
                     The default is "noop".
                     """,
             converter = SinkConverter.class

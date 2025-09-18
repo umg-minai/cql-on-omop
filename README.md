@@ -131,3 +131,17 @@ Other options for further processing the results computed by CQL expressions inc
   Id fields will by populated when objects are stored in the database, so CQL libraries should not be concerned with those fields.
 
   See the file `examples/create-patients.cql` for an example CQL library that works with this sink.
+
+* Writing temporal histograms that are computed from the CQL definitions selected by `RESULT-REGEX-1`, `RESULT-REGEX-2`, etc. into text files.
+
+  ```bash
+  CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
+  batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME \
+  --sink histogram --result-name 'RESULT-REGEX-1' --result-name 'RESULT-REGEX-2' CQL-LIBRARY-NAME
+  ```
+
+  The computed temporal histogram for each matching expression definition is written to a text file that is named like the expression definition.
+  For example, the commandline options `--sink histogram --result-name 'Population' --result-name 'Intervention' population-and-intervention` will evaluate the definitions in the CQL library `population-and-intervention.cql`, look for the definitions `Population` and `Intervention` in that library, compute two temporal histograms and store the histograms in the files `Population.txt` and `Intervention.txt`.
+  Each selected expression has to evaluate to a CQL value of type `List<Date>`.
+
+  See the file `examples/output-histogram.cql` for an example CQL library that works with this sink.
