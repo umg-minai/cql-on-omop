@@ -139,10 +139,13 @@ public class Batch implements Callable<Integer> {
             throw new RuntimeException(String.format("Internal error initializing terminal: %s%n", e));
         }
         final var sourcePresenter = new SourcePresenter(terminal, theme, engine.getLibraryManager());
-        final var valuePresenter = new ValuePresenter(terminal, theme);
-        final var resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
+        final var valuePresenter = new de.umg.minai.cqlonomop.terminal.ValuePresenter(terminal, theme);
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
-        final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter);
+        final var resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
+        final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
+                theme,
+                resultPresenter,
+                errorPresenter);
 
         // Prepare the requested result sink. The result sink will receive all evaluation results in the reduce step
         // of the MapReduceEngine and extract the expressions for resultNames for processing. It will also compute
@@ -190,18 +193,19 @@ public class Batch implements Callable<Integer> {
             // and the overall result as well as debug info possibly
             // including a profile via resultSink.
             engine.setProfiling(profilePath != null);
-            outcomePresenter.beginPresentation();
-            final var resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
-                    contextObjects,
-                    parameters,
-                    (contextObject, outcome) -> {
-                        synchronized (this) {
-                            outcomePresenter.presentOutcome(contextObject, outcome);
-                        }
-                        return outcome;
-                    },
-                    resultSink::processResults);
-            outcomePresenter.endPresentation();
+            final ResultSink.ResultInfo resultInfo;
+            try (var adapter = new AutoClosableOutcomePresenter(outcomePresenter)) {
+                resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
+                        contextObjects,
+                        parameters,
+                        (contextObject, outcome) -> {
+                            synchronized (this) {
+                                adapter.processOutcome(contextObject, outcome);
+                            }
+                            return outcome;
+                        },
+                        resultSink::processResults);
+            }
             if (profilePath != null) {
                 resultInfo.debugResult().getProfile().render(profilePath);
             }
