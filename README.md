@@ -12,6 +12,8 @@ The code in this repository can be compiled into a standalone Java application w
   Results can be handled in different ways.
   Some possibilities are
 
+  * Results are printed to the standard output stream
+
   * Results are written into one or more CSV files
 
   * Results are written to the OMOP database
@@ -114,7 +116,9 @@ CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/tar
   batch -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME CQL-LIBRARY-NAME
 ```
 
-By default, evaluation results will be printed to the standard output stream of the process.
+The return value of the process indicates whether the evaluation or any of multiple evaluations failed.
+With default `-print-*` options (see below), any errors will be printed in addition to being indicated by the return value.
+By default, errors but no evaluation results will be printed to the standard output stream of the process.
 Other options for further processing the results computed by CQL expressions include:
 
 * No processing with `--sink noop`, the default
@@ -184,3 +188,24 @@ Other options for further processing the results computed by CQL expressions inc
   * The results for different context values (such a `Person` instance) are turned into sequences of rows and concatenated into an overall sequence of rows
 
   See the file `examples/output-csv.cql` for an example CQL library that works with this sink.
+
+Sink options are orthogonal to the printing of evaluation results and/or progress indication and/or errors as the evaluation proceeds.
+The following options control the printing of such information during evaluation:
+
+* `--print-errors`/`--no-print-errors` (default: errors are printed)
+
+  Print errors that occur during evaluation.
+  Errors during evaluation are printed as soon as they are encountered by default.
+  In particular, when a CQL library is evaluated repeatedly, for example for each individual patient, the individual evaluations can succeed or fail so that any number of errors may be printed.
+  The (UNIX) return value of the process is not affected by this option.
+
+* `--print-results`/`--no-print-results` (default: results are not printed)
+
+  Print each computed result.
+  This option is most useful for semi-interactive work and during development and debugging of CQL libraries.
+  That said, it is of course possible to additionally select a sink for actual processing of the evaluation results.
+
+* `--print-progress`/`--no-print-progress` (default: progress indication is not printed)
+
+  Print some indication of progress during evaluation.
+  This option is most suitable for long-running evaluations in which the processing of results is handled by some sink other than the `noop` sink.

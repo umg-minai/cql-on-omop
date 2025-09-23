@@ -108,6 +108,48 @@ public class Batch implements Callable<Integer> {
     )
     private Path profilePath;
 
+    private enum ProgressOutput {
+        NONE,
+        PROGRESS,
+        EXPRESSION_RESULTS
+    }
+
+    @CommandLine.Option(
+            names = { "--print-errors" },
+            negatable = true,
+            description = """
+                    Print errors that occur during evaluation.
+                    Errors during evaluation are printed as soon as they are encountered by default. In particular, \
+                    when a CQL library is evaluated repeatedly, for example for each individual patient, the \
+                    individual evaluations can succeed or fail so that any number of errors may be printed. The \
+                    (UNIX) return value of the process is not affected by this option.
+                    """
+    )
+    private Boolean printErrors = true;
+
+    @CommandLine.Option(
+            names = { "--print-results" },
+            negatable = true,
+            description = """
+                    Print each computed result.
+                    This option is most useful for semi-interactive work and during development and debugging of CQL \
+                    libraries. That said, it is of course possible to additionally select a sink for actual \
+                    processing of the evaluation results.
+                    """
+    )
+    private Boolean printResults = false;
+
+    @CommandLine.Option(
+            names = { "--print-progress" },
+            negatable = true,
+            description = """
+                    Print some indication of progress during evaluation.
+                    This option is most suitable for long-running evaluations in which the processing of results is \
+                    handled by some sink other than the noop sink.
+                    """
+    )
+    private Boolean printProgress = false;
+
     // A temporary source provider that is used for evaluating stand-alone CQL expressions. We use this to compute
     // the values of the CQL context object(s) and CQL parameters.
     final InMemoryLibrarySourceProvider temporarySourceProvider = new InMemoryLibrarySourceProvider();
@@ -141,11 +183,12 @@ public class Batch implements Callable<Integer> {
         final var sourcePresenter = new SourcePresenter(terminal, theme, engine.getLibraryManager());
         final var valuePresenter = new de.umg.minai.cqlonomop.terminal.ValuePresenter(terminal, theme);
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
-        final var resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
                 theme,
-                resultPresenter,
-                errorPresenter);
+                printResults
+                        ? new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter)
+                        : null,
+                printErrors ? errorPresenter : null);
 
         // Prepare the requested result sink. The result sink will receive all evaluation results in the reduce step
         // of the MapReduceEngine and extract the expressions for resultNames for processing. It will also compute
@@ -194,14 +237,18 @@ public class Batch implements Callable<Integer> {
             // including a profile via resultSink.
             engine.setProfiling(profilePath != null);
             final ResultSink.ResultInfo resultInfo;
+            int[] count = {0};
             try (var adapter = new AutoClosableOutcomePresenter(outcomePresenter)) {
                 resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
                         contextObjects,
                         parameters,
                         (contextObject, outcome) -> {
                             synchronized (this) {
-                                adapter.processOutcome(contextObject, outcome);
+                                if ((++count[0] % 100 == 0) && printProgress) {
+                                    System.out.printf("%d\n", count[0]);
+                                }
                             }
+                            adapter.processOutcome(contextObject, outcome);
                             return outcome;
                         },
                         resultSink::processResults);
