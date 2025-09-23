@@ -19,7 +19,8 @@ import java.io.IOException;
 @CommandLine.Command(
         name = "repl",
         description = "Run an interactive Read Eval Print Loop (REPL)",
-        defaultValueProvider = DefaultValueProvider.class
+        defaultValueProvider = DefaultValueProvider.class,
+        usageHelpAutoWidth = true
 )
 public class Repl implements Runnable {
 

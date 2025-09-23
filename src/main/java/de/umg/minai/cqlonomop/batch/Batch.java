@@ -25,7 +25,8 @@ import java.util.concurrent.Callable;
 @Command(
         name = "batch",
         description = "Evaluate CQL code and print or process the results",
-        defaultValueProvider = DefaultValueProvider.class
+        defaultValueProvider = DefaultValueProvider.class,
+        usageHelpAutoWidth = true
 )
 public class Batch implements Callable<Integer> {
 
@@ -61,7 +62,7 @@ public class Batch implements Callable<Integer> {
             names = { "--result-name" },
             paramLabel = "<expression-definition-name>",
             description = "Name of CQL expression definitions which should be processed. The processing is performed " +
-                    "by the \"result sink\" chose via the --sink option. If this option is supplied multiple times, " +
+                    "by the \"result sink\" chosen via the --sink option. If this option is supplied multiple times, " +
                     "all specified results are selected for processing."
     )
     private List<String> resultNames;
