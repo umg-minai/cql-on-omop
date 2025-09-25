@@ -12,6 +12,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.widget.AutosuggestionWidgets;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -127,6 +128,8 @@ public class Repl implements Runnable {
                 builder.variable(LineReader.HISTORY_FILE, historyFile);
             }
             this.reader = builder.build();
+            final var autoSuggestions = new AutosuggestionWidgets(this.reader);
+            autoSuggestions.enable();
         } catch (IOException e) {
             throw new RuntimeException("Error initializing terminal", e);
         }
