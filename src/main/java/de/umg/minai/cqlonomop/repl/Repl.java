@@ -115,12 +115,18 @@ public class Repl implements Runnable {
         this.commandProcessor = new CommandProcessor(evaluator);
         try {
             this.terminal = TerminalBuilder.builder().build();
-            // TODO(jmoringe): fallback directory if XDG variable is not set
-            final var historyFile = String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME"));
-            this.reader = LineReaderBuilder.builder()
-                    .variable(LineReader.HISTORY_FILE, historyFile)
-                    .completer(new Completer(systemModelInfo, domainModelInfo, this.commandProcessor))
-                    .terminal(this.terminal).build();
+            final var builder = LineReaderBuilder.builder()
+                    .terminal(this.terminal)
+                    .completer(new Completer(systemModelInfo, domainModelInfo, this.commandProcessor));
+            final var xdgStateHome = System.getenv("XDG_STATE_HOME");
+            final var stateDirectory = xdgStateHome != null
+                    ? xdgStateHome
+                    : System.getenv("HOME");
+            if (stateDirectory != null) {
+                final var historyFile = String.format("%s/cql-on-omop/repl-history", stateDirectory);
+                builder.variable(LineReader.HISTORY_FILE, historyFile);
+            }
+            this.reader = builder.build();
         } catch (IOException e) {
             throw new RuntimeException("Error initializing terminal", e);
         }
