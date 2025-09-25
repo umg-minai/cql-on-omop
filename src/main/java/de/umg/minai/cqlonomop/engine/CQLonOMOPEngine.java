@@ -155,15 +155,6 @@ public class CQLonOMOPEngine {
         result.add(library);
     }
 
-    public CqlEngine evaluateExpressionsIntoCache(final Map<VersionedIdentifier, Set<String>> expressions) {
-        return withEngineSession(session -> {
-            final var engine = session.cqlEngine();
-            engine.getCache().setExpressionCaching(true);
-            expressions.forEach(engine::evaluate);
-            return engine;
-        });
-    }
-
     public <R> R withEngineSession(final Function<EngineSession, R> continuation) {
         try (var session = this.sessionFactory.openSession();
              var entityManager = session.getEntityManagerFactory().createEntityManager()) {

@@ -230,7 +230,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
         });
         final var unfilteredIntermediate = mapper.apply(null, Outcome.success(unfilteredResult));
         final var unfilteredCache = unfilteredEngine.getCache();
-        final Function<Map<Object, I>, R> wrappedReducer = (intermediate) -> {
+        final Function<Map<Object, I>, R> wrappedReducer = intermediate -> {
             intermediate.put(UNFILTERED_CONTEXT_KEY, unfilteredIntermediate);
             return reducer.apply(intermediate);
         };

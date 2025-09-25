@@ -28,11 +28,4 @@ public class ConnectionFactory {
         return config.buildSessionFactory();
     }
 
-    public static EntityManager createEntityManager(final Configuration configuration,
-                                                    final MappingInfo mappingInfo) {
-        final var sessionFactory = createSessionFactory(configuration, mappingInfo);
-        final var session = sessionFactory.openSession();
-        return session.getEntityManagerFactory().createEntityManager();
-    }
-
 }
