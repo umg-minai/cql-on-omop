@@ -46,10 +46,10 @@ public class Repl implements Runnable {
 
     private void repl() {
         for (int i = 0;; ++i) {
-            final String input;
             try {
                 final var prompt = String.format("[%s] ", i);
-                input = reader.readLine(prompt);
+                terminal.flush();
+                reader.readLine(prompt);
             } catch (EndOfFileException _e) {
                 // User probably pressed C-d.
                 break;
@@ -64,7 +64,8 @@ public class Repl implements Runnable {
                 oldHandler[0] = null;
             });
             try {
-                this.processor.process(input);
+                final var parsedLine = reader.getParsedLine();
+                this.processor.process(parsedLine);
             } catch (Exception exception) {
                 this.errorPresenter.presentError(exception);
             } finally {
@@ -106,24 +107,25 @@ public class Repl implements Runnable {
                 }
             }
         }
+        final var engine = this.evaluator.getEngine();
 
         // Initialize user interface.
-        final var systemModelInfo = this.evaluator.getEngine().getModel("System").getModelInfo();
-        final var domainModelInfo = this.evaluator.getEngine().getModel().getModelInfo();
+        final var systemModelInfo = engine.getModel("System").getModelInfo();
+        final var domainModelInfo = engine.getModel().getModelInfo();
         this.commandProcessor = new CommandProcessor(evaluator);
         try {
             this.terminal = TerminalBuilder.builder().build();
             // TODO(jmoringe): fallback directory if XDG variable is not set
+            final var historyFile = String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME"));
             this.reader = LineReaderBuilder.builder()
-                    .variable(LineReader.HISTORY_FILE,
-                            String.format("%s/cql-on-omop/repl-history", System.getenv("XDG_STATE_HOME")))
+                    .variable(LineReader.HISTORY_FILE, historyFile)
                     .completer(new Completer(systemModelInfo, domainModelInfo, this.commandProcessor))
                     .terminal(this.terminal).build();
         } catch (IOException e) {
             throw new RuntimeException("Error initializing terminal", e);
         }
 
-        final var libraryManager = this.evaluator.getEngine().getLibraryManager();
+        final var libraryManager = engine.getLibraryManager();
         final var theme = new DefaultTheme();
         final var sourcePresenter = new SourcePresenter(terminal, theme, libraryManager);
         final var valuePresenter = new ValuePresenter(terminal, theme);
