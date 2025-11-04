@@ -24,6 +24,7 @@ public class ConnectionFactory {
         if (password != null) {
             config.setProperty(JAKARTA_JDBC_PASSWORD, password);
         }
+        config.setProperty(DEFAULT_SCHEMA, configuration.getDatabaseSchema());
         config.setProperty(SHOW_SQL, String.valueOf(configuration.getShowSQL()));
         // Register class of the data model.
         mappingInfo.getDataTypeInfos().forEach(

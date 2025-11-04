@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "dose_era", schema = "cds_cdm")
+@Table(name = "dose_era")
 public class DoseEra {
 
     @Column(name = "dose_era_end_date", updatable = false, nullable = false)

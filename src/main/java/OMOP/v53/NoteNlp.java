@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "note_nlp", schema = "cds_cdm")
+@Table(name = "note_nlp")
 public class NoteNlp {
 
     @Column(name = "lexical_variant", updatable = false, nullable = false)

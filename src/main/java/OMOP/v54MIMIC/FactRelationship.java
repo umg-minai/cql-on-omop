@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "fact_relationship", schema = "cds_cdm")
+@Table(name = "fact_relationship")
 public class FactRelationship {
 
     @Embeddable

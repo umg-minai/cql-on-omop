@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "cdm_source", schema = "cds_cdm")
+@Table(name = "cdm_source")
 public class CdmSource {
 
     @Embeddable

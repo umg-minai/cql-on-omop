@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "cohort_definition", schema = "cds_cdm")
+@Table(name = "cohort_definition")
 public class CohortDefinition {
 
     @Embeddable

@@ -34,8 +34,10 @@ To start the REPL and connect to a database
 
 ```bash
 CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.0-SNAPSHOT.jar \
-  repl -p DATABASE_SERVER_PORT -u DATABASE_USERNAME -d DATABASE-NAME
+  repl -h DATABASE-SERVER-HOST -p DATABASE-SERVER-PORT -u DATABASE-USERNAME -d DATABASE-NAME [-s DATABASE-SCHEMA]
 ```
+
+The default `DATABASE-SCHEMA` is `cds_cdm`.
 
 Within the REPL, evaluate CQL expressions:
 

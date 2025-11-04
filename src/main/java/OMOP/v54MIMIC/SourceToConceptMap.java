@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "source_to_concept_map", schema = "cds_cdm")
+@Table(name = "source_to_concept_map")
 public class SourceToConceptMap {
 
     @Embeddable

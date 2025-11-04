@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "vocabulary", schema = "cds_cdm")
+@Table(name = "vocabulary")
 public class Vocabulary {
 
     @Column(name = "vocabulary_concept_id", updatable = false, nullable = false)

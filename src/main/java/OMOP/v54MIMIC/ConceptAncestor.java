@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "concept_ancestor", schema = "cds_cdm")
+@Table(name = "concept_ancestor")
 public class ConceptAncestor {
 
     @Embeddable

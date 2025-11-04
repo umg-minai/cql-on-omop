@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "care_site", schema = "cds_cdm")
+@Table(name = "care_site")
 public class CareSite {
 
     @Id

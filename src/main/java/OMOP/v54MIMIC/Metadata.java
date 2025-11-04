@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "metadata", schema = "cds_cdm")
+@Table(name = "metadata")
 public class Metadata {
 
     @Column(name = "metadata_concept_id", updatable = false, nullable = false)

@@ -17,6 +17,8 @@ public class Configuration {
 
     private String databaseName;
 
+    private String databaseSchema;
+
     private Integer threadCount = defaultThreadCount();
 
     private Boolean showSQL = false;
@@ -71,6 +73,15 @@ public class Configuration {
 
     public Configuration withDatabaseName(final String databaseName) {
         this.databaseName = databaseName;
+        return this;
+    }
+
+    public String getDatabaseSchema() {
+        return this.databaseSchema;
+    }
+
+    public Configuration withDatabaseSchema(final String databaseSchema) {
+        this.databaseSchema = databaseSchema;
         return this;
     }
 

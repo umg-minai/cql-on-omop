@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "payer_plan_period", schema = "cds_cdm")
+@Table(name = "payer_plan_period")
 public class PayerPlanPeriod {
 
     @Column(name = "family_source_value", updatable = false, nullable = true)

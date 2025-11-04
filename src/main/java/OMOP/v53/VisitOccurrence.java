@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Table(name = "visit_occurrence", schema = "cds_cdm")
+@Table(name = "visit_occurrence")
 public class VisitOccurrence {
 
     @Column(name = "admitting_source_concept_id", updatable = false,

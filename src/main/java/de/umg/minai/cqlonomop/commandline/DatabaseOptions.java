@@ -39,7 +39,14 @@ public class DatabaseOptions {
     public String database;
 
     @Option(
-            names = {"-s", "--show-sql"},
+            names = {"-s", "--schema"},
+            defaultValue = "cds_cdm",
+            description = "The schema in which the OMOP tables reside within the specified database."
+    )
+    public String schema;
+
+    @Option(
+            names = {"--show-sql"},
             defaultValue = "false",
             description = "Show the generated SQL statements as they are sent to the database server."
     )
@@ -52,6 +59,7 @@ public class DatabaseOptions {
                 .withDatabaseUser(this.user)
                 .withDatabasePassword(this.password)
                 .withDatabaseName(this.database)
+                .withDatabaseSchema(this.schema)
                 .withShowSQL(this.showSQL);
     }
 
