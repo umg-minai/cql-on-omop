@@ -1,8 +1,10 @@
 package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
-import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
+
+import static org.hibernate.cfg.JdbcSettings.*;
+import static org.hibernate.cfg.MappingSettings.DEFAULT_SCHEMA;
 
 public class ConnectionFactory {
 
@@ -15,13 +17,14 @@ public class ConnectionFactory {
                 configuration.getDatabaseHost(),
                 configuration.getDatabasePort(),
                 configuration.getDatabaseName());
-        config.setProperty("hibernate.connection.url", connectionURL);
-        config.setProperty("hibernate.connection.username", configuration.getDatabaseUser());
+
+        config.setProperty(JAKARTA_JDBC_URL, connectionURL);
+        config.setProperty(JAKARTA_JDBC_USER, configuration.getDatabaseUser());
         final var password = configuration.getDatabasePassword();
         if (password != null) {
-            config.setProperty("hibernate.connection.password", password);
+            config.setProperty(JAKARTA_JDBC_PASSWORD, password);
         }
-        config.setProperty("hibernate.show_sql", String.valueOf(configuration.getShowSQL()));
+        config.setProperty(SHOW_SQL, String.valueOf(configuration.getShowSQL()));
         // Register class of the data model.
         mappingInfo.getDataTypeInfos().forEach(
                 (name, info) -> config.addAnnotatedClass(info.getClazz()));
