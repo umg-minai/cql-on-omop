@@ -19,12 +19,12 @@ public class ConceptAncestor {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "ancestor_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "ancestor_concept_id", updatable = false,
+                nullable = false)
         private Integer ancestorConceptId;
 
-        @Column(name = "descendant_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "descendant_concept_id", updatable = false,
+                nullable = false)
         private Integer descendantConceptId;
 
         @Override
@@ -71,7 +71,8 @@ public class ConceptAncestor {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ancestor_concept_id")
+    @JoinColumn(name = "ancestor_concept_id", insertable = false,
+                updatable = false)
     @MapsId("ancestorConceptId")
     private Concept ancestorConcept;
     
@@ -89,7 +90,8 @@ public class ConceptAncestor {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "descendant_concept_id")
+    @JoinColumn(name = "descendant_concept_id", insertable = false,
+                updatable = false)
     @MapsId("descendantConceptId")
     private Concept descendantConcept;
     
@@ -102,8 +104,8 @@ public class ConceptAncestor {
         this.compoundId.descendantConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "max_levels_of_separation", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "max_levels_of_separation", updatable = false,
+            nullable = false)
     private Integer maxLevelsOfSeparation;
     
     public Integer getMaxLevelsOfSeparation() {
@@ -114,8 +116,8 @@ public class ConceptAncestor {
         this.maxLevelsOfSeparation = newValue;
     }
 
-    @Column(name = "min_levels_of_separation", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "min_levels_of_separation", updatable = false,
+            nullable = false)
     private Integer minLevelsOfSeparation;
     
     public Integer getMinLevelsOfSeparation() {

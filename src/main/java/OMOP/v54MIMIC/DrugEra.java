@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "drug_era", schema = "cds_cdm")
 public class DrugEra {
 
-    @Column(name = "drug_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_concept_id", updatable = false, nullable = false)
     private Integer drugConceptId;
     
     public Integer getDrugConceptId() {
@@ -25,7 +24,7 @@ public class DrugEra {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_concept_id")
+    @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     private Concept drugConcept;
     
     public Concept getDrugConcept() {
@@ -37,8 +36,7 @@ public class DrugEra {
         this.drugConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "drug_era_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_era_end_date", updatable = false, nullable = false)
     private ZonedDateTime drugEraEndDate;
     
     public Date getDrugEraEndDate() {
@@ -51,16 +49,14 @@ public class DrugEra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "drug_era_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_era_id", updatable = false, nullable = false)
     private Long drugEraId;
     
     public Long getDrugEraId() {
         return this.drugEraId;
     }
 
-    @Column(name = "drug_era_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "drug_era_start_date", updatable = false, nullable = false)
     private ZonedDateTime drugEraStartDate;
     
     public Date getDrugEraStartDate() {
@@ -71,8 +67,7 @@ public class DrugEra {
         this.drugEraStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "drug_exposure_count", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "drug_exposure_count", updatable = false, nullable = true)
     private Integer drugExposureCount;
     
     public Optional<Integer> getDrugExposureCount() {
@@ -87,8 +82,7 @@ public class DrugEra {
         this.drugExposureCount = newValue;
     }
 
-    @Column(name = "gap_days", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "gap_days", updatable = false, nullable = true)
     private Integer gapDays;
     
     public Optional<Integer> getGapDays() {
@@ -103,8 +97,7 @@ public class DrugEra {
         this.gapDays = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -112,7 +105,7 @@ public class DrugEra {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {

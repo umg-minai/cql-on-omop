@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "note_nlp", schema = "cds_cdm")
 public class NoteNlp {
 
-    @Column(name = "lexical_variant", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "lexical_variant", updatable = false, nullable = false)
     private String lexicalVariant;
     
     public String getLexicalVariant() {
@@ -28,8 +27,7 @@ public class NoteNlp {
         this.lexicalVariant = newValue;
     }
 
-    @Column(name = "nlp_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "nlp_date", updatable = false, nullable = false)
     private ZonedDateTime nlpDate;
     
     public Date getNlpDate() {
@@ -40,8 +38,7 @@ public class NoteNlp {
         this.nlpDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "nlp_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "nlp_datetime", updatable = false, nullable = true)
     private ZonedDateTime nlpDatetime;
     
     public Optional<DateTime> getNlpDatetime() {
@@ -60,8 +57,7 @@ public class NoteNlp {
         }
     }
 
-    @Column(name = "nlp_system", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "nlp_system", updatable = false, nullable = true)
     private String nlpSystem;
     
     public Optional<String> getNlpSystem() {
@@ -76,8 +72,7 @@ public class NoteNlp {
         this.nlpSystem = newValue;
     }
 
-    @Column(name = "note_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "note_id", updatable = false, nullable = false)
     private Long noteId;
     
     public Long getNoteId() {
@@ -88,8 +83,7 @@ public class NoteNlp {
         this.noteId = newValue;
     }
 
-    @Column(name = "note_nlp_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "note_nlp_concept_id", updatable = false, nullable = true)
     private Integer noteNlpConceptId;
     
     public Optional<Integer> getNoteNlpConceptId() {
@@ -101,7 +95,8 @@ public class NoteNlp {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_nlp_concept_id")
+    @JoinColumn(name = "note_nlp_concept_id", insertable = false,
+                updatable = false)
     private Concept noteNlpConcept;
     
     public Optional<Concept> getNoteNlpConcept() {
@@ -120,16 +115,15 @@ public class NoteNlp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "note_nlp_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "note_nlp_id", updatable = false, nullable = false)
     private Long noteNlpId;
     
     public Long getNoteNlpId() {
         return this.noteNlpId;
     }
 
-    @Column(name = "note_nlp_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "note_nlp_source_concept_id", updatable = false,
+            nullable = true)
     private Integer noteNlpSourceConceptId;
     
     public Optional<Integer> getNoteNlpSourceConceptId() {
@@ -141,7 +135,8 @@ public class NoteNlp {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_nlp_source_concept_id")
+    @JoinColumn(name = "note_nlp_source_concept_id", insertable = false,
+                updatable = false)
     private Concept noteNlpSourceConcept;
     
     public Optional<Concept> getNoteNlpSourceConcept() {
@@ -158,8 +153,7 @@ public class NoteNlp {
         }
     }
 
-    @Column(name = "offset", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "offset", updatable = false, nullable = true)
     private String offset;
     
     public Optional<String> getOffset() {
@@ -174,8 +168,7 @@ public class NoteNlp {
         this.offset = newValue;
     }
 
-    @Column(name = "section_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "section_concept_id", updatable = false, nullable = true)
     private Integer sectionConceptId;
     
     public Optional<Integer> getSectionConceptId() {
@@ -187,7 +180,8 @@ public class NoteNlp {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_concept_id")
+    @JoinColumn(name = "section_concept_id", insertable = false,
+                updatable = false)
     private Concept sectionConcept;
     
     public Optional<Concept> getSectionConcept() {
@@ -204,8 +198,7 @@ public class NoteNlp {
         }
     }
 
-    @Column(name = "snippet", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "snippet", updatable = false, nullable = true)
     private String snippet;
     
     public Optional<String> getSnippet() {
@@ -220,8 +213,7 @@ public class NoteNlp {
         this.snippet = newValue;
     }
 
-    @Column(name = "term_exists", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "term_exists", updatable = false, nullable = true)
     private String termExists;
     
     public Optional<String> getTermExists() {
@@ -236,8 +228,7 @@ public class NoteNlp {
         this.termExists = newValue;
     }
 
-    @Column(name = "term_modifiers", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "term_modifiers", updatable = false, nullable = true)
     private String termModifiers;
     
     public Optional<String> getTermModifiers() {
@@ -252,8 +243,7 @@ public class NoteNlp {
         this.termModifiers = newValue;
     }
 
-    @Column(name = "term_temporal", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "term_temporal", updatable = false, nullable = true)
     private String termTemporal;
     
     public Optional<String> getTermTemporal() {

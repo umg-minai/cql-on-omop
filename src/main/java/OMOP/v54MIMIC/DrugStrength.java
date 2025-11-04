@@ -19,12 +19,11 @@ public class DrugStrength {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "drug_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "drug_concept_id", updatable = false, nullable = false)
         private Integer drugConceptId;
 
-        @Column(name = "ingredient_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "ingredient_concept_id", updatable = false,
+                nullable = false)
         private Integer ingredientConceptId;
 
         @Override
@@ -66,8 +65,7 @@ public class DrugStrength {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "amount_unit_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "amount_unit_concept_id", updatable = false, nullable = true)
     private Integer amountUnitConceptId;
     
     public Optional<Integer> getAmountUnitConceptId() {
@@ -79,7 +77,8 @@ public class DrugStrength {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "amount_unit_concept_id")
+    @JoinColumn(name = "amount_unit_concept_id", insertable = false,
+                updatable = false)
     private Concept amountUnitConcept;
     
     public Optional<Concept> getAmountUnitConcept() {
@@ -96,8 +95,7 @@ public class DrugStrength {
         }
     }
 
-    @Column(name = "amount_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "amount_value", updatable = false, nullable = true)
     private BigDecimal amountValue;
     
     public Optional<BigDecimal> getAmountValue() {
@@ -112,8 +110,7 @@ public class DrugStrength {
         this.amountValue = newValue;
     }
 
-    @Column(name = "box_size", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "box_size", updatable = false, nullable = true)
     private Integer boxSize;
     
     public Optional<Integer> getBoxSize() {
@@ -128,8 +125,8 @@ public class DrugStrength {
         this.boxSize = newValue;
     }
 
-    @Column(name = "denominator_unit_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "denominator_unit_concept_id", updatable = false,
+            nullable = true)
     private Integer denominatorUnitConceptId;
     
     public Optional<Integer> getDenominatorUnitConceptId() {
@@ -141,7 +138,8 @@ public class DrugStrength {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "denominator_unit_concept_id")
+    @JoinColumn(name = "denominator_unit_concept_id", insertable = false,
+                updatable = false)
     private Concept denominatorUnitConcept;
     
     public Optional<Concept> getDenominatorUnitConcept() {
@@ -158,8 +156,7 @@ public class DrugStrength {
         }
     }
 
-    @Column(name = "denominator_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "denominator_value", updatable = false, nullable = true)
     private BigDecimal denominatorValue;
     
     public Optional<BigDecimal> getDenominatorValue() {
@@ -179,7 +176,7 @@ public class DrugStrength {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_concept_id")
+    @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     @MapsId("drugConceptId")
     private Concept drugConcept;
     
@@ -197,7 +194,8 @@ public class DrugStrength {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ingredient_concept_id")
+    @JoinColumn(name = "ingredient_concept_id", insertable = false,
+                updatable = false)
     @MapsId("ingredientConceptId")
     private Concept ingredientConcept;
     
@@ -210,8 +208,7 @@ public class DrugStrength {
         this.compoundId.ingredientConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "invalid_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "invalid_reason", updatable = false, nullable = true)
     private String invalidReason;
     
     public Optional<String> getInvalidReason() {
@@ -226,8 +223,8 @@ public class DrugStrength {
         this.invalidReason = newValue;
     }
 
-    @Column(name = "numerator_unit_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "numerator_unit_concept_id", updatable = false,
+            nullable = true)
     private Integer numeratorUnitConceptId;
     
     public Optional<Integer> getNumeratorUnitConceptId() {
@@ -239,7 +236,8 @@ public class DrugStrength {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "numerator_unit_concept_id")
+    @JoinColumn(name = "numerator_unit_concept_id", insertable = false,
+                updatable = false)
     private Concept numeratorUnitConcept;
     
     public Optional<Concept> getNumeratorUnitConcept() {
@@ -256,8 +254,7 @@ public class DrugStrength {
         }
     }
 
-    @Column(name = "numerator_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "numerator_value", updatable = false, nullable = true)
     private BigDecimal numeratorValue;
     
     public Optional<BigDecimal> getNumeratorValue() {
@@ -272,8 +269,7 @@ public class DrugStrength {
         this.numeratorValue = newValue;
     }
 
-    @Column(name = "valid_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_end_date", updatable = false, nullable = false)
     private ZonedDateTime validEndDate;
     
     public Date getValidEndDate() {
@@ -284,8 +280,7 @@ public class DrugStrength {
         this.validEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "valid_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "valid_start_date", updatable = false, nullable = false)
     private ZonedDateTime validStartDate;
     
     public Date getValidStartDate() {

@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "specimen", schema = "cds_cdm")
 public class Specimen {
 
-    @Column(name = "anatomic_site_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "anatomic_site_concept_id", updatable = false,
+            nullable = true)
     private Integer anatomicSiteConceptId;
     
     public Optional<Integer> getAnatomicSiteConceptId() {
@@ -29,7 +29,8 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "anatomic_site_concept_id")
+    @JoinColumn(name = "anatomic_site_concept_id", insertable = false,
+                updatable = false)
     private Concept anatomicSiteConcept;
     
     public Optional<Concept> getAnatomicSiteConcept() {
@@ -46,8 +47,8 @@ public class Specimen {
         }
     }
 
-    @Column(name = "anatomic_site_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "anatomic_site_source_value", updatable = false,
+            nullable = true)
     private String anatomicSiteSourceValue;
     
     public Optional<String> getAnatomicSiteSourceValue() {
@@ -62,8 +63,8 @@ public class Specimen {
         this.anatomicSiteSourceValue = newValue;
     }
 
-    @Column(name = "disease_status_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "disease_status_concept_id", updatable = false,
+            nullable = true)
     private Integer diseaseStatusConceptId;
     
     public Optional<Integer> getDiseaseStatusConceptId() {
@@ -75,7 +76,8 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "disease_status_concept_id")
+    @JoinColumn(name = "disease_status_concept_id", insertable = false,
+                updatable = false)
     private Concept diseaseStatusConcept;
     
     public Optional<Concept> getDiseaseStatusConcept() {
@@ -92,8 +94,8 @@ public class Specimen {
         }
     }
 
-    @Column(name = "disease_status_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "disease_status_source_value", updatable = false,
+            nullable = true)
     private String diseaseStatusSourceValue;
     
     public Optional<String> getDiseaseStatusSourceValue() {
@@ -108,8 +110,7 @@ public class Specimen {
         this.diseaseStatusSourceValue = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -117,7 +118,7 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -129,8 +130,7 @@ public class Specimen {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "quantity", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "quantity", updatable = false, nullable = true)
     private BigDecimal quantity;
     
     public Optional<BigDecimal> getQuantity() {
@@ -145,8 +145,7 @@ public class Specimen {
         this.quantity = newValue;
     }
 
-    @Column(name = "specimen_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "specimen_concept_id", updatable = false, nullable = false)
     private Integer specimenConceptId;
     
     public Integer getSpecimenConceptId() {
@@ -154,7 +153,8 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "specimen_concept_id")
+    @JoinColumn(name = "specimen_concept_id", insertable = false,
+                updatable = false)
     private Concept specimenConcept;
     
     public Concept getSpecimenConcept() {
@@ -166,8 +166,7 @@ public class Specimen {
         this.specimenConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "specimen_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "specimen_date", updatable = false, nullable = false)
     private ZonedDateTime specimenDate;
     
     public Date getSpecimenDate() {
@@ -178,8 +177,7 @@ public class Specimen {
         this.specimenDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "specimen_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "specimen_datetime", updatable = false, nullable = true)
     private ZonedDateTime specimenDatetime;
     
     public Optional<DateTime> getSpecimenDatetime() {
@@ -200,16 +198,14 @@ public class Specimen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "specimen_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "specimen_id", updatable = false, nullable = false)
     private Long specimenId;
     
     public Long getSpecimenId() {
         return this.specimenId;
     }
 
-    @Column(name = "specimen_source_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "specimen_source_id", updatable = false, nullable = true)
     private String specimenSourceId;
     
     public Optional<String> getSpecimenSourceId() {
@@ -224,8 +220,7 @@ public class Specimen {
         this.specimenSourceId = newValue;
     }
 
-    @Column(name = "specimen_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "specimen_source_value", updatable = false, nullable = true)
     private String specimenSourceValue;
     
     public Optional<String> getSpecimenSourceValue() {
@@ -240,8 +235,8 @@ public class Specimen {
         this.specimenSourceValue = newValue;
     }
 
-    @Column(name = "specimen_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "specimen_type_concept_id", updatable = false,
+            nullable = false)
     private Integer specimenTypeConceptId;
     
     public Integer getSpecimenTypeConceptId() {
@@ -249,7 +244,8 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "specimen_type_concept_id")
+    @JoinColumn(name = "specimen_type_concept_id", insertable = false,
+                updatable = false)
     private Concept specimenTypeConcept;
     
     public Concept getSpecimenTypeConcept() {
@@ -261,8 +257,7 @@ public class Specimen {
         this.specimenTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "unit_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_concept_id", updatable = false, nullable = true)
     private Integer unitConceptId;
     
     public Optional<Integer> getUnitConceptId() {
@@ -274,7 +269,7 @@ public class Specimen {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_concept_id")
+    @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
     
     public Optional<Concept> getUnitConcept() {
@@ -291,8 +286,7 @@ public class Specimen {
         }
     }
 
-    @Column(name = "unit_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "unit_source_value", updatable = false, nullable = true)
     private String unitSourceValue;
     
     public Optional<String> getUnitSourceValue() {

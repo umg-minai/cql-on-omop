@@ -19,12 +19,11 @@ public class ConceptSynonym {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "concept_id", insertable = false, updatable = false,
-                nullable = false)
+        @Column(name = "concept_id", updatable = false, nullable = false)
         private Integer conceptId;
 
-        @Column(name = "language_concept_id", insertable = false,
-                updatable = false, nullable = false)
+        @Column(name = "language_concept_id", updatable = false,
+                nullable = false)
         private Integer languageConceptId;
 
         @Override
@@ -71,7 +70,7 @@ public class ConceptSynonym {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "concept_id")
+    @JoinColumn(name = "concept_id", insertable = false, updatable = false)
     @MapsId("conceptId")
     private Concept concept;
     
@@ -84,8 +83,7 @@ public class ConceptSynonym {
         this.compoundId.conceptId = newValue.getConceptId();
     }
 
-    @Column(name = "concept_synonym_name", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "concept_synonym_name", updatable = false, nullable = false)
     private String conceptSynonymName;
     
     public String getConceptSynonymName() {
@@ -101,7 +99,8 @@ public class ConceptSynonym {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "language_concept_id")
+    @JoinColumn(name = "language_concept_id", insertable = false,
+                updatable = false)
     @MapsId("languageConceptId")
     private Concept languageConcept;
     

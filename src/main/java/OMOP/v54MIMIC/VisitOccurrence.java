@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "visit_occurrence", schema = "cds_cdm")
 public class VisitOccurrence {
 
-    @Column(name = "admitted_from_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "admitted_from_concept_id", updatable = false,
+            nullable = true)
     private Integer admittedFromConceptId;
     
     public Optional<Integer> getAdmittedFromConceptId() {
@@ -29,7 +29,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "admitted_from_concept_id")
+    @JoinColumn(name = "admitted_from_concept_id", insertable = false,
+                updatable = false)
     private Concept admittedFromConcept;
     
     public Optional<Concept> getAdmittedFromConcept() {
@@ -46,8 +47,8 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "admitted_from_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "admitted_from_source_value", updatable = false,
+            nullable = true)
     private String admittedFromSourceValue;
     
     public Optional<String> getAdmittedFromSourceValue() {
@@ -62,8 +63,7 @@ public class VisitOccurrence {
         this.admittedFromSourceValue = newValue;
     }
 
-    @Column(name = "care_site_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "care_site_id", updatable = false, nullable = true)
     private Long careSiteId;
     
     public Optional<Long> getCareSiteId() {
@@ -75,7 +75,7 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = CareSite.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "care_site_id")
+    @JoinColumn(name = "care_site_id", insertable = false, updatable = false)
     private CareSite careSite;
     
     public Optional<CareSite> getCareSite() {
@@ -92,8 +92,8 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "discharged_to_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "discharged_to_concept_id", updatable = false,
+            nullable = true)
     private Integer dischargedToConceptId;
     
     public Optional<Integer> getDischargedToConceptId() {
@@ -105,7 +105,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "discharged_to_concept_id")
+    @JoinColumn(name = "discharged_to_concept_id", insertable = false,
+                updatable = false)
     private Concept dischargedToConcept;
     
     public Optional<Concept> getDischargedToConcept() {
@@ -122,8 +123,8 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "discharged_to_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "discharged_to_source_value", updatable = false,
+            nullable = true)
     private String dischargedToSourceValue;
     
     public Optional<String> getDischargedToSourceValue() {
@@ -138,8 +139,7 @@ public class VisitOccurrence {
         this.dischargedToSourceValue = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -147,7 +147,7 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -159,8 +159,8 @@ public class VisitOccurrence {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "preceding_visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "preceding_visit_occurrence_id", updatable = false,
+            nullable = true)
     private Long precedingVisitOccurrenceId;
     
     public Optional<Long> getPrecedingVisitOccurrenceId() {
@@ -172,7 +172,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "preceding_visit_occurrence_id")
+    @JoinColumn(name = "preceding_visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence precedingVisitOccurrence;
     
     public Optional<VisitOccurrence> getPrecedingVisitOccurrence() {
@@ -189,8 +190,7 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Long providerId;
     
     public Optional<Long> getProviderId() {
@@ -202,7 +202,7 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -219,8 +219,7 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "visit_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "visit_concept_id", updatable = false, nullable = false)
     private Integer visitConceptId;
     
     public Integer getVisitConceptId() {
@@ -228,7 +227,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_concept_id")
+    @JoinColumn(name = "visit_concept_id", insertable = false,
+                updatable = false)
     private Concept visitConcept;
     
     public Concept getVisitConcept() {
@@ -240,8 +240,7 @@ public class VisitOccurrence {
         this.visitConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "visit_end_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "visit_end_date", updatable = false, nullable = false)
     private ZonedDateTime visitEndDate;
     
     public Date getVisitEndDate() {
@@ -252,8 +251,7 @@ public class VisitOccurrence {
         this.visitEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "visit_end_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_end_datetime", updatable = false, nullable = true)
     private ZonedDateTime visitEndDatetime;
     
     public Optional<DateTime> getVisitEndDatetime() {
@@ -274,16 +272,15 @@ public class VisitOccurrence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = false)
     private Long visitOccurrenceId;
     
     public Long getVisitOccurrenceId() {
         return this.visitOccurrenceId;
     }
 
-    @Column(name = "visit_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_source_concept_id", updatable = false,
+            nullable = true)
     private Integer visitSourceConceptId;
     
     public Optional<Integer> getVisitSourceConceptId() {
@@ -295,7 +292,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_source_concept_id")
+    @JoinColumn(name = "visit_source_concept_id", insertable = false,
+                updatable = false)
     private Concept visitSourceConcept;
     
     public Optional<Concept> getVisitSourceConcept() {
@@ -312,8 +310,7 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "visit_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_source_value", updatable = false, nullable = true)
     private String visitSourceValue;
     
     public Optional<String> getVisitSourceValue() {
@@ -328,8 +325,7 @@ public class VisitOccurrence {
         this.visitSourceValue = newValue;
     }
 
-    @Column(name = "visit_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "visit_start_date", updatable = false, nullable = false)
     private ZonedDateTime visitStartDate;
     
     public Date getVisitStartDate() {
@@ -340,8 +336,7 @@ public class VisitOccurrence {
         this.visitStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "visit_start_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_start_datetime", updatable = false, nullable = true)
     private ZonedDateTime visitStartDatetime;
     
     public Optional<DateTime> getVisitStartDatetime() {
@@ -360,8 +355,7 @@ public class VisitOccurrence {
         }
     }
 
-    @Column(name = "visit_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "visit_type_concept_id", updatable = false, nullable = false)
     private Integer visitTypeConceptId;
     
     public Integer getVisitTypeConceptId() {
@@ -369,7 +363,8 @@ public class VisitOccurrence {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_type_concept_id")
+    @JoinColumn(name = "visit_type_concept_id", insertable = false,
+                updatable = false)
     private Concept visitTypeConcept;
     
     public Concept getVisitTypeConcept() {

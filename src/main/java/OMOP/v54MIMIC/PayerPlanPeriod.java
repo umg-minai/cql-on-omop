@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "payer_plan_period", schema = "cds_cdm")
 public class PayerPlanPeriod {
 
-    @Column(name = "family_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "family_source_value", updatable = false, nullable = true)
     private String familySourceValue;
     
     public Optional<String> getFamilySourceValue() {
@@ -32,8 +31,7 @@ public class PayerPlanPeriod {
         this.familySourceValue = newValue;
     }
 
-    @Column(name = "payer_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "payer_concept_id", updatable = false, nullable = true)
     private Integer payerConceptId;
     
     public Optional<Integer> getPayerConceptId() {
@@ -45,7 +43,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "payer_concept_id")
+    @JoinColumn(name = "payer_concept_id", insertable = false,
+                updatable = false)
     private Concept payerConcept;
     
     public Optional<Concept> getPayerConcept() {
@@ -62,8 +61,8 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "payer_plan_period_end_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "payer_plan_period_end_date", updatable = false,
+            nullable = false)
     private ZonedDateTime payerPlanPeriodEndDate;
     
     public Date getPayerPlanPeriodEndDate() {
@@ -76,16 +75,15 @@ public class PayerPlanPeriod {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payer_plan_period_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "payer_plan_period_id", updatable = false, nullable = false)
     private Long payerPlanPeriodId;
     
     public Long getPayerPlanPeriodId() {
         return this.payerPlanPeriodId;
     }
 
-    @Column(name = "payer_plan_period_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "payer_plan_period_start_date", updatable = false,
+            nullable = false)
     private ZonedDateTime payerPlanPeriodStartDate;
     
     public Date getPayerPlanPeriodStartDate() {
@@ -96,8 +94,8 @@ public class PayerPlanPeriod {
         this.payerPlanPeriodStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "payer_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "payer_source_concept_id", updatable = false,
+            nullable = true)
     private Integer payerSourceConceptId;
     
     public Optional<Integer> getPayerSourceConceptId() {
@@ -109,7 +107,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "payer_source_concept_id")
+    @JoinColumn(name = "payer_source_concept_id", insertable = false,
+                updatable = false)
     private Concept payerSourceConcept;
     
     public Optional<Concept> getPayerSourceConcept() {
@@ -126,8 +125,7 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "payer_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "payer_source_value", updatable = false, nullable = true)
     private String payerSourceValue;
     
     public Optional<String> getPayerSourceValue() {
@@ -142,8 +140,7 @@ public class PayerPlanPeriod {
         this.payerSourceValue = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -151,7 +148,7 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -163,8 +160,7 @@ public class PayerPlanPeriod {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "plan_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "plan_concept_id", updatable = false, nullable = true)
     private Integer planConceptId;
     
     public Optional<Integer> getPlanConceptId() {
@@ -176,7 +172,7 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_concept_id")
+    @JoinColumn(name = "plan_concept_id", insertable = false, updatable = false)
     private Concept planConcept;
     
     public Optional<Concept> getPlanConcept() {
@@ -193,8 +189,7 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "plan_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "plan_source_concept_id", updatable = false, nullable = true)
     private Integer planSourceConceptId;
     
     public Optional<Integer> getPlanSourceConceptId() {
@@ -206,7 +201,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_source_concept_id")
+    @JoinColumn(name = "plan_source_concept_id", insertable = false,
+                updatable = false)
     private Concept planSourceConcept;
     
     public Optional<Concept> getPlanSourceConcept() {
@@ -223,8 +219,7 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "plan_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "plan_source_value", updatable = false, nullable = true)
     private String planSourceValue;
     
     public Optional<String> getPlanSourceValue() {
@@ -239,8 +234,7 @@ public class PayerPlanPeriod {
         this.planSourceValue = newValue;
     }
 
-    @Column(name = "sponsor_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "sponsor_concept_id", updatable = false, nullable = true)
     private Integer sponsorConceptId;
     
     public Optional<Integer> getSponsorConceptId() {
@@ -252,7 +246,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "sponsor_concept_id")
+    @JoinColumn(name = "sponsor_concept_id", insertable = false,
+                updatable = false)
     private Concept sponsorConcept;
     
     public Optional<Concept> getSponsorConcept() {
@@ -269,8 +264,8 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "sponsor_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "sponsor_source_concept_id", updatable = false,
+            nullable = true)
     private Integer sponsorSourceConceptId;
     
     public Optional<Integer> getSponsorSourceConceptId() {
@@ -282,7 +277,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "sponsor_source_concept_id")
+    @JoinColumn(name = "sponsor_source_concept_id", insertable = false,
+                updatable = false)
     private Concept sponsorSourceConcept;
     
     public Optional<Concept> getSponsorSourceConcept() {
@@ -299,8 +295,7 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "sponsor_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "sponsor_source_value", updatable = false, nullable = true)
     private String sponsorSourceValue;
     
     public Optional<String> getSponsorSourceValue() {
@@ -315,8 +310,7 @@ public class PayerPlanPeriod {
         this.sponsorSourceValue = newValue;
     }
 
-    @Column(name = "stop_reason_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "stop_reason_concept_id", updatable = false, nullable = true)
     private Integer stopReasonConceptId;
     
     public Optional<Integer> getStopReasonConceptId() {
@@ -328,7 +322,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "stop_reason_concept_id")
+    @JoinColumn(name = "stop_reason_concept_id", insertable = false,
+                updatable = false)
     private Concept stopReasonConcept;
     
     public Optional<Concept> getStopReasonConcept() {
@@ -345,8 +340,8 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "stop_reason_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "stop_reason_source_concept_id", updatable = false,
+            nullable = true)
     private Integer stopReasonSourceConceptId;
     
     public Optional<Integer> getStopReasonSourceConceptId() {
@@ -358,7 +353,8 @@ public class PayerPlanPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "stop_reason_source_concept_id")
+    @JoinColumn(name = "stop_reason_source_concept_id", insertable = false,
+                updatable = false)
     private Concept stopReasonSourceConcept;
     
     public Optional<Concept> getStopReasonSourceConcept() {
@@ -375,8 +371,8 @@ public class PayerPlanPeriod {
         }
     }
 
-    @Column(name = "stop_reason_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "stop_reason_source_value", updatable = false,
+            nullable = true)
     private String stopReasonSourceValue;
     
     public Optional<String> getStopReasonSourceValue() {

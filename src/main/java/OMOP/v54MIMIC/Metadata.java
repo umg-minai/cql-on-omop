@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "metadata", schema = "cds_cdm")
 public class Metadata {
 
-    @Column(name = "metadata_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "metadata_concept_id", updatable = false, nullable = false)
     private Integer metadataConceptId;
     
     public Integer getMetadataConceptId() {
@@ -25,7 +24,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "metadata_concept_id")
+    @JoinColumn(name = "metadata_concept_id", insertable = false,
+                updatable = false)
     private Concept metadataConcept;
     
     public Concept getMetadataConcept() {
@@ -37,8 +37,7 @@ public class Metadata {
         this.metadataConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "metadata_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "metadata_date", updatable = false, nullable = true)
     private ZonedDateTime metadataDate;
     
     public Optional<Date> getMetadataDate() {
@@ -57,8 +56,7 @@ public class Metadata {
         }
     }
 
-    @Column(name = "metadata_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "metadata_datetime", updatable = false, nullable = true)
     private ZonedDateTime metadataDatetime;
     
     public Optional<DateTime> getMetadataDatetime() {
@@ -79,16 +77,15 @@ public class Metadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "metadata_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "metadata_id", updatable = false, nullable = false)
     private Long metadataId;
     
     public Long getMetadataId() {
         return this.metadataId;
     }
 
-    @Column(name = "metadata_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "metadata_type_concept_id", updatable = false,
+            nullable = false)
     private Integer metadataTypeConceptId;
     
     public Integer getMetadataTypeConceptId() {
@@ -96,7 +93,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "metadata_type_concept_id")
+    @JoinColumn(name = "metadata_type_concept_id", insertable = false,
+                updatable = false)
     private Concept metadataTypeConcept;
     
     public Concept getMetadataTypeConcept() {
@@ -108,8 +106,7 @@ public class Metadata {
         this.metadataTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "name", updatable = false, nullable = false)
     private String name;
     
     public String getName() {
@@ -120,8 +117,7 @@ public class Metadata {
         this.name = newValue;
     }
 
-    @Column(name = "value_as_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "value_as_concept_id", updatable = false, nullable = true)
     private Integer valueAsConceptId;
     
     public Optional<Integer> getValueAsConceptId() {
@@ -133,7 +129,8 @@ public class Metadata {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "value_as_concept_id")
+    @JoinColumn(name = "value_as_concept_id", insertable = false,
+                updatable = false)
     private Concept valueAsConcept;
     
     public Optional<Concept> getValueAsConcept() {
@@ -150,8 +147,7 @@ public class Metadata {
         }
     }
 
-    @Column(name = "value_as_number", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_number", updatable = false, nullable = true)
     private BigDecimal valueAsNumber;
     
     public Optional<BigDecimal> getValueAsNumber() {
@@ -166,8 +162,7 @@ public class Metadata {
         this.valueAsNumber = newValue;
     }
 
-    @Column(name = "value_as_string", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "value_as_string", updatable = false, nullable = true)
     private String valueAsString;
     
     public Optional<String> getValueAsString() {

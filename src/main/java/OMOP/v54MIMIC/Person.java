@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "person", schema = "cds_cdm")
 public class Person {
 
-    @Column(name = "birth_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "birth_datetime", updatable = false, nullable = true)
     private ZonedDateTime birthDatetime;
     
     public Optional<DateTime> getBirthDatetime() {
@@ -36,8 +35,7 @@ public class Person {
         }
     }
 
-    @Column(name = "care_site_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "care_site_id", updatable = false, nullable = true)
     private Long careSiteId;
     
     public Optional<Long> getCareSiteId() {
@@ -49,7 +47,7 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = CareSite.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "care_site_id")
+    @JoinColumn(name = "care_site_id", insertable = false, updatable = false)
     private CareSite careSite;
     
     public Optional<CareSite> getCareSite() {
@@ -66,8 +64,7 @@ public class Person {
         }
     }
 
-    @Column(name = "day_of_birth", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "day_of_birth", updatable = false, nullable = true)
     private Integer dayOfBirth;
     
     public Optional<Integer> getDayOfBirth() {
@@ -82,8 +79,7 @@ public class Person {
         this.dayOfBirth = newValue;
     }
 
-    @Column(name = "ethnicity_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "ethnicity_concept_id", updatable = false, nullable = false)
     private Integer ethnicityConceptId;
     
     public Integer getEthnicityConceptId() {
@@ -91,7 +87,8 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ethnicity_concept_id")
+    @JoinColumn(name = "ethnicity_concept_id", insertable = false,
+                updatable = false)
     private Concept ethnicityConcept;
     
     public Concept getEthnicityConcept() {
@@ -103,8 +100,8 @@ public class Person {
         this.ethnicityConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "ethnicity_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "ethnicity_source_concept_id", updatable = false,
+            nullable = true)
     private Integer ethnicitySourceConceptId;
     
     public Optional<Integer> getEthnicitySourceConceptId() {
@@ -116,7 +113,8 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ethnicity_source_concept_id")
+    @JoinColumn(name = "ethnicity_source_concept_id", insertable = false,
+                updatable = false)
     private Concept ethnicitySourceConcept;
     
     public Optional<Concept> getEthnicitySourceConcept() {
@@ -133,8 +131,7 @@ public class Person {
         }
     }
 
-    @Column(name = "ethnicity_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "ethnicity_source_value", updatable = false, nullable = true)
     private String ethnicitySourceValue;
     
     public Optional<String> getEthnicitySourceValue() {
@@ -149,8 +146,7 @@ public class Person {
         this.ethnicitySourceValue = newValue;
     }
 
-    @Column(name = "gender_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "gender_concept_id", updatable = false, nullable = false)
     private Integer genderConceptId;
     
     public Integer getGenderConceptId() {
@@ -158,7 +154,8 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_concept_id")
+    @JoinColumn(name = "gender_concept_id", insertable = false,
+                updatable = false)
     private Concept genderConcept;
     
     public Concept getGenderConcept() {
@@ -170,8 +167,8 @@ public class Person {
         this.genderConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "gender_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "gender_source_concept_id", updatable = false,
+            nullable = true)
     private Integer genderSourceConceptId;
     
     public Optional<Integer> getGenderSourceConceptId() {
@@ -183,7 +180,8 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_source_concept_id")
+    @JoinColumn(name = "gender_source_concept_id", insertable = false,
+                updatable = false)
     private Concept genderSourceConcept;
     
     public Optional<Concept> getGenderSourceConcept() {
@@ -200,8 +198,7 @@ public class Person {
         }
     }
 
-    @Column(name = "gender_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "gender_source_value", updatable = false, nullable = true)
     private String genderSourceValue;
     
     public Optional<String> getGenderSourceValue() {
@@ -216,8 +213,7 @@ public class Person {
         this.genderSourceValue = newValue;
     }
 
-    @Column(name = "location_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "location_id", updatable = false, nullable = true)
     private Long locationId;
     
     public Optional<Long> getLocationId() {
@@ -229,7 +225,7 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Location.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
     private Location location;
     
     public Optional<Location> getLocation() {
@@ -246,8 +242,7 @@ public class Person {
         }
     }
 
-    @Column(name = "month_of_birth", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "month_of_birth", updatable = false, nullable = true)
     private Integer monthOfBirth;
     
     public Optional<Integer> getMonthOfBirth() {
@@ -264,16 +259,14 @@ public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
         return this.personId;
     }
 
-    @Column(name = "person_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "person_source_value", updatable = false, nullable = true)
     private String personSourceValue;
     
     public Optional<String> getPersonSourceValue() {
@@ -288,8 +281,7 @@ public class Person {
         this.personSourceValue = newValue;
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Long providerId;
     
     public Optional<Long> getProviderId() {
@@ -301,7 +293,7 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -318,8 +310,7 @@ public class Person {
         }
     }
 
-    @Column(name = "race_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "race_concept_id", updatable = false, nullable = false)
     private Integer raceConceptId;
     
     public Integer getRaceConceptId() {
@@ -327,7 +318,7 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "race_concept_id")
+    @JoinColumn(name = "race_concept_id", insertable = false, updatable = false)
     private Concept raceConcept;
     
     public Concept getRaceConcept() {
@@ -339,8 +330,7 @@ public class Person {
         this.raceConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "race_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "race_source_concept_id", updatable = false, nullable = true)
     private Integer raceSourceConceptId;
     
     public Optional<Integer> getRaceSourceConceptId() {
@@ -352,7 +342,8 @@ public class Person {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "race_source_concept_id")
+    @JoinColumn(name = "race_source_concept_id", insertable = false,
+                updatable = false)
     private Concept raceSourceConcept;
     
     public Optional<Concept> getRaceSourceConcept() {
@@ -369,8 +360,7 @@ public class Person {
         }
     }
 
-    @Column(name = "race_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "race_source_value", updatable = false, nullable = true)
     private String raceSourceValue;
     
     public Optional<String> getRaceSourceValue() {
@@ -385,8 +375,7 @@ public class Person {
         this.raceSourceValue = newValue;
     }
 
-    @Column(name = "year_of_birth", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "year_of_birth", updatable = false, nullable = false)
     private Integer yearOfBirth;
     
     public Integer getYearOfBirth() {

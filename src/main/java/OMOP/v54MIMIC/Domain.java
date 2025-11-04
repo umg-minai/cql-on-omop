@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "domain", schema = "cds_cdm")
 public class Domain {
 
-    @Column(name = "domain_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "domain_concept_id", updatable = false, nullable = false)
     private Integer domainConceptId;
     
     public Integer getDomainConceptId() {
@@ -25,7 +24,8 @@ public class Domain {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "domain_concept_id")
+    @JoinColumn(name = "domain_concept_id", insertable = false,
+                updatable = false)
     private Concept domainConcept;
     
     public Concept getDomainConcept() {
@@ -39,16 +39,14 @@ public class Domain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "domain_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "domain_id", updatable = false, nullable = false)
     private String domainId;
     
     public String getDomainId() {
         return this.domainId;
     }
 
-    @Column(name = "domain_name", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "domain_name", updatable = false, nullable = false)
     private String domainName;
     
     public String getDomainName() {

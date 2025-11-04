@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "episode", schema = "cds_cdm")
 public class Episode {
 
-    @Column(name = "episode_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "episode_concept_id", updatable = false, nullable = false)
     private Integer episodeConceptId;
     
     public Integer getEpisodeConceptId() {
@@ -25,7 +24,8 @@ public class Episode {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_concept_id")
+    @JoinColumn(name = "episode_concept_id", insertable = false,
+                updatable = false)
     private Concept episodeConcept;
     
     public Concept getEpisodeConcept() {
@@ -37,8 +37,7 @@ public class Episode {
         this.episodeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "episode_end_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "episode_end_date", updatable = false, nullable = true)
     private ZonedDateTime episodeEndDate;
     
     public Optional<Date> getEpisodeEndDate() {
@@ -57,8 +56,7 @@ public class Episode {
         }
     }
 
-    @Column(name = "episode_end_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "episode_end_datetime", updatable = false, nullable = true)
     private ZonedDateTime episodeEndDatetime;
     
     public Optional<DateTime> getEpisodeEndDatetime() {
@@ -79,16 +77,14 @@ public class Episode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "episode_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "episode_id", updatable = false, nullable = false)
     private Long episodeId;
     
     public Long getEpisodeId() {
         return this.episodeId;
     }
 
-    @Column(name = "episode_number", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "episode_number", updatable = false, nullable = true)
     private Integer episodeNumber;
     
     public Optional<Integer> getEpisodeNumber() {
@@ -103,8 +99,8 @@ public class Episode {
         this.episodeNumber = newValue;
     }
 
-    @Column(name = "episode_object_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "episode_object_concept_id", updatable = false,
+            nullable = false)
     private Integer episodeObjectConceptId;
     
     public Integer getEpisodeObjectConceptId() {
@@ -112,7 +108,8 @@ public class Episode {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_object_concept_id")
+    @JoinColumn(name = "episode_object_concept_id", insertable = false,
+                updatable = false)
     private Concept episodeObjectConcept;
     
     public Concept getEpisodeObjectConcept() {
@@ -124,8 +121,7 @@ public class Episode {
         this.episodeObjectConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "episode_parent_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "episode_parent_id", updatable = false, nullable = true)
     private Long episodeParentId;
     
     public Optional<Long> getEpisodeParentId() {
@@ -140,8 +136,8 @@ public class Episode {
         this.episodeParentId = newValue;
     }
 
-    @Column(name = "episode_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "episode_source_concept_id", updatable = false,
+            nullable = true)
     private Integer episodeSourceConceptId;
     
     public Optional<Integer> getEpisodeSourceConceptId() {
@@ -153,7 +149,8 @@ public class Episode {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_source_concept_id")
+    @JoinColumn(name = "episode_source_concept_id", insertable = false,
+                updatable = false)
     private Concept episodeSourceConcept;
     
     public Optional<Concept> getEpisodeSourceConcept() {
@@ -170,8 +167,7 @@ public class Episode {
         }
     }
 
-    @Column(name = "episode_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "episode_source_value", updatable = false, nullable = true)
     private String episodeSourceValue;
     
     public Optional<String> getEpisodeSourceValue() {
@@ -186,8 +182,7 @@ public class Episode {
         this.episodeSourceValue = newValue;
     }
 
-    @Column(name = "episode_start_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "episode_start_date", updatable = false, nullable = false)
     private ZonedDateTime episodeStartDate;
     
     public Date getEpisodeStartDate() {
@@ -198,8 +193,7 @@ public class Episode {
         this.episodeStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "episode_start_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "episode_start_datetime", updatable = false, nullable = true)
     private ZonedDateTime episodeStartDatetime;
     
     public Optional<DateTime> getEpisodeStartDatetime() {
@@ -218,8 +212,8 @@ public class Episode {
         }
     }
 
-    @Column(name = "episode_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "episode_type_concept_id", updatable = false,
+            nullable = false)
     private Integer episodeTypeConceptId;
     
     public Integer getEpisodeTypeConceptId() {
@@ -227,7 +221,8 @@ public class Episode {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "episode_type_concept_id")
+    @JoinColumn(name = "episode_type_concept_id", insertable = false,
+                updatable = false)
     private Concept episodeTypeConcept;
     
     public Concept getEpisodeTypeConcept() {
@@ -239,8 +234,7 @@ public class Episode {
         this.episodeTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -248,7 +242,7 @@ public class Episode {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {

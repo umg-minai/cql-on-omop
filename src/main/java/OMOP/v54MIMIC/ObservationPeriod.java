@@ -16,8 +16,8 @@ import java.util.Set;
 @Table(name = "observation_period", schema = "cds_cdm")
 public class ObservationPeriod {
 
-    @Column(name = "observation_period_end_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "observation_period_end_date", updatable = false,
+            nullable = false)
     private ZonedDateTime observationPeriodEndDate;
     
     public Date getObservationPeriodEndDate() {
@@ -30,16 +30,15 @@ public class ObservationPeriod {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "observation_period_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "observation_period_id", updatable = false, nullable = false)
     private Long observationPeriodId;
     
     public Long getObservationPeriodId() {
         return this.observationPeriodId;
     }
 
-    @Column(name = "observation_period_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "observation_period_start_date", updatable = false,
+            nullable = false)
     private ZonedDateTime observationPeriodStartDate;
     
     public Date getObservationPeriodStartDate() {
@@ -50,8 +49,8 @@ public class ObservationPeriod {
         this.observationPeriodStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "period_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "period_type_concept_id", updatable = false,
+            nullable = false)
     private Integer periodTypeConceptId;
     
     public Integer getPeriodTypeConceptId() {
@@ -59,7 +58,8 @@ public class ObservationPeriod {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "period_type_concept_id")
+    @JoinColumn(name = "period_type_concept_id", insertable = false,
+                updatable = false)
     private Concept periodTypeConcept;
     
     public Concept getPeriodTypeConcept() {
@@ -71,8 +71,7 @@ public class ObservationPeriod {
         this.periodTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -80,7 +79,7 @@ public class ObservationPeriod {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {

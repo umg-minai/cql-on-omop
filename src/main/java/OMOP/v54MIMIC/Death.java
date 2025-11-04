@@ -19,8 +19,7 @@ public class Death {
     @Embeddable
     private static class CompoundId {
 
-        @Column(name = "person_id", insertable = false, updatable = false,
-                nullable = false)
+        @Column(name = "person_id", updatable = false, nullable = false)
         private Long personId;
 
         @Override
@@ -58,8 +57,7 @@ public class Death {
     @EmbeddedId
     private CompoundId compoundId = new CompoundId();
 
-    @Column(name = "cause_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "cause_concept_id", updatable = false, nullable = true)
     private Integer causeConceptId;
     
     public Optional<Integer> getCauseConceptId() {
@@ -71,7 +69,8 @@ public class Death {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cause_concept_id")
+    @JoinColumn(name = "cause_concept_id", insertable = false,
+                updatable = false)
     private Concept causeConcept;
     
     public Optional<Concept> getCauseConcept() {
@@ -88,8 +87,8 @@ public class Death {
         }
     }
 
-    @Column(name = "cause_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "cause_source_concept_id", updatable = false,
+            nullable = true)
     private Integer causeSourceConceptId;
     
     public Optional<Integer> getCauseSourceConceptId() {
@@ -101,7 +100,8 @@ public class Death {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cause_source_concept_id")
+    @JoinColumn(name = "cause_source_concept_id", insertable = false,
+                updatable = false)
     private Concept causeSourceConcept;
     
     public Optional<Concept> getCauseSourceConcept() {
@@ -118,8 +118,7 @@ public class Death {
         }
     }
 
-    @Column(name = "cause_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "cause_source_value", updatable = false, nullable = true)
     private String causeSourceValue;
     
     public Optional<String> getCauseSourceValue() {
@@ -134,8 +133,7 @@ public class Death {
         this.causeSourceValue = newValue;
     }
 
-    @Column(name = "death_date", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "death_date", updatable = false, nullable = false)
     private ZonedDateTime deathDate;
     
     public Date getDeathDate() {
@@ -146,8 +144,7 @@ public class Death {
         this.deathDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "death_datetime", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "death_datetime", updatable = false, nullable = true)
     private ZonedDateTime deathDatetime;
     
     public Optional<DateTime> getDeathDatetime() {
@@ -166,8 +163,7 @@ public class Death {
         }
     }
 
-    @Column(name = "death_type_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "death_type_concept_id", updatable = false, nullable = true)
     private Integer deathTypeConceptId;
     
     public Optional<Integer> getDeathTypeConceptId() {
@@ -179,7 +175,8 @@ public class Death {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "death_type_concept_id")
+    @JoinColumn(name = "death_type_concept_id", insertable = false,
+                updatable = false)
     private Concept deathTypeConcept;
     
     public Optional<Concept> getDeathTypeConcept() {
@@ -201,7 +198,7 @@ public class Death {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     @MapsId("personId")
     private Person person;
     

@@ -16,8 +16,7 @@ import java.util.Set;
 @Table(name = "drug_exposure", schema = "cds_cdm")
 public class DrugExposure {
 
-    @Column(name = "days_supply", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "days_supply", updatable = false, nullable = true)
     private Integer daysSupply;
     
     public Optional<Integer> getDaysSupply() {
@@ -32,8 +31,7 @@ public class DrugExposure {
         this.daysSupply = newValue;
     }
 
-    @Column(name = "dose_unit_source_value", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "dose_unit_source_value", updatable = false, nullable = true)
     private String doseUnitSourceValue;
     
     public Optional<String> getDoseUnitSourceValue() {
@@ -48,8 +46,7 @@ public class DrugExposure {
         this.doseUnitSourceValue = newValue;
     }
 
-    @Column(name = "drug_concept_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_concept_id", updatable = false, nullable = false)
     private Integer drugConceptId;
     
     public Integer getDrugConceptId() {
@@ -57,7 +54,7 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_concept_id")
+    @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     private Concept drugConcept;
     
     public Concept getDrugConcept() {
@@ -69,8 +66,8 @@ public class DrugExposure {
         this.drugConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "drug_exposure_end_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "drug_exposure_end_date", updatable = false,
+            nullable = false)
     private ZonedDateTime drugExposureEndDate;
     
     public Date getDrugExposureEndDate() {
@@ -81,8 +78,8 @@ public class DrugExposure {
         this.drugExposureEndDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "drug_exposure_end_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "drug_exposure_end_datetime", updatable = false,
+            nullable = true)
     private ZonedDateTime drugExposureEndDatetime;
     
     public Optional<DateTime> getDrugExposureEndDatetime() {
@@ -103,16 +100,15 @@ public class DrugExposure {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "drug_exposure_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "drug_exposure_id", updatable = false, nullable = false)
     private Long drugExposureId;
     
     public Long getDrugExposureId() {
         return this.drugExposureId;
     }
 
-    @Column(name = "drug_exposure_start_date", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "drug_exposure_start_date", updatable = false,
+            nullable = false)
     private ZonedDateTime drugExposureStartDate;
     
     public Date getDrugExposureStartDate() {
@@ -123,8 +119,8 @@ public class DrugExposure {
         this.drugExposureStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
     }
 
-    @Column(name = "drug_exposure_start_datetime", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "drug_exposure_start_datetime", updatable = false,
+            nullable = true)
     private ZonedDateTime drugExposureStartDatetime;
     
     public Optional<DateTime> getDrugExposureStartDatetime() {
@@ -143,8 +139,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "drug_source_concept_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "drug_source_concept_id", updatable = false, nullable = true)
     private Integer drugSourceConceptId;
     
     public Optional<Integer> getDrugSourceConceptId() {
@@ -156,7 +151,8 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_source_concept_id")
+    @JoinColumn(name = "drug_source_concept_id", insertable = false,
+                updatable = false)
     private Concept drugSourceConcept;
     
     public Optional<Concept> getDrugSourceConcept() {
@@ -173,8 +169,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "drug_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "drug_source_value", updatable = false, nullable = true)
     private String drugSourceValue;
     
     public Optional<String> getDrugSourceValue() {
@@ -189,8 +184,7 @@ public class DrugExposure {
         this.drugSourceValue = newValue;
     }
 
-    @Column(name = "drug_type_concept_id", insertable = false,
-            updatable = false, nullable = false)
+    @Column(name = "drug_type_concept_id", updatable = false, nullable = false)
     private Integer drugTypeConceptId;
     
     public Integer getDrugTypeConceptId() {
@@ -198,7 +192,8 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "drug_type_concept_id")
+    @JoinColumn(name = "drug_type_concept_id", insertable = false,
+                updatable = false)
     private Concept drugTypeConcept;
     
     public Concept getDrugTypeConcept() {
@@ -210,8 +205,7 @@ public class DrugExposure {
         this.drugTypeConceptId = newValue.getConceptId();
     }
 
-    @Column(name = "lot_number", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "lot_number", updatable = false, nullable = true)
     private String lotNumber;
     
     public Optional<String> getLotNumber() {
@@ -226,8 +220,7 @@ public class DrugExposure {
         this.lotNumber = newValue;
     }
 
-    @Column(name = "person_id", insertable = false, updatable = false,
-            nullable = false)
+    @Column(name = "person_id", updatable = false, nullable = false)
     private Long personId;
     
     public Long getPersonId() {
@@ -235,7 +228,7 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Person.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
     private Person person;
     
     public Person getPerson() {
@@ -247,8 +240,7 @@ public class DrugExposure {
         this.personId = newValue.getPersonId();
     }
 
-    @Column(name = "provider_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "provider_id", updatable = false, nullable = true)
     private Long providerId;
     
     public Optional<Long> getProviderId() {
@@ -260,7 +252,7 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
+    @JoinColumn(name = "provider_id", insertable = false, updatable = false)
     private Provider provider;
     
     public Optional<Provider> getProvider() {
@@ -277,8 +269,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "quantity", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "quantity", updatable = false, nullable = true)
     private BigDecimal quantity;
     
     public Optional<BigDecimal> getQuantity() {
@@ -293,8 +284,7 @@ public class DrugExposure {
         this.quantity = newValue;
     }
 
-    @Column(name = "refills", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "refills", updatable = false, nullable = true)
     private Integer refills;
     
     public Optional<Integer> getRefills() {
@@ -309,8 +299,7 @@ public class DrugExposure {
         this.refills = newValue;
     }
 
-    @Column(name = "route_concept_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "route_concept_id", updatable = false, nullable = true)
     private Integer routeConceptId;
     
     public Optional<Integer> getRouteConceptId() {
@@ -322,7 +311,8 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "route_concept_id")
+    @JoinColumn(name = "route_concept_id", insertable = false,
+                updatable = false)
     private Concept routeConcept;
     
     public Optional<Concept> getRouteConcept() {
@@ -339,8 +329,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "route_source_value", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "route_source_value", updatable = false, nullable = true)
     private String routeSourceValue;
     
     public Optional<String> getRouteSourceValue() {
@@ -355,8 +344,7 @@ public class DrugExposure {
         this.routeSourceValue = newValue;
     }
 
-    @Column(name = "sig", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "sig", updatable = false, nullable = true)
     private String sig;
     
     public Optional<String> getSig() {
@@ -371,8 +359,7 @@ public class DrugExposure {
         this.sig = newValue;
     }
 
-    @Column(name = "stop_reason", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "stop_reason", updatable = false, nullable = true)
     private String stopReason;
     
     public Optional<String> getStopReason() {
@@ -387,8 +374,7 @@ public class DrugExposure {
         this.stopReason = newValue;
     }
 
-    @Column(name = "verbatim_end_date", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "verbatim_end_date", updatable = false, nullable = true)
     private ZonedDateTime verbatimEndDate;
     
     public Optional<Date> getVerbatimEndDate() {
@@ -407,8 +393,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "visit_detail_id", insertable = false, updatable = false,
-            nullable = true)
+    @Column(name = "visit_detail_id", updatable = false, nullable = true)
     private Long visitDetailId;
     
     public Optional<Long> getVisitDetailId() {
@@ -420,7 +405,7 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = VisitDetail.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_detail_id")
+    @JoinColumn(name = "visit_detail_id", insertable = false, updatable = false)
     private VisitDetail visitDetail;
     
     public Optional<VisitDetail> getVisitDetail() {
@@ -437,8 +422,7 @@ public class DrugExposure {
         }
     }
 
-    @Column(name = "visit_occurrence_id", insertable = false,
-            updatable = false, nullable = true)
+    @Column(name = "visit_occurrence_id", updatable = false, nullable = true)
     private Long visitOccurrenceId;
     
     public Optional<Long> getVisitOccurrenceId() {
@@ -450,7 +434,8 @@ public class DrugExposure {
     }
 
     @ManyToOne(targetEntity = VisitOccurrence.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "visit_occurrence_id")
+    @JoinColumn(name = "visit_occurrence_id", insertable = false,
+                updatable = false)
     private VisitOccurrence visitOccurrence;
     
     public Optional<VisitOccurrence> getVisitOccurrence() {
