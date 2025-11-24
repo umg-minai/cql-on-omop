@@ -161,7 +161,7 @@ public class Concept {
     }
 
     @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinTable(schema = "cds_cdm", name = "concept_ancestor", joinColumns = {
+    @JoinTable(name = "concept_ancestor", joinColumns = {
                    @JoinColumn(name = "descendant_concept_id",
                                insertable = false, updatable = false)
 
@@ -177,7 +177,7 @@ public class Concept {
     }
 
     @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinTable(schema = "cds_cdm", name = "concept_ancestor", joinColumns = {
+    @JoinTable(name = "concept_ancestor", joinColumns = {
                    @JoinColumn(name = "ancestor_concept_id",
                                insertable = false, updatable = false)
 
@@ -193,8 +193,7 @@ public class Concept {
     }
 
     @ManyToMany(targetEntity = Concept.class, fetch = FetchType.LAZY)
-    @JoinTable(schema = "cds_cdm", name = "concept_relationship",
-               joinColumns = {
+    @JoinTable(name = "concept_relationship", joinColumns = {
                    @JoinColumn(name = "concept_id_1", insertable = false,
                                updatable = false)
 
@@ -211,8 +210,7 @@ public class Concept {
 
     @ManyToMany(targetEntity = ConceptRelationship.class,
                 fetch = FetchType.LAZY)
-    @JoinTable(schema = "cds_cdm", name = "concept_relationship",
-               joinColumns = {
+    @JoinTable(name = "concept_relationship", joinColumns = {
                    @JoinColumn(name = "concept_id_1", insertable = false,
                                updatable = false)
 
