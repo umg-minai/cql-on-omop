@@ -18,7 +18,9 @@ public class Constants {
     public final static Map<String, String> OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID = Map.of(
             "http://loinc.org",                                             "LOINC",
             "http://snomed.info/sct",                                       "SNOMED",
-            "https://www.who.int/tools/atc-ddd-toolkit/atc-classification", "ATC"
+            "https://www.who.int/tools/atc-ddd-toolkit/atc-classification", "ATC",
+            "https://www.cdc.gov/nchs/icd/icd-10-cm.htm",                   "ICD10CM",
+            "http://www.cms.gov/Medicare/Coding/ICD10/index.html",          "ICM10PCS"
     );
 
 }
