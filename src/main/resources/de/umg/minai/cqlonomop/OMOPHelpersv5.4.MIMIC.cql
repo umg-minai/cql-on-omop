@@ -2,6 +2,79 @@ library OMOPHelpers version '1.0'
 
 using OMOP version 'v5.4.MIMIC'
 
+// Conversion to Interval<System.Date>
+
+define function ToDateInterval(OMOPObject OMOP.Concept):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.ConceptRelationship):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.ConditionEra):
+  Interval[OMOPObject.conditionEraStartDate, OMOPObject.conditionEraEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.ConditionOccurrence):
+  Interval[OMOPObject.conditionStartDate, OMOPObject.conditionEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.DeviceExposure):
+  Interval[OMOPObject.deviceExposureStartDate, OMOPObject.deviceExposureEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.DoseEra):
+  Interval[OMOPObject.doseEraStartDate, OMOPObject.doseEraEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.DrugEra):
+  Interval[OMOPObject.drugEraStartDate, OMOPObject.drugEraEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.DrugExposure):
+  Interval[OMOPObject.drugExposureStartDate, OMOPObject.verbatimEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.DrugStrength):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.Episode):
+  Interval[OMOPObject.episodeStartDate, OMOPObject.episodeEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.ObservationPeriod):
+  Interval[OMOPObject.observationPeriodStartDate, OMOPObject.observationPeriodEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.PayerPlanPeriod):
+  Interval[OMOPObject.payerPlanPeriodStartDate, OMOPObject.payerPlanPeriodEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.ProcedureOccurrence):
+  Interval[OMOPObject.procedureDate, OMOPObject.procedureEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.SourceToConceptMap):
+  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.VisitDetail):
+  Interval[OMOPObject.visitDetailStartDate, OMOPObject.visitDetailEndDate]
+  
+define function ToDateInterval(OMOPObject OMOP.VisitOccurrence):
+  Interval[OMOPObject.visitStartDate, OMOPObject.visitEndDate]
+  
+// Conversion to Interval<System.DateTime>
+
+define function ToDateTimeInterval(OMOPObject OMOP.ConditionOccurrence):
+  Interval[OMOPObject.conditionStartDatetime, OMOPObject.conditionEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.DeviceExposure):
+  Interval[OMOPObject.deviceExposureStartDatetime, OMOPObject.deviceExposureEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.DrugExposure):
+  Interval[OMOPObject.drugExposureStartDatetime, OMOPObject.drugExposureEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.Episode):
+  Interval[OMOPObject.episodeStartDatetime, OMOPObject.episodeEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.ProcedureOccurrence):
+  Interval[OMOPObject.procedureDatetime, OMOPObject.procedureEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.VisitDetail):
+  Interval[OMOPObject.visitDetailStartDatetime, OMOPObject.visitDetailEndDatetime]
+  
+define function ToDateTimeInterval(OMOPObject OMOP.VisitOccurrence):
+  Interval[OMOPObject.visitStartDatetime, OMOPObject.visitEndDatetime]
+  
 // Conversion to System.Code
 
 define function ToCode(OMOPObject OMOP.Concept):
@@ -215,76 +288,129 @@ define function ToConcept(OMOPObject OMOP.Vocabulary):
     codes: { ToCode(OMOPObject) }
   }
   
-// Conversion to System.Interval
+// Conversion to System.Date
 
-define function ToInterval(OMOPObject OMOP.Concept):
-  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+define function ToDate(OMOPObject OMOP.CdmSource):
+  OMOPObject.cdmReleaseDate
   
-define function ToInterval(OMOPObject OMOP.ConceptRelationship):
-  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+define function ToDate(OMOPObject OMOP.CohortDefinition):
+  OMOPObject.cohortInitiationDate
   
-define function ToInterval(OMOPObject OMOP.ConditionEra):
-  Interval[OMOPObject.conditionEraStartDate, OMOPObject.conditionEraEndDate]
+define function ToDate(OMOPObject OMOP.Concept):
+  OMOPObject.validStartDate
   
-define function ToInterval(OMOPObject OMOP.ConditionOccurrence):
-  Interval[OMOPObject.conditionStartDatetime, OMOPObject.conditionEndDatetime]
+define function ToDate(OMOPObject OMOP.ConceptRelationship):
+  OMOPObject.validStartDate
   
-define function ToInterval(OMOPObject OMOP.ConditionOccurrence):
-  Interval[OMOPObject.conditionStartDate, OMOPObject.conditionEndDate]
+define function ToDate(OMOPObject OMOP.ConditionEra):
+  OMOPObject.conditionEraStartDate
   
-define function ToInterval(OMOPObject OMOP.DeviceExposure):
-  Interval[OMOPObject.deviceExposureStartDatetime, OMOPObject.deviceExposureEndDatetime]
+define function ToDate(OMOPObject OMOP.ConditionOccurrence):
+  OMOPObject.conditionStartDate
   
-define function ToInterval(OMOPObject OMOP.DeviceExposure):
-  Interval[OMOPObject.deviceExposureStartDate, OMOPObject.deviceExposureEndDate]
+define function ToDate(OMOPObject OMOP.Death):
+  OMOPObject.deathDate
   
-define function ToInterval(OMOPObject OMOP.DoseEra):
-  Interval[OMOPObject.doseEraStartDate, OMOPObject.doseEraEndDate]
+define function ToDate(OMOPObject OMOP.DeviceExposure):
+  OMOPObject.deviceExposureStartDate
   
-define function ToInterval(OMOPObject OMOP.DrugEra):
-  Interval[OMOPObject.drugEraStartDate, OMOPObject.drugEraEndDate]
+define function ToDate(OMOPObject OMOP.DoseEra):
+  OMOPObject.doseEraStartDate
   
-define function ToInterval(OMOPObject OMOP.DrugExposure):
-  Interval[OMOPObject.drugExposureStartDatetime, OMOPObject.drugExposureEndDatetime]
+define function ToDate(OMOPObject OMOP.DrugEra):
+  OMOPObject.drugEraStartDate
   
-define function ToInterval(OMOPObject OMOP.DrugExposure):
-  Interval[OMOPObject.drugExposureStartDate, OMOPObject.verbatimEndDate]
+define function ToDate(OMOPObject OMOP.DrugExposure):
+  OMOPObject.drugExposureStartDate
   
-define function ToInterval(OMOPObject OMOP.DrugStrength):
-  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+define function ToDate(OMOPObject OMOP.DrugStrength):
+  OMOPObject.validStartDate
   
-define function ToInterval(OMOPObject OMOP.Episode):
-  Interval[OMOPObject.episodeStartDatetime, OMOPObject.episodeEndDatetime]
+define function ToDate(OMOPObject OMOP.Episode):
+  OMOPObject.episodeStartDate
   
-define function ToInterval(OMOPObject OMOP.Episode):
-  Interval[OMOPObject.episodeStartDate, OMOPObject.episodeEndDate]
+define function ToDate(OMOPObject OMOP.Measurement):
+  OMOPObject.measurementDate
   
-define function ToInterval(OMOPObject OMOP.ObservationPeriod):
-  Interval[OMOPObject.observationPeriodStartDate, OMOPObject.observationPeriodEndDate]
+define function ToDate(OMOPObject OMOP.Metadata):
+  OMOPObject.metadataDate
   
-define function ToInterval(OMOPObject OMOP.PayerPlanPeriod):
-  Interval[OMOPObject.payerPlanPeriodStartDate, OMOPObject.payerPlanPeriodEndDate]
+define function ToDate(OMOPObject OMOP.Note):
+  OMOPObject.noteDate
   
-define function ToInterval(OMOPObject OMOP.ProcedureOccurrence):
-  Interval[OMOPObject.procedureDatetime, OMOPObject.procedureEndDatetime]
+define function ToDate(OMOPObject OMOP.NoteNlp):
+  OMOPObject.nlpDate
   
-define function ToInterval(OMOPObject OMOP.ProcedureOccurrence):
-  Interval[OMOPObject.procedureDate, OMOPObject.procedureEndDate]
+define function ToDate(OMOPObject OMOP.Observation):
+  OMOPObject.observationDate
   
-define function ToInterval(OMOPObject OMOP.SourceToConceptMap):
-  Interval[OMOPObject.validStartDate, OMOPObject.validEndDate]
+define function ToDate(OMOPObject OMOP.ObservationPeriod):
+  OMOPObject.observationPeriodStartDate
   
-define function ToInterval(OMOPObject OMOP.VisitDetail):
-  Interval[OMOPObject.visitDetailStartDatetime, OMOPObject.visitDetailEndDatetime]
+define function ToDate(OMOPObject OMOP.PayerPlanPeriod):
+  OMOPObject.payerPlanPeriodStartDate
   
-define function ToInterval(OMOPObject OMOP.VisitDetail):
-  Interval[OMOPObject.visitDetailStartDate, OMOPObject.visitDetailEndDate]
+define function ToDate(OMOPObject OMOP.ProcedureOccurrence):
+  OMOPObject.procedureDate
   
-define function ToInterval(OMOPObject OMOP.VisitOccurrence):
-  Interval[OMOPObject.visitStartDatetime, OMOPObject.visitEndDatetime]
+define function ToDate(OMOPObject OMOP.SourceToConceptMap):
+  OMOPObject.validStartDate
   
-define function ToInterval(OMOPObject OMOP.VisitOccurrence):
-  Interval[OMOPObject.visitStartDate, OMOPObject.visitEndDate]
+define function ToDate(OMOPObject OMOP.Specimen):
+  OMOPObject.specimenDate
+  
+define function ToDate(OMOPObject OMOP.VisitDetail):
+  OMOPObject.visitDetailStartDate
+  
+define function ToDate(OMOPObject OMOP.VisitOccurrence):
+  OMOPObject.visitStartDate
+  
+// Conversion to System.DateTime
+
+define function ToDateTime(OMOPObject OMOP.ConditionOccurrence):
+  OMOPObject.conditionStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Death):
+  OMOPObject.deathDatetime
+  
+define function ToDateTime(OMOPObject OMOP.DeviceExposure):
+  OMOPObject.deviceExposureStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.DrugExposure):
+  OMOPObject.drugExposureStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Episode):
+  OMOPObject.episodeStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Measurement):
+  OMOPObject.measurementDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Metadata):
+  OMOPObject.metadataDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Note):
+  OMOPObject.noteDatetime
+  
+define function ToDateTime(OMOPObject OMOP.NoteNlp):
+  OMOPObject.nlpDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Observation):
+  OMOPObject.observationDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Person):
+  OMOPObject.birthDatetime
+  
+define function ToDateTime(OMOPObject OMOP.ProcedureOccurrence):
+  OMOPObject.procedureDatetime
+  
+define function ToDateTime(OMOPObject OMOP.Specimen):
+  OMOPObject.specimenDatetime
+  
+define function ToDateTime(OMOPObject OMOP.VisitDetail):
+  OMOPObject.visitDetailStartDatetime
+  
+define function ToDateTime(OMOPObject OMOP.VisitOccurrence):
+  OMOPObject.visitStartDatetime
   
 // Conversion to System.Quantity
 
