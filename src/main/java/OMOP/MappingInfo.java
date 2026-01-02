@@ -38,6 +38,14 @@ public class MappingInfo {
         return infos.get(name);
     }
 
+    public DataTypeInfo getDataTypeInfo(final Class<?> clazz) {
+        var className = clazz.getSimpleName();
+        if (className.contains("Hibernate")) {
+            className = clazz.getSuperclass().getSimpleName();
+        }
+        return getDataTypeInfo(className);
+    }
+
     private static final Map<String, MappingInfo> versions = new HashMap<>();
 
     public static MappingInfo ensureVersion(final String version) {

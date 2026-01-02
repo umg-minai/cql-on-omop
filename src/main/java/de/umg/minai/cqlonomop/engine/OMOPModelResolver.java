@@ -120,11 +120,11 @@ public class OMOPModelResolver implements ModelResolver {
 
     @Override
     public String resolveId(Object target) {
-        final var dataTypeInfo = mappingInfo.getDataTypeInfo(target.getClass().getSimpleName());
+        final var dataTypeInfo = mappingInfo.getDataTypeInfo(target.getClass());
         if (dataTypeInfo != null) {
             final var contextInfo = dataTypeInfo.infoForContext("person", target);
             if (contextInfo != null) {
-                return contextInfo.columnName();
+                return String.valueOf(contextInfo.value());
             }
         }
         throw new RuntimeException(String.format("resolveId(%s) not implemented", target));
