@@ -32,9 +32,9 @@ public class ConceptSynonym {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.conceptId, otherInstance.conceptId)
-                            && Objects.equals(this.languageConceptId, otherInstance.languageConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.conceptId, otherInstance.conceptId))
+                            && (Objects.equals(this.languageConceptId, otherInstance.languageConceptId)));
                 } else {
                     return false;
                 }

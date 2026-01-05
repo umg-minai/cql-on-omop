@@ -29,8 +29,8 @@ public class AttributeDefinition {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.attributeTypeConceptId, otherInstance.attributeTypeConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.attributeTypeConceptId, otherInstance.attributeTypeConceptId)));
                 } else {
                     return false;
                 }

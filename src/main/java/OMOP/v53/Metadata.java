@@ -37,10 +37,10 @@ public class Metadata {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.metadataConceptId, otherInstance.metadataConceptId)
-                            && Objects.equals(this.metadataTypeConceptId, otherInstance.metadataTypeConceptId)
-                            && Objects.equals(this.valueAsConceptId, otherInstance.valueAsConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.metadataConceptId, otherInstance.metadataConceptId))
+                            && (Objects.equals(this.metadataTypeConceptId, otherInstance.metadataTypeConceptId))
+                            && (Objects.equals(this.valueAsConceptId, otherInstance.valueAsConceptId)));
                 } else {
                     return false;
                 }

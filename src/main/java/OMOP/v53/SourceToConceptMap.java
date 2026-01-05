@@ -35,10 +35,10 @@ public class SourceToConceptMap {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.sourceConceptId, otherInstance.sourceConceptId)
-                            && Objects.equals(this.targetConceptId, otherInstance.targetConceptId)
-                            && Objects.equals(this.targetVocabularyId, otherInstance.targetVocabularyId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.sourceConceptId, otherInstance.sourceConceptId))
+                            && (Objects.equals(this.targetConceptId, otherInstance.targetConceptId))
+                            && (Objects.equals(this.targetVocabularyId, otherInstance.targetVocabularyId)));
                 } else {
                     return false;
                 }

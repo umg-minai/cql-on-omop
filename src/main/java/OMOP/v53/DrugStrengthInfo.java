@@ -17,11 +17,11 @@ public class DrugStrengthInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("denominatorUnitConcept")
-               || codePath.equals("numeratorUnitConcept")
-               || codePath.equals("amountUnitConcept")
-               || codePath.equals("ingredientConcept")
-               || codePath.equals("drugConcept");
+        return ((codePath.equals("denominatorUnitConcept"))
+                || (codePath.equals("numeratorUnitConcept"))
+                || (codePath.equals("amountUnitConcept"))
+                || (codePath.equals("ingredientConcept"))
+                || (codePath.equals("drugConcept")));
     }
 
 

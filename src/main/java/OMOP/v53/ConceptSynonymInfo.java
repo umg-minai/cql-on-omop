@@ -17,8 +17,8 @@ public class ConceptSynonymInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("languageConcept")
-               || codePath.equals("concept");
+        return ((codePath.equals("languageConcept"))
+                || (codePath.equals("concept")));
     }
 
 

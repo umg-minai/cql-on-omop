@@ -17,8 +17,8 @@ public class ConceptAncestorInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("descendantConcept")
-               || codePath.equals("ancestorConcept");
+        return ((codePath.equals("descendantConcept"))
+                || (codePath.equals("ancestorConcept")));
     }
 
 
