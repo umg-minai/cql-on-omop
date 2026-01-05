@@ -32,9 +32,9 @@ public class EpisodeEvent {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.episodeEventFieldConceptId, otherInstance.episodeEventFieldConceptId)
-                            && Objects.equals(this.episodeId, otherInstance.episodeId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.episodeEventFieldConceptId, otherInstance.episodeEventFieldConceptId))
+                            && (Objects.equals(this.episodeId, otherInstance.episodeId)));
                 } else {
                     return false;
                 }

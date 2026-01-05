@@ -33,9 +33,9 @@ public class ConceptAncestor {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.ancestorConceptId, otherInstance.ancestorConceptId)
-                            && Objects.equals(this.descendantConceptId, otherInstance.descendantConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.ancestorConceptId, otherInstance.ancestorConceptId))
+                            && (Objects.equals(this.descendantConceptId, otherInstance.descendantConceptId)));
                 } else {
                     return false;
                 }

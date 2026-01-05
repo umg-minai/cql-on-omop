@@ -37,10 +37,10 @@ public class FactRelationship {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.domainConceptId1, otherInstance.domainConceptId1)
-                            && Objects.equals(this.domainConceptId2, otherInstance.domainConceptId2)
-                            && Objects.equals(this.relationshipConceptId, otherInstance.relationshipConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.domainConceptId1, otherInstance.domainConceptId1))
+                            && (Objects.equals(this.domainConceptId2, otherInstance.domainConceptId2))
+                            && (Objects.equals(this.relationshipConceptId, otherInstance.relationshipConceptId)));
                 } else {
                     return false;
                 }

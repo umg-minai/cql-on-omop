@@ -17,10 +17,10 @@ public class CostInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("drgConcept")
-               || codePath.equals("revenueCodeConcept")
-               || codePath.equals("currencyConcept")
-               || codePath.equals("costTypeConcept");
+        return ((codePath.equals("drgConcept"))
+                || (codePath.equals("revenueCodeConcept"))
+                || (codePath.equals("currencyConcept"))
+                || (codePath.equals("costTypeConcept")));
     }
 
 
