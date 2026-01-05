@@ -17,9 +17,9 @@ public class NoteNlpInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("noteNlpSourceConcept")
-               || codePath.equals("noteNlpConcept")
-               || codePath.equals("sectionConcept");
+        return ((codePath.equals("noteNlpSourceConcept"))
+                || (codePath.equals("noteNlpConcept"))
+                || (codePath.equals("sectionConcept")));
     }
 
 

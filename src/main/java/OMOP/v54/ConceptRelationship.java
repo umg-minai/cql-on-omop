@@ -34,10 +34,10 @@ public class ConceptRelationship {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.conceptId1, otherInstance.conceptId1)
-                            && Objects.equals(this.conceptId2, otherInstance.conceptId2)
-                            && Objects.equals(this.relationshipId, otherInstance.relationshipId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.conceptId1, otherInstance.conceptId1))
+                            && (Objects.equals(this.conceptId2, otherInstance.conceptId2))
+                            && (Objects.equals(this.relationshipId, otherInstance.relationshipId)));
                 } else {
                     return false;
                 }

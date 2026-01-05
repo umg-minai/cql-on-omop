@@ -17,8 +17,8 @@ public class CohortDefinitionInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("subjectConcept")
-               || codePath.equals("definitionTypeConcept");
+        return ((codePath.equals("subjectConcept"))
+                || (codePath.equals("definitionTypeConcept")));
     }
 
 

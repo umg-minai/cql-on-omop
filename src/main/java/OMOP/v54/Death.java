@@ -28,8 +28,8 @@ public class Death {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.personId, otherInstance.personId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.personId, otherInstance.personId)));
                 } else {
                     return false;
                 }

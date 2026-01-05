@@ -17,10 +17,10 @@ public class ProviderInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("genderSourceConcept")
-               || codePath.equals("specialtySourceConcept")
-               || codePath.equals("genderConcept")
-               || codePath.equals("specialtyConcept");
+        return ((codePath.equals("genderSourceConcept"))
+                || (codePath.equals("specialtySourceConcept"))
+                || (codePath.equals("genderConcept"))
+                || (codePath.equals("specialtyConcept")));
     }
 
 

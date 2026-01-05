@@ -32,9 +32,9 @@ public class DrugStrength {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.drugConceptId, otherInstance.drugConceptId)
-                            && Objects.equals(this.ingredientConceptId, otherInstance.ingredientConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.drugConceptId, otherInstance.drugConceptId))
+                            && (Objects.equals(this.ingredientConceptId, otherInstance.ingredientConceptId)));
                 } else {
                     return false;
                 }

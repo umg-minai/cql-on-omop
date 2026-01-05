@@ -17,9 +17,9 @@ public class MetadataInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("valueAsConcept")
-               || codePath.equals("metadataTypeConcept")
-               || codePath.equals("metadataConcept");
+        return ((codePath.equals("valueAsConcept"))
+                || (codePath.equals("metadataTypeConcept"))
+                || (codePath.equals("metadataConcept")));
     }
 
 

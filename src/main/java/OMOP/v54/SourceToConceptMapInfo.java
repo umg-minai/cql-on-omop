@@ -17,8 +17,8 @@ public class SourceToConceptMapInfo implements DataTypeInfo {
     }
 
     public boolean isJoinableCodePath(final String codePath) {
-        return codePath.equals("targetConcept")
-               || codePath.equals("sourceConcept");
+        return ((codePath.equals("targetConcept"))
+                || (codePath.equals("sourceConcept")));
     }
 
 

@@ -33,9 +33,9 @@ public class CohortDefinition {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.definitionTypeConceptId, otherInstance.definitionTypeConceptId)
-                            && Objects.equals(this.subjectConceptId, otherInstance.subjectConceptId));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.definitionTypeConceptId, otherInstance.definitionTypeConceptId))
+                            && (Objects.equals(this.subjectConceptId, otherInstance.subjectConceptId)));
                 } else {
                     return false;
                 }

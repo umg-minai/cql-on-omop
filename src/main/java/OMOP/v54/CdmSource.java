@@ -31,9 +31,9 @@ public class CdmSource {
                 return true;
             } else {
                 if (other instanceof CompoundId otherInstance) {
-                    return (other.getClass() == this.getClass()
-                            && Objects.equals(this.cdmSourceName, otherInstance.cdmSourceName)
-                            && Objects.equals(this.cdmVersion, otherInstance.cdmVersion));
+                    return ((other.getClass() == this.getClass())
+                            && (Objects.equals(this.cdmSourceName, otherInstance.cdmSourceName))
+                            && (Objects.equals(this.cdmVersion, otherInstance.cdmVersion)));
                 } else {
                     return false;
                 }
