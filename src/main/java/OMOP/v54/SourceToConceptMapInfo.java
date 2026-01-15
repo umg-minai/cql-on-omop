@@ -1,3 +1,5 @@
+// This file has been generated from a description of the OMOP CDM v5.4 - do
+// not edit
 package OMOP.v54;
 
 import OMOP.DataTypeInfo;

@@ -1,3 +1,5 @@
+// This file has been generated from a description of the OMOP CMD v5.4 - do not edit
+
 library OMOPHelpers version '1.0'
 
 using OMOP version 'v5.4'
