@@ -505,6 +505,7 @@
         <ns4:element name="stopReasonSourceValue" type="System.String" definition="The Plan stop reason as it appears in the source data."/>
     </ns4:typeInfo>
     <ns4:typeInfo xsi:type="ns4:ClassInfo" namespace="OMOP" name="Person" baseType="System.Any" retrievable="true" definition="This table serves as the central identity management for all Persons in the database. It contains records that uniquely identify each person or patient, and some demographic information.&#10;&#10;All records in this table are independent Persons." comment="All Persons in a database needs one record in this table, unless they fail data quality requirements specified in the ETL. Persons with no Events should have a record nonetheless. If more than one data source contributes Events to the database, Persons must be reconciled, if possible, across the sources to create one single record per Person. The content of the BIRTH_DATETIME must be equivalent to the content of BIRTH_DAY, BIRTH_MONTH and BIRTH_YEAR.&lt;br&gt;&lt;br&gt;For detailed conventions for how to populate this table, please refer to the [THEMIS repository](https://ohdsi.github.io/Themis/person.html).">
+        <ns4:element name="bestEffortBirthDate" type="System.Date" definition="Birth date scraped form different attributes."/>
         <ns4:element name="birthDatetime" type="System.DateTime" comment="This field is not required but highly encouraged. For data sources that provide the precise datetime of birth, that value should be stored in this field. For more information on how to populate this field, please refer to the [THEMIS repository](https://ohdsi.github.io/Themis/person.html)."/>
         <ns4:element name="careSiteId" type="System.Long" definition="The Care Site refers to where the Provider typically provides the primary care."/>
         <ns4:element name="careSite" type="CareSite"/>
@@ -696,7 +697,7 @@
     <ns4:contextInfo name="Practitioner" keyElement="id">
         <ns4:contextType namespace="OMOP" name="Person"/>
     </ns4:contextInfo>
-    <ns4:contextInfo name="Patient" keyElement="id" birthDateElement="birthDatetime">
+    <ns4:contextInfo name="Patient" keyElement="id" birthDateElement="bestEffortBirthDate">
         <ns4:contextType namespace="OMOP" name="Person"/>
     </ns4:contextInfo>
     <ns4:conversionInfo fromType="OMOP.CdmSource" toType="System.Date" functionName="OMOPHelpers.ToDate"/>

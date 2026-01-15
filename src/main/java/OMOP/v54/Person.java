@@ -388,6 +388,32 @@ public class Person {
         this.yearOfBirth = newValue;
     }
 
+    public Date getBestEffortBirthDate() {
+        if (this.birthDatetime != null) {
+            final var temp = this.birthDatetime.toOffsetDateTime();
+            return new Date(temp.getYear(), temp.getMonthValue(), temp.getDayOfMonth());
+        } else {
+            if (this.yearOfBirth != null) {
+                var precision = org.opencds.cqf.cql.engine.runtime.Precision.YEAR;
+                var month = 1;
+                var day = 1;
+                if (this.monthOfBirth != null) {
+                    month = this.monthOfBirth;
+                    precision = org.opencds.cqf.cql.engine.runtime.Precision.MONTH;
+                }
+                if (this.dayOfBirth != null) {
+                    day = this.dayOfBirth;
+                    precision = org.opencds.cqf.cql.engine.runtime.Precision.DAY;
+                }
+                var date = new Date(this.yearOfBirth, month, day);
+                date.setPrecision(precision);
+                return date;
+            } else {
+                return null;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         final var result = new StringBuilder();

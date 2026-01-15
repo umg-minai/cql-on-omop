@@ -1,3 +1,5 @@
+// This file has been generated from a description of the OMOP CDM v5.4.MIMIC -
+// do not edit
 package OMOP.v54MIMIC;
 
 import OMOP.DataTypeInfo;
