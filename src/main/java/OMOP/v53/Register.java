@@ -1,3 +1,5 @@
+// This file has been generated from a description of the OMOP CDM v5.3 - do
+// not edit
 package OMOP.v53;
 
 import OMOP.MappingInfo;
