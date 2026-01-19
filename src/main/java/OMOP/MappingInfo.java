@@ -4,14 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MappingInfo {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(MappingInfo.class);
 
     private final String version;
 
     private final Map<String, DataTypeInfo> infos = new HashMap<>();
 
     public MappingInfo(final String version) {
-        System.out.printf("Registering data type information for OMOP '%s'%n", version);
+        LOGGER.info("Registering data type information for OMOP '{}'", version);
         this.version = version;
         final var registerClassName = String.format("OMOP.%s.Register", version.replace(".", ""));
         try {
