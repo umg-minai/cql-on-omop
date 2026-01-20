@@ -23,6 +23,8 @@ public class Configuration {
 
     private String databaseSchema;
 
+    private String databaseConnectionString = null;
+
     private Integer threadCount = defaultThreadCount();
 
     private Boolean showSQL = false;
@@ -95,6 +97,15 @@ public class Configuration {
 
     public Configuration withDatabaseSchema(final String databaseSchema) {
         this.databaseSchema = databaseSchema;
+        return this;
+    }
+
+    public String getDatabaseConnectionString() {
+        return this.databaseConnectionString;
+    }
+
+    public Configuration withDatabaseConnectionString(final String databaseConnectionString) {
+        this.databaseConnectionString = databaseConnectionString;
         return this;
     }
 

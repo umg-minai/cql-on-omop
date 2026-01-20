@@ -54,6 +54,12 @@ public class DatabaseOptions {
     public String schema;
 
     @Option(
+            names = "--connection-string",
+            description = "JDBC database connection string. Has priority over and replaces --driver, --host, --port and --database options."
+    )
+    public String connectionString;
+
+    @Option(
             names = {"--show-sql"},
             defaultValue = "false",
             description = "Show the generated SQL statements as they are sent to the database server."
@@ -69,6 +75,7 @@ public class DatabaseOptions {
                 .withDatabasePassword(this.password)
                 .withDatabaseName(this.database)
                 .withDatabaseSchema(this.schema)
+                .withDatabaseConnectionString(this.connectionString)
                 .withShowSQL(this.showSQL);
     }
 
