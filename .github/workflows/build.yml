@@ -7,16 +7,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Platform Dependencies
-        run: |
-          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-            && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                 maven openjdk-17-jdk
+      - uses: actions/checkout@v5
 
-      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution:    'temurin'
+          java-version:    '21'
+          server-username: PACKAGES_USERNAME_REF # env variable name for username
+          server-password: PACKAGES_TOKEN_REF    # env variable name for GitHub Personal Access To
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        env:
+          PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
+          PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Gather Artifacts
         run: |
