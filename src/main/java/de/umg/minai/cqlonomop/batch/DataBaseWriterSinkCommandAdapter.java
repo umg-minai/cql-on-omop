@@ -19,14 +19,17 @@ import java.util.List;
                       - Instances of OMOP datatypes are inserted into the corresponding table
                       - Other datatypes are not supported
                       In other words, each selected definition has to evaluate to an instance of an OMOP datatype \
-                      such as Person or to a list of such like List<Person>.
-                      """,
+                      such as Person or to a list of such like List<Person>.""",
         usageHelpAutoWidth = true
 )
 public class DataBaseWriterSinkCommandAdapter implements ResultSinkCommandAdapter {
 
+    @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
+    private DatabaseOptions databaseOptions = new DatabaseOptions();
+
     public ResultSink createConfigured(final MapReduceEngine engine, final List<String> resultNames) {
-        return new DatabaseWriterSink(engine, resultNames);
+        final var configuration = databaseOptions.applyToConfiguration(new DatabaseConfiguration());
+        return new DatabaseWriterSink(engine, resultNames, configuration);
     }
 
 }
