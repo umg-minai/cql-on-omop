@@ -10,13 +10,15 @@ import java.util.List;
 
 public class CSVWriterSink extends ExpressionResultToFileWriterSink {
 
-    // TODO(jmoringe): make this configurable
-    private final boolean contextColumn = false;
+    private final boolean includeContextAsColumn;
 
     private final List<List<String>> slice = new ArrayList<>();
 
-    public CSVWriterSink(final MapReduceEngine ignoredEngine, final List<String> resultNames) {
+    public CSVWriterSink(final MapReduceEngine ignoredEngine,
+                         final List<String> resultNames,
+                         boolean includeContextAsColumn) {
         super(resultNames);
+        this.includeContextAsColumn = includeContextAsColumn;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class CSVWriterSink extends ExpressionResultToFileWriterSink {
     }
 
     private void maybeAddContext(final List<String> row, final Object contextObject) {
-        if (this.contextColumn && contextObject != null) {
+        if (this.includeContextAsColumn && contextObject != null) {
             row.add(contextObject.toString());
         }
     }

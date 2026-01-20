@@ -16,14 +16,23 @@ import java.util.List;
                       - The elements of a tuple turn into columns of a row
                       - A "scalar" value turns into a single column of a row
                       - The results for different context values (such a Person instance) are turned into sequences \
-                      of rows and concatenated into an overall sequence of rows
-                      """,
+                      of rows and concatenated into an overall sequence of rows""",
         usageHelpAutoWidth = true
 )
 public class CSVWriterSinkCommandAdapter implements ResultSinkCommandAdapter {
 
+    @CommandLine.Option(
+            names = "--context-column",
+            negatable = true,
+            defaultValue = "false",
+            description = """
+                          Add a column which contains the respective context object such as the person for each result.
+                          Default value: ${DEFAULT-VALUE}"""
+    )
+    private boolean contextColumn = false;
+
     public ResultSink createConfigured(final MapReduceEngine engine, final List<String> resultNames) {
-        return new CSVWriterSink(engine, resultNames);
+        return new CSVWriterSink(engine, resultNames, contextColumn);
     }
 
 }
