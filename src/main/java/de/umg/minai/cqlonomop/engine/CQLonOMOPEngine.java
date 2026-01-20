@@ -1,6 +1,7 @@
 package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
+import de.umg.minai.cqlonomop.database.ConnectionFactory;
 import jakarta.persistence.EntityManager;
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.*;

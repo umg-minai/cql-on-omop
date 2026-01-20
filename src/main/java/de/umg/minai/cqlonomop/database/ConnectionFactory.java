@@ -1,4 +1,4 @@
-package de.umg.minai.cqlonomop.engine;
+package de.umg.minai.cqlonomop.database;
 
 import OMOP.MappingInfo;
 import org.hibernate.SessionFactory;
@@ -8,7 +8,7 @@ import static org.hibernate.cfg.MappingSettings.DEFAULT_SCHEMA;
 
 public class ConnectionFactory {
 
-    public static SessionFactory createSessionFactory(final Configuration configuration,
+    public static SessionFactory createSessionFactory(final DatabaseConfiguration configuration,
                                                       final MappingInfo mappingInfo) {
         // Configure Hibernate
         final var config = new org.hibernate.cfg.Configuration();

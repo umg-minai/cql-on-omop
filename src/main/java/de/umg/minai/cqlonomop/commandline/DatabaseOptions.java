@@ -1,5 +1,6 @@
 package de.umg.minai.cqlonomop.commandline;
 
+import de.umg.minai.cqlonomop.database.DatabaseConfiguration;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import picocli.CommandLine.Option;
 
@@ -7,30 +8,31 @@ public class DatabaseOptions {
 
     @Option(
             names = {"--driver"},
-            defaultValue = Configuration.DEFAULT_DATABASE_DRIVER,
+            defaultValue = DatabaseConfiguration.DEFAULT_DRIVER,
             description = "The driver that should be used to connect to the OMOP database server."
     )
-    public String driver = Configuration.DEFAULT_DATABASE_DRIVER;
+    public String driver = DatabaseConfiguration.DEFAULT_DRIVER;
 
     @Option(
             names = {"-h", "--host"},
-            defaultValue = "localhost",
+            defaultValue = DatabaseConfiguration.DEFAULT_HOST,
             description = "The hostname of the database server from which to retrieve the OMOP data."
     )
-    public String host = "localhost";
+    public String host = DatabaseConfiguration.DEFAULT_HOST;
 
     @Option(
             names = {"-p", "--port"},
-            defaultValue = "5434",
+            defaultValue = DatabaseConfiguration.DEFAULT_PORT_AS_STRING,
             description = "The post on which the database server from which to retrieve the OMOP data listens."
     )
-    public int port = 5434;
+    public int port = DatabaseConfiguration.DEFAULT_PORT;
 
     @Option(
             names = {"-u", "--user"},
+            defaultValue = DatabaseConfiguration.DEFAULT_USER,
             description = "The username of the database server account that should be used to retrieve the OMOP data."
     )
-    public String user = "postgres";
+    public String user = DatabaseConfiguration.DEFAULT_USER;
 
     @Option(
             names = {"--password"},
@@ -66,8 +68,9 @@ public class DatabaseOptions {
     )
     public boolean showSQL = false;
 
-    public Configuration applyToConfiguration(final Configuration configuration) {
-        return configuration
+    public <T extends DatabaseConfiguration> T applyToConfiguration(final T configuration) {
+        //noinspection unchecked
+        return (T) configuration
                 .withDatabaseDriver(this.driver)
                 .withDatabaseHost(this.host)
                 .withDatabasePort(this.port)
