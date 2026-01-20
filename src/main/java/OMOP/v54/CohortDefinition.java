@@ -158,7 +158,10 @@ public class CohortDefinition {
 
     public void setDefinitionTypeConcept(final Concept newValue) {
         this.definitionTypeConcept = newValue;
-        this.compoundId.definitionTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.definitionTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getSubjectConceptId() {
@@ -177,7 +180,10 @@ public class CohortDefinition {
 
     public void setSubjectConcept(final Concept newValue) {
         this.subjectConcept = newValue;
-        this.compoundId.subjectConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.subjectConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override

@@ -92,7 +92,10 @@ public class FactRelationship {
 
     public void setDomainConcept1(final Concept newValue) {
         this.domainConcept1 = newValue;
-        this.compoundId.domainConceptId1 = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.domainConceptId1 = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getDomainConceptId2() {
@@ -111,7 +114,10 @@ public class FactRelationship {
 
     public void setDomainConcept2(final Concept newValue) {
         this.domainConcept2 = newValue;
-        this.compoundId.domainConceptId2 = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.domainConceptId2 = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "fact_id_1", updatable = false, nullable = false)
@@ -152,7 +158,10 @@ public class FactRelationship {
 
     public void setRelationshipConcept(final Concept newValue) {
         this.relationshipConcept = newValue;
-        this.compoundId.relationshipConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.relationshipConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override

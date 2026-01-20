@@ -188,7 +188,10 @@ public class DrugStrength {
 
     public void setDrugConcept(final Concept newValue) {
         this.drugConcept = newValue;
-        this.compoundId.drugConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.drugConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getIngredientConceptId() {
@@ -207,7 +210,10 @@ public class DrugStrength {
 
     public void setIngredientConcept(final Concept newValue) {
         this.ingredientConcept = newValue;
-        this.compoundId.ingredientConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.ingredientConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "invalid_reason", updatable = false, nullable = true)

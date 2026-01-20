@@ -83,7 +83,10 @@ public class EpisodeEvent {
 
     public void setEpisodeEventFieldConcept(final Concept newValue) {
         this.episodeEventFieldConcept = newValue;
-        this.compoundId.episodeEventFieldConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.episodeEventFieldConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getEpisodeId() {
@@ -101,7 +104,10 @@ public class EpisodeEvent {
 
     public void setEpisode(final Episode newValue) {
         this.episode = newValue;
-        this.compoundId.episodeId = newValue.getEpisodeId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.episodeId = (newValue != null) ? newValue.getEpisodeId() : 0;
     }
 
     @Column(name = "event_id", updatable = false, nullable = false)

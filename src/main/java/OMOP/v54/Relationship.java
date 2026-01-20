@@ -59,7 +59,10 @@ public class Relationship {
 
     public void setRelationshipConcept(final Concept newValue) {
         this.relationshipConcept = newValue;
-        this.relationshipConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.relationshipConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Id
@@ -105,7 +108,8 @@ public class Relationship {
             result.append(this.getRelationshipConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

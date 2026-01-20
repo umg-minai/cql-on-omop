@@ -36,7 +36,10 @@ public class ConditionEra {
 
     public void setConditionConcept(final Concept newValue) {
         this.conditionConcept = newValue;
-        this.conditionConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.conditionConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "condition_era_end_date", updatable = false,
@@ -105,7 +108,10 @@ public class ConditionEra {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Override

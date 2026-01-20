@@ -88,7 +88,10 @@ public class ConceptRelationship {
 
     public void setConcept1(final Concept newValue) {
         this.concept1 = newValue;
-        this.compoundId.conceptId1 = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.conceptId1 = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getConceptId2() {
@@ -106,7 +109,10 @@ public class ConceptRelationship {
 
     public void setConcept2(final Concept newValue) {
         this.concept2 = newValue;
-        this.compoundId.conceptId2 = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.conceptId2 = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "invalid_reason", updatable = false, nullable = true)

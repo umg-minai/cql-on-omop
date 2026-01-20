@@ -35,7 +35,10 @@ public class DrugEra {
 
     public void setDrugConcept(final Concept newValue) {
         this.drugConcept = newValue;
-        this.drugConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.drugConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "drug_era_end_date", updatable = false, nullable = false)
@@ -116,7 +119,10 @@ public class DrugEra {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Override

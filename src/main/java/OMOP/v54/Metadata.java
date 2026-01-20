@@ -36,7 +36,10 @@ public class Metadata {
 
     public void setMetadataConcept(final Concept newValue) {
         this.metadataConcept = newValue;
-        this.metadataConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.metadataConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "metadata_date", updatable = false, nullable = true)
@@ -105,7 +108,10 @@ public class Metadata {
 
     public void setMetadataTypeConcept(final Concept newValue) {
         this.metadataTypeConcept = newValue;
-        this.metadataTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.metadataTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "name", updatable = false, nullable = false)
@@ -190,7 +196,8 @@ public class Metadata {
             result.append(this.getMetadataConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 
