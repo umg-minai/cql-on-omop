@@ -16,6 +16,7 @@ import org.jline.widget.AutosuggestionWidgets;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 @CommandLine.Command(
         name = "repl",
@@ -23,7 +24,7 @@ import java.io.IOException;
         defaultValueProvider = DefaultValueProvider.class,
         usageHelpAutoWidth = true
 )
-public class Repl implements Runnable {
+public class Repl implements Callable<Integer> {
 
     @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
     DatabaseOptions databaseOptions = new DatabaseOptions();
@@ -78,7 +79,7 @@ public class Repl implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Integer call() {
         // Configure and create evaluator.
         var configuration = databaseOptions.applyToConfiguration(new Configuration());
         if (cqlOptions != null) {
@@ -153,6 +154,7 @@ public class Repl implements Runnable {
                 System.err.printf("Error saving REPL history %s\n", e);
             }
         }
+        return 0;
     }
 
 }

@@ -20,15 +20,22 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 @Command(
         name = "batch",
         description = "Evaluate CQL code and print or process the results",
         defaultValueProvider = DefaultValueProvider.class,
-        usageHelpAutoWidth = true
+        usageHelpAutoWidth = true,
+        subcommands = {
+                DataBaseWriterSinkCommandAdapter.class,
+                GnuplotHistogramSinkCommandAdapter.class,
+                CSVWriterSinkCommandAdapter.class
+        },
+        synopsisSubcommandLabel = "SINK",
+        commandListHeading = "Sinks\n"
 )
-public class Batch implements Callable<Integer> {
+public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
 
     @ArgGroup(validate = false, heading = "Database Options%n")
     private DatabaseOptions databaseOptions = new DatabaseOptions();
@@ -62,44 +69,10 @@ public class Batch implements Callable<Integer> {
             names = { "--result-name" },
             paramLabel = "<expression-definition-name>",
             description = "Name of CQL expression definitions which should be processed. The processing is performed " +
-                    "by the \"result sink\" chosen via the --sink option. If this option is supplied multiple times, " +
+                    "by the \"result sink\" chosen via the SINK options. If this option is supplied multiple times, " +
                     "all specified results are selected for processing."
     )
     private List<String> resultNames;
-
-    @CommandLine.Option(
-            names = { "--sink" },
-            paramLabel = "<sink>",
-            description = """
-                    Action that should be applied to evaluation results, either all results or the ones selected via \
-                    the --result-name option(s). Possible values are
-                    "noop" No operation.
-                    "dbwrite" Write result objects to OMOP database. The result for each expression selected via the \
-                    --result-name option(s) is inserted into the OMOP table which corresponds to the type of the \
-                    result. Result objects are translated into database rows according to the following rules \
-                      - The results for different context values (such as Person instances) are inserted independently
-                      - The elements of a list are inserted as individual rows
-                      - Instances of OMOP datatypes are inserted into the corresponding table
-                      - Other datatypes are not supported
-                      In other words, each selected definition has to evaluate to an instance of an OMOP datatype such \
-                    as Person or to a list of such like List<Person>.
-                    "histogram" Write a temporal histogram to one or more files. The output is human-readable and also \
-                    suitable for plotting with gnuplot. Each expression selected by --result-name is written into a \
-                    file EXPRESSION_NAME.txt.
-                    "csv" Write the selected result objects into CSV files. Each expression selected by --result-name \
-                    is written into a file EXPRESSION_NAME.csv. A --result-name option that selects multiple \
-                    expressions leads to multiple CSV files. Result objects are translated into rows and columns of \
-                    the CSV files according to the following rules:
-                      - The elements of a list turn into rows of the CSV file
-                      - The elements of a tuple turn into columns of a row
-                      - A "scalar" value turns into a single column of a row
-                      - The results for different context values (such a Person instance) are turned into sequences \
-                    of rows and concatenated into an overall sequence of rows
-                    The default is "noop".
-                    """,
-            converter = SinkConverter.class
-    )
-    private Class<? extends ResultSink> resultSinkClass = NoopSink.class;
 
     @CommandLine.Option(
             names = {"--profile"},
@@ -156,7 +129,7 @@ public class Batch implements Callable<Integer> {
     final InMemoryLibrarySourceProvider temporarySourceProvider = new InMemoryLibrarySourceProvider();
 
     @Override
-    public Integer call() {
+    public Integer apply(final ResultSinkCommandAdapter resultSinkCommandAdapter) {
         // Prepare a configuration and instantiate the engine.
         var configuration = databaseOptions.applyToConfiguration(new Configuration());
         if (cqlOptions != null) {
@@ -196,9 +169,9 @@ public class Batch implements Callable<Integer> {
         // the overall success of the batch processing.
         final ResultSink resultSink;
         try {
-            resultSink = resultSinkClass
-                    .getConstructor(MapReduceEngine.class, List.class)
-                    .newInstance(engine, resultNames);
+            resultSink = resultSinkCommandAdapter != null
+                    ? resultSinkCommandAdapter.createConfigured(engine, resultNames)
+                    : new NoopSink(engine, resultNames);
         } catch (final Exception e) {
             throw new RuntimeException(String.format("Internal error while creating result sink: %s%n", e), e);
         }
