@@ -1,5 +1,7 @@
 package de.umg.minai.cqlonomop.batch;
 
+import de.umg.minai.cqlonomop.database.ConnectionFactory;
+import de.umg.minai.cqlonomop.database.DatabaseConfiguration;
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,9 +16,17 @@ public class DatabaseWriterSink extends BasicResultSink {
 
     private Session session;
 
-    public DatabaseWriterSink(final MapReduceEngine engine, final List<String> resultNames) {
+    public DatabaseWriterSink(final MapReduceEngine engine,
+                              final List<String> resultNames,
+                              final DatabaseConfiguration databaseConfiguration) {
         super(resultNames);
-        this.sessionFactory = engine.getSessionFactory();
+        this.sessionFactory = (databaseConfiguration != null)
+                ? ConnectionFactory.createSessionFactory(databaseConfiguration, engine.getMappingInfo())
+                : engine.getSessionFactory();
+    }
+
+    public DatabaseWriterSink(final MapReduceEngine engine, final List<String> resultNames) {
+        this(engine, resultNames, null);
     }
 
     @Override
@@ -47,7 +57,10 @@ public class DatabaseWriterSink extends BasicResultSink {
         }
     }
 
-    void notePersistedObject(final Object contextObject, final String name, final Integer index, final Object object) {
+    private void notePersistedObject(final Object contextObject,
+                                     final String name,
+                                     final Integer index,
+                                     final Object object) {
         final var writer = System.out;
         writer.print("Persisting");
         if (contextObject != null) {

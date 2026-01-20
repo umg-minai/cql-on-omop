@@ -110,6 +110,10 @@ public class CQLonOMOPEngine {
         return this.sessionFactory;
     }
 
+    public MappingInfo getMappingInfo() {
+        return this.mappingInfo;
+    }
+
     public boolean isProfiling() {
         return this.isProfiling;
     }
