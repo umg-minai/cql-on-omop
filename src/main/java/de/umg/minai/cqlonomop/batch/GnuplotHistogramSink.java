@@ -14,10 +14,32 @@ public class GnuplotHistogramSink extends TemporalHistogram {
 
     private record Plot(Path imageFile, List<Graph> graphs) {}
 
-    private Pattern groupBy = Pattern.compile("(.*)-([^-]+)");
+    public static final String GROUP_BY_DEFAULT = "(.*)-([^-]+)";
 
-    public GnuplotHistogramSink(MapReduceEngine ignoredEngine, List<String> resultNames) {
+    private Pattern groupBy = Pattern.compile(GROUP_BY_DEFAULT);
+
+    public enum PlotType {
+        BOXES,
+        SMOOTH_BEZIER,
+    }
+
+    private PlotType plotType = PlotType.BOXES;
+
+    private Boolean keepTempraryFiles = false;
+
+    public GnuplotHistogramSink(final MapReduceEngine ignoredEngine, final List<String> resultNames) {
         super(ignoredEngine, resultNames);
+    }
+
+    public GnuplotHistogramSink(final MapReduceEngine ignoredEngine,
+                                final List<String> resultNames,
+                                final String groupBy,
+                                final PlotType plotType,
+                                final Boolean keepTempraryFiles) {
+        super(ignoredEngine, resultNames);
+        this.groupBy = Pattern.compile(groupBy);
+        this.plotType = plotType;
+        this.keepTempraryFiles = keepTempraryFiles;
     }
 
     @Override
@@ -52,8 +74,10 @@ public class GnuplotHistogramSink extends TemporalHistogram {
 
     private void gnuplot(final List<Graph> graphs, final Path outputFile) throws IOException, InterruptedException {
         final var format = "png";
-        //final var plotType = "smooth sbezier";
-        final var plotType = "with boxes";
+        final var plotType = switch (this.plotType) {
+            case BOXES -> "with boxes";
+            case SMOOTH_BEZIER -> "smooth sbezier with filledcurve";
+        };
         final var scriptFile = Path.of("script.gplt");
         System.out.printf("%s -> '%s'\n", graphs.stream().map(Graph::dataFile).toList(), outputFile);
 
@@ -93,9 +117,11 @@ public class GnuplotHistogramSink extends TemporalHistogram {
             throw new RuntimeException(String.format("Gnuplot failed with code %d.\n%s%s", code, output, error));
         }
         // Only delete files if everything worked. Otherwise, leave the temporary files around for debugging.
-        Files.delete(scriptFile);
-        for (final var graph : graphs) {
-            Files.delete(graph.dataFile());
+        if (!this.keepTempraryFiles) {
+            Files.delete(scriptFile);
+            for (final var graph : graphs) {
+                Files.delete(graph.dataFile());
+            }
         }
     }
 }
