@@ -4,6 +4,14 @@ import de.umg.minai.cqlonomop.engine.Configuration;
 import picocli.CommandLine.Option;
 
 public class DatabaseOptions {
+
+    @Option(
+            names = {"--driver"},
+            defaultValue = Configuration.DEFAULT_DATABASE_DRIVER,
+            description = "The driver that should be used to connect to the OMOP database server."
+    )
+    public String driver = Configuration.DEFAULT_DATABASE_DRIVER;
+
     @Option(
             names = {"-h", "--host"},
             defaultValue = "localhost",
@@ -54,6 +62,7 @@ public class DatabaseOptions {
 
     public Configuration applyToConfiguration(final Configuration configuration) {
         return configuration
+                .withDatabaseDriver(this.driver)
                 .withDatabaseHost(this.host)
                 .withDatabasePort(this.port)
                 .withDatabaseUser(this.user)

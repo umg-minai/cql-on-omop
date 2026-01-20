@@ -13,7 +13,8 @@ public class ConnectionFactory {
         // Configure Hibernate
         final var config = new org.hibernate.cfg.Configuration();
         config.configure("de/umg/minai/cqlonomop/hibernate.cfg.xml");
-        final var connectionURL = String.format("jdbc:postgresql://%s:%d/%s",
+        final var connectionURL = String.format("jdbc:%s://%s:%d/%s",
+                configuration.getDatabaseDriver(),
                 configuration.getDatabaseHost(),
                 configuration.getDatabasePort(),
                 configuration.getDatabaseName());

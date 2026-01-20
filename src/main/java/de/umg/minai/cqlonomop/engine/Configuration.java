@@ -5,7 +5,11 @@ import java.util.List;
 
 public class Configuration {
 
+    public final static String DEFAULT_DATABASE_DRIVER = "postgresql";
+
     public final static String DEFAULT_OMOP_VERSION = "v5.4";
+
+    private String databaseDriver = DEFAULT_DATABASE_DRIVER;
 
     private String databaseHost;
 
@@ -29,6 +33,15 @@ public class Configuration {
 
     public static int defaultThreadCount() {
         return Runtime.getRuntime().availableProcessors();
+    }
+
+    public String getDatabaseDriver() {
+        return this.databaseDriver;
+    }
+
+    public Configuration withDatabaseDriver(final String driver) {
+        this.databaseDriver = driver;
+        return this;
     }
 
     public String getDatabaseHost() {
