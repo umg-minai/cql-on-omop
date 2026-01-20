@@ -157,7 +157,10 @@ public class VisitDetail {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "preceding_visit_detail_id", updatable = false,
@@ -239,7 +242,10 @@ public class VisitDetail {
 
     public void setVisitDetailConcept(final Concept newValue) {
         this.visitDetailConcept = newValue;
-        this.visitDetailConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.visitDetailConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "visit_detail_end_date", updatable = false, nullable = false)
@@ -410,7 +416,10 @@ public class VisitDetail {
 
     public void setVisitDetailTypeConcept(final Concept newValue) {
         this.visitDetailTypeConcept = newValue;
-        this.visitDetailTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.visitDetailTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "visit_occurrence_id", updatable = false, nullable = false)
@@ -431,7 +440,10 @@ public class VisitDetail {
 
     public void setVisitOccurrence(final VisitOccurrence newValue) {
         this.visitOccurrence = newValue;
-        this.visitOccurrenceId = newValue.getVisitOccurrenceId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.visitOccurrenceId = (newValue != null) ? newValue.getVisitOccurrenceId() : 0;
     }
 
     @Override
@@ -445,7 +457,8 @@ public class VisitDetail {
             result.append(this.getVisitDetailConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

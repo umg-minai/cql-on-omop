@@ -36,7 +36,10 @@ public class ConditionOccurrence {
 
     public void setConditionConcept(final Concept newValue) {
         this.conditionConcept = newValue;
-        this.conditionConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.conditionConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "condition_end_date", updatable = false, nullable = true)
@@ -230,7 +233,10 @@ public class ConditionOccurrence {
 
     public void setConditionTypeConcept(final Concept newValue) {
         this.conditionTypeConcept = newValue;
-        this.conditionTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.conditionTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -250,7 +256,10 @@ public class ConditionOccurrence {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -367,7 +376,8 @@ public class ConditionOccurrence {
             result.append(this.getConditionConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

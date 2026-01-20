@@ -129,7 +129,10 @@ public class Specimen {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "quantity", updatable = false, nullable = true)
@@ -165,7 +168,10 @@ public class Specimen {
 
     public void setSpecimenConcept(final Concept newValue) {
         this.specimenConcept = newValue;
-        this.specimenConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.specimenConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "specimen_date", updatable = false, nullable = false)
@@ -256,7 +262,10 @@ public class Specimen {
 
     public void setSpecimenTypeConcept(final Concept newValue) {
         this.specimenTypeConcept = newValue;
-        this.specimenTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.specimenTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "unit_concept_id", updatable = false, nullable = true)
@@ -314,7 +323,8 @@ public class Specimen {
             result.append(this.getSpecimenConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

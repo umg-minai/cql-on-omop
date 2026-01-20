@@ -84,7 +84,10 @@ public class ConceptAncestor {
 
     public void setAncestorConcept(final Concept newValue) {
         this.ancestorConcept = newValue;
-        this.compoundId.ancestorConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.ancestorConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public Integer getDescendantConceptId() {
@@ -103,7 +106,10 @@ public class ConceptAncestor {
 
     public void setDescendantConcept(final Concept newValue) {
         this.descendantConcept = newValue;
-        this.compoundId.descendantConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.descendantConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "max_levels_of_separation", updatable = false,

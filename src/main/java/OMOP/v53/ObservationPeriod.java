@@ -70,7 +70,10 @@ public class ObservationPeriod {
 
     public void setPeriodTypeConcept(final Concept newValue) {
         this.periodTypeConcept = newValue;
-        this.periodTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.periodTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -90,7 +93,10 @@ public class ObservationPeriod {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Override

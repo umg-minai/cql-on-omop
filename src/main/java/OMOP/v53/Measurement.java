@@ -37,7 +37,10 @@ public class Measurement {
 
     public void setMeasurementConcept(final Concept newValue) {
         this.measurementConcept = newValue;
-        this.measurementConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.measurementConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "measurement_date", updatable = false, nullable = false)
@@ -160,7 +163,10 @@ public class Measurement {
 
     public void setMeasurementTypeConcept(final Concept newValue) {
         this.measurementTypeConcept = newValue;
-        this.measurementTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.measurementTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "operator_concept_id", updatable = false, nullable = true)
@@ -210,7 +216,10 @@ public class Measurement {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -446,7 +455,8 @@ public class Measurement {
             result.append(this.getMeasurementConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

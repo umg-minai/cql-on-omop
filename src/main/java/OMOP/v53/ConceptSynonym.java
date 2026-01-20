@@ -82,7 +82,10 @@ public class ConceptSynonym {
 
     public void setConcept(final Concept newValue) {
         this.concept = newValue;
-        this.compoundId.conceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.conceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "concept_synonym_name", updatable = false, nullable = false)
@@ -112,7 +115,10 @@ public class ConceptSynonym {
 
     public void setLanguageConcept(final Concept newValue) {
         this.languageConcept = newValue;
-        this.compoundId.languageConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.languageConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override

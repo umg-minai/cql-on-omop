@@ -65,7 +65,10 @@ public class DrugExposure {
 
     public void setDrugConcept(final Concept newValue) {
         this.drugConcept = newValue;
-        this.drugConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.drugConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "drug_exposure_end_date", updatable = false,
@@ -204,7 +207,10 @@ public class DrugExposure {
 
     public void setDrugTypeConcept(final Concept newValue) {
         this.drugTypeConcept = newValue;
-        this.drugTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.drugTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "lot_number", updatable = false, nullable = true)
@@ -239,7 +245,10 @@ public class DrugExposure {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -465,7 +474,8 @@ public class DrugExposure {
             result.append(this.getDrugConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

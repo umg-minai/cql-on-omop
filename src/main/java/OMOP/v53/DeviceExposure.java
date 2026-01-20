@@ -36,7 +36,10 @@ public class DeviceExposure {
 
     public void setDeviceConcept(final Concept newValue) {
         this.deviceConcept = newValue;
-        this.deviceConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.deviceConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "device_exposure_end_date", updatable = false,
@@ -185,7 +188,10 @@ public class DeviceExposure {
 
     public void setDeviceTypeConcept(final Concept newValue) {
         this.deviceTypeConcept = newValue;
-        this.deviceTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.deviceTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -205,7 +211,10 @@ public class DeviceExposure {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -337,7 +346,8 @@ public class DeviceExposure {
             result.append(this.getDeviceConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

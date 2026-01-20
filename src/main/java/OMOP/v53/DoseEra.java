@@ -77,7 +77,10 @@ public class DoseEra {
 
     public void setDrugConcept(final Concept newValue) {
         this.drugConcept = newValue;
-        this.drugConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.drugConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -97,7 +100,10 @@ public class DoseEra {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "unit_concept_id", updatable = false, nullable = false)
@@ -117,7 +123,10 @@ public class DoseEra {
 
     public void setUnitConcept(final Concept newValue) {
         this.unitConcept = newValue;
-        this.unitConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.unitConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override

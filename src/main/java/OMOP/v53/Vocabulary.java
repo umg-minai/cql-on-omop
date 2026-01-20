@@ -36,7 +36,10 @@ public class Vocabulary {
 
     public void setVocabularyConcept(final Concept newValue) {
         this.vocabularyConcept = newValue;
-        this.vocabularyConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.vocabularyConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Id
@@ -96,7 +99,8 @@ public class Vocabulary {
             result.append(this.getVocabularyConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

@@ -129,7 +129,10 @@ public class AttributeDefinition {
 
     public void setAttributeTypeConcept(final Concept newValue) {
         this.attributeTypeConcept = newValue;
-        this.compoundId.attributeTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.attributeTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override

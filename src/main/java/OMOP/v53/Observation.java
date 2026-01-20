@@ -37,7 +37,10 @@ public class Observation {
 
     public void setObservationConcept(final Concept newValue) {
         this.observationConcept = newValue;
-        this.observationConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.observationConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "observation_date", updatable = false, nullable = false)
@@ -145,7 +148,10 @@ public class Observation {
 
     public void setObservationTypeConcept(final Concept newValue) {
         this.observationTypeConcept = newValue;
-        this.observationTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.observationTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -165,7 +171,10 @@ public class Observation {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -416,7 +425,8 @@ public class Observation {
             result.append(this.getObservationConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 
