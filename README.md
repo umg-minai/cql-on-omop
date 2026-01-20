@@ -136,7 +136,7 @@ Other options for further processing the results computed by CQL expressions inc
   This sink writes the objects that are the values of the CQL definitions selected by `RESULT-REGEX-1`, `RESULT-REGEX-2`, etc. into the suitable tables of OMOP database.
   The database tables are chosen based on the types of the objects.
   For example, the commandline options `--sink dbwrite --result-name 'NewPersons' add-persons` will evaluate the definitions in the CQL library `add-persons.cql`, look for a definition `NewPersons` in that library and store the value in the `person` OMOP CDM table, assuming the value of the definition is of type `OMOP.v54.Person` (or some other version) or `List<OMOP.v54.Person>`.
-  Id fields will by populated when objects are stored in the database, so CQL libraries should not be concerned with those fields.
+  Id fields will be populated when objects are stored in the database, so CQL libraries should not be concerned with those fields.
 
   See the file `examples/create-patients.cql` for an example CQL library that works with this sink.
 
