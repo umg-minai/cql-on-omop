@@ -80,7 +80,10 @@ public class ProcedureOccurrence {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "procedure_concept_id", updatable = false, nullable = false)
@@ -101,7 +104,10 @@ public class ProcedureOccurrence {
 
     public void setProcedureConcept(final Concept newValue) {
         this.procedureConcept = newValue;
-        this.procedureConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.procedureConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "procedure_date", updatable = false, nullable = false)
@@ -247,7 +253,10 @@ public class ProcedureOccurrence {
 
     public void setProcedureTypeConcept(final Concept newValue) {
         this.procedureTypeConcept = newValue;
-        this.procedureTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.procedureTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)
@@ -364,7 +373,8 @@ public class ProcedureOccurrence {
             result.append(this.getProcedureConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

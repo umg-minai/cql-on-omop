@@ -99,7 +99,10 @@ public class Person {
 
     public void setEthnicityConcept(final Concept newValue) {
         this.ethnicityConcept = newValue;
-        this.ethnicityConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.ethnicityConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "ethnicity_source_concept_id", updatable = false,
@@ -166,7 +169,10 @@ public class Person {
 
     public void setGenderConcept(final Concept newValue) {
         this.genderConcept = newValue;
-        this.genderConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.genderConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "gender_source_concept_id", updatable = false,
@@ -329,7 +335,10 @@ public class Person {
 
     public void setRaceConcept(final Concept newValue) {
         this.raceConcept = newValue;
-        this.raceConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.raceConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "race_source_concept_id", updatable = false, nullable = true)

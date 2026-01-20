@@ -158,7 +158,10 @@ public class VisitOccurrence {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "preceding_visit_occurrence_id", updatable = false,
@@ -239,7 +242,10 @@ public class VisitOccurrence {
 
     public void setVisitConcept(final Concept newValue) {
         this.visitConcept = newValue;
-        this.visitConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.visitConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "visit_end_date", updatable = false, nullable = false)
@@ -375,7 +381,10 @@ public class VisitOccurrence {
 
     public void setVisitTypeConcept(final Concept newValue) {
         this.visitTypeConcept = newValue;
-        this.visitTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.visitTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Override
@@ -389,7 +398,8 @@ public class VisitOccurrence {
             result.append(this.getVisitConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

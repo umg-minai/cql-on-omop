@@ -36,7 +36,10 @@ public class Note {
 
     public void setEncodingConcept(final Concept newValue) {
         this.encodingConcept = newValue;
-        this.encodingConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.encodingConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "language_concept_id", updatable = false, nullable = false)
@@ -57,7 +60,10 @@ public class Note {
 
     public void setLanguageConcept(final Concept newValue) {
         this.languageConcept = newValue;
-        this.languageConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.languageConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "note_class_concept_id", updatable = false, nullable = false)
@@ -78,7 +84,10 @@ public class Note {
 
     public void setNoteClassConcept(final Concept newValue) {
         this.noteClassConcept = newValue;
-        this.noteClassConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.noteClassConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "note_date", updatable = false, nullable = false)
@@ -225,7 +234,10 @@ public class Note {
 
     public void setNoteTypeConcept(final Concept newValue) {
         this.noteTypeConcept = newValue;
-        this.noteTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.noteTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -245,7 +257,10 @@ public class Note {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Column(name = "provider_id", updatable = false, nullable = true)

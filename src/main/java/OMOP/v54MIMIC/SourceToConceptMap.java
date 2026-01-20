@@ -132,7 +132,10 @@ public class SourceToConceptMap {
 
     public void setSourceConcept(final Concept newValue) {
         this.sourceConcept = newValue;
-        this.compoundId.sourceConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.sourceConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "source_vocabulary_id", updatable = false, nullable = false)
@@ -162,7 +165,10 @@ public class SourceToConceptMap {
 
     public void setTargetConcept(final Concept newValue) {
         this.targetConcept = newValue;
-        this.compoundId.targetConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.targetConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     public String getTargetVocabularyId() {

@@ -210,7 +210,10 @@ public class Death {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.compoundId.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.compoundId.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Override

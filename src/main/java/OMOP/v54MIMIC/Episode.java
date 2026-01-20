@@ -36,7 +36,10 @@ public class Episode {
 
     public void setEpisodeConcept(final Concept newValue) {
         this.episodeConcept = newValue;
-        this.episodeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.episodeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "episode_end_date", updatable = false, nullable = true)
@@ -120,7 +123,10 @@ public class Episode {
 
     public void setEpisodeObjectConcept(final Concept newValue) {
         this.episodeObjectConcept = newValue;
-        this.episodeObjectConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.episodeObjectConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "episode_parent_id", updatable = false, nullable = true)
@@ -233,7 +239,10 @@ public class Episode {
 
     public void setEpisodeTypeConcept(final Concept newValue) {
         this.episodeTypeConcept = newValue;
-        this.episodeTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.episodeTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "person_id", updatable = false, nullable = false)
@@ -253,7 +262,10 @@ public class Episode {
 
     public void setPerson(final Person newValue) {
         this.person = newValue;
-        this.personId = newValue.getPersonId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.personId = (newValue != null) ? newValue.getPersonId() : 0;
     }
 
     @Override
@@ -267,7 +279,8 @@ public class Episode {
             result.append(this.getEpisodeConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 

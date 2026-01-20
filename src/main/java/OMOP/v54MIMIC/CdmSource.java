@@ -154,7 +154,10 @@ public class CdmSource {
 
     public void setCdmVersionConcept(final Concept newValue) {
         this.cdmVersionConcept = newValue;
-        this.cdmVersionConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.cdmVersionConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "source_description", updatable = false, nullable = true)

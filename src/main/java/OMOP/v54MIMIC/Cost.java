@@ -91,7 +91,10 @@ public class Cost {
 
     public void setCostTypeConcept(final Concept newValue) {
         this.costTypeConcept = newValue;
-        this.costTypeConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.costTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Column(name = "currency_concept_id", updatable = false, nullable = true)

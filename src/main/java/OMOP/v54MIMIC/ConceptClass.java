@@ -37,7 +37,10 @@ public class ConceptClass {
 
     public void setConceptClassConcept(final Concept newValue) {
         this.conceptClassConcept = newValue;
-        this.conceptClassConceptId = newValue.getConceptId();
+        // We allow explicitly settings the (ostensibly required) field to null
+        // and the associated foreign key to 0 so that users can create broken
+        // references when they absolutely must.
+        this.conceptClassConceptId = (newValue != null) ? newValue.getConceptId() : 0;
     }
 
     @Id
@@ -71,7 +74,8 @@ public class ConceptClass {
             result.append(this.getConceptClassConcept().getConceptName());
             result.append("'");
 
-        }result.append("}");
+        }
+        result.append("}");
         return result.toString();
     }
 
