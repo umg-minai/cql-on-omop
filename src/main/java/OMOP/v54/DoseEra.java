@@ -67,6 +67,14 @@ public class DoseEra {
         return this.drugConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrugConceptId(final Integer newValue) {
+        this.drugConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     private Concept drugConcept;
@@ -111,6 +119,14 @@ public class DoseEra {
     
     public Integer getUnitConceptId() {
         return this.unitConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setUnitConceptId(final Integer newValue) {
+        this.unitConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

@@ -44,6 +44,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPayerConceptId(final Integer newValue) {
+        this.payerConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "payer_concept_id", insertable = false,
                 updatable = false)
@@ -106,6 +114,14 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPayerSourceConceptId(final Integer newValue) {
+        this.payerSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -176,6 +192,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPlanConceptId(final Integer newValue) {
+        this.planConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_concept_id", insertable = false, updatable = false)
     private Concept planConcept;
@@ -203,6 +227,14 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPlanSourceConceptId(final Integer newValue) {
+        this.planSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -250,6 +282,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSponsorConceptId(final Integer newValue) {
+        this.sponsorConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "sponsor_concept_id", insertable = false,
                 updatable = false)
@@ -279,6 +319,14 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSponsorSourceConceptId(final Integer newValue) {
+        this.sponsorSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -326,6 +374,14 @@ public class PayerPlanPeriod {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setStopReasonConceptId(final Integer newValue) {
+        this.stopReasonConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "stop_reason_concept_id", insertable = false,
                 updatable = false)
@@ -355,6 +411,14 @@ public class PayerPlanPeriod {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setStopReasonSourceConceptId(final Integer newValue) {
+        this.stopReasonSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

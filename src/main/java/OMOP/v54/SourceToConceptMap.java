@@ -120,6 +120,14 @@ public class SourceToConceptMap {
         return this.compoundId.sourceConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSourceConceptId(final Integer newValue) {
+        this.compoundId.sourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "source_concept_id", insertable = false,
                 updatable = false)
@@ -151,6 +159,14 @@ public class SourceToConceptMap {
 
     public Integer getTargetConceptId() {
         return this.compoundId.targetConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setTargetConceptId(final Integer newValue) {
+        this.compoundId.targetConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

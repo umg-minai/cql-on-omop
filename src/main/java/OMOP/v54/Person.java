@@ -88,6 +88,14 @@ public class Person {
         return this.ethnicityConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEthnicityConceptId(final Integer newValue) {
+        this.ethnicityConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ethnicity_concept_id", insertable = false,
                 updatable = false)
@@ -115,6 +123,14 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEthnicitySourceConceptId(final Integer newValue) {
+        this.ethnicitySourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -158,6 +174,14 @@ public class Person {
         return this.genderConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setGenderConceptId(final Integer newValue) {
+        this.genderConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_concept_id", insertable = false,
                 updatable = false)
@@ -185,6 +209,14 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setGenderSourceConceptId(final Integer newValue) {
+        this.genderSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -325,6 +357,14 @@ public class Person {
         return this.raceConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRaceConceptId(final Integer newValue) {
+        this.raceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "race_concept_id", insertable = false, updatable = false)
     private Concept raceConcept;
@@ -350,6 +390,14 @@ public class Person {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRaceSourceConceptId(final Integer newValue) {
+        this.raceSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

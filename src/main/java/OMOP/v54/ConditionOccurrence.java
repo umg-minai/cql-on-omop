@@ -25,6 +25,14 @@ public class ConditionOccurrence {
         return this.conditionConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConditionConceptId(final Integer newValue) {
+        this.conditionConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "condition_concept_id", insertable = false,
                 updatable = false)
@@ -100,6 +108,14 @@ public class ConditionOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConditionSourceConceptId(final Integer newValue) {
+        this.conditionSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -179,6 +195,14 @@ public class ConditionOccurrence {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConditionStatusConceptId(final Integer newValue) {
+        this.conditionStatusConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "condition_status_concept_id", insertable = false,
                 updatable = false)
@@ -220,6 +244,14 @@ public class ConditionOccurrence {
     
     public Integer getConditionTypeConceptId() {
         return this.conditionTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConditionTypeConceptId(final Integer newValue) {
+        this.conditionTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -373,8 +405,13 @@ public class ConditionOccurrence {
         result.append(this.conditionOccurrenceId);
         {
             result.append(", concept='");
-            result.append(this.getConditionConcept().getConceptName());
-            result.append("'");
+            if (this.getConditionConcept() != null) {
+                result.append(this.getConditionConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

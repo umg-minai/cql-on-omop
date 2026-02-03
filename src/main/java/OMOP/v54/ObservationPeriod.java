@@ -59,6 +59,14 @@ public class ObservationPeriod {
         return this.periodTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPeriodTypeConceptId(final Integer newValue) {
+        this.periodTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "period_type_concept_id", insertable = false,
                 updatable = false)

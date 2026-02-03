@@ -25,6 +25,14 @@ public class ConditionEra {
         return this.conditionConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConditionConceptId(final Integer newValue) {
+        this.conditionConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "condition_concept_id", insertable = false,
                 updatable = false)

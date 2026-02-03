@@ -71,6 +71,14 @@ public class EpisodeEvent {
         return this.compoundId.episodeEventFieldConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEpisodeEventFieldConceptId(final Integer newValue) {
+        this.compoundId.episodeEventFieldConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "episode_event_field_concept_id", insertable = false,
                 updatable = false)

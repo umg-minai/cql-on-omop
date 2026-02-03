@@ -74,6 +74,14 @@ public class Location {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCountryConceptId(final Integer newValue) {
+        this.countryConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "country_concept_id", insertable = false,
                 updatable = false)

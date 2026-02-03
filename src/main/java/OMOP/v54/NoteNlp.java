@@ -96,6 +96,14 @@ public class NoteNlp {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setNoteNlpConceptId(final Integer newValue) {
+        this.noteNlpConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "note_nlp_concept_id", insertable = false,
                 updatable = false)
@@ -134,6 +142,14 @@ public class NoteNlp {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setNoteNlpSourceConceptId(final Integer newValue) {
+        this.noteNlpSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -179,6 +195,14 @@ public class NoteNlp {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSectionConceptId(final Integer newValue) {
+        this.sectionConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

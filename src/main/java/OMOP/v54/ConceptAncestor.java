@@ -72,6 +72,14 @@ public class ConceptAncestor {
         return this.compoundId.ancestorConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAncestorConceptId(final Integer newValue) {
+        this.compoundId.ancestorConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ancestor_concept_id", insertable = false,
                 updatable = false)
@@ -92,6 +100,14 @@ public class ConceptAncestor {
 
     public Integer getDescendantConceptId() {
         return this.compoundId.descendantConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDescendantConceptId(final Integer newValue) {
+        this.compoundId.descendantConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

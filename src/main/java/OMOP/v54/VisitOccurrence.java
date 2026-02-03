@@ -30,6 +30,14 @@ public class VisitOccurrence {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAdmittedFromConceptId(final Integer newValue) {
+        this.admittedFromConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "admitted_from_concept_id", insertable = false,
                 updatable = false)
@@ -104,6 +112,14 @@ public class VisitOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDischargedToConceptId(final Integer newValue) {
+        this.dischargedToConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -231,6 +247,14 @@ public class VisitOccurrence {
         return this.visitConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitConceptId(final Integer newValue) {
+        this.visitConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "visit_concept_id", insertable = false,
                 updatable = false)
@@ -297,6 +321,14 @@ public class VisitOccurrence {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitSourceConceptId(final Integer newValue) {
+        this.visitSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -370,6 +402,14 @@ public class VisitOccurrence {
         return this.visitTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitTypeConceptId(final Integer newValue) {
+        this.visitTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "visit_type_concept_id", insertable = false,
                 updatable = false)
@@ -395,8 +435,13 @@ public class VisitOccurrence {
         result.append(this.visitOccurrenceId);
         {
             result.append(", concept='");
-            result.append(this.getVisitConcept().getConceptName());
-            result.append("'");
+            if (this.getVisitConcept() != null) {
+                result.append(this.getVisitConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

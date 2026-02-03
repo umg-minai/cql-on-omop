@@ -30,6 +30,14 @@ public class Measurement {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMeasEventFieldConceptId(final Integer newValue) {
+        this.measEventFieldConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "meas_event_field_concept_id", insertable = false,
                 updatable = false)
@@ -55,6 +63,14 @@ public class Measurement {
     
     public Integer getMeasurementConceptId() {
         return this.measurementConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMeasurementConceptId(final Integer newValue) {
+        this.measurementConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -140,6 +156,14 @@ public class Measurement {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMeasurementSourceConceptId(final Integer newValue) {
+        this.measurementSourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "measurement_source_concept_id", insertable = false,
                 updatable = false)
@@ -198,6 +222,14 @@ public class Measurement {
         return this.measurementTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMeasurementTypeConceptId(final Integer newValue) {
+        this.measurementTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "measurement_type_concept_id", insertable = false,
                 updatable = false)
@@ -224,6 +256,14 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setOperatorConceptId(final Integer newValue) {
+        this.operatorConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -338,6 +378,14 @@ public class Measurement {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setUnitConceptId(final Integer newValue) {
+        this.unitConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
@@ -365,6 +413,14 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setUnitSourceConceptId(final Integer newValue) {
+        this.unitSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -410,6 +466,14 @@ public class Measurement {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setValueAsConceptId(final Integer newValue) {
+        this.valueAsConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -528,8 +592,13 @@ public class Measurement {
         result.append(this.measurementId);
         {
             result.append(", concept='");
-            result.append(this.getMeasurementConcept().getConceptName());
-            result.append("'");
+            if (this.getMeasurementConcept() != null) {
+                result.append(this.getMeasurementConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

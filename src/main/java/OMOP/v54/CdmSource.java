@@ -143,6 +143,14 @@ public class CdmSource {
         return this.cdmVersionConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCdmVersionConceptId(final Integer newValue) {
+        this.cdmVersionConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "cdm_version_concept_id", insertable = false,
                 updatable = false)
