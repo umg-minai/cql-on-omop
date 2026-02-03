@@ -386,6 +386,15 @@ define function ToDateTime(OMOPObject OMOP.VisitOccurrence):
   
 // Conversion to System.Quantity
 
+define function ToQuantity(OMOPObject OMOP.DrugStrength):
+  if OMOPObject.amountValue is null or OMOPObject.amountUnitConcept is null then
+    null
+  else
+    System.Quantity{
+      value: OMOPObject.amountValue,
+      unit:  OMOPObject.amountUnitConcept.conceptCode
+    }
+  
 define function ToQuantity(OMOPObject OMOP.Measurement):
   if OMOPObject.valueAsNumber is null or OMOPObject.unitConcept is null then
     null
