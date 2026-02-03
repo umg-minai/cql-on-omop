@@ -29,6 +29,14 @@ public class ProcedureOccurrence {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setModifierConceptId(final Integer newValue) {
+        this.modifierConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "modifier_concept_id", insertable = false,
                 updatable = false)
@@ -91,6 +99,14 @@ public class ProcedureOccurrence {
     
     public Integer getProcedureConceptId() {
         return this.procedureConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setProcedureConceptId(final Integer newValue) {
+        this.procedureConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -200,6 +216,14 @@ public class ProcedureOccurrence {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setProcedureSourceConceptId(final Integer newValue) {
+        this.procedureSourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "procedure_source_concept_id", insertable = false,
                 updatable = false)
@@ -240,6 +264,14 @@ public class ProcedureOccurrence {
     
     public Integer getProcedureTypeConceptId() {
         return this.procedureTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setProcedureTypeConceptId(final Integer newValue) {
+        this.procedureTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -370,8 +402,13 @@ public class ProcedureOccurrence {
         result.append(this.procedureOccurrenceId);
         {
             result.append(", concept='");
-            result.append(this.getProcedureConcept().getConceptName());
-            result.append("'");
+            if (this.getProcedureConcept() != null) {
+                result.append(this.getProcedureConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

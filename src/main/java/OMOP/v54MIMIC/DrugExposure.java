@@ -55,6 +55,14 @@ public class DrugExposure {
         return this.drugConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrugConceptId(final Integer newValue) {
+        this.drugConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     private Concept drugConcept;
@@ -155,6 +163,14 @@ public class DrugExposure {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrugSourceConceptId(final Integer newValue) {
+        this.drugSourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "drug_source_concept_id", insertable = false,
                 updatable = false)
@@ -194,6 +210,14 @@ public class DrugExposure {
     
     public Integer getDrugTypeConceptId() {
         return this.drugTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrugTypeConceptId(final Integer newValue) {
+        this.drugTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -319,6 +343,14 @@ public class DrugExposure {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRouteConceptId(final Integer newValue) {
+        this.routeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -471,8 +503,13 @@ public class DrugExposure {
         result.append(this.drugExposureId);
         {
             result.append(", concept='");
-            result.append(this.getDrugConcept().getConceptName());
-            result.append("'");
+            if (this.getDrugConcept() != null) {
+                result.append(this.getDrugConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

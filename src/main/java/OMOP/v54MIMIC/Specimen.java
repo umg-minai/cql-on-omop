@@ -30,6 +30,14 @@ public class Specimen {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAnatomicSiteConceptId(final Integer newValue) {
+        this.anatomicSiteConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "anatomic_site_concept_id", insertable = false,
                 updatable = false)
@@ -75,6 +83,14 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDiseaseStatusConceptId(final Integer newValue) {
+        this.diseaseStatusConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -155,6 +171,14 @@ public class Specimen {
     
     public Integer getSpecimenConceptId() {
         return this.specimenConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSpecimenConceptId(final Integer newValue) {
+        this.specimenConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -251,6 +275,14 @@ public class Specimen {
         return this.specimenTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSpecimenTypeConceptId(final Integer newValue) {
+        this.specimenTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "specimen_type_concept_id", insertable = false,
                 updatable = false)
@@ -277,6 +309,14 @@ public class Specimen {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setUnitConceptId(final Integer newValue) {
+        this.unitConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -320,8 +360,13 @@ public class Specimen {
         result.append(this.specimenId);
         {
             result.append(", concept='");
-            result.append(this.getSpecimenConcept().getConceptName());
-            result.append("'");
+            if (this.getSpecimenConcept() != null) {
+                result.append(this.getSpecimenConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

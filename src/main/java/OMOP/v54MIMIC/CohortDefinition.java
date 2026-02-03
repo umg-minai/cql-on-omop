@@ -146,6 +146,14 @@ public class CohortDefinition {
         return this.compoundId.definitionTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDefinitionTypeConceptId(final Integer newValue) {
+        this.compoundId.definitionTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "definition_type_concept_id", insertable = false,
                 updatable = false)
@@ -166,6 +174,14 @@ public class CohortDefinition {
 
     public Integer getSubjectConceptId() {
         return this.compoundId.subjectConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSubjectConceptId(final Integer newValue) {
+        this.compoundId.subjectConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

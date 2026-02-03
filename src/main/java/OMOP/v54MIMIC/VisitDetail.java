@@ -30,6 +30,14 @@ public class VisitDetail {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAdmittedFromConceptId(final Integer newValue) {
+        this.admittedFromConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "admitted_from_concept_id", insertable = false,
                 updatable = false)
@@ -104,6 +112,14 @@ public class VisitDetail {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDischargedToConceptId(final Integer newValue) {
+        this.dischargedToConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -262,6 +278,14 @@ public class VisitDetail {
         return this.visitDetailConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitDetailConceptId(final Integer newValue) {
+        this.visitDetailConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "visit_detail_concept_id", insertable = false,
                 updatable = false)
@@ -329,6 +353,14 @@ public class VisitDetail {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitDetailSourceConceptId(final Integer newValue) {
+        this.visitDetailSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -406,6 +438,14 @@ public class VisitDetail {
         return this.visitDetailTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVisitDetailTypeConceptId(final Integer newValue) {
+        this.visitDetailTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "visit_detail_type_concept_id", insertable = false,
                 updatable = false)
@@ -455,8 +495,13 @@ public class VisitDetail {
         result.append(this.visitDetailId);
         {
             result.append(", concept='");
-            result.append(this.getVisitDetailConcept().getConceptName());
-            result.append("'");
+            if (this.getVisitDetailConcept() != null) {
+                result.append(this.getVisitDetailConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

@@ -25,6 +25,14 @@ public class Episode {
         return this.episodeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEpisodeConceptId(final Integer newValue) {
+        this.episodeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "episode_concept_id", insertable = false,
                 updatable = false)
@@ -112,6 +120,14 @@ public class Episode {
         return this.episodeObjectConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEpisodeObjectConceptId(final Integer newValue) {
+        this.episodeObjectConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "episode_object_concept_id", insertable = false,
                 updatable = false)
@@ -154,6 +170,14 @@ public class Episode {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEpisodeSourceConceptId(final Integer newValue) {
+        this.episodeSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -228,6 +252,14 @@ public class Episode {
         return this.episodeTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEpisodeTypeConceptId(final Integer newValue) {
+        this.episodeTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "episode_type_concept_id", insertable = false,
                 updatable = false)
@@ -276,8 +308,13 @@ public class Episode {
         result.append(this.episodeId);
         {
             result.append(", concept='");
-            result.append(this.getEpisodeConcept().getConceptName());
-            result.append("'");
+            if (this.getEpisodeConcept() != null) {
+                result.append(this.getEpisodeConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

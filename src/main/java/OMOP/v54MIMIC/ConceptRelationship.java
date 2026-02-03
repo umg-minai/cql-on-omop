@@ -77,6 +77,14 @@ public class ConceptRelationship {
         return this.compoundId.conceptId1;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConceptId1(final Integer newValue) {
+        this.compoundId.conceptId1 = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "concept_id_1", insertable = false, updatable = false)
     @MapsId("conceptId1")
@@ -96,6 +104,14 @@ public class ConceptRelationship {
 
     public Integer getConceptId2() {
         return this.compoundId.conceptId2;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConceptId2(final Integer newValue) {
+        this.compoundId.conceptId2 = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

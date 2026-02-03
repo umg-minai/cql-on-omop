@@ -71,6 +71,14 @@ public class ConceptSynonym {
         return this.compoundId.conceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setConceptId(final Integer newValue) {
+        this.compoundId.conceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "concept_id", insertable = false, updatable = false)
     @MapsId("conceptId")
@@ -101,6 +109,14 @@ public class ConceptSynonym {
 
     public Integer getLanguageConceptId() {
         return this.compoundId.languageConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setLanguageConceptId(final Integer newValue) {
+        this.compoundId.languageConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

@@ -48,6 +48,14 @@ public class Relationship {
         return this.relationshipConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRelationshipConceptId(final Integer newValue) {
+        this.relationshipConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "relationship_concept_id", insertable = false,
                 updatable = false)
@@ -105,8 +113,13 @@ public class Relationship {
         result.append(this.relationshipId);
         {
             result.append(", concept='");
-            result.append(this.getRelationshipConcept().getConceptName());
-            result.append("'");
+            if (this.getRelationshipConcept() != null) {
+                result.append(this.getRelationshipConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");
