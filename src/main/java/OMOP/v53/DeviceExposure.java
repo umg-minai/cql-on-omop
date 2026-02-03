@@ -25,6 +25,14 @@ public class DeviceExposure {
         return this.deviceConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDeviceConceptId(final Integer newValue) {
+        this.deviceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "device_concept_id", insertable = false,
                 updatable = false)
@@ -135,6 +143,14 @@ public class DeviceExposure {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDeviceSourceConceptId(final Integer newValue) {
+        this.deviceSourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "device_source_concept_id", insertable = false,
                 updatable = false)
@@ -175,6 +191,14 @@ public class DeviceExposure {
     
     public Integer getDeviceTypeConceptId() {
         return this.deviceTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDeviceTypeConceptId(final Integer newValue) {
+        this.deviceTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -343,8 +367,13 @@ public class DeviceExposure {
         result.append(this.deviceExposureId);
         {
             result.append(", concept='");
-            result.append(this.getDeviceConcept().getConceptName());
-            result.append("'");
+            if (this.getDeviceConcept() != null) {
+                result.append(this.getDeviceConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

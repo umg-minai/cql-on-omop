@@ -73,6 +73,14 @@ public class Provider {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setGenderConceptId(final Integer newValue) {
+        this.genderConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_concept_id", insertable = false,
                 updatable = false)
@@ -102,6 +110,14 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setGenderSourceConceptId(final Integer newValue) {
+        this.genderSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -203,6 +219,14 @@ public class Provider {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSpecialtyConceptId(final Integer newValue) {
+        this.specialtyConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "specialty_concept_id", insertable = false,
                 updatable = false)
@@ -232,6 +256,14 @@ public class Provider {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setSpecialtySourceConceptId(final Integer newValue) {
+        this.specialtySourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

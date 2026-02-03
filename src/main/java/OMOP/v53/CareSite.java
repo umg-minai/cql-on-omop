@@ -98,6 +98,14 @@ public class CareSite {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setPlaceOfServiceConceptId(final Integer newValue) {
+        this.placeOfServiceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "place_of_service_concept_id", insertable = false,
                 updatable = false)

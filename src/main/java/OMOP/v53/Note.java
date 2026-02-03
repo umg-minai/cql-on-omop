@@ -25,6 +25,14 @@ public class Note {
         return this.encodingConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setEncodingConceptId(final Integer newValue) {
+        this.encodingConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "encoding_concept_id", insertable = false,
                 updatable = false)
@@ -49,6 +57,14 @@ public class Note {
         return this.languageConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setLanguageConceptId(final Integer newValue) {
+        this.languageConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "language_concept_id", insertable = false,
                 updatable = false)
@@ -71,6 +87,14 @@ public class Note {
     
     public Integer getNoteClassConceptId() {
         return this.noteClassConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setNoteClassConceptId(final Integer newValue) {
+        this.noteClassConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -175,6 +199,14 @@ public class Note {
     
     public Integer getNoteTypeConceptId() {
         return this.noteTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setNoteTypeConceptId(final Integer newValue) {
+        this.noteTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

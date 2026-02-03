@@ -25,6 +25,14 @@ public class Vocabulary {
         return this.vocabularyConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setVocabularyConceptId(final Integer newValue) {
+        this.vocabularyConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "vocabulary_concept_id", insertable = false,
                 updatable = false)
@@ -96,8 +104,13 @@ public class Vocabulary {
         result.append(this.vocabularyId);
         {
             result.append(", concept='");
-            result.append(this.getVocabularyConcept().getConceptName());
-            result.append("'");
+            if (this.getVocabularyConcept() != null) {
+                result.append(this.getVocabularyConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

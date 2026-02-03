@@ -78,6 +78,14 @@ public class DrugStrength {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAmountUnitConceptId(final Integer newValue) {
+        this.amountUnitConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "amount_unit_concept_id", insertable = false,
                 updatable = false)
@@ -139,6 +147,14 @@ public class DrugStrength {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDenominatorUnitConceptId(final Integer newValue) {
+        this.denominatorUnitConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "denominator_unit_concept_id", insertable = false,
                 updatable = false)
@@ -177,6 +193,14 @@ public class DrugStrength {
         return this.compoundId.drugConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrugConceptId(final Integer newValue) {
+        this.compoundId.drugConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "drug_concept_id", insertable = false, updatable = false)
     @MapsId("drugConceptId")
@@ -196,6 +220,14 @@ public class DrugStrength {
 
     public Integer getIngredientConceptId() {
         return this.compoundId.ingredientConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setIngredientConceptId(final Integer newValue) {
+        this.compoundId.ingredientConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -241,6 +273,14 @@ public class DrugStrength {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setNumeratorUnitConceptId(final Integer newValue) {
+        this.numeratorUnitConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

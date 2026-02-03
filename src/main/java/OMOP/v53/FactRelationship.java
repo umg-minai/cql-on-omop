@@ -80,6 +80,14 @@ public class FactRelationship {
         return this.compoundId.domainConceptId1;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDomainConceptId1(final Integer newValue) {
+        this.compoundId.domainConceptId1 = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "domain_concept_id_1", insertable = false,
                 updatable = false)
@@ -100,6 +108,14 @@ public class FactRelationship {
 
     public Integer getDomainConceptId2() {
         return this.compoundId.domainConceptId2;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDomainConceptId2(final Integer newValue) {
+        this.compoundId.domainConceptId2 = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -144,6 +160,14 @@ public class FactRelationship {
 
     public Integer getRelationshipConceptId() {
         return this.compoundId.relationshipConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRelationshipConceptId(final Integer newValue) {
+        this.compoundId.relationshipConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

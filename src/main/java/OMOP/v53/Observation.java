@@ -26,6 +26,14 @@ public class Observation {
         return this.observationConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setObservationConceptId(final Integer newValue) {
+        this.observationConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "observation_concept_id", insertable = false,
                 updatable = false)
@@ -94,6 +102,14 @@ public class Observation {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setObservationSourceConceptId(final Integer newValue) {
+        this.observationSourceConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "observation_source_concept_id", insertable = false,
                 updatable = false)
@@ -135,6 +151,14 @@ public class Observation {
     
     public Integer getObservationTypeConceptId() {
         return this.observationTypeConceptId;
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setObservationTypeConceptId(final Integer newValue) {
+        this.observationTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -217,6 +241,14 @@ public class Observation {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setQualifierConceptId(final Integer newValue) {
+        this.qualifierConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "qualifier_concept_id", insertable = false,
                 updatable = false)
@@ -262,6 +294,14 @@ public class Observation {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setUnitConceptId(final Integer newValue) {
+        this.unitConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_concept_id", insertable = false, updatable = false)
     private Concept unitConcept;
@@ -304,6 +344,14 @@ public class Observation {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setValueAsConceptId(final Integer newValue) {
+        this.valueAsConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -422,8 +470,13 @@ public class Observation {
         result.append(this.observationId);
         {
             result.append(", concept='");
-            result.append(this.getObservationConcept().getConceptName());
-            result.append("'");
+            if (this.getObservationConcept() != null) {
+                result.append(this.getObservationConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

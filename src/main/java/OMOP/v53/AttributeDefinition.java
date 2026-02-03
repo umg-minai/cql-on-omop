@@ -117,6 +117,14 @@ public class AttributeDefinition {
         return this.compoundId.attributeTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setAttributeTypeConceptId(final Integer newValue) {
+        this.compoundId.attributeTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_type_concept_id", insertable = false,
                 updatable = false)

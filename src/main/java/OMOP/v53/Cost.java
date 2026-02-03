@@ -80,6 +80,14 @@ public class Cost {
         return this.costTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCostTypeConceptId(final Integer newValue) {
+        this.costTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "cost_type_concept_id", insertable = false,
                 updatable = false)
@@ -106,6 +114,14 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCurrencyConceptId(final Integer newValue) {
+        this.currencyConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -136,6 +152,14 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDrgConceptId(final Integer newValue) {
+        this.drgConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -318,6 +342,14 @@ public class Cost {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setRevenueCodeConceptId(final Integer newValue) {
+        this.revenueCodeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

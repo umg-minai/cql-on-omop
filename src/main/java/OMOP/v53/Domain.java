@@ -25,6 +25,14 @@ public class Domain {
         return this.domainConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDomainConceptId(final Integer newValue) {
+        this.domainConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "domain_concept_id", insertable = false,
                 updatable = false)
@@ -70,8 +78,13 @@ public class Domain {
         result.append(this.domainId);
         {
             result.append(", concept='");
-            result.append(this.getDomainConcept().getConceptName());
-            result.append("'");
+            if (this.getDomainConcept() != null) {
+                result.append(this.getDomainConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");

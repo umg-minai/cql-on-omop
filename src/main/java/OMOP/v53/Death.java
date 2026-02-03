@@ -70,6 +70,14 @@ public class Death {
         }
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCauseConceptId(final Integer newValue) {
+        this.causeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "cause_concept_id", insertable = false,
                 updatable = false)
@@ -99,6 +107,14 @@ public class Death {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setCauseSourceConceptId(final Integer newValue) {
+        this.causeSourceConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -174,6 +190,14 @@ public class Death {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setDeathTypeConceptId(final Integer newValue) {
+        this.deathTypeConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)

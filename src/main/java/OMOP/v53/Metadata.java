@@ -80,6 +80,14 @@ public class Metadata {
         return this.compoundId.metadataConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMetadataConceptId(final Integer newValue) {
+        this.compoundId.metadataConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "metadata_concept_id", insertable = false,
                 updatable = false)
@@ -140,6 +148,14 @@ public class Metadata {
         return this.compoundId.metadataTypeConceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setMetadataTypeConceptId(final Integer newValue) {
+        this.compoundId.metadataTypeConceptId = newValue;
+    }
+
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "metadata_type_concept_id", insertable = false,
                 updatable = false)
@@ -175,6 +191,14 @@ public class Metadata {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Warning: This setter can be used to create dangling references to
+     * (non-existing) concepts.
+     */
+    public void setValueAsConceptId(final Integer newValue) {
+        this.compoundId.valueAsConceptId = newValue;
     }
 
     @ManyToOne(targetEntity = Concept.class, fetch = FetchType.LAZY)
@@ -220,8 +244,13 @@ public class Metadata {
         result.append(this.compoundId);
         {
             result.append(", concept='");
-            result.append(this.getMetadataConcept().getConceptName());
-            result.append("'");
+            if (this.getMetadataConcept() != null) {
+                result.append(this.getMetadataConcept().getConceptName());
+
+            } else {
+                result.append("«broken relation»");
+
+            }result.append("'");
 
         }
         result.append("}");
