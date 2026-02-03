@@ -741,6 +741,7 @@
     <ns4:conversionInfo fromType="OMOP.DrugExposure" toType="System.DateTime" functionName="OMOPHelpers.ToDateTime"/>
     <ns4:conversionInfo fromType="OMOP.DrugStrength" toType="Interval&lt;System.Date&gt;" functionName="OMOPHelpers.ToDateInterval"/>
     <ns4:conversionInfo fromType="OMOP.DrugStrength" toType="System.Date" functionName="OMOPHelpers.ToDate"/>
+    <ns4:conversionInfo fromType="OMOP.DrugStrength" toType="System.Quantity" functionName="OMOPHelpers.ToQuantity"/>
     <ns4:conversionInfo fromType="OMOP.Episode" toType="Interval&lt;System.Date&gt;" functionName="OMOPHelpers.ToDateInterval"/>
     <ns4:conversionInfo fromType="OMOP.Episode" toType="Interval&lt;System.DateTime&gt;" functionName="OMOPHelpers.ToDateTimeInterval"/>
     <ns4:conversionInfo fromType="OMOP.Episode" toType="System.Code" functionName="OMOPHelpers.ToCode"/>
