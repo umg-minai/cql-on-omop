@@ -12,21 +12,25 @@ import java.util.Map;
 
 public class DatabaseWriterSink extends BasicResultSink {
 
+    private final boolean printNotes;
+
     private final SessionFactory sessionFactory;
 
     private Session session;
 
     public DatabaseWriterSink(final MapReduceEngine engine,
                               final List<String> resultNames,
-                              final DatabaseConfiguration databaseConfiguration) {
+                              final DatabaseConfiguration databaseConfiguration,
+                              boolean printNotes) {
         super(resultNames);
         this.sessionFactory = (databaseConfiguration != null)
                 ? ConnectionFactory.createSessionFactory(databaseConfiguration, engine.getMappingInfo())
                 : engine.getSessionFactory();
+        this.printNotes = printNotes;
     }
 
     public DatabaseWriterSink(final MapReduceEngine engine, final List<String> resultNames) {
-        this(engine, resultNames, null);
+        this(engine, resultNames, null, true);
     }
 
     @Override
@@ -61,16 +65,18 @@ public class DatabaseWriterSink extends BasicResultSink {
                                      final String name,
                                      final Integer index,
                                      final Object object) {
-        final var writer = System.out;
-        writer.print("Persisting");
-        if (contextObject != null) {
-            writer.printf(" %s ->", contextObject);
+        if (this.printNotes) {
+            final var writer = System.out;
+            writer.print("Persisting");
+            if (contextObject != null) {
+                writer.printf(" %s ->", contextObject);
+            }
+            writer.printf(" %s", name);
+            if (index != null) {
+                writer.printf("[%d]", index);
+            }
+            writer.printf(" -> %s\n", object);
         }
-        writer.printf(" %s", name);
-        if (index != null) {
-            writer.printf("[%d]", index);
-        }
-        writer.printf(" -> %s\n", object);
     }
 
 }

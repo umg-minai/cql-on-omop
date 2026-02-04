@@ -27,9 +27,18 @@ public class DataBaseWriterSinkCommandAdapter implements ResultSinkCommandAdapte
     @CommandLine.ArgGroup(validate = false, heading = "Database Options%n")
     private DatabaseOptions databaseOptions = new DatabaseOptions();
 
+    @CommandLine.Option(
+            names = {"--print-notes"},
+            negatable = true,
+            defaultValue = "true",
+            fallbackValue = "true",
+            description = "Controls whether notes about persisting individual objects are printed."
+    )
+    private boolean printNotes;
+
     public ResultSink createConfigured(final MapReduceEngine engine, final List<String> resultNames) {
         final var configuration = databaseOptions.applyToConfiguration(new DatabaseConfiguration());
-        return new DatabaseWriterSink(engine, resultNames, configuration);
+        return new DatabaseWriterSink(engine, resultNames, configuration, printNotes);
     }
 
 }
