@@ -8,6 +8,7 @@ import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class ResultPresenter extends AbstractPresenter {
 
@@ -17,13 +18,24 @@ public class ResultPresenter extends AbstractPresenter {
 
     private final ValuePresenter valuePresenter;
 
+    private final Pattern filter;
+
+    public ResultPresenter(final Terminal terminal,
+                           final Theme theme,
+                           final SourcePresenter sourcePresenter,
+                           final ValuePresenter valuePresenter,
+                           final String filter) {
+        super(terminal, theme);
+        this.sourcePresenter = sourcePresenter;
+        this.valuePresenter = valuePresenter;
+        this.filter = filter != null ? Pattern.compile(filter) : null;
+    }
+
     public ResultPresenter(final Terminal terminal,
                            final Theme theme,
                            final SourcePresenter sourcePresenter,
                            final ValuePresenter valuePresenter) {
-        super(terminal, theme);
-        this.sourcePresenter = sourcePresenter;
-        this.valuePresenter = valuePresenter;
+        this(terminal, theme, sourcePresenter, valuePresenter, null);
     }
 
     public void presentResult(final EvaluationResult result) {
@@ -38,7 +50,8 @@ public class ResultPresenter extends AbstractPresenter {
         }
         // Result values
         result.expressionResults.forEach((expressionName, expressionResult) -> {
-            if (!this.seenResults.contains(expressionName)) {
+            if (!this.seenResults.contains(expressionName)
+                    && (this.filter == null || this.filter.matcher(expressionName).matches())) {
                 this.seenResults.add(expressionName);
                 final var value = expressionResult.value();
                 builder.withStyle(Theme.Element.IDENTIFIER, expressionName).append(" => ");

@@ -114,6 +114,18 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     private Boolean printResults = false;
 
     @CommandLine.Option(
+            names = { "--print-results-matching"},
+            paramLabel = "REGEX",
+            description = """
+                          Print computed results for expressions whose names match the given pattern.
+                          This option is most useful for semi-interactive work and during development and debugging \
+                          of CQL libraries. That said, it is of course possible to additionally select a sink for \
+                          actual processing of the evaluation results.
+                          """
+    )
+    private String printResultsMatching = null;
+
+    @CommandLine.Option(
             names = { "--print-progress" },
             negatable = true,
             description = """
@@ -159,8 +171,8 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
                 theme,
-                printResults
-                        ? new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter)
+                (printResults || printResultsMatching != null)
+                        ? new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter, printResultsMatching)
                         : null,
                 printErrors ? errorPresenter : null);
 
