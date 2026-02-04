@@ -221,8 +221,8 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                                 if ((++count[0] % 100 == 0) && printProgress) {
                                     System.out.printf("%d\n", count[0]);
                                 }
+                                adapter.processOutcome(contextObject, outcome);
                             }
-                            adapter.processOutcome(contextObject, outcome);
                             return outcome;
                         },
                         resultSink::processResults);
