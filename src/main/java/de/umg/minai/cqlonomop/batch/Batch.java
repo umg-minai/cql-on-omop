@@ -4,6 +4,7 @@ import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
+import de.umg.minai.cqlonomop.database.ConnectionFactory;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.InMemoryLibrarySourceProvider;
@@ -150,6 +151,12 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         if (executionOptions != null) {
             configuration = executionOptions.applyToConfiguration(configuration);
         }
+        // Load additional JDBC drivers if requested.
+        final var driverLibraries = configuration.getLoadJDBCDrivers();
+        if (driverLibraries != null) {
+            ConnectionFactory.loadJDBCDrivers(driverLibraries);
+        }
+        // Instantiate CQL engine.
         final var engine = new MapReduceEngine(configuration);
         // Add a source provider for evaluating stand-alone CQL
         // expressions. We use this for computing the values of the

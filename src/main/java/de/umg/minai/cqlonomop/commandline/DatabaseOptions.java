@@ -4,6 +4,9 @@ import de.umg.minai.cqlonomop.database.DatabaseConfiguration;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import picocli.CommandLine.Option;
 
+import java.nio.file.Path;
+import java.util.List;
+
 public class DatabaseOptions {
 
     @Option(
@@ -65,6 +68,16 @@ public class DatabaseOptions {
     public String connectionString;
 
     @Option(
+            names = "--load-jdbc-driver",
+            paramLabel = "<jar-filename>",
+            description = """
+                          Filename of a JAR file that should be loaded and searched for additional JDBC drivers. \
+                          This option can be supplied multiple times.
+                          """
+    )
+    public List<Path> loadJDBCDrivers;
+
+    @Option(
             names = {"--show-sql"},
             defaultValue = "false",
             description = "Show the generated SQL statements as they are sent to the database server."
@@ -82,6 +95,7 @@ public class DatabaseOptions {
                 .withDatabaseName(this.database)
                 .withDatabaseSchema(this.schema)
                 .withDatabaseConnectionString(this.connectionString)
+                .withLoadJDBCDrivers(this.loadJDBCDrivers)
                 .withShowSQL(this.showSQL);
     }
 

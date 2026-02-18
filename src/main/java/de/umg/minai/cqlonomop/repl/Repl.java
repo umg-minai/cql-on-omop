@@ -4,6 +4,7 @@ import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.commandline.ExecutionOptions;
+import de.umg.minai.cqlonomop.database.ConnectionFactory;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.repl.command.CommandProfile;
 import de.umg.minai.cqlonomop.terminal.*;
@@ -88,6 +89,12 @@ public class Repl implements Callable<Integer> {
         if (otherOptions != null) {
             configuration = otherOptions.applyToConfiguration(configuration);
         }
+        // Load additional JDBC drivers if requested.
+        final var driverLibraries = configuration.getLoadJDBCDrivers();
+        if (driverLibraries != null) {
+            ConnectionFactory.loadJDBCDrivers(driverLibraries);
+        }
+        // Instantiate evaluator.
         this.evaluator = new Evaluator(configuration);
         if (cqlOptions != null) {
             // Load files
