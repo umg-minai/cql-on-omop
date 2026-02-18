@@ -1,5 +1,8 @@
 package de.umg.minai.cqlonomop.database;
 
+import java.nio.file.Path;
+import java.util.List;
+
 public class DatabaseConfiguration {
 
     public final static String DEFAULT_DRIVER = "postgresql";
@@ -27,6 +30,8 @@ public class DatabaseConfiguration {
     private String databaseSchema;
 
     private String databaseConnectionString = null;
+
+    private List<Path> loadJDBCDrivers = List.of();
 
     private Boolean showSQL = false;
 
@@ -99,6 +104,15 @@ public class DatabaseConfiguration {
 
     public DatabaseConfiguration withDatabaseConnectionString(final String databaseConnectionString) {
         this.databaseConnectionString = databaseConnectionString;
+        return this;
+    }
+
+    public List<Path> getLoadJDBCDrivers() {
+        return this.loadJDBCDrivers;
+    }
+
+    public DatabaseConfiguration withLoadJDBCDrivers(final List<Path> loadJDBCDrivers) {
+        this.loadJDBCDrivers = loadJDBCDrivers;
         return this;
     }
 
