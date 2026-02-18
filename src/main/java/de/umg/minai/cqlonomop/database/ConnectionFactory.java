@@ -29,7 +29,7 @@ public class ConnectionFactory {
         }
         config.setProperty(DEFAULT_SCHEMA, configuration.getDatabaseSchema());
         config.setProperty(SHOW_SQL, String.valueOf(configuration.getShowSQL()));
-        // Register class of the data model.
+        // Register classes of the data model.
         mappingInfo.getDataTypeInfos().forEach(
                 (name, info) -> config.addAnnotatedClass(info.getClazz()));
         return config.buildSessionFactory();

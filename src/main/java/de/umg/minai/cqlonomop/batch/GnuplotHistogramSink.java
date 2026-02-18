@@ -84,15 +84,15 @@ public class GnuplotHistogramSink extends TemporalHistogram {
         final var builder = new StringBuilder(String.format("""
                 set terminal %s size 1200,600
                 set output "%s"
-                
+
                 set xdata time
                 set timefmt "%%Y-%%m-%%d"
-                
+
                 set style fill solid 1.0
                 set boxwidth 0.02 relative
-                
+
                 set yrange [0:]
-                
+
                 """,
                 format, outputFile));
         var isFirst = true;

@@ -20,8 +20,6 @@ import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
-    private final OMOPModelResolver modelResolver;
-
     private final EntityManager entityManager;
 
     private final MappingInfo mappingInfo;
@@ -29,7 +27,6 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
                                 final EntityManager entityManager,
                                 final MappingInfo mappingInfo) {
-        this.modelResolver = modelResolver;
         this.entityManager = entityManager;
         this.mappingInfo = mappingInfo;
     }

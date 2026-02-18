@@ -57,7 +57,10 @@ public class DatabaseOptions {
 
     @Option(
             names = "--connection-string",
-            description = "JDBC database connection string. Has priority over and replaces --driver, --host, --port and --database options."
+            description = """
+                          JDBC database connection string. Has priority over and replaces --driver, --host, --port \
+                          and --database options.
+                          """
     )
     public String connectionString;
 
