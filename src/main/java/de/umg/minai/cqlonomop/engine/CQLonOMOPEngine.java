@@ -157,7 +157,9 @@ public class CQLonOMOPEngine {
                     prepareOneLibrary(includedIdentifier, errors, result);
             });
         }
-        result.add(library);
+        if (!result.contains(library)) {
+            result.add(library);
+        }
     }
 
     public <R> R withEngineSession(final Function<EngineSession, R> continuation) {
