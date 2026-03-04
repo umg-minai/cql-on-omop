@@ -188,9 +188,10 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         // the overall success of the batch processing.
         final ResultSink resultSink;
         try {
+            final List<String> resultNameList = resultNames != null ? resultNames : List.of();
             resultSink = resultSinkCommandAdapter != null
-                    ? resultSinkCommandAdapter.createConfigured(engine, resultNames)
-                    : new NoopSink(engine, resultNames);
+                    ? resultSinkCommandAdapter.createConfigured(engine, resultNameList)
+                    : new NoopSink(engine, resultNameList);
         } catch (final Exception e) {
             throw new RuntimeException(String.format("Internal error while creating result sink: %s%n", e), e);
         }
