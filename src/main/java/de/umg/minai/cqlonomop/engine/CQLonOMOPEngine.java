@@ -81,7 +81,9 @@ public class CQLonOMOPEngine {
                            final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
         this(configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
         this.mappingInfo = MappingInfo.ensureVersion(configuration.getOmopVersion());
-        this.sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
+        if (configuration.getDatabaseName() != null) {
+            this.sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
+        }
     }
 
     public CQLonOMOPEngine(final Configuration configuration) {
