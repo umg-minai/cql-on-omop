@@ -41,6 +41,7 @@ public class Evaluator {
 
     private static final Set<String> statementKeywords = Set.of("code",
             "codesystem",
+            "concept",
             "context",
             "define",
             "include",
@@ -106,7 +107,9 @@ public class Evaluator {
         if (statementKeywords.stream().anyMatch(trimmed::startsWith)) {
             if (trimmed.startsWith("include")) {
                 return executeCqlIncludeStatement(trimmed, mapper, reducer);
-            } else if (trimmed.startsWith("code") || trimmed.startsWith("codesystem")) {
+            } else if (trimmed.startsWith("code")
+                    || trimmed.startsWith("codesystem")
+                    || trimmed.startsWith("concept")) {
                 return executeCqlPreludeStatement(trimmed, mapper, reducer);
             } else {
                 return executeCqlStatement(trimmed, mapper, reducer);
