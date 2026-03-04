@@ -161,7 +161,7 @@ public class Repl implements Callable<Integer> {
                 System.err.printf("Error saving REPL history %s\n", e);
             }
         }
-        return 0;
+        return CommandLine.ExitCode.OK;
     }
 
 }
