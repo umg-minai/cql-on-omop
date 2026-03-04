@@ -3,6 +3,7 @@ package de.umg.minai.cqlonomop;
 import de.umg.minai.cqlonomop.batch.Batch;
 import de.umg.minai.cqlonomop.batch.ResultSinkCommandAdapter;
 import de.umg.minai.cqlonomop.repl.Repl;
+import de.umg.minai.cqlonomop.terminology.Terminology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -14,7 +15,7 @@ import java.util.logging.Level;
 @CommandLine.Command(
         name = "cql-on-omop",
         version = "cql-on-omop 0.1",
-        subcommands = { Batch.class, Repl.class },
+        subcommands = { Batch.class, Repl.class, Terminology.class },
         mixinStandardHelpOptions = true
 )
 public class Main {
