@@ -27,6 +27,14 @@ jobs:
           mkdir -p artifacts
           cp -v target/cql-on-omop*.jar artifacts/
 
+      - name: Publish package
+        run: mvn deploy --file pom.xml
+        env:
+          PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
+          PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
+        #env:
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

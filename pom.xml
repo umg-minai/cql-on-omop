@@ -167,4 +167,12 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/umg-minai/cql-on-omop</url>
+        </repository>
+    </distributionManagement>
 </project>
