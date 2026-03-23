@@ -57,6 +57,15 @@ define function DrugStrengthForIngredient(Ingredient OMOP.Concept):
 define function DrugStrengthForIngredient(Ingredient List<OMOP.Concept>):
   [DrugStrength: ingredientConcept ~ OMOPHelpers.ToConcept(Ingredient)]
 
+define function ToQuantity(drugExposure OMOP.DrugExposure):
+  (1) _
+    let strength:         DrugStrengthForDrug(drugExposure.drugConcept),
+        strengthQuantity: convert strength to Quantity
+      return if strengthQuantity is not null and drugExposure.quantity is not null then
+               drugExposure.quantity * strengthQuantity
+             else
+               null
+
 // Validity
 
 define function Validity(DrugStrength OMOP.DrugStrength):
