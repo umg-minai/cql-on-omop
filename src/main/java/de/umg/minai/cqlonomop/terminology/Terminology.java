@@ -8,6 +8,7 @@ import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.Constants;
+import de.umg.minai.cqlonomop.engine.OMOPDataProvider;
 import de.umg.minai.cqlonomop.terminal.DefaultTheme;
 import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
 import de.umg.minai.cqlonomop.terminal.SourcePresenter;
@@ -183,7 +184,9 @@ public class Terminology implements Callable<Integer> {
             String domainName = null;
             Set<String> usingLibraries = entry.getValue();
             if (session != null) {
-                final var dataProvider = session.cqlEngine().getEnvironment().getDataProviders().values().iterator().next();
+                final var dataProvider = session.cqlEngine().getEnvironment().getDataProviders().values().stream()
+                        .filter(provider -> provider instanceof OMOPDataProvider)
+                        .findFirst().orElseThrow();
                 final var queryCode = new org.opencds.cqf.cql.engine.runtime.Code().withCode(code.code()).withSystem(code.system());
                 final var result = dataProvider.retrieve(null,
                         null,
