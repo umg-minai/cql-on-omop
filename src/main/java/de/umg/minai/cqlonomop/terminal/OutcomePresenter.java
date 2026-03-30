@@ -2,6 +2,7 @@ package de.umg.minai.cqlonomop.terminal;
 
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import org.jline.terminal.Terminal;
+import org.opencds.cqf.cql.engine.exception.Severity;
 
 import java.util.Set;
 
@@ -30,7 +31,8 @@ public class OutcomePresenter extends AbstractPresenter {
 
     private static final int SUCCESS = 0;
     private static final int FAILURE = 1;
-    private final int[] counts = {0, 0};
+    private static final int WARNING = 2;
+    private final long[] counts = {0, 0, 0};
 
     private long startTime = 0;
 
@@ -47,6 +49,7 @@ public class OutcomePresenter extends AbstractPresenter {
         this.newState = null;
         this.counts[SUCCESS] = 0;
         this.counts[FAILURE] = 0;
+        this.counts[WARNING] = 0;
         this.startTime = System.nanoTime();
     }
 
@@ -70,8 +73,16 @@ public class OutcomePresenter extends AbstractPresenter {
             }
             builder.append(String.valueOf(counts[FAILURE]))
                     .append(" ")
-                    .append(counts[FAILURE] == 1 ? "failure" : "failures")
-                    .println(this.terminal);
+                    .append(counts[FAILURE] == 1 ? "failure" : "failures");
+
+            if (counts[WARNING] > 0) {
+                builder.append(", ");
+                builder.style(this.theme.styleForElement(Theme.Element.WARNING));
+                builder.append(String.valueOf(counts[WARNING]))
+                        .append(" ")
+                        .append(counts[WARNING] == 1 ? "warning" : "warnings");
+            }
+            builder.println(this.terminal);
         }
     }
 
@@ -85,6 +96,12 @@ public class OutcomePresenter extends AbstractPresenter {
                 if (this.newState == null) {
                     this.newState = this.resultPresenter.getSeenResults();
                 }
+            }
+            var debugResult = success.result().getDebugResult();
+            if (debugResult != null) {
+                this.counts[WARNING] += debugResult.getMessages().stream()
+                        .filter(message -> message.getSeverity() == Severity.WARNING)
+                        .count();
             }
             this.counts[SUCCESS]++;
         } else if (outcome instanceof MapReduceEngine.Outcome.Failure failure) {
