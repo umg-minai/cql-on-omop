@@ -26,6 +26,9 @@ public class ResultPresenter extends AbstractPresenter {
                            final ValuePresenter valuePresenter,
                            final String filter) {
         super(terminal, theme);
+        if (filter != null && valuePresenter == null) {
+            throw new IllegalArgumentException("Constructing ResultPresenter with a filter but no value presenter does not make sense. ");
+        }
         this.sourcePresenter = sourcePresenter;
         this.valuePresenter = valuePresenter;
         this.filter = filter != null ? Pattern.compile(filter) : null;
@@ -49,15 +52,17 @@ public class ResultPresenter extends AbstractPresenter {
             presentMessages(builder, debugResult.getMessages());
         }
         // Result values
-        result.expressionResults.forEach((expressionName, expressionResult) -> {
-            if (!this.seenResults.contains(expressionName)
-                    && (this.filter == null || this.filter.matcher(expressionName).matches())) {
-                this.seenResults.add(expressionName);
-                final var value = expressionResult.value();
-                builder.withStyle(Theme.Element.IDENTIFIER, expressionName).append(" => ");
-                this.valuePresenter.presentValue(builder, value);
-            }
-        });
+        if (this.valuePresenter != null) {
+            result.expressionResults.forEach((expressionName, expressionResult) -> {
+                if (!this.seenResults.contains(expressionName)
+                        && (this.filter == null || this.filter.matcher(expressionName).matches())) {
+                    this.seenResults.add(expressionName);
+                    final var value = expressionResult.value();
+                    builder.withStyle(Theme.Element.IDENTIFIER, expressionName).append(" => ");
+                    this.valuePresenter.presentValue(builder, value);
+                }
+            });
+        }
     }
 
     public void presentMessages(final ThemeAwareStringBuilder builder, final List<CqlException> messages) {
