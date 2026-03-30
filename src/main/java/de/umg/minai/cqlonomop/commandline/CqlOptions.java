@@ -52,7 +52,12 @@ public class CqlOptions {
     @Option(
             names = {"--omop-version"},
             paramLabel = "<omop-version>",
-            description = "The version of the OMOP CDM that should be selected as the CQL data model. CQL library code should say `using OMOP version 'v5.4'` regardless of the version selected here. Default: ${DEFAULT-VALUE}",
+            description = """
+                          The version of the OMOP CDM that should be selected as the CQL data model.
+                          CQL library code should say `using OMOP version 'v5.4'` regardless of the version selected \
+                          here.
+                          Default: ${DEFAULT-VALUE}
+                          """,
             converter = OmopVersionConverter.class
     )
     public OmopVersion omopVersion;
@@ -60,7 +65,10 @@ public class CqlOptions {
     @Option(
             names = {"-I"},
             paramLabel = "<directory>",
-            description = "Search the specified directory for CQL libraries when processing CQL include statements. This option can be supplied multiple times."
+            description = """
+                          Search the specified directory for CQL libraries when processing CQL include statements.
+                          This option can be supplied multiple times.
+                          """
     )
     public List<Path> librarySearchPath = List.of();
 
@@ -73,7 +81,11 @@ public class CqlOptions {
 
     @Option(
             names = {"-D"},
-            description = "Bind parameters of the CQL library to specific values. A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is evaluated to produce the CQL value that is assigned to the parameter named NAME. "
+            description = """
+                          Bind parameters of the CQL library to specific values.
+                          A binding is of the form NAME=EXPRESSION where EXPRESSION is a CQL expression that is \
+                          evaluated to produce the CQL value that is assigned to the parameter named NAME.
+                          """
     )
     public Map<String, String> parameterBindings = Map.of();
 

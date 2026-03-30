@@ -12,28 +12,42 @@ public class DatabaseOptions {
     @Option(
             names = {"--driver"},
             defaultValue = DatabaseConfiguration.DEFAULT_DRIVER,
-            description = "The driver that should be used to connect to the OMOP database server."
+            description = """
+                          The driver that should be used to connect to the OMOP database server.
+                          Default: ${DEFAULT-VALUE}
+                          """
     )
     public String driver = DatabaseConfiguration.DEFAULT_DRIVER;
 
     @Option(
             names = {"-h", "--host"},
+            paramLabel = "<hostname>",
             defaultValue = DatabaseConfiguration.DEFAULT_HOST,
-            description = "The hostname of the database server from which to retrieve the OMOP data."
+            description = """
+                          The hostname of the database server from which to retrieve the OMOP data.
+                          Default: ${DEFAULT-VALUE}
+                          """
     )
     public String host = DatabaseConfiguration.DEFAULT_HOST;
 
     @Option(
             names = {"-p", "--port"},
             defaultValue = DatabaseConfiguration.DEFAULT_PORT_AS_STRING,
-            description = "The post on which the database server from which to retrieve the OMOP data listens."
+            description = """
+                          The post on which the database server from which to retrieve the OMOP data listens.
+                          Default: ${DEFAULT-VALUE}
+                          """
     )
     public int port = DatabaseConfiguration.DEFAULT_PORT;
 
     @Option(
             names = {"-u", "--user"},
+            paramLabel = "<username>",
             defaultValue = DatabaseConfiguration.DEFAULT_USER,
-            description = "The username of the database server account that should be used to retrieve the OMOP data."
+            description = """
+                          The username of the database server account that should be used to retrieve the OMOP data.
+                          Default: ${DEFAULT-VALUE}
+                          """
     )
     public String user = DatabaseConfiguration.DEFAULT_USER;
 
@@ -54,15 +68,18 @@ public class DatabaseOptions {
     @Option(
             names = {"-s", "--schema"},
             defaultValue = "cds_cdm",
-            description = "The schema in which the OMOP tables reside within the specified database."
+            description = """
+                          The schema in which the OMOP tables reside within the specified database.
+                          Default: ${DEFAULT-VALUE}
+                          """
     )
     public String schema;
 
     @Option(
             names = "--connection-string",
             description = """
-                          JDBC database connection string. Has priority over and replaces --driver, --host, --port \
-                          and --database options.
+                          JDBC database connection string.
+                          Has priority over and replaces --driver, --host, --port and --database options.
                           """
     )
     public String connectionString;
@@ -71,7 +88,7 @@ public class DatabaseOptions {
             names = "--load-jdbc-driver",
             paramLabel = "<jar-filename>",
             description = """
-                          Filename of a JAR file that should be loaded and searched for additional JDBC drivers. \
+                          Filename of a JAR file that should be loaded and searched for additional JDBC drivers.
                           This option can be supplied multiple times.
                           """
     )
