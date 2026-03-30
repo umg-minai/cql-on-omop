@@ -4,7 +4,6 @@ import de.umg.minai.cqlonomop.batch.Batch;
 import de.umg.minai.cqlonomop.batch.ResultSinkCommandAdapter;
 import de.umg.minai.cqlonomop.repl.Repl;
 import de.umg.minai.cqlonomop.terminology.Terminology;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
@@ -19,8 +18,6 @@ import java.util.logging.Level;
         mixinStandardHelpOptions = true
 )
 public class Main {
-
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static class ExecutionStrategy implements CommandLine.IExecutionStrategy {
 
@@ -58,8 +55,19 @@ public class Main {
     public static void main(String[] args) {
         final var logManager = java.util.logging.LogManager.getLogManager();
         logManager.getLogger("").setLevel(Level.WARNING);
-        // Make a CommandLine instance with sub-commands that processes sub-commands on the first level so that deeper
-        // sub-commands can be used for options without confusing the overall execution.
+        // The MessageEvaluator outputs Message(.., 'Warning', ...) as
+        // Java log messages.  We don't want that since we output the
+        // warnings in a different way ourselves.  Since the Logger
+        // lives within the CQL engine, it does not yet exist here.
+        // Consequently, to configure the logger from here, we have to
+        // create it first.
+        LoggerFactory.getLogger("org.opencds.cqf.cql.engine.elm.executing.MessageEvaluator");
+        logManager.getLogger("org.opencds.cqf.cql.engine.elm.executing.MessageEvaluator").setLevel(Level.OFF);
+
+        // Make a CommandLine instance with sub-commands that
+        // processes sub-commands on the first level so that deeper
+        // sub-commands can be used for options without confusing the
+        // overall execution.
         final var exitCode = new CommandLine(new Main())
                 .setExecutionStrategy(new ExecutionStrategy())
                 .execute(args);
