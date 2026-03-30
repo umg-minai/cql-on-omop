@@ -103,6 +103,18 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     private Boolean printErrors = true;
 
     @CommandLine.Option(
+            names = { "--print-messages" },
+            negatable = true,
+            description = """
+                    Print warning and note messages that occur during evaluation.
+                    Messages during evaluation are printed as soon as they are encountered by default. In particular, \
+                    when a CQL library is evaluated repeatedly, for example for each individual patient, the \
+                    individual evaluations can produce any number of messages.
+                    """
+    )
+    private Boolean printMessages = true;
+
+    @CommandLine.Option(
             names = { "--print-results" },
             negatable = true,
             description = """
@@ -178,8 +190,12 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
         final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
                 theme,
-                (printResults || printResultsMatching != null)
-                        ? new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter, printResultsMatching)
+                (printResults || printResultsMatching != null || printMessages)
+                        ? new ResultPresenter(terminal,
+                        theme,
+                        sourcePresenter,
+                        (printResults || printResultsMatching != null) ? valuePresenter : null,
+                        printResultsMatching)
                         : null,
                 printErrors ? errorPresenter : null);
 
