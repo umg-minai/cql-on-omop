@@ -74,6 +74,10 @@ public class BasicResultSink implements ResultSink {
             if (profile != null) {
                 debugResult.ensureProfile().merge(profile);
             }
+            var messages = oneDebugResult.getMessages();
+            if (!messages.isEmpty()) {
+                debugResult.getMessages().addAll(messages);
+            }
         }
         return debugResult;
     }
