@@ -36,7 +36,10 @@ public class Main {
                 final var command = commandLine.getCommand();
                 final var subSubParseResult = subParseResult.subcommand();
                 try {
-                    if (command instanceof Callable<?>) {
+                    if (command instanceof CommandLine.HelpCommand) {
+                        // If the help command has been select, don't interfere with the execution.
+                        return this.runLast.execute(parseResult);
+                    } else if (command instanceof Callable<?>) {
                         assert subSubParseResult == null;
                         return ((Callable<Integer>) commandLine.getCommand()).call();
                     } else {
