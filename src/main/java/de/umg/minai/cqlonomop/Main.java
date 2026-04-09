@@ -13,9 +13,9 @@ import java.util.logging.Level;
 
 @CommandLine.Command(
         name = "cql-on-omop",
-        version = "cql-on-omop 0.1",
-        subcommands = { Batch.class, Repl.class, Terminology.class },
-        mixinStandardHelpOptions = true
+        subcommands = { Batch.class, Repl.class, Terminology.class, CommandLine.HelpCommand.class },
+        mixinStandardHelpOptions = true,
+        versionProvider = VersionProvider.class
 )
 public class Main {
 
