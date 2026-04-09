@@ -32,11 +32,9 @@ jobs:
         env:
           PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
           PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
-        #env:
-        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: application
           path: artifacts
