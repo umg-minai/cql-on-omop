@@ -444,4 +444,4 @@ define function ToQuantity(OMOPObject OMOP.Observation):
       value: OMOPObject.valueAsNumber,
       unit:  OMOPObject.unitConcept.conceptCode
     }
-  
+

@@ -11,7 +11,7 @@ public class PersonInfo implements DataTypeInfo {
     }
 
     public String contextPath(final String contextName) {
-        // contextName can be "Person" when a "related context "retrieve" is
+        // contextName can be "Person" when a "related context retrieve" is
         // used as in
         //   define p: First([Person])
         //   define v: First([p -> Person])
