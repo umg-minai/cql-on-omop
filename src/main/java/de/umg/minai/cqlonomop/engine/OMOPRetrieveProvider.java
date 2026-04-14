@@ -73,6 +73,9 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                      String dateLowPath,
                                      String dateHighPath,
                                      Interval dateRange) {
+        if (this.entityManager == null) {
+            throw new RuntimeException("Cannot evaluate retrieve expression because database connection is not initialized.");
+        }
         // A "context Patient" statement is translated to something like "define Patient: [Person]" which then chokes
         // on the returned list because it expects a single element. Work around that issue. The replacement value
         // we provide here does not really matter since subsequent statements use the context value that we supply

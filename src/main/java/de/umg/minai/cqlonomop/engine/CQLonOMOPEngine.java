@@ -19,12 +19,16 @@ import org.opencds.cqf.cql.engine.execution.CqlEngine;
 import org.opencds.cqf.cql.engine.execution.Environment;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 
 public class CQLonOMOPEngine {
+
+    private static final Logger log = LoggerFactory.getLogger(CQLonOMOPEngine.class);
 
     public record EngineSession(CqlEngine cqlEngine, Session session, EntityManager entityManager) {}
 
@@ -81,8 +85,14 @@ public class CQLonOMOPEngine {
                            final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
         this(configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
         this.mappingInfo = MappingInfo.ensureVersion(configuration.getOmopVersion());
-        if (configuration.getDatabaseName() != null) {
+        if (configuration.getDatabaseConnectionString() != null
+                || configuration.getDatabaseName() != null) {
             this.sessionFactory = ConnectionFactory.createSessionFactory(configuration, mappingInfo);
+        } else {
+            log.warn("""
+                     Configuring CQL engine without database connection because neither a database name nor a \
+                     connection string was supplied; Retrieve expressions will throw errors during evaluation.
+                     """);
         }
     }
 
@@ -165,8 +175,8 @@ public class CQLonOMOPEngine {
     }
 
     public <R> R withEngineSession(final Function<EngineSession, R> continuation) {
-        try (var session = this.sessionFactory.openSession();
-             var entityManager = session.getEntityManagerFactory().createEntityManager()) {
+        try (var session = this.sessionFactory != null ? this.sessionFactory.openSession() : null;
+             var entityManager = session != null ? session.getEntityManagerFactory().createEntityManager() : null) {
             final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
             final var dataProviders = Map.<String, DataProvider>of(
                     String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
