@@ -386,15 +386,61 @@ define function ToDateTime(OMOPObject OMOP.VisitOccurrence):
 
 // Conversion to System.Quantity
 
+define function ToQuantity(OMOPObject OMOP.DrugExposure):
+  (1) _
+    let drugCode: ToCode(OMOPObject),
+        // Parenthesis around the retrieve expression are required due to a
+        // quirk of the CQL grammar.
+        // Also note that the singleton from construct makes this function
+        // error if there is more than DrugStrength associated with the code.
+        strength: singleton from ([DrugStrength: drugConcept ~ drugCode]),
+        strengthQuantity: ToQuantity(strength)
+      return all if ((strengthQuantity is not null)
+                     and (OMOPObject.quantity is not null)) then
+                   OMOPObject.quantity * strengthQuantity
+                 else
+                   null
+
 define function ToQuantity(OMOPObject OMOP.DrugStrength):
-  if OMOPObject.amountValue is null or OMOPObject.amountUnitConcept is null then
-    null
-  else
-    System.Quantity{
-      value: OMOPObject.amountValue,
-      unit:  OMOPObject.amountUnitConcept.conceptCode
-    }
-  
+  case
+    when ((OMOPObject.amountValue is not null)
+          and (OMOPObject.amountUnitConcept is not null)) then
+      // Use amount{Value,UnitConcept} if available.
+      System.Quantity{
+        value: OMOPObject.amountValue,
+        unit:  OMOPObject.amountUnitConcept.conceptCode
+      }
+    when ((OMOPObject.numeratorValue is not null)
+          and (OMOPObject.numeratorUnitConcept is not null)) then
+      // If amount is not available, try numerator{Value,UnitConcept} and
+      // optionally denominator{Value,UnitConcept}
+      (1) _
+        let numerator: System.Quantity{
+                         value: OMOPObject.numeratorValue,
+                         unit:  OMOPObject.numeratorUnitConcept.conceptCode
+                       }
+          return all case
+                       when OMOPObject.denominatorValue is null then
+                         // If there is no denominatorValue, just use the
+                         // quantity computed from the numerator.
+                         numerator
+                       when OMOPObject.denominatorUnitConcept is not null then
+                         numerator / System.Quantity{
+                           value: OMOPObject.denominatorValue,
+                           unit:  OMOPObject.denominatorUnitConcept.conceptCode
+                         }
+                       else
+                         // If there is denominatorValue but no
+                         // denominatorUnitConcept, we can't compute a valid
+                         // Quantity
+                         null
+                     end
+    else
+      // If there is neither amount{Value,UnitConcept} nor
+      // numerator{Value,UnitConcept}, we can't compute a valid Quantity.
+      null
+  end
+
 define function ToQuantity(OMOPObject OMOP.Measurement):
   if ((OMOPObject.valueAsNumber is null)
       or (OMOPObject.unitConcept is null)) then
