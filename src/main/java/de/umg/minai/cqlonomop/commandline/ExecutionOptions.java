@@ -6,6 +6,12 @@ import picocli.CommandLine;
 public class ExecutionOptions {
 
     @CommandLine.Option(
+            names = {"--debug"},
+            description = "Print additional information when errors occur during CQL evaluation."
+    )
+    public boolean debug;
+
+    @CommandLine.Option(
             names = {"-n", "--threads"},
             paramLabel = "<thread-count>",
             description = """
@@ -18,7 +24,7 @@ public class ExecutionOptions {
     public Integer threadCount;
 
     public Configuration applyToConfiguration(final Configuration configuration) {
-        return configuration.withThreadCount(this.threadCount);
+        return configuration.withDebug(this.debug).withThreadCount(this.threadCount);
     }
 
 }

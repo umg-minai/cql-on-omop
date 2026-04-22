@@ -6,6 +6,8 @@ import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
 import org.opencds.cqf.cql.engine.execution.Cache;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +23,8 @@ import java.util.function.Function;
  * {@link EvaluationResult} objects.
  */
 public class MapReduceEngine extends CQLonOMOPEngine {
+
+    private static final Logger log = LoggerFactory.getLogger(MapReduceEngine.class);
 
     public static final String UNFILTERED_CONTEXT_KEY = "Unfiltered Context";
 
@@ -77,6 +81,12 @@ public class MapReduceEngine extends CQLonOMOPEngine {
             return withEvaluationResult(library, contextObject, parameterBindings, initialCache,
                     result -> continuation.apply(Outcome.success(result)));
         } catch (final Exception e) {
+            if (this.isDebugging()) {
+                log.error(String.format("Error during evaluation of CQL library '%s' with context object '%s'",
+                                library,
+                                contextObject),
+                        e);
+            }
             return continuation.apply(Outcome.failure(e));
         }
     }

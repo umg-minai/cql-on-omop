@@ -9,11 +9,22 @@ public class Configuration extends DatabaseConfiguration {
 
     public final static String DEFAULT_OMOP_VERSION = "v5.4";
 
+    private boolean debug = false;
+
     private Integer threadCount = defaultThreadCount();
 
     private String omopVersion = DEFAULT_OMOP_VERSION;
 
     private List<Path> librarySearchPath = List.of();
+
+    public boolean getDebug() {
+        return this.debug;
+    }
+
+    public Configuration withDebug(boolean debug) {
+        this.debug= debug;
+        return this;
+    }
 
     public static int defaultThreadCount() {
         return Runtime.getRuntime().availableProcessors();

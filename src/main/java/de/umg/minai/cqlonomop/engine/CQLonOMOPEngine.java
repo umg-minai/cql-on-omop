@@ -47,9 +47,15 @@ public class CQLonOMOPEngine {
 
     private MappingInfo mappingInfo;
 
+    private boolean isDebugging = false;
+
     private boolean isProfiling = false;
 
-    public CQLonOMOPEngine(final String version, final List<LibrarySourceProvider> librarySourceProviders) {
+    public CQLonOMOPEngine(final boolean debug,
+                           final String version,
+                           final List<LibrarySourceProvider> librarySourceProviders) {
+        this.isDebugging = debug;
+
         this.modelIdentifier = new ModelIdentifier().withId("OMOP").withVersion(version);
         this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
 
@@ -63,11 +69,12 @@ public class CQLonOMOPEngine {
         this.terminologyProvider = new OMOPTerminologyProvider();
     }
 
-    public CQLonOMOPEngine(final String version,
+    public CQLonOMOPEngine(final boolean debug,
+                           final String version,
                            final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
                            final List<LibrarySourceProvider> librarySourceProviders) {
-        this(version, librarySourceProviders);
+        this(debug, version, librarySourceProviders);
         this.sessionFactory = sessionFactory;
         this.mappingInfo = mappingInfo;
     }
@@ -83,7 +90,7 @@ public class CQLonOMOPEngine {
 
     public CQLonOMOPEngine(final Configuration configuration,
                            final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
-        this(configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
+        this(configuration.getDebug(), configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
         this.mappingInfo = MappingInfo.ensureVersion(configuration.getOmopVersion());
         if (configuration.getDatabaseConnectionString() != null
                 || configuration.getDatabaseName() != null) {
@@ -124,6 +131,10 @@ public class CQLonOMOPEngine {
 
     public MappingInfo getMappingInfo() {
         return this.mappingInfo;
+    }
+
+    public boolean isDebugging() {
+        return this.isDebugging;
     }
 
     public boolean isProfiling() {
