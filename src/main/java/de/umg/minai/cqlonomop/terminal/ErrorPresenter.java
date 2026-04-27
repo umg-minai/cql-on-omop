@@ -106,7 +106,7 @@ public class ErrorPresenter extends AbstractPresenter{
                     final var sourceLines = this.sourcePresenter.fetchLibrarySource(library);
                     this.sourcePresenter.presentSource(builder, sourceLines, trackback);
                 } else {
-                    builder.append("    <missing source>\n");
+                    builder.append("      <missing source>\n");
                 }
             }
         }
