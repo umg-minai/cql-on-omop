@@ -213,7 +213,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                         }
                     });
                     // Evaluate those expressions and store the results, qualified by the library name, into the
-                    // overall result  unfilteredResult.
+                    // overall result unfilteredResult.
                     final var result = engine.evaluate(library.getIdentifier(), expressions, parameterBindings);
                     result.expressionResults.forEach((expression, expressionResult) -> {
                         final var key = String.format("%s.%s", library.getIdentifier().getId(), expression);
