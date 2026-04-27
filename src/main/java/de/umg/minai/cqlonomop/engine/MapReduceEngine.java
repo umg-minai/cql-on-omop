@@ -82,9 +82,28 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                     result -> continuation.apply(Outcome.success(result)));
         } catch (final Exception e) {
             if (this.isDebugging()) {
-                log.error(String.format("Error during evaluation of CQL library '%s' with context object '%s'",
+                final var initialCacheString = new StringBuilder();
+                for (var libraryAndResults : initialCache.getExpressions().entrySet()) {
+                    initialCacheString.append(String.format("  %s\n", libraryAndResults.getKey()));
+                    for (var nameAndResult : libraryAndResults.getValue().entrySet()) {
+                        initialCacheString.append(String.format("    %s -> %s\n",
+                                nameAndResult.getKey(), nameAndResult.getValue().value()));
+                    }
+                }
+                log.error(String.format("""
+                                        Error during evaluation of CQL library
+                                          '%s'
+                                        with context object
+                                          %s
+                                        with parameters
+                                          %s
+                                        with initial cache
+                                        %s
+                                        """,
                                 library,
-                                contextObject),
+                                contextObject,
+                                parameterBindings,
+                                initialCacheString.toString()),
                         e);
             }
             return continuation.apply(Outcome.failure(e));
