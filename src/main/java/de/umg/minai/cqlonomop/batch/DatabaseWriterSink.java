@@ -6,13 +6,20 @@ import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 public class DatabaseWriterSink extends BasicResultSink {
 
+    private static final Logger log = LoggerFactory.getLogger(DatabaseWriterSink.class);
+
     private final boolean printNotes;
+
+    private final DatabaseConfiguration databaseConfiguration;
 
     private final SessionFactory sessionFactory;
 
@@ -23,6 +30,7 @@ public class DatabaseWriterSink extends BasicResultSink {
                               final DatabaseConfiguration databaseConfiguration,
                               boolean printNotes) {
         super(resultNames);
+        this.databaseConfiguration = databaseConfiguration;
         this.sessionFactory = (databaseConfiguration != null)
                 ? ConnectionFactory.createSessionFactory(databaseConfiguration, engine.getMappingInfo())
                 : engine.getSessionFactory();
@@ -41,6 +49,26 @@ public class DatabaseWriterSink extends BasicResultSink {
             final var result = super.processResults(intermediateResults);
             transaction.commit();
             return result;
+        } catch (Exception exception) {
+            // TODO: make a debug option for this
+            log.error(String.format("""
+                                    Error persisting results
+                                      %s
+                                    with database configuration
+                                      %s
+                                    session factory
+                                      %s
+                                      %s
+                                    session
+                                      %s
+                                    """,
+                            intermediateResults,
+                            this.databaseConfiguration,
+                            this.sessionFactory,
+                            this.sessionFactory.getProperties(),
+                            this.session),
+                    exception);
+            throw exception;
         }
     }
 
