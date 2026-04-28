@@ -125,4 +125,20 @@ public class DatabaseConfiguration {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "DatabaseConfiguration{" +
+                "databaseDriver='" + databaseDriver + '\'' +
+                ", databaseHost='" + databaseHost + '\'' +
+                ", databasePort=" + databasePort +
+                ", databaseUser='" + databaseUser + '\'' +
+                ", databasePassword='" + databasePassword + '\'' +
+                ", databaseName='" + databaseName + '\'' +
+                ", databaseSchema='" + databaseSchema + '\'' +
+                ", databaseConnectionString='" + databaseConnectionString + '\'' +
+                ", loadJDBCDrivers=" + loadJDBCDrivers +
+                ", showSQL=" + showSQL +
+                '}';
+    }
+
 }
