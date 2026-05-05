@@ -89,11 +89,11 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         final var root = criteriaQuery.getRoots().stream().findFirst().orElseThrow();
         // Add context criteria, if possible.
         if (context != null && contextPath != null && contextValue != null) {
-            criteriaQuery = maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
+            maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
         }
         // Add code criteria, if possible.
         if (codes != null) {
-            criteriaQuery = maybeAddCodeCriteria(criteriaBuilder, criteriaQuery, dataType, root, codePath, codes);
+            maybeAddCodeCriteria(criteriaBuilder, criteriaQuery, dataType, root, codePath, codes);
         }
         // Add date criteria, if possible
         if (dateRange != null) {
@@ -126,17 +126,17 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     /**
      * Add predicates to @param{baseQuery} to restrict it the current context and return the modified query.
      *
-     * @param baseQuery The partially built query that should be restricted to the context
-     * @param dataType The type of the objects that will be retrieved
-     * @param root The table from which objects are being retrieved
+     * @param baseQuery   The partially built query that should be restricted to the context
+     * @param dataType    The type of the objects that will be retrieved
+     * @param root        The table from which objects are being retrieved
      * @param contextPath the path within objects from the @param{root} table that should match the context
      */
-    private CriteriaQuery<?> maybeAddContextCriteria(final CriteriaBuilder criteriaBuilder,
-                                                     final CriteriaQuery<?> baseQuery,
-                                                     final String dataType,
-                                                     final Root<?> root,
-                                                     final String contextPath,
-                                                     final Object contextValue) {
+    private void maybeAddContextCriteria(final CriteriaBuilder criteriaBuilder,
+                                         final AbstractQuery<?> baseQuery,
+                                         final String dataType,
+                                         final Root<?> root,
+                                         final String contextPath,
+                                         final Object contextValue) {
         final var info = this.mappingInfo.getDataTypeInfo(dataType);
         final var contextInfo = info.infoForContext(contextPath, contextValue);
         if (contextInfo != null) {
@@ -147,33 +147,31 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             } catch (PathElementException e) {
                 column = root.get("compoundId").get(columnName);
             }
-            return addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
-        } else {
-            return baseQuery;
+            addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
         }
     }
 
-    private CriteriaQuery<?> maybeAddCodeCriteria(final CriteriaBuilder criteriaBuilder,
-                                                  final CriteriaQuery<?> baseQuery,
-                                                  final String dataType,
-                                                  final Root<?> root,
-                                                  final String codePath,
-                                                  final Iterable<Code> codes) {
+    private void maybeAddCodeCriteria(final CriteriaBuilder criteriaBuilder,
+                                      final CriteriaQuery<?> baseQuery,
+                                      final String dataType,
+                                      final Root<?> root,
+                                      final String codePath,
+                                      final Iterable<Code> codes) {
         final var info = this.mappingInfo.getDataTypeInfo(dataType);
         if (!info.isJoinableCodePath(codePath)) {
             throw new RuntimeException(String.format("Retrieve for data type %s cannot filter by '%s'.",
                     dataType, codePath));
         }
-        return addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
+        addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
     }
 
     /*
      *
      */
-    private <T> CriteriaQuery<T> addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
-                                                     final CriteriaQuery<T> baseQuery,
-                                                     final String conceptRelation,
-                                                     final Iterable<Code> codes) {
+    private <T, Q extends AbstractQuery<T>> void addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                                     final Q baseQuery,
+                                                                     final String conceptRelation,
+                                                                     final Iterable<Code> codes) {
         final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
         jakarta.persistence.criteria.Predicate predicates;
         if (root.getModel().getName().equals("Concept")
@@ -183,7 +181,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             final Join<T, ?> join = root.join(conceptRelation);
             predicates = conceptPredicateForCodes(criteriaBuilder, join, codes);
         }
-        return addRestriction(baseQuery, predicates);
+        addRestriction(baseQuery, predicates);
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
@@ -213,13 +211,13 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
     }
 
-    private <T> CriteriaQuery<T> addRestriction(final CriteriaQuery<T> baseQuery,
-                                                final jakarta.persistence.criteria.Predicate predicate) {
-        final var oldRestriction = baseQuery.getRestriction();
+    private <T> void addRestriction(final AbstractQuery<T> query,
+                                    final jakarta.persistence.criteria.Predicate predicate) {
+        final var oldRestriction = query.getRestriction();
         if (oldRestriction == null) {
-            return baseQuery.where(predicate);
+            query.where(predicate);
         } else {
-            return baseQuery.where(oldRestriction, predicate);
+            query.where(oldRestriction, predicate);
         }
     }
 
