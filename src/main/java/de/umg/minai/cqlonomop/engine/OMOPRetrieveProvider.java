@@ -19,6 +19,8 @@ import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
 
+    private record Pair<L, R> (L left, R right) {}
+
     private final EntityManager entityManager;
 
     private final MappingInfo mappingInfo;
@@ -85,8 +87,9 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         final var entityManager = this.entityManager;
         // Create a base query that selects from the OMOP table for dataType.
         final var criteriaBuilder = entityManager.getCriteriaBuilder();
-        var criteriaQuery = dataTypeCriteria(criteriaBuilder, dataType);
-        final var root = criteriaQuery.getRoots().stream().findFirst().orElseThrow();
+        final var queryAndRoot = dataTypeCriteria(criteriaBuilder, dataType);
+        final var criteriaQuery = queryAndRoot.left;
+        final var root = queryAndRoot.right;
         // Add context criteria, if possible.
         if (context != null && contextPath != null && contextValue != null) {
             maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
@@ -111,16 +114,16 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
      * @param dataType The name of the data type in the CQL model info.
      * @return The constructed query.
      */
-    private CriteriaQuery<?> dataTypeCriteria(final CriteriaBuilder criteriaBuilder,
-                                              final String dataType) {
+    private Pair<CriteriaQuery<?>, Root<?>> dataTypeCriteria(final CriteriaBuilder criteriaBuilder,
+                                                             final String dataType) {
         //noinspection unchecked
         final Class<Object> clazz = (Class<Object>) this.mappingInfo.getDataTypeInfo(dataType).getClazz();
         if (clazz == null) {
-            System.err.println("Class for " + dataType + " not found");
-            return null;
+            throw new RuntimeException(String.format("Class for %s not found", dataType));
         }
-        final var criteria = criteriaBuilder.createQuery(clazz);
-        return criteria.select(criteria.from(clazz));
+        final var query = criteriaBuilder.createQuery(clazz);
+        final var root = query.from(clazz);
+        return new Pair<>(query.select(root), root);
     }
 
     /**
@@ -162,17 +165,20 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             throw new RuntimeException(String.format("Retrieve for data type %s cannot filter by '%s'.",
                     dataType, codePath));
         }
-        addCodeJoinCriteria(criteriaBuilder, baseQuery, codePath, codes);
+        addCodeJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codes);
     }
 
     /*
      *
+    /*
+     * Add restrictions for the supplied concept relation and codes to the query. Either by adding where clauses is
+     * the query is against the concept table or by adding a join with the concept table if the query.
      */
     private <T, Q extends AbstractQuery<T>> void addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
                                                                      final Q baseQuery,
+                                                                     final Root<?> root,
                                                                      final String conceptRelation,
                                                                      final Iterable<Code> codes) {
-        final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
         jakarta.persistence.criteria.Predicate predicates;
         if (root.getModel().getName().equals("Concept")
                 && conceptRelation.equals("concept")) {
