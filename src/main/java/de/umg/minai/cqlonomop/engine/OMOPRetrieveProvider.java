@@ -9,6 +9,9 @@ import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -25,11 +28,18 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
     private final MappingInfo mappingInfo;
 
+    private final Class<Object> conceptClass;
+    private final Class<Object> conceptAncestorClass;
+
     public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
                                 final EntityManager entityManager,
                                 final MappingInfo mappingInfo) {
         this.entityManager = entityManager;
         this.mappingInfo = mappingInfo;
+        //noinspection unchecked
+        this.conceptClass = (Class<Object>) mappingInfo.getDataTypeInfo("Concept").getClazz();
+        //noinspection unchecked
+        this.conceptAncestorClass = (Class<Object>) mappingInfo.getDataTypeInfo("ConceptAncestor").getClazz();
     }
 
     static class RetrieveResult implements Iterable<Object> {
@@ -165,11 +175,87 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             throw new RuntimeException(String.format("Retrieve for data type %s cannot filter by '%s'.",
                     dataType, codePath));
         }
-        addCodeJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codes);
+        // Separate the supplied codes regarding whether they should be considered with or without concept hierarchy.
+        // When considered with hierarchy, the code designates a concept and all its ancestors.
+        final var codesWithoutHierarchy = new ArrayList<Code>();
+        final var codesWithHierarchy = new ArrayList<Code>();
+        for (var code : codes) {
+            final var URLAndClassification = analyzeCodeSystem(code.getSystem());
+            if (URLAndClassification.right) {
+                // Add the code to the list of code that should be considered with hierarchy. Replace the
+                // codesystem URL to contain just the actual codesystem URL.
+                final var normalizedCode = new Code()
+                        .withCode(code.getCode())
+                        .withSystem(URLAndClassification.left);
+                codesWithHierarchy.add(normalizedCode);
+            } else {
+                codesWithoutHierarchy.add(code);
+            }
+        }
+        // For concepts that should be considered with hierarchy, we generate a sub-query which finds all ancestor
+        // concepts and restrict the returned rows to those ancestor concepts.
+        if (!codesWithHierarchy.isEmpty()) {
+            addCodeAncestorsJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithHierarchy);
+        }
+        // For concepts that should be considered without hierarchy, we restrict the returned rows to the supplied
+        // concepts either based on the concept id or via a join that handles the vocabulary lookup.
+        if (!codesWithoutHierarchy.isEmpty()) {
+            addCodeJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithoutHierarchy);
+        }
     }
 
     /*
-     *
+     * Check whether the code system designator indicates hierarchical processing via the URL query part being
+     * "hierarchical".
+     */
+    private Pair<String, Boolean> analyzeCodeSystem(final String codeSystem) {
+        // Parse the code system designator as a URL.
+        final URL codeSystemURL;
+        try {
+            codeSystemURL= new URL(codeSystem);
+        } catch (MalformedURLException exception) {
+            throw new RuntimeException(String.format("Code system URL '%s' is not valid: %s",
+                    codeSystem,
+                    exception));
+        }
+        // If the query part of the URL is "hierarchical", return true and a URL with the query part stripped,
+        // otherwise return false the unmodified URL.
+        final var query = codeSystemURL.getQuery();
+        if (query == null) {
+            return new Pair<>(null, false);
+        }
+        if (query.equals("hierarchical")) {
+            try {
+                final var baseURL = new URL(codeSystemURL.getProtocol(),
+                        codeSystemURL.getHost(),
+                        codeSystemURL.getPort(),
+                        codeSystemURL.getPath());
+                return new Pair<>(baseURL.toString(), true);
+            } catch (MalformedURLException exception) {
+                throw new RuntimeException("should not happen");
+            }
+        } else {
+            throw new RuntimeException(String.format("Code system URL '%s' contains invalid query part: %s",
+                    codeSystemURL,
+                    codeSystemURL.getQuery()));
+        }
+    }
+
+    private <T> void addCodeAncestorsJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                  final CriteriaQuery<T> baseQuery,
+                                                  final Root<?> root,
+                                                  final String conceptRelation,
+                                                  final Iterable<Code> codes) {
+        // TODO(jmoringe): pass entityManager
+        final var subQuery = baseQuery.subquery(this.conceptClass);
+        final var subRoot = subQuery.from(this.conceptAncestorClass);
+        subQuery.select(subRoot.get("descendantConcept"));
+        addCodeJoinCriteria(criteriaBuilder, subQuery, subRoot, "ancestorConcept", codes);
+
+        //final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
+        baseQuery.where(criteriaBuilder.in(root.get(conceptRelation)).value(subQuery.getSelection()));
+    }
+
     /*
      * Add restrictions for the supplied concept relation and codes to the query. Either by adding where clauses is
      * the query is against the concept table or by adding a join with the concept table if the query.
