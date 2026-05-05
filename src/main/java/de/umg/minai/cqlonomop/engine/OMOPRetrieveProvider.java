@@ -1,7 +1,6 @@
 package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
-import OMOP.v54.Concept;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -179,16 +178,16 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         jakarta.persistence.criteria.Predicate predicates;
         if (root.getModel().getName().equals("Concept")
                 && conceptRelation.equals("concept")) {
-            predicates = conceptPredicateForCodes(criteriaBuilder, (Path<Concept>) root, codes);
+            predicates = conceptPredicateForCodes(criteriaBuilder, root, codes);
         } else {
-            final Join<T, Concept> join = root.join(conceptRelation);
+            final Join<T, ?> join = root.join(conceptRelation);
             predicates = conceptPredicateForCodes(criteriaBuilder, join, codes);
         }
         return addRestriction(baseQuery, predicates);
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
-                                                                            final Path<Concept> conceptPath,
+                                                                            final Path<?> conceptPath,
                                                                             final Iterable<Code> codes) {
         final var predicates = StreamSupport
                 .stream(codes.spliterator(), false)
@@ -198,7 +197,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCode(final CriteriaBuilder criteriaBuilder,
-                                                                           final Path<Concept> conceptPath,
+                                                                           final Path<?> conceptPath,
                                                                            final Code code) {
         if (code.getSystem().equals(Constants.OMOP_CODESYSTEM_URI)) {
             final var conceptId = Integer.parseInt(code.getCode()); // TODO: handle errors
