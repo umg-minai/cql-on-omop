@@ -85,41 +85,42 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
         final var entityManager = this.entityManager;
         // Create a base query that selects from the OMOP table for dataType.
-        var criteriaQuery = dataTypeCriteria(dataType);
         final var criteriaBuilder = entityManager.getCriteriaBuilder();
+        var criteriaQuery = dataTypeCriteria(criteriaBuilder, dataType);
         final var root = criteriaQuery.getRoots().stream().findFirst().orElseThrow();
-
         // Add context criteria, if possible.
         if (context != null && contextPath != null && contextValue != null) {
             criteriaQuery = maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
         }
-
         // Add code criteria, if possible.
-        boolean mustFilterCodes = false;
         if (codes != null) {
             criteriaQuery = maybeAddCodeCriteria(criteriaBuilder, criteriaQuery, dataType, root, codePath, codes);
         }
-
         // Add date criteria, if possible
         if (dateRange != null) {
-            System.out.printf("Adding date range %s%n", dateRange);
-            throw new RuntimeException("not implemented");
-
-            // TODO
+            throw new RuntimeException("Filtering by date range not implemented"); // TODO: implement
         }
-
+        // Create query and return the (lazy) retrieve result.
         final var query = entityManager.createQuery(criteriaQuery);
         return new RetrieveResult(query);
     }
 
-    private CriteriaQuery<?> dataTypeCriteria(final String dataType) {
+    /**
+     * Create the base query for the given data type.
+     *
+     * @param criteriaBuilder The criteria builder to be used for creating the query.
+     * @param dataType The name of the data type in the CQL model info.
+     * @return The constructed query.
+     */
+    private CriteriaQuery<?> dataTypeCriteria(final CriteriaBuilder criteriaBuilder,
+                                              final String dataType) {
+        //noinspection unchecked
         final Class<Object> clazz = (Class<Object>) this.mappingInfo.getDataTypeInfo(dataType).getClazz();
         if (clazz == null) {
             System.err.println("Class for " + dataType + " not found");
             return null;
         }
-        // TODO(jmoringe): pass entityManager
-        final var criteria = this.entityManager.getCriteriaBuilder().createQuery(clazz);
+        final var criteria = criteriaBuilder.createQuery(clazz);
         return criteria.select(criteria.from(clazz));
     }
 
@@ -189,7 +190,6 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
                                                                             final Path<Concept> conceptPath,
                                                                             final Iterable<Code> codes) {
-        // TODO(jmoringe): can we use criteriaBuilder.in(expression).in(collection)?
         final var predicates = StreamSupport
                 .stream(codes.spliterator(), false)
                 .map(code -> conceptPredicateForCode(criteriaBuilder, conceptPath, code))
