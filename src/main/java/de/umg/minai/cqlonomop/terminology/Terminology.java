@@ -110,7 +110,7 @@ public class Terminology implements Callable<Integer> {
             // Output collected concept info as JSON.
             var objectMapper = new ObjectMapper();
             objectMapper.writeValue(System.out, conceptInfos);
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             errorPresenter.presentError(exception);
             isSuccess = false;
         }

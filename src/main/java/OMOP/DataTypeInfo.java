@@ -2,7 +2,7 @@ package OMOP;
 
 public interface DataTypeInfo {
 
-    record ContextInfo(String columnName, Object value) {};
+    record ContextInfo(String columnName, Object value) {}
 
     /**
      * Return the Java class which implements the CQL/OMOP Type.
