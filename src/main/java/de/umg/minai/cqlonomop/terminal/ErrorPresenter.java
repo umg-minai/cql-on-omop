@@ -42,6 +42,7 @@ public class ErrorPresenter extends AbstractPresenter{
         } else {
             presentSpecificError(builder, error);
         }
+        this.terminal.flush();
     }
 
     private void presentSpecificError(final ThemeAwareStringBuilder builder, final Exception exception) {
