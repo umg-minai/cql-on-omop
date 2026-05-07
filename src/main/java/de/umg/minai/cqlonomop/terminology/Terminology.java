@@ -55,13 +55,21 @@ public class Terminology implements Callable<Integer> {
     )
     private List<String> libraries;
 
+    private record CodeSystemNormalizationResult(String url, Boolean hierarchical) {}
+
     private record CodeSystemKey(String libraryName, String name) {}
 
     // TODO(moringenj): store name and source location?
-    private record Code(String code, String system) {}
+    private record Code(String code, String system, boolean hierarchical) {}
 
     @JsonAutoDetect
-    private record ConceptInfo(String id, String name, String domain, Set<String> usingLibraries) {}
+    private record ConceptInfo(
+            String id,
+            String name,
+            String domain,
+            Boolean withAncestors,
+            Set<String> usingLibraries
+    ) {}
 
     @Override
     public Integer call() {
@@ -118,7 +126,7 @@ public class Terminology implements Callable<Integer> {
     private Collection<ConceptInfo> collectTerminology(final CQLonOMOPEngine.EngineSession session,
                                                        final Collection<Library> libraries) {
         // Step 1: collect the code systems used in all libraries. This information is required to resolve code system
-        // references within code definition
+        // references within code definition.
         final var codeSystems = new HashMap<CodeSystemKey, String>();
         for (final var library : libraries) {
             final var codeSystemDefs = library.getCodeSystems();
@@ -156,9 +164,11 @@ public class Terminology implements Callable<Integer> {
                     // Look up the codesystem id based on the key and determine whether the codesystem is the OMOP
                     // standard vocabulary. In that case, the "code" part of defined codes is the OMOP concept id.
                     // Collect all OMOP concept ids and remember for each which library (or libraries) defined it.
-                    final var codeSystemId = codeSystems.get(key);
-                    if (codeSystemId.equals(CodeSystems.OMOP_CODESYSTEM_URI)) {
-                        final var code = new Code(codeDef.getId(), codeSystemId);
+                    final var omopCodeSystemURLAndHierarchical= getOMOPCodeSystemURL(key, codeSystems);
+                    if (omopCodeSystemURLAndHierarchical != null) {
+                        final var code = new Code(codeDef.getId(),
+                                omopCodeSystemURLAndHierarchical.url(),
+                                omopCodeSystemURLAndHierarchical.hierarchical());
                         codes.compute(code, (key1, existing) ->  {
                             var list = existing;
                             if (list == null) {
@@ -205,10 +215,44 @@ public class Terminology implements Callable<Integer> {
                     domainName = (String) dataProvider.resolvePath(domain, "domainName");
                 }
             }
-            final var conceptInfo = new ConceptInfo(id, name, domainName, usingLibraries);
+            final var conceptInfo = new ConceptInfo(id, name, domainName, code.hierarchical(), usingLibraries);
             conceptInfos.add(conceptInfo);
         }
         return conceptInfos;
+    }
+
+    /*
+     * Check whether key designates the OMOP Standard Vocabulary code system and whether key indicates hierarchical
+     * processing.
+     *
+     * Return null if key does not designate the OMOP Standard Vocabulary, otherwise return two values: 1) A URL
+     * which designates the OMOP Standard Vocabulary code system 2) a Boolean which indicates whether hierarchical
+     * processing should be performed.
+     */
+    private CodeSystemNormalizationResult getOMOPCodeSystemURL(final CodeSystemKey key, final Map<CodeSystemKey, String> codeSystems) {
+        // We got through this lookup process to achieve the following normalization of the "withAncestors" flag:
+        //
+        // Case 1
+        //   "OMOPSV Hierarchy" -> "https://fhir-terminology.ohdsi.org?hierarchical" via codeSystems.get()
+        //   "https://fhir-terminology.ohdsi.org?hierarchical" -> <null, true>       via CodeSystems.resolveCodeSystem()
+        //   <null, true> -> <"https://fhir-terminology.ohdsi.org?hierarchical", true>
+        //
+        // Case 2
+        //   "OMOPSV" -> "https://fhir-terminology.ohdsi.org"                   via codeSystems.get()
+        //   "https://fhir-terminology.ohdsi.org" -> <null, false>              via CodeSystems.resolveCodeSystem()
+        //   <null, false> -> <"https://fhir-terminology.ohdsi.org?hierarchical", false>
+        //
+        // Case 3
+        //   "LOINC" -> "http://loinc.org"          via codeSystems.get()
+        //   "http://loinc.org" -> <"LOINC", false> via Codesystems.resolveCodeSystem()
+        //   <"LOINC", false> -> null
+        final var codeSystemURL = codeSystems.get(key);
+        final var resolved = CodeSystems.resolveCodeSystem(codeSystemURL);
+        if (resolved.id() == null) { // null means OMOP Standard Vocabulary
+            return new CodeSystemNormalizationResult(CodeSystems.OMOP_CODESYSTEM_URI, resolved.hierarchical());
+        } else {
+            return null;
+        }
     }
 
 }
