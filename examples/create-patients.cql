@@ -1,6 +1,17 @@
+// Use like this
+// java -jar PATH/cql-on-omop-1.0.2-SNAPSHOT.jar batch
+//   --omop-version v5.4
+//   -p PORT -d DATABASE --user USERNAME --password PASSWORD
+//   -D 'BirthMonth=month from Today()'
+//   -I PATH create-patients
+//   --result-name 'New.*' --print-progress
+//   dbwrite -p PORT -d DATABASE --user USERNAME --password PASSWORD
+
 library "create-patients"
 
 using "OMOP" version 'v5.4'
+
+parameter PersonCount Integer default 10
 
 parameter BirthMonth Integer default month from Today()
 
@@ -9,15 +20,15 @@ include "OMOPFunctions" called F
 define NoMatchingConcept: F.StandardConcept(0)
 
 define NewPersons:
-  (expand Interval[1, 10] per 1) id
+  (expand Interval[1, PersonCount] per 1) id
     return all Person{
       ethnicityConcept: NoMatchingConcept,
-      raceConcept: NoMatchingConcept,
-      genderConcept: F.StandardConcept(8532),
-      dayOfBirth: day from Today(),
-      monthOfBirth: BirthMonth,
-      yearOfBirth: year from Today(),
-      birthDatetime: Now()
+      raceConcept:      NoMatchingConcept,
+      genderConcept:    F.StandardConcept(8532),
+      dayOfBirth:       day from Today(),
+      monthOfBirth:     BirthMonth,
+      yearOfBirth:      year from Today(),
+      birthDatetime:    Now()
     }
 
 define NewConditions:
