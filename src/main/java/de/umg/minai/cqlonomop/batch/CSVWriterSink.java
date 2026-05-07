@@ -74,7 +74,7 @@ public class CSVWriterSink extends ExpressionResultToFileWriterSink {
         } else if (object instanceof Tuple tuple) {
             addTupleElements(row, tuple);
         } else {
-            throw new RuntimeException(String.format("Unexpected result element %s (type %s)",
+            throw new RuntimeException(String.format("Unexpected result element %s (type %s, expected List or Tuple)",
                     object,
                     object.getClass().getName()));
         }
