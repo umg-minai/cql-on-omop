@@ -1,6 +1,6 @@
 package de.umg.minai.cqlonomop.repl;
 
-import de.umg.minai.cqlonomop.engine.Constants;
+import de.umg.minai.cqlonomop.engine.CodeSystems;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,8 +53,8 @@ public class PseudoLibrary {
         include OMOPFunctions
         """, this.omopVersion));
         this.include.forEach(statement -> input.append(statement).append("\n"));
-        input.append(String.format("codesystem OMOPSV: '%s' // SV = Standardized Vocabulary\n", Constants.OMOP_CODESYSTEM_URI));
-        Constants.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.forEach((url, name) ->
+        input.append(String.format("codesystem OMOPSV: '%s' // SV = Standardized Vocabulary\n", CodeSystems.OMOP_CODESYSTEM_URI));
+        CodeSystems.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.forEach((url, name) ->
                 input.append(String.format("codesystem %s: '%s'\n", name, url)));
         this.prelude.forEach(statement -> input.append(statement).append("\n"));
         this.statements.forEach(statement -> input.append(statement).append("\n"));

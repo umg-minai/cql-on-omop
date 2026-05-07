@@ -9,8 +9,6 @@ import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,8 +96,8 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         // Create a base query that selects from the OMOP table for dataType.
         final var criteriaBuilder = entityManager.getCriteriaBuilder();
         final var queryAndRoot = dataTypeCriteria(criteriaBuilder, dataType);
-        final var criteriaQuery = queryAndRoot.left;
-        final var root = queryAndRoot.right;
+        final var criteriaQuery = queryAndRoot.left();
+        final var root = queryAndRoot.right();
         // Add context criteria, if possible.
         if (context != null && contextPath != null && contextValue != null) {
             maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
@@ -180,13 +178,13 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         final var codesWithoutHierarchy = new ArrayList<Code>();
         final var codesWithHierarchy = new ArrayList<Code>();
         for (var code : codes) {
-            final var URLAndClassification = analyzeCodeSystem(code.getSystem());
-            if (URLAndClassification.right) {
+            final var URLAndClassification = CodeSystems.analyzeCodeSystem(code.getSystem());
+            if (URLAndClassification.hierarchical()) {
                 // Add the code to the list of code that should be considered with hierarchy. Replace the
                 // codesystem URL to contain just the actual codesystem URL.
                 final var normalizedCode = new Code()
                         .withCode(code.getCode())
-                        .withSystem(URLAndClassification.left);
+                        .withSystem(URLAndClassification.id());
                 codesWithHierarchy.add(normalizedCode);
             } else {
                 codesWithoutHierarchy.add(code);
@@ -201,43 +199,6 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         // concepts either based on the concept id or via a join that handles the vocabulary lookup.
         if (!codesWithoutHierarchy.isEmpty()) {
             addCodeJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithoutHierarchy);
-        }
-    }
-
-    /*
-     * Check whether the code system designator indicates hierarchical processing via the URL query part being
-     * "hierarchical".
-     */
-    private Pair<String, Boolean> analyzeCodeSystem(final String codeSystem) {
-        // Parse the code system designator as a URL.
-        final URL codeSystemURL;
-        try {
-            codeSystemURL= new URL(codeSystem);
-        } catch (MalformedURLException exception) {
-            throw new RuntimeException(String.format("Code system URL '%s' is not valid: %s",
-                    codeSystem,
-                    exception));
-        }
-        // If the query part of the URL is "hierarchical", return true and a URL with the query part stripped,
-        // otherwise return false the unmodified URL.
-        final var query = codeSystemURL.getQuery();
-        if (query == null) {
-            return new Pair<>(null, false);
-        }
-        if (query.equals("hierarchical")) {
-            try {
-                final var baseURL = new URL(codeSystemURL.getProtocol(),
-                        codeSystemURL.getHost(),
-                        codeSystemURL.getPort(),
-                        codeSystemURL.getPath());
-                return new Pair<>(baseURL.toString(), true);
-            } catch (MalformedURLException exception) {
-                throw new RuntimeException("should not happen");
-            }
-        } else {
-            throw new RuntimeException(String.format("Code system URL '%s' contains invalid query part: %s",
-                    codeSystemURL,
-                    codeSystemURL.getQuery()));
         }
     }
 
@@ -289,13 +250,13 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     private jakarta.persistence.criteria.Predicate conceptPredicateForCode(final CriteriaBuilder criteriaBuilder,
                                                                            final Path<?> conceptPath,
                                                                            final Code code) {
-        if (code.getSystem().equals(Constants.OMOP_CODESYSTEM_URI)) {
+        if (code.getSystem().equals(CodeSystems.OMOP_CODESYSTEM_URI)) {
             final var conceptId = Integer.parseInt(code.getCode()); // TODO: handle errors
             return criteriaBuilder.equal(conceptPath.get("conceptId"), conceptId);
         } else {
             // TODO(jmoringe): we could look up the code system url in the OMOP vocabulary table to obtain the vocabulary id
             final var system = code.getSystem();
-            final var vocabularyId = Constants.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.getOrDefault(system, system);
+            final var vocabularyId = CodeSystems.OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.getOrDefault(system, system);
             assert vocabularyId != null;
             return criteriaBuilder.and(
                     criteriaBuilder.equal(conceptPath.get("conceptCode"), code.getCode()),

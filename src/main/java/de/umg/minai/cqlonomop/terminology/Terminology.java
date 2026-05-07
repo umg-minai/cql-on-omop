@@ -7,7 +7,7 @@ import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
-import de.umg.minai.cqlonomop.engine.Constants;
+import de.umg.minai.cqlonomop.engine.CodeSystems;
 import de.umg.minai.cqlonomop.engine.OMOPDataProvider;
 import de.umg.minai.cqlonomop.terminal.DefaultTheme;
 import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
@@ -157,7 +157,7 @@ public class Terminology implements Callable<Integer> {
                     // standard vocabulary. In that case, the "code" part of defined codes is the OMOP concept id.
                     // Collect all OMOP concept ids and remember for each which library (or libraries) defined it.
                     final var codeSystemId = codeSystems.get(key);
-                    if (codeSystemId.equals(Constants.OMOP_CODESYSTEM_URI)) {
+                    if (codeSystemId.equals(CodeSystems.OMOP_CODESYSTEM_URI)) {
                         final var code = new Code(codeDef.getId(), codeSystemId);
                         codes.compute(code, (key1, existing) ->  {
                             var list = existing;
