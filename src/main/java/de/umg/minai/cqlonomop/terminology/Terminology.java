@@ -18,8 +18,6 @@ import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
@@ -40,7 +38,6 @@ import java.util.concurrent.Callable;
 )
 public class Terminology implements Callable<Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(Terminology.class);
     @ArgGroup(validate = false, heading = "Database Options%n")
     private DatabaseOptions databaseOptions = new DatabaseOptions();
 
