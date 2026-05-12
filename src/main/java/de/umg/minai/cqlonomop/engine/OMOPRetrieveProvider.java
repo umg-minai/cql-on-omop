@@ -98,17 +98,19 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         final var queryAndRoot = dataTypeCriteria(criteriaBuilder, dataType);
         final var criteriaQuery = queryAndRoot.left();
         final var root = queryAndRoot.right();
-        // Add context criteria, if possible.
-        if (context != null && contextPath != null && contextValue != null) {
-            maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
-        }
-        // Add code criteria, if possible.
+        // Add code criteria, if possible. This has to happen as the first restriction because it does
+        // criteriaQuery.where(...) and that replaces the current where clause.  Subsequent restrictions are written
+        // such that they extend the where clause instead of replacing it.
         if (codes != null) {
             maybeAddCodeCriteria(criteriaBuilder, criteriaQuery, dataType, root, codePath, codes);
         }
         // Add date criteria, if possible
         if (dateRange != null) {
             throw new RuntimeException("Filtering by date range not implemented"); // TODO: implement
+        }
+        // Add context criteria, if possible.
+        if (context != null && contextPath != null && contextValue != null) {
+            maybeAddContextCriteria(criteriaBuilder, criteriaQuery, dataType, root, contextPath, contextValue);
         }
         // Create query and return the (lazy) retrieve result.
         final var query = entityManager.createQuery(criteriaQuery);
@@ -132,34 +134,6 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         final var query = criteriaBuilder.createQuery(clazz);
         final var root = query.from(clazz);
         return new Pair<>(query.select(root), root);
-    }
-
-    /**
-     * Add predicates to @param{baseQuery} to restrict it the current context and return the modified query.
-     *
-     * @param baseQuery   The partially built query that should be restricted to the context
-     * @param dataType    The type of the objects that will be retrieved
-     * @param root        The table from which objects are being retrieved
-     * @param contextPath the path within objects from the @param{root} table that should match the context
-     */
-    private void maybeAddContextCriteria(final CriteriaBuilder criteriaBuilder,
-                                         final AbstractQuery<?> baseQuery,
-                                         final String dataType,
-                                         final Root<?> root,
-                                         final String contextPath,
-                                         final Object contextValue) {
-        final var info = this.mappingInfo.getDataTypeInfo(dataType);
-        final var contextInfo = info.infoForContext(contextPath, contextValue);
-        if (contextInfo != null) {
-            final var columnName = contextInfo.columnName();
-            Path<?> column;
-            try {
-                column = root.get(columnName);
-            } catch (PathElementException e) {
-                column = root.get("compoundId").get(columnName);
-            }
-            addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
-        }
     }
 
     private void maybeAddCodeCriteria(final CriteriaBuilder criteriaBuilder,
@@ -192,49 +166,57 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
         // For concepts that should be considered with hierarchy, we generate a sub-query which finds all ancestor
         // concepts and restrict the returned rows to those ancestor concepts.
+        Expression<Boolean> codeExpression = null;
         if (!codesWithHierarchy.isEmpty()) {
-            addCodeAncestorsJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithHierarchy);
+            codeExpression = addCodeAncestorsJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithHierarchy);
         }
         // For concepts that should be considered without hierarchy, we restrict the returned rows to the supplied
         // concepts either based on the concept id or via a join that handles the vocabulary lookup.
         if (!codesWithoutHierarchy.isEmpty()) {
-            addCodeJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithoutHierarchy);
+            final var expression = addCodeJoinCriteria(criteriaBuilder, root, codePath, codesWithoutHierarchy);
+            if (codeExpression == null) {
+                codeExpression = expression;
+            } else {
+                codeExpression = criteriaBuilder.or(codeExpression, expression);
+            }
+
+        }
+        if (codeExpression != null) {
+            baseQuery.where(codeExpression);
         }
     }
 
-    private <T> void addCodeAncestorsJoinCriteria(final CriteriaBuilder criteriaBuilder,
-                                                  final CriteriaQuery<T> baseQuery,
-                                                  final Root<?> root,
-                                                  final String conceptRelation,
-                                                  final Iterable<Code> codes) {
+    private <T> Expression<Boolean> addCodeAncestorsJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                                 final CriteriaQuery<T> baseQuery,
+                                                                 final Root<?> root,
+                                                                 final String conceptRelation,
+                                                                 final Iterable<Code> codes) {
         // TODO(jmoringe): pass entityManager
         final var subQuery = baseQuery.subquery(this.conceptClass);
         final var subRoot = subQuery.from(this.conceptAncestorClass);
         subQuery.select(subRoot.get("descendantConcept"));
-        addCodeJoinCriteria(criteriaBuilder, subQuery, subRoot, "ancestorConcept", codes);
-
-        //final var root = baseQuery.getRoots().stream().findFirst().orElseThrow();
-        baseQuery.where(criteriaBuilder.in(root.get(conceptRelation)).value(subQuery.getSelection()));
+        subQuery.where(addCodeJoinCriteria(criteriaBuilder, subRoot, "ancestorConcept", codes));
+        return (isConceptRetrieve(root, conceptRelation))
+                ? criteriaBuilder.<Object>in(root).value(subQuery.getSelection())
+                : criteriaBuilder.in(root.get(conceptRelation)).value(subQuery.getSelection());
     }
 
     /*
      * Add restrictions for the supplied concept relation and codes to the query. Either by adding where clauses is
      * the query is against the concept table or by adding a join with the concept table if the query.
      */
-    private <T, Q extends AbstractQuery<T>> void addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
-                                                                     final Q baseQuery,
-                                                                     final Root<?> root,
-                                                                     final String conceptRelation,
-                                                                     final Iterable<Code> codes) {
+    private <T, Q extends AbstractQuery<T>> Expression<Boolean> addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                                                    final Root<?> root,
+                                                                                    final String conceptRelation,
+                                                                                    final Iterable<Code> codes) {
         jakarta.persistence.criteria.Predicate predicates;
-        if (root.getModel().getName().equals("Concept")
-                && conceptRelation.equals("concept")) {
+        if (isConceptRetrieve(root, conceptRelation)) {
             predicates = conceptPredicateForCodes(criteriaBuilder, root, codes);
         } else {
             final Join<T, ?> join = root.join(conceptRelation);
             predicates = conceptPredicateForCodes(criteriaBuilder, join, codes);
         }
-        addRestriction(baseQuery, predicates);
+        return predicates;
     }
 
     private jakarta.persistence.criteria.Predicate conceptPredicateForCodes(final CriteriaBuilder criteriaBuilder,
@@ -264,6 +246,34 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
     }
 
+    /**
+     * Add predicates to @param{baseQuery} to restrict it the current context and return the modified query.
+     *
+     * @param baseQuery   The partially built query that should be restricted to the context
+     * @param dataType    The type of the objects that will be retrieved
+     * @param root        The table from which objects are being retrieved
+     * @param contextPath the path within objects from the @param{root} table that should match the context
+     */
+    private void maybeAddContextCriteria(final CriteriaBuilder criteriaBuilder,
+                                         final AbstractQuery<?> baseQuery,
+                                         final String dataType,
+                                         final Root<?> root,
+                                         final String contextPath,
+                                         final Object contextValue) {
+        final var info = this.mappingInfo.getDataTypeInfo(dataType);
+        final var contextInfo = info.infoForContext(contextPath, contextValue);
+        if (contextInfo != null) {
+            final var columnName = contextInfo.columnName();
+            Path<?> column;
+            try {
+                column = root.get(columnName);
+            } catch (PathElementException e) {
+                column = root.get("compoundId").get(columnName);
+            }
+            addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
+        }
+    }
+
     private <T> void addRestriction(final AbstractQuery<T> query,
                                     final jakarta.persistence.criteria.Predicate predicate) {
         final var oldRestriction = query.getRestriction();
@@ -272,6 +282,10 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         } else {
             query.where(oldRestriction, predicate);
         }
+    }
+
+    private boolean isConceptRetrieve(final Root<?> root, final String conceptRelation) {
+        return root.getModel().getName().equals("Concept") && conceptRelation.equals("concept");
     }
 
 }
