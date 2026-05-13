@@ -71,6 +71,20 @@ public class Domain {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Domain other)) {
+            return false;
+        } else {
+            return Objects.equals(this.domainId, other.domainId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.domainId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Domain{");

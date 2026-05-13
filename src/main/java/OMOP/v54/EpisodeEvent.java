@@ -29,17 +29,12 @@ public class EpisodeEvent {
         private Integer episodeId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.episodeEventFieldConceptId, otherInstance.episodeEventFieldConceptId))
-                            && (Objects.equals(this.episodeId, otherInstance.episodeId)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.episodeEventFieldConceptId, other.episodeEventFieldConceptId))
+                        && (Objects.equals(this.episodeId, other.episodeId)));
             }
         }
 
@@ -127,6 +122,20 @@ public class EpisodeEvent {
 
     public void setEventId(final Integer newValue) {
         this.eventId = newValue;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof EpisodeEvent other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

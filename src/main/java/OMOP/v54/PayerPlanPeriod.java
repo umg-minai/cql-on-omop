@@ -457,6 +457,20 @@ public class PayerPlanPeriod {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof PayerPlanPeriod other)) {
+            return false;
+        } else {
+            return Objects.equals(this.payerPlanPeriodId, other.payerPlanPeriodId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.payerPlanPeriodId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("PayerPlanPeriod{");

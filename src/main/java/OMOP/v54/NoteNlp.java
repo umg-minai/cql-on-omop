@@ -285,6 +285,20 @@ public class NoteNlp {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof NoteNlp other)) {
+            return false;
+        } else {
+            return Objects.equals(this.noteNlpId, other.noteNlpId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.noteNlpId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("NoteNlp{");

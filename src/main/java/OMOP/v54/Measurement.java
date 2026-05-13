@@ -585,6 +585,20 @@ public class Measurement {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Measurement other)) {
+            return false;
+        } else {
+            return Objects.equals(this.measurementId, other.measurementId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.measurementId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Measurement{");

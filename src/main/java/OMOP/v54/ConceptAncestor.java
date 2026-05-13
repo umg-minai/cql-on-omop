@@ -30,17 +30,12 @@ public class ConceptAncestor {
         private Integer descendantConceptId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.ancestorConceptId, otherInstance.ancestorConceptId))
-                            && (Objects.equals(this.descendantConceptId, otherInstance.descendantConceptId)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.ancestorConceptId, other.ancestorConceptId))
+                        && (Objects.equals(this.descendantConceptId, other.descendantConceptId)));
             }
         }
 
@@ -150,6 +145,20 @@ public class ConceptAncestor {
 
     public void setMinLevelsOfSeparation(final Integer newValue) {
         this.minLevelsOfSeparation = newValue;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ConceptAncestor other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

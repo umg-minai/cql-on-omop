@@ -433,6 +433,20 @@ public class Cost {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Cost other)) {
+            return false;
+        } else {
+            return Objects.equals(this.costId, other.costId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.costId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Cost{");

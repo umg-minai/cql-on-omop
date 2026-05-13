@@ -32,18 +32,13 @@ public class SourceToConceptMap {
         private String targetVocabularyId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.sourceConceptId, otherInstance.sourceConceptId))
-                            && (Objects.equals(this.targetConceptId, otherInstance.targetConceptId))
-                            && (Objects.equals(this.targetVocabularyId, otherInstance.targetVocabularyId)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.sourceConceptId, other.sourceConceptId))
+                        && (Objects.equals(this.targetConceptId, other.targetConceptId))
+                        && (Objects.equals(this.targetVocabularyId, other.targetVocabularyId)));
             }
         }
 
@@ -226,6 +221,20 @@ public class SourceToConceptMap {
 
     public void setValidStartDate(final Date newValue) {
         this.validStartDate = newValue.getDate().atStartOfDay(ZoneId.systemDefault());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof SourceToConceptMap other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

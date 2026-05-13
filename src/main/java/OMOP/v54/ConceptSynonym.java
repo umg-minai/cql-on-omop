@@ -29,17 +29,12 @@ public class ConceptSynonym {
         private Integer languageConceptId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.conceptId, otherInstance.conceptId))
-                            && (Objects.equals(this.languageConceptId, otherInstance.languageConceptId)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.conceptId, other.conceptId))
+                        && (Objects.equals(this.languageConceptId, other.languageConceptId)));
             }
         }
 
@@ -135,6 +130,20 @@ public class ConceptSynonym {
         // and the associated foreign key to 0 so that users can create broken
         // references when they absolutely must.
         this.compoundId.languageConceptId = (newValue != null) ? newValue.getConceptId() : 0;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ConceptSynonym other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

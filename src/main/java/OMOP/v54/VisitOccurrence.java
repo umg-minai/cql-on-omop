@@ -428,6 +428,20 @@ public class VisitOccurrence {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof VisitOccurrence other)) {
+            return false;
+        } else {
+            return Objects.equals(this.visitOccurrenceId, other.visitOccurrenceId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.visitOccurrenceId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("VisitOccurrence{");
