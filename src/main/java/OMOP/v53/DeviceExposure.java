@@ -360,6 +360,20 @@ public class DeviceExposure {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof DeviceExposure other)) {
+            return false;
+        } else {
+            return Objects.equals(this.deviceExposureId, other.deviceExposureId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.deviceExposureId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("DeviceExposure{");

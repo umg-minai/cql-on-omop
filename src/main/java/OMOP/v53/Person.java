@@ -472,6 +472,20 @@ public class Person {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Person other)) {
+            return false;
+        } else {
+            return Objects.equals(this.personId, other.personId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.personId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Person{");

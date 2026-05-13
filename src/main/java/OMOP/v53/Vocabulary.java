@@ -97,6 +97,20 @@ public class Vocabulary {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Vocabulary other)) {
+            return false;
+        } else {
+            return Objects.equals(this.vocabularyId, other.vocabularyId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.vocabularyId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Vocabulary{");

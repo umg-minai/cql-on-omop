@@ -34,18 +34,13 @@ public class Metadata {
         private Integer valueAsConceptId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.metadataConceptId, otherInstance.metadataConceptId))
-                            && (Objects.equals(this.metadataTypeConceptId, otherInstance.metadataTypeConceptId))
-                            && (Objects.equals(this.valueAsConceptId, otherInstance.valueAsConceptId)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.metadataConceptId, other.metadataConceptId))
+                        && (Objects.equals(this.metadataTypeConceptId, other.metadataTypeConceptId))
+                        && (Objects.equals(this.valueAsConceptId, other.valueAsConceptId)));
             }
         }
 
@@ -234,6 +229,20 @@ public class Metadata {
 
     public void setValueAsString(final String newValue) {
         this.valueAsString = newValue;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Metadata other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

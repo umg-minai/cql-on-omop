@@ -142,6 +142,20 @@ public class CareSite {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof CareSite other)) {
+            return false;
+        } else {
+            return Objects.equals(this.careSiteId, other.careSiteId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.careSiteId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("CareSite{");

@@ -487,6 +487,20 @@ public class VisitDetail {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof VisitDetail other)) {
+            return false;
+        } else {
+            return Objects.equals(this.visitDetailId, other.visitDetailId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.visitDetailId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("VisitDetail{");

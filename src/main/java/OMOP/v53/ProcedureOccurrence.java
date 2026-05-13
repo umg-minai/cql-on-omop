@@ -291,6 +291,20 @@ public class ProcedureOccurrence {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ProcedureOccurrence other)) {
+            return false;
+        } else {
+            return Objects.equals(this.procedureOccurrenceId, other.procedureOccurrenceId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.procedureOccurrenceId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("ProcedureOccurrence{");

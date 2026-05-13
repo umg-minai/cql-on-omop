@@ -111,6 +111,20 @@ public class ConditionEra {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ConditionEra other)) {
+            return false;
+        } else {
+            return Objects.equals(this.conditionEraId, other.conditionEraId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.conditionEraId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("ConditionEra{");

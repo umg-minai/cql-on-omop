@@ -26,16 +26,11 @@ public class AttributeDefinition {
         private Integer attributeTypeConceptId;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.attributeTypeConceptId, otherInstance.attributeTypeConceptId)));
-                } else {
-                    return false;
-                }
+                return Objects.equals(this.attributeTypeConceptId, other.attributeTypeConceptId);
             }
         }
 
@@ -141,6 +136,20 @@ public class AttributeDefinition {
         // and the associated foreign key to 0 so that users can create broken
         // references when they absolutely must.
         this.compoundId.attributeTypeConceptId = (newValue != null) ? newValue.getConceptId() : 0;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof AttributeDefinition other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override

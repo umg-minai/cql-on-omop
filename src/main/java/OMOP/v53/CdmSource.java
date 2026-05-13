@@ -28,17 +28,12 @@ public class CdmSource {
         private String cdmVersion;
 
         @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
+        public boolean equals(final Object o) {
+            if (!(o instanceof CompoundId other)) {
+                return false;
             } else {
-                if (other instanceof CompoundId otherInstance) {
-                    return ((other.getClass() == this.getClass())
-                            && (Objects.equals(this.cdmSourceName, otherInstance.cdmSourceName))
-                            && (Objects.equals(this.cdmVersion, otherInstance.cdmVersion)));
-                } else {
-                    return false;
-                }
+                return ((Objects.equals(this.cdmSourceName, other.cdmSourceName))
+                        && (Objects.equals(this.cdmVersion, other.cdmVersion)));
             }
         }
 
@@ -214,6 +209,20 @@ public class CdmSource {
 
     public void setVocabularyVersion(final String newValue) {
         this.vocabularyVersion = newValue;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof CdmSource other)) {
+            return false;
+        } else {
+            return Objects.equals(this.compoundId, other.compoundId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.compoundId);
     }
 
     @Override
