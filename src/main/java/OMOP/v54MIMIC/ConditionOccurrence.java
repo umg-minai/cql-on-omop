@@ -398,6 +398,20 @@ public class ConditionOccurrence {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ConditionOccurrence other)) {
+            return false;
+        } else {
+            return Objects.equals(this.conditionOccurrenceId, other.conditionOccurrenceId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.conditionOccurrenceId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("ConditionOccurrence{");

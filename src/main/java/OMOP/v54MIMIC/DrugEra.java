@@ -134,6 +134,20 @@ public class DrugEra {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof DrugEra other)) {
+            return false;
+        } else {
+            return Objects.equals(this.drugEraId, other.drugEraId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.drugEraId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("DrugEra{");

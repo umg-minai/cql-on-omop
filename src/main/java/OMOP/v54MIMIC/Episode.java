@@ -301,6 +301,20 @@ public class Episode {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Episode other)) {
+            return false;
+        } else {
+            return Objects.equals(this.episodeId, other.episodeId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.episodeId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Episode{");

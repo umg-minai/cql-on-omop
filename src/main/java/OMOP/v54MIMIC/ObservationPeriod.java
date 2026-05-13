@@ -108,6 +108,20 @@ public class ObservationPeriod {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof ObservationPeriod other)) {
+            return false;
+        } else {
+            return Objects.equals(this.observationPeriodId, other.observationPeriodId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.observationPeriodId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("ObservationPeriod{");

@@ -232,6 +232,20 @@ public class Concept {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Concept other)) {
+            return false;
+        } else {
+            return Objects.equals(this.conceptId, other.conceptId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.conceptId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Concept{");

@@ -146,6 +146,20 @@ public class DoseEra {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof DoseEra other)) {
+            return false;
+        } else {
+            return Objects.equals(this.doseEraId, other.doseEraId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.doseEraId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("DoseEra{");

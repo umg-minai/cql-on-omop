@@ -210,6 +210,20 @@ public class Metadata {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Metadata other)) {
+            return false;
+        } else {
+            return Objects.equals(this.metadataId, other.metadataId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.metadataId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Metadata{");

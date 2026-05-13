@@ -392,6 +392,20 @@ public class Note {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Note other)) {
+            return false;
+        } else {
+            return Objects.equals(this.noteId, other.noteId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.noteId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Note{");

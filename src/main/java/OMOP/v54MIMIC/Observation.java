@@ -532,6 +532,20 @@ public class Observation {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Observation other)) {
+            return false;
+        } else {
+            return Objects.equals(this.observationId, other.observationId);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.observationId);
+    }
+
+    @Override
     public String toString() {
         final var result = new StringBuilder();
         result.append("Observation{");
