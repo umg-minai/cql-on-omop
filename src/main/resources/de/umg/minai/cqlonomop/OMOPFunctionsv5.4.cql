@@ -66,6 +66,31 @@ define function ToQuantity(drugExposure OMOP.DrugExposure):
              else
                null
 
+/*
+ * Extract from drugExposure the respective amounts of the listed
+ * ingredients and return the overall amount as a System.Quantity.
+ *
+ * If drugExposure does not contain any of the mentioned ingredients
+ * or drugExposure.quantity is null, return null.
+ */
+define function IngredientExposure(drugExposure OMOP.DrugExposure,
+                                   ingredients  List<OMOP.Concept>):
+  (1) _
+    let strengths:           DrugStrengthForDrug(drugExposure.drugConcept),
+        ingredientStrengths: (strengths) s
+                               where s.ingredientConcept in ingredients
+                               return all s,
+        strengthQuantity:    (ingredientStrengths) s aggregate r starting (null as Quantity):
+                               if r is null then
+                                 convert s to Quantity
+                               else
+                                 r + (convert s to Quantity)
+      return if strengthQuantity is not null
+                and drugExposure.quantity is not null then
+               drugExposure.quantity * strengthQuantity
+             else
+               null
+
 // Validity
 
 define function Validity(DrugStrength OMOP.DrugStrength):
