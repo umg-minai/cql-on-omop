@@ -1,8 +1,6 @@
 name: publish-container-image
 
-on:
-  push:
-    branches: [ main ]
+on: [push, pull_request]
 
 env:
   IMAGE_NAME: ${{ github.repository }}
@@ -18,14 +16,14 @@ jobs:
         with:
           distribution:    'temurin'
           java-version:    '21'
-          server-username: PACKAGES_USERNAME_REF # env variable name for username
-          server-password: PACKAGES_TOKEN_REF    # env variable name for token
+          server-username: PACKAGES_USERNAME # env variable name for username
+          server-password: PACKAGES_TOKEN    # env variable name for token
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
         env:
-          PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
-          PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
+          PACKAGES_USERNAME: ''
+          PACKAGES_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get application version
         run: |
@@ -45,10 +43,11 @@ jobs:
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
-          username: ${{ secrets.PACKAGES_USERNAME }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push the Docker image
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker push ghcr.io/${{ env.IMAGE_NAME }}:${APPLICATION_VERSION}
           docker push ghcr.io/${{ env.IMAGE_NAME }}:latest

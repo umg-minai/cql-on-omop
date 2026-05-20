@@ -13,28 +13,29 @@ jobs:
         with:
           distribution:    'temurin'
           java-version:    '21'
-          server-username: PACKAGES_USERNAME_REF # env variable name for username
-          server-password: PACKAGES_TOKEN_REF    # env variable name for GitHub Personal Access To
+          server-username: PACKAGES_USERNAME # env variable name for username
+          server-password: PACKAGES_TOKEN    # env variable name for GitHub Personal Access To
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
         env:
-          PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
-          PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
+          PACKAGES_USERNAME: ''
+          PACKAGES_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
 
       - name: Gather Artifacts
         run: |
           mkdir -p artifacts
           cp -v target/cql-on-omop*.jar artifacts/
 
-      - name: Publish package
-        run: mvn deploy --file pom.xml
-        env:
-          PACKAGES_USERNAME_REF: ${{ secrets.PACKAGES_USERNAME }}
-          PACKAGES_TOKEN_REF:    ${{ secrets.PACKAGES_TOKEN }}
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
         with:
           name: application
           path: artifacts
+
+      - name: Publish package
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: mvn deploy --file pom.xml
+        env:
+          PACKAGES_USERNAME: ''
+          PACKAGES_TOKEN:    ${{ secrets.GITHUB_TOKEN }}
