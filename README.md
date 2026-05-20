@@ -16,7 +16,7 @@ The code in this repository can be compiled into a standalone Java application w
 
   * Results are written into one or more CSV files
 
-  * Results are written to the OMOP database
+  * Results are written to the OMOP database or to a different OMOP database
 
 ## Usage
 
