@@ -103,7 +103,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                                 library,
                                 contextObject,
                                 parameterBindings,
-                                initialCacheString.toString()),
+                                initialCacheString),
                         e);
             }
             return continuation.apply(Outcome.failure(e));
@@ -147,7 +147,8 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                                              final BiFunction<Object, Outcome, I> mapper,
                                              final Function<Map<Object, I>, R> reducer) {
         if (contextObject instanceof Iterable<?> iterable) {
-            // Count objects.
+            // Count objects. This may force lazy Hibernate proxies prematurely but that would happen in the loop below
+            // anyway.
             int i = 0;
             for (var ignored : iterable) { i++; }
             final var objectCount = i;
