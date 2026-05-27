@@ -158,7 +158,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
             final var executor = ensureThreadPool();
             try {
                 iterable.forEach(oneContextObject ->
-                        executor.submit(() -> {
+                        executor.execute(() -> {
                             internalEvaluate(library,
                                     oneContextObject,
                                     parameterBindings,
