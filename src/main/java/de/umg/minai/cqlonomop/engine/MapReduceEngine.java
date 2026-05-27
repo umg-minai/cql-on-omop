@@ -153,11 +153,37 @@ public class MapReduceEngine extends CQLonOMOPEngine {
             for (var ignored : iterable) { i++; }
             final var objectCount = i;
             // Prepare thread pool, termination and intermediate object collection.
-            final var progress = new Semaphore(0);
+            //
+            // slotCount is the number of executor tasks that may be submitted simultaneously. We allow twice the number
+            // of pool threads so that the pool hopefully never has to wait for the main thread.
+            //
+            // finishedCount is the number of finished Tasks.  Initially equal to -slotCount for technical reasons (see
+            // below) and ultimately equal to objectCount.
+            //
+            // freeSlotCount is the number of "slots" no occupied by any task at the moment.  We start with all slots (2
+            // * thread count) free.
+            //
+            // The loop blocks on and decrements ("acquire") freeSlotCount, increments finishedCount and submits a task
+            // (while tasks are available).  Each finished task increments ("release") freeSlotCount so that the loop
+            // can do one more iteration.  The loop performs more iterations than objectCount because there are
+            // slotCount initial iterations that don't wait for anything and just submit tasks followed by objectCount
+            // iterations.
             final var intermediateResults = new ConcurrentHashMap<Object, I>();
             final var executor = ensureThreadPool();
+            final var slotCount = 2 * this.threadCount;
+            final var freeSlotCount = new Semaphore(slotCount);
+            var finishedCount = -slotCount;
+            final var iterator = iterable.iterator();
             try {
-                iterable.forEach(oneContextObject ->
+                while (finishedCount < objectCount)  {
+                    // Wait for a free "slot" to submit a task.
+                    freeSlotCount.acquire();
+                    // Assume that a slot becoming available means that a previously submitted task has finished (see
+                    // comment above for exceptional iterations at the start).
+                    finishedCount++;
+                    // If there are objects left to process, submit a task for the next one.
+                    if (iterator.hasNext()) {
+                        final var oneContextObject = iterator.next();
                         executor.execute(() -> {
                             internalEvaluate(library,
                                     oneContextObject,
@@ -170,9 +196,10 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                                         }
                                         return intermediateResult;
                                     });
-                            progress.release();
-                        }));
-                progress.acquire(objectCount);
+                            freeSlotCount.release();
+                        });
+                    }
+                }
             } catch (InterruptedException _e) {
                 executor.shutdownNow();
                 boolean success = false;
