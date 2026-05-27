@@ -5,9 +5,21 @@
 <hibernate-configuration>
     <session-factory>
         <property name = "hibernate.enable_lazy_load_no_trans">true</property>
+
         <!-- Debugging -->
         <property name = "hibernate.show_sql">false</property>
+
         <!-- Optional: Auto-generate schema -->
         <!-- <property name = "hibernate.hbm2ddl.auto">create</property> -->
+
+        <!-- HikariCP connection pool -->
+        <property name="hibernate.connection.provider_class">
+            org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+        </property>
+        <property name="hibernate.hikari.minimumIdle">5</property>
+        <property name="hibernate.hikari.maximumPoolSize">20</property>
+        <property name="hibernate.hikari.idleTimeout">300000</property>
+        <property name="hibernate.hikari.maxLifetime">1800000</property>
+        <property name="hibernate.hikari.connectionTimeout">30000</property>
     </session-factory>
 </hibernate-configuration>
