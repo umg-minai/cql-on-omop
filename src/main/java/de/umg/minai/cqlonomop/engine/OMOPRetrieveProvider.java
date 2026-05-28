@@ -9,13 +9,7 @@ import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 public class OMOPRetrieveProvider implements RetrieveProvider {
@@ -44,28 +38,18 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
         private final TypedQuery<?> query;
 
-        private final Predicate<Object> codeFilter;
+        private Object[] cache = null;
 
-        private List<Object> cache = null;
-
-        public RetrieveResult(final TypedQuery<?> query,
-                              final Predicate<Object> codeFilter) {
+        public RetrieveResult(final TypedQuery<?> query) {
             this.query = query;
-            this.codeFilter = codeFilter;
         }
-
-        public RetrieveResult(TypedQuery<?> query) { this(query, null); }
 
         @Override
         public Iterator<Object> iterator() {
-            if (cache == null) {
-                Stream<?> stream = query.getResultStream();
-                if (this.codeFilter != null) {
-                    stream = stream.filter(this.codeFilter);
-                }
-                cache = stream.collect(Collectors.toList());
+            if (this.cache == null) {
+                this.cache = this.query.getResultList().toArray();
             }
-            return cache.iterator();
+            return Arrays.stream(this.cache).iterator();
         }
     }
 
