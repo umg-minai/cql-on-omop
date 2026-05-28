@@ -281,20 +281,25 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                                           final String expression) {
         // TODO: The engine should provide this
         engine.getLibraryCache().clear();
-        temporarySourceProvider.registerLibrary(new VersionedIdentifier().withId("Temporary"),
+        final var temporaryLibraryName = "Temporary";
+        final var temporaryExpressionName = "Temporary";
+        temporarySourceProvider.registerLibrary(new VersionedIdentifier().withId(temporaryLibraryName),
                 String.format("""
-                                library Temporary
+                              library %s
 
-                                using "OMOP" version '%s'
+                              using "OMOP" version '%s'
 
-                                include OMOPHelpers
-                                include OMOPFunctions
+                              include OMOPHelpers
+                              include OMOPFunctions
 
-                                define Temporary: %s""",
+                              define %s: %s
+                              """,
+                        temporaryLibraryName,
                         configuration.getOmopVersion(),
+                        temporaryExpressionName,
                         expression));
-        final var result = engine.evaluateLibrary("Temporary");
-        return result.forExpression("Temporary").value();
+        final var result = engine.evaluateLibrary(temporaryLibraryName);
+        return result.forExpression(temporaryExpressionName).value();
     }
 
 }
