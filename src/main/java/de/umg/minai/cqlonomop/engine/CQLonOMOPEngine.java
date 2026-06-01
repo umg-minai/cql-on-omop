@@ -245,7 +245,15 @@ public class CQLonOMOPEngine {
                 contextObject,
                 parameterBindings,
                 initialCache,
-                result -> result);
+                result -> {
+                    result.expressionResults.forEach((name, expressionResult) -> {
+                        final var value = expressionResult.value();
+                        if (value instanceof OMOPRetrieveProvider.RetrieveResult retrieveResult) {
+                            retrieveResult.ensureFetched();
+                        }
+                    });
+                    return result;
+                });
     }
 
     public EvaluationResult evaluateLibrary(final String library,

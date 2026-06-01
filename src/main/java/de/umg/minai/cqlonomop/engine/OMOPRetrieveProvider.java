@@ -44,13 +44,18 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             this.query = query;
         }
 
-        @Override
-        public Iterator<Object> iterator() {
+        public void ensureFetched() {
             if (this.cache == null) {
                 this.cache = this.query.getResultList().toArray();
             }
+        }
+
+        @Override
+        public Iterator<Object> iterator() {
+            ensureFetched();
             return Arrays.stream(this.cache).iterator();
         }
+
     }
 
     @Override
