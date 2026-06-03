@@ -3,6 +3,7 @@ package de.umg.minai.cqlonomop.repl;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
 import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
+import de.umg.minai.cqlonomop.engine.OMOPRetrieveProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -193,7 +194,11 @@ public class Evaluator {
                     if (theOutcome instanceof MapReduceEngine.Outcome.Success success) {
                         final var expressionResults = success.result().expressionResults;
                         final var resultKey = String.format("%s.%s", this.sourceProvider.libraryName(), definitionName);
-                        return expressionResults.get(resultKey).value();
+                        final var value = expressionResults.get(resultKey).value();
+                        if (value instanceof OMOPRetrieveProvider.RetrieveResult retrieveResult) {
+                            retrieveResult.ensureFetched();
+                        }
+                        return value;
                     } else if (theOutcome instanceof MapReduceEngine.Outcome.Failure failure) {
                         throw (RuntimeException) failure.error();
                     }

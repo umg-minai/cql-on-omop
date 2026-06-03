@@ -34,7 +34,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         this.conceptAncestorClass = (Class<Object>) mappingInfo.getDataTypeInfo("ConceptAncestor").getClazz();
     }
 
-    static class RetrieveResult implements Iterable<Object> {
+    public static class RetrieveResult implements Iterable<Object> {
 
         private final TypedQuery<?> query;
 
