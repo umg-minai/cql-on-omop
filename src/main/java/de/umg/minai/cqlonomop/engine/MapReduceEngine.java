@@ -247,9 +247,9 @@ public class MapReduceEngine extends CQLonOMOPEngine {
         // these definitions once now (before the parallelized processing starts) and put the results into the CQL
         // engine cache so that they are available to each of the parallel evaluations.
         final var unfilteredResult = new EvaluationResult();
-        final var unfilteredEngine = withEngineSession(session -> {
-            final var engine = session.cqlEngine();
-            engine.getCache().setExpressionCaching(true);
+        return withEngineSession(session -> {
+            final var unfilteredEngine = session.cqlEngine();
+            unfilteredEngine.getCache().setExpressionCaching(true);
             libraries.forEach(library -> {
                 if (library.getStatements() != null) {
                     // Collect expression (but not function) definitions that are defined in the "Unfiltered" context.
@@ -261,9 +261,10 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                     });
                     // Evaluate those expressions and store the results, qualified by the library name, into the
                     // overall result unfilteredResult.
-                    final var result = engine.evaluate(library.getIdentifier(), expressions, parameterBindings);
+                    final var result = unfilteredEngine.evaluate(library.getIdentifier(), expressions, parameterBindings);
                     result.expressionResults.forEach((expression, expressionResult) -> {
                         final var key = String.format("%s.%s", library.getIdentifier().getId(), expression);
+                        final var value = expressionResult.value();
                         unfilteredResult.expressionResults.put(key, expressionResult);
                     });
                     // Merge any message and/or profile data that were generated into the debug result of the overall
@@ -283,24 +284,24 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                     }
                 }
             });
-            return engine;
+
+            final var unfilteredIntermediate = mapper.apply(null, Outcome.success(unfilteredResult));
+            final var unfilteredCache = unfilteredEngine.getCache();
+            final Function<Map<Object, I>, R> wrappedReducer = intermediate -> {
+                intermediate.put(UNFILTERED_CONTEXT_KEY, unfilteredIntermediate);
+                return reducer.apply(intermediate);
+            };
+            // Start the (potentially) parallel evaluation of libraryName for all context objects. The evaluation results
+            // produced above are used in two ways: 1) to pre-fill the expression cache of the CQL engine 2) the
+            // caller-supplied reducer function is augmented so that unfilteredResult is merged into the final overall
+            // result.
+            return evaluateLibraryMapReduce(libraryName,
+                    contextObject,
+                    parameterBindings,
+                    unfilteredCache,
+                    mapper,
+                    wrappedReducer);
         });
-        final var unfilteredIntermediate = mapper.apply(null, Outcome.success(unfilteredResult));
-        final var unfilteredCache = unfilteredEngine.getCache();
-        final Function<Map<Object, I>, R> wrappedReducer = intermediate -> {
-            intermediate.put(UNFILTERED_CONTEXT_KEY, unfilteredIntermediate);
-            return reducer.apply(intermediate);
-        };
-        // Start the (potentially) parallel evaluation of libraryName for all context objects. The evaluation results
-        // produced above are used in two ways: 1) to pre-fill the expression cache of the CQL engine 2) the
-        // caller-supplied reducer function is augmented so that unfilteredResult is merged into the final overall
-        // result.
-        return evaluateLibraryMapReduce(libraryName,
-                contextObject,
-                parameterBindings,
-                unfilteredCache,
-                mapper,
-                wrappedReducer);
     }
 
 }
