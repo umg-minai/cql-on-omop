@@ -73,7 +73,8 @@ public class SourcePresenter extends AbstractPresenter {
                 // Don't crash if the source file doesn't match the
                 // recorded location, for example when the source file
                 // has been modified in the meantime.
-                end = Math.min(line.length(), end);
+                end = Math.min(end, line.length());
+                start = Math.min(start, end);
                 // Line number and part of line before highlight.
                 for (int i = 0; i < indent; ++i) {
                     builder.append(' ');
@@ -86,9 +87,9 @@ public class SourcePresenter extends AbstractPresenter {
                 if (startLine == endLine) {
                     style = style.underline();
                 }
-                builder.withStyle(style, highlight)
-                        .append(line.substring(end)) // Remainder of line after highlight.
-                        .append("\n");
+                builder.withStyle(style, highlight);
+                // Remainder of line after highlight.
+                builder.append(line.substring(end)).append("\n");
             }
         }
     }
