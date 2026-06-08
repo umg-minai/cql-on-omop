@@ -69,202 +69,152 @@ define function ToDateTimeInterval(OMOPObject OMOP.VisitOccurrence):
 
 define function ToCode(OMOPObject OMOP.Concept):
   System.Code{
-    code:    ToString(OMOPObject.conceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.vocabularyId,
-  //  display: OMOPObject.conceptName
+    code: ToString(OMOPObject.conceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.ConceptClass):
   System.Code{
-    code:    ToString(OMOPObject.conceptClassConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.conceptClassConcept.vocabularyId,
-  //  display: OMOPObject.conceptClassConcept.conceptName
+    code: ToString(OMOPObject.conceptClassConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.conceptClassConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.ConditionOccurrence):
   System.Code{
-    code:    ToString(OMOPObject.conditionConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.conditionConcept.vocabularyId,
-  //  display: OMOPObject.conditionConcept.conceptName
+    code: ToString(OMOPObject.conditionConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.conditionConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.DeviceExposure):
   System.Code{
-    code:    ToString(OMOPObject.deviceConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.deviceConcept.vocabularyId,
-  //  display: OMOPObject.deviceConcept.conceptName
+    code: ToString(OMOPObject.deviceConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.deviceConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Domain):
   System.Code{
-    code:    ToString(OMOPObject.domainConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.domainConcept.vocabularyId,
-  //  display: OMOPObject.domainConcept.conceptName
+    code: ToString(OMOPObject.domainConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.domainConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.DrugExposure):
   System.Code{
-    code:    ToString(OMOPObject.drugConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.drugConcept.vocabularyId,
-  //  display: OMOPObject.drugConcept.conceptName
+    code: ToString(OMOPObject.drugConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.drugConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Measurement):
   System.Code{
-    code:    ToString(OMOPObject.measurementConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.measurementConcept.vocabularyId,
-  //  display: OMOPObject.measurementConcept.conceptName
+    code: ToString(OMOPObject.measurementConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.measurementConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Metadata):
   System.Code{
-    code:    ToString(OMOPObject.metadataConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.metadataConcept.vocabularyId,
-  //  display: OMOPObject.metadataConcept.conceptName
+    code: ToString(OMOPObject.metadataConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.metadataConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.NoteNlp):
   System.Code{
-    code:    ToString(OMOPObject.noteNlpConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.noteNlpConcept.vocabularyId,
-  //  display: OMOPObject.noteNlpConcept.conceptName
+    code: ToString(OMOPObject.noteNlpConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.noteNlpConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Observation):
   System.Code{
-    code:    ToString(OMOPObject.observationConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.observationConcept.vocabularyId,
-  //  display: OMOPObject.observationConcept.conceptName
+    code: ToString(OMOPObject.observationConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.observationConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.ProcedureOccurrence):
   System.Code{
-    code:    ToString(OMOPObject.procedureConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.procedureConcept.vocabularyId,
-  //  display: OMOPObject.procedureConcept.conceptName
+    code: ToString(OMOPObject.procedureConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.procedureConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Relationship):
   System.Code{
-    code:    ToString(OMOPObject.relationshipConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.relationshipConcept.vocabularyId,
-  //  display: OMOPObject.relationshipConcept.conceptName
+    code: ToString(OMOPObject.relationshipConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.relationshipConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Specimen):
   System.Code{
-    code:    ToString(OMOPObject.specimenConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.specimenConcept.vocabularyId,
-  //  display: OMOPObject.specimenConcept.conceptName
+    code: ToString(OMOPObject.specimenConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.specimenConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.VisitDetail):
   System.Code{
-    code:    ToString(OMOPObject.visitDetailConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.visitDetailConcept.vocabularyId,
-  //  display: OMOPObject.visitDetailConcept.conceptName
+    code: ToString(OMOPObject.visitDetailConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.visitDetailConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.VisitOccurrence):
   System.Code{
-    code:    ToString(OMOPObject.visitConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.visitConcept.vocabularyId,
-  //  display: OMOPObject.visitConcept.conceptName
+    code: ToString(OMOPObject.visitConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.visitConcept.vocabularyId
   }
 
 define function ToCode(OMOPObject OMOP.Vocabulary):
   System.Code{
-    code:    ToString(OMOPObject.vocabularyConceptId),
-    system:  'https://fhir-terminology.ohdsi.org' //OMOPObject.vocabularyConcept.vocabularyId,
-  //  display: OMOPObject.vocabularyConcept.conceptName
+    code: ToString(OMOPObject.vocabularyConceptId),
+    system: 'https://fhir-terminology.ohdsi.org' //OMOPObject.vocabularyConcept.vocabularyId
   }
 
 // Conversion to System.Concept
 
 define function ToConcept(OMOPObject OMOP.Concept):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject List<OMOP.Concept>):
-  System.Concept{
-    codes: (OMOPObject) o return all ToCode(o)
-  }
+  System.Concept{  codes: (OMOPObject) o return all ToCode(o)}
 
 define function ToConcept(OMOPObject OMOP.ConceptClass):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.ConditionOccurrence):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.DeviceExposure):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Domain):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.DrugExposure):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Measurement):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Metadata):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.NoteNlp):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Observation):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.ProcedureOccurrence):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Relationship):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Specimen):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.VisitDetail):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.VisitOccurrence):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 define function ToConcept(OMOPObject OMOP.Vocabulary):
-  System.Concept{
-    codes: { ToCode(OMOPObject) }
-  }
+  System.Concept{  codes: { ToCode(OMOPObject) }}
 
 // Conversion to System.Date
 
@@ -392,7 +342,8 @@ define function ToQuantity(OMOPObject OMOP.DrugExposure):
         // Parenthesis around the retrieve expression are required due to a
         // quirk of the CQL grammar.
         // Also note that the singleton from construct makes this function
-        // error if there is more than DrugStrength associated with the code.
+        // error if there is more than one DrugStrength associated with the
+        // code.
         strength: singleton from ([DrugStrength: drugConcept ~ drugCode]),
         strengthQuantity: ToQuantity(strength)
       return all if ((strengthQuantity is not null)
@@ -408,7 +359,13 @@ define function ToQuantity(OMOPObject OMOP.DrugStrength):
       // Use amount{Value,UnitConcept} if available.
       System.Quantity{
         value: OMOPObject.amountValue,
-        unit:  OMOPObject.amountUnitConcept.conceptCode
+        unit: // The unit [U] can occur in OMOP CDM data but the UCUM service
+              // cannot process this unit. [U] should be equivalent to [IU], so
+              // perform the replacement.
+              if OMOPObject.amountUnitConcept.conceptCode = '[U]' then
+                '[IU]'
+              else
+                OMOPObject.amountUnitConcept.conceptCode
       }
     when ((OMOPObject.numeratorValue is not null)
           and (OMOPObject.numeratorUnitConcept is not null)) then
@@ -417,24 +374,29 @@ define function ToQuantity(OMOPObject OMOP.DrugStrength):
       (1) _
         let numerator: System.Quantity{
                          value: OMOPObject.numeratorValue,
-                         unit:  OMOPObject.numeratorUnitConcept.conceptCode
+                         unit: // The unit [U] can occur in OMOP CDM data but
+                               // the UCUM service cannot process this unit.
+                               // [U] should be equivalent to [IU], so perform
+                               // the replacement.
+                               if OMOPObject.numeratorUnitConcept.conceptCode = '[U]' then
+                                 '[IU]'
+                               else
+                                 OMOPObject.numeratorUnitConcept.conceptCode
                        }
-          return all case
-                       when OMOPObject.denominatorValue is null then
-                         // If there is no denominatorValue, just use the
-                         // quantity computed from the numerator.
-                         numerator
-                       when OMOPObject.denominatorUnitConcept is not null then
-                         numerator / System.Quantity{
-                           value: OMOPObject.denominatorValue,
-                           unit:  OMOPObject.denominatorUnitConcept.conceptCode
-                         }
-                       else
-                         // If there is denominatorValue but no
-                         // denominatorUnitConcept, we can't compute a valid
-                         // Quantity
-                         null
-                     end
+          return all if OMOPObject.denominatorUnitConcept is not null then
+                       numerator / System.Quantity{
+                         value: if OMOPObject.denominatorValue is not null then
+                                  OMOPObject.denominatorValue
+                                else
+                                  // If there is no denominatorValue, use 1
+                                  // instead.
+                                  1,
+                         unit: OMOPObject.denominatorUnitConcept.conceptCode
+                       }
+                     else
+                       // If there is no denominatorUnitConcept use just the
+                       // numerator.
+                       numerator
     else
       // If there is neither amount{Value,UnitConcept} nor
       // numerator{Value,UnitConcept}, we can't compute a valid Quantity.
@@ -447,9 +409,7 @@ define function ToQuantity(OMOPObject OMOP.Measurement):
     null
   else
     System.Quantity{
-      value: OMOPObject.valueAsNumber,
-      unit:  OMOPObject.unitConcept.conceptCode
-    }
+      value: OMOPObject.valueAsNumber, unit: OMOPObject.unitConcept.conceptCode}
 
 define function ToQuantity(OMOPObject OMOP.Observation):
   if ((OMOPObject.valueAsNumber is null)
@@ -457,7 +417,5 @@ define function ToQuantity(OMOPObject OMOP.Observation):
     null
   else
     System.Quantity{
-      value: OMOPObject.valueAsNumber,
-      unit:  OMOPObject.unitConcept.conceptCode
-    }
+      value: OMOPObject.valueAsNumber, unit: OMOPObject.unitConcept.conceptCode}
 
