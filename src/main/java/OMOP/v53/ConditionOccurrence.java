@@ -3,6 +3,7 @@
 package OMOP.v53;
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
@@ -402,13 +403,31 @@ public class ConditionOccurrence {
         if (!(o instanceof ConditionOccurrence other)) {
             return false;
         } else {
-            return Objects.equals(this.conditionOccurrenceId, other.conditionOccurrenceId);
+            final Object thisId;
+            if (this instanceof HibernateProxy proxy) {
+                thisId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                thisId = this.conditionOccurrenceId;
+            }
+            final Object otherId;
+            if (other instanceof HibernateProxy proxy) {
+                otherId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                otherId = other.conditionOccurrenceId;
+            }
+            return Objects.equals(thisId, otherId);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.conditionOccurrenceId);
+        final Object id;
+        if (this instanceof HibernateProxy proxy) {
+            id = proxy.getHibernateLazyInitializer().getIdentifier();
+        } else {
+            id = this.conditionOccurrenceId;
+        }
+        return Objects.hash(id);
     }
 
     @Override
