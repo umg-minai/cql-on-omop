@@ -38,14 +38,14 @@ As a result, this project has to be built by first building the CQL engine. All 
 
 7. `mvn package`
 
-Successful compilation produces a standalone application in a file like `target/cql-on-omop-1.1.5-SNAPSHOT.jar`.
+Successful compilation produces a standalone application in a file like `target/cql-on-omop-1.1.6-SNAPSHOT.jar`.
 
 ### Interactive REPL
 
 To start the REPL and connect to a database
 
 ```bash
-CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.1.5-SNAPSHOT.jar \
+CQL_ON_OMOP_DATABASE_PASSWORD=$(GET-PASSWORD) java -jar REPOSITORY-DIRECTORY/target/cql-on-omop-1.1.6-SNAPSHOT.jar \
   repl -h DATABASE-SERVER-HOST -p DATABASE-SERVER-PORT -u DATABASE-USERNAME -d DATABASE-NAME [-s DATABASE-SCHEMA]
 ```
 
