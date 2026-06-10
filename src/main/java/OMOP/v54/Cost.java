@@ -3,6 +3,7 @@
 package OMOP.v54;
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
@@ -437,13 +438,31 @@ public class Cost {
         if (!(o instanceof Cost other)) {
             return false;
         } else {
-            return Objects.equals(this.costId, other.costId);
+            final Object thisId;
+            if (this instanceof HibernateProxy proxy) {
+                thisId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                thisId = this.costId;
+            }
+            final Object otherId;
+            if (other instanceof HibernateProxy proxy) {
+                otherId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                otherId = other.costId;
+            }
+            return Objects.equals(thisId, otherId);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.costId);
+        final Object id;
+        if (this instanceof HibernateProxy proxy) {
+            id = proxy.getHibernateLazyInitializer().getIdentifier();
+        } else {
+            id = this.costId;
+        }
+        return Objects.hash(id);
     }
 
     @Override

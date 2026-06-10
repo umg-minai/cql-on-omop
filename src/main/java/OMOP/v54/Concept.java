@@ -3,6 +3,7 @@
 package OMOP.v54;
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
@@ -236,13 +237,31 @@ public class Concept {
         if (!(o instanceof Concept other)) {
             return false;
         } else {
-            return Objects.equals(this.conceptId, other.conceptId);
+            final Object thisId;
+            if (this instanceof HibernateProxy proxy) {
+                thisId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                thisId = this.conceptId;
+            }
+            final Object otherId;
+            if (other instanceof HibernateProxy proxy) {
+                otherId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                otherId = other.conceptId;
+            }
+            return Objects.equals(thisId, otherId);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.conceptId);
+        final Object id;
+        if (this instanceof HibernateProxy proxy) {
+            id = proxy.getHibernateLazyInitializer().getIdentifier();
+        } else {
+            id = this.conceptId;
+        }
+        return Objects.hash(id);
     }
 
     @Override

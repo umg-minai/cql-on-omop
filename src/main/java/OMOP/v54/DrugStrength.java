@@ -3,6 +3,7 @@
 package OMOP.v54;
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.opencds.cqf.cql.engine.runtime.Date;
 import org.opencds.cqf.cql.engine.runtime.DateTime;
 
@@ -339,13 +340,31 @@ public class DrugStrength {
         if (!(o instanceof DrugStrength other)) {
             return false;
         } else {
-            return Objects.equals(this.compoundId, other.compoundId);
+            final Object thisId;
+            if (this instanceof HibernateProxy proxy) {
+                thisId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                thisId = this.compoundId;
+            }
+            final Object otherId;
+            if (other instanceof HibernateProxy proxy) {
+                otherId = proxy.getHibernateLazyInitializer().getIdentifier();
+            } else {
+                otherId = other.compoundId;
+            }
+            return Objects.equals(thisId, otherId);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.compoundId);
+        final Object id;
+        if (this instanceof HibernateProxy proxy) {
+            id = proxy.getHibernateLazyInitializer().getIdentifier();
+        } else {
+            id = this.compoundId;
+        }
+        return Objects.hash(id);
     }
 
     @Override
