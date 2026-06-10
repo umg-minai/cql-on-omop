@@ -109,6 +109,11 @@ public class OMOPModelResolver implements ModelResolver {
     }
 
     @Override
+    public boolean canUseEquals(final Class<?> clazz) {
+        return mappingInfo.getDataTypeInfo(clazz) != null;
+    }
+
+    @Override
     public Boolean objectEqual(final Object left, final Object right) {
         return left.equals(right);
     }
