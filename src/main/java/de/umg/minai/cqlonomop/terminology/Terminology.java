@@ -2,12 +2,13 @@ package de.umg.minai.cqlonomop.terminology;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.umg.minai.cqlonomop.commandline.CqlOptions;
 import de.umg.minai.cqlonomop.commandline.DatabaseOptions;
 import de.umg.minai.cqlonomop.commandline.DefaultValueProvider;
 import de.umg.minai.cqlonomop.engine.CQLonOMOPEngine;
-import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.CodeSystems;
+import de.umg.minai.cqlonomop.engine.Configuration;
 import de.umg.minai.cqlonomop.engine.OMOPDataProvider;
 import de.umg.minai.cqlonomop.terminal.DefaultTheme;
 import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
@@ -18,6 +19,7 @@ import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.opencds.cqf.cql.engine.data.DataProvider;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
@@ -25,6 +27,7 @@ import picocli.CommandLine.Command;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 @Command(
         name = "terminology",
@@ -43,6 +46,13 @@ public class Terminology implements Callable<Integer> {
 
     @ArgGroup(validate = false, heading = "CQL Options%n")
     private CqlOptions cqlOptions;
+
+    @CommandLine.Option(names = { "--resolve-concepts" },
+                        description = """
+                                      Controls whether to resolve OMOP concepts: if true, codes that refer to OMOP \
+                                      concepts in "hierarchical" mode, are resolved to the set of descendant concepts.
+                                      """)
+    private boolean resolveConcepts  = false;
 
     @CommandLine.Parameters(
             arity = "1..*",
@@ -67,7 +77,7 @@ public class Terminology implements Callable<Integer> {
             String id,
             String name,
             String domain,
-            Boolean withAncestors,
+            boolean withAncestors,
             Set<String> usingLibraries
     ) {}
 
@@ -108,12 +118,15 @@ public class Terminology implements Callable<Integer> {
                 final var newLibraries = engine.prepareLibrary(new VersionedIdentifier().withId(library));
                 allLibraries.addAll(newLibraries);
             }
+            // Collect the terminology, possibly using the database to resolve "hierarchical" concept references and
+            // adding more information to concepts.
             Collection<ConceptInfo> conceptInfos =
                     engine.getSessionFactory() != null
-                            ? engine.withEngineSession(session -> collectTerminology(session, allLibraries))
-                            : collectTerminology(null, allLibraries);
+                            ? engine.withEngineSession(session -> collectTerminology(session, allLibraries, resolveConcepts))
+                            : collectTerminology(null, allLibraries, resolveConcepts);
             // Output collected concept info as JSON.
-            var objectMapper = new ObjectMapper();
+            var objectMapper = new ObjectMapper()
+                .enable(SerializationFeature.INDENT_OUTPUT);
             objectMapper.writeValue(System.out, conceptInfos);
         } catch (final Exception exception) {
             errorPresenter.presentError(exception);
@@ -124,7 +137,18 @@ public class Terminology implements Callable<Integer> {
     }
 
     private Collection<ConceptInfo> collectTerminology(final CQLonOMOPEngine.EngineSession session,
-                                                       final Collection<Library> libraries) {
+                                                       final Collection<Library> libraries,
+                                                      boolean resolveConcepts) {
+        if (resolveConcepts && session == null) {
+            throw new RuntimeException("Was asked to resolve OMOP concepts but a database connection is not available.");
+        }
+
+        // If we have a database connection, get the OMOP data provider so that we can perform retrieve operations.
+        final var dataProvider = session != null
+            ? session.cqlEngine().getEnvironment().getDataProviders().values().stream()
+            .filter(provider -> provider instanceof OMOPDataProvider)
+            .findFirst().orElseThrow()
+            : null;
         // Step 1: collect the code systems used in all libraries. This information is required to resolve code system
         // references within code definition.
         final var codeSystems = new HashMap<CodeSystemKey, String>();
@@ -183,42 +207,41 @@ public class Terminology implements Callable<Integer> {
         }
         // Step 3: If a database connection is available, augment the collected OMOP concept ids with the concept
         // name, domain name and possibly other information. Otherwise, those fields will be empty.
-        final var conceptInfos = new ArrayList<ConceptInfo>();
+        final var conceptInfos = new HashMap<String, ConceptInfo>();
         for (final var entry : codes.entrySet()) {
             final var code = entry.getKey();
             final var id = code.code();
-            String name = null;
-            String domainName = null;
-            Set<String> usingLibraries = entry.getValue();
-            if (session != null) {
-                final var dataProvider = session.cqlEngine().getEnvironment().getDataProviders().values().stream()
-                        .filter(provider -> provider instanceof OMOPDataProvider)
-                        .findFirst().orElseThrow();
-                final var queryCode = new org.opencds.cqf.cql.engine.runtime.Code().withCode(code.code()).withSystem(code.system());
-                final var result = dataProvider.retrieve(null,
-                        null,
-                        null,
-                        "Concept",
-                        null,
-                        "concept",
-                        List.of(queryCode),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
-                final var iterator = result.iterator();
-                if (iterator.hasNext()) {
+            final var usingLibraries = entry.getValue();
+            final var iterator = dataProvider != null
+                ? fetchConcepts(dataProvider, List.of(code), resolveConcepts).iterator()
+                : null;
+            // For custom concepts, the lookup will produce no results. Use the concept as-is in that case.
+            if (iterator != null && iterator.hasNext()) {
+                while (iterator.hasNext()) {
                     final var concept = iterator.next();
-                    final var domain = dataProvider.resolvePath(concept, "domain");
-                    name = (String) dataProvider.resolvePath(concept, "conceptName");
-                    domainName = (String) dataProvider.resolvePath(domain, "domainName");
+                    final var idInteger = (Integer) dataProvider.resolvePath(concept, "conceptId");
+                    final var idString = String.valueOf(idInteger);
+                    if (!conceptInfos.containsKey(idString)) {
+                        final var domain = dataProvider.resolvePath(concept, "domain");
+                        final var name = (String) dataProvider.resolvePath(concept, "conceptName");
+                        final var domainName= (String) dataProvider.resolvePath(domain, "domainName");
+                        conceptInfos.put(idString, new ConceptInfo(idString,
+                                name,
+                                domainName,
+                                false,
+                                usingLibraries));
+                    }
                 }
+                assert(conceptInfos.containsKey(id));
+            } else {
+                conceptInfos.put(id, new ConceptInfo(id,
+                        null,
+                        null,
+                        code.hierarchical(),
+                        usingLibraries));
             }
-            final var conceptInfo = new ConceptInfo(id, name, domainName, code.hierarchical(), usingLibraries);
-            conceptInfos.add(conceptInfo);
         }
-        return conceptInfos;
+        return conceptInfos.values();
     }
 
     /*
@@ -235,17 +258,17 @@ public class Terminology implements Callable<Integer> {
         // Case 1
         //   "OMOPSV Hierarchy" -> "https://fhir-terminology.ohdsi.org?hierarchical" via codeSystems.get()
         //   "https://fhir-terminology.ohdsi.org?hierarchical" -> <null, true>       via CodeSystems.resolveCodeSystem()
-        //   <null, true> -> <"https://fhir-terminology.ohdsi.org?hierarchical", true>
+        //   <null, true> -> <"https://fhir-terminology.ohdsi.org", true>
         //
         // Case 2
-        //   "OMOPSV" -> "https://fhir-terminology.ohdsi.org"                   via codeSystems.get()
-        //   "https://fhir-terminology.ohdsi.org" -> <null, false>              via CodeSystems.resolveCodeSystem()
-        //   <null, false> -> <"https://fhir-terminology.ohdsi.org?hierarchical", false>
+        //   "OMOPSV"                             -> "https://fhir-terminology.ohdsi.org"          via codeSystems.get()
+        //   "https://fhir-terminology.ohdsi.org" -> <null, false>                                 via CodeSystems.resolveCodeSystem()
+        //   <null, false>                        -> <"https://fhir-terminology.ohdsi.org", false>
         //
         // Case 3
-        //   "LOINC" -> "http://loinc.org"          via codeSystems.get()
-        //   "http://loinc.org" -> <"LOINC", false> via Codesystems.resolveCodeSystem()
-        //   <"LOINC", false> -> null
+        //   "LOINC"            -> "http://loinc.org" via codeSystems.get()
+        //   "http://loinc.org" -> <"LOINC", false>   via Codesystems.resolveCodeSystem()
+        //   <"LOINC", false>   -> null
         final var codeSystemURL = codeSystems.get(key);
         final var resolved = CodeSystems.resolveCodeSystem(codeSystemURL);
         if (resolved.id() == null) { // null means OMOP Standard Vocabulary
@@ -253,6 +276,26 @@ public class Terminology implements Callable<Integer> {
         } else {
             return null;
         }
+    }
+
+    private Iterable<Object> fetchConcepts(final DataProvider dataProvider, final Collection<Code> codes, boolean resolve) {
+        final var queryCodes = codes.stream()
+            .map(code -> new org.opencds.cqf.cql.engine.runtime.Code()
+                 .withCode(code.code())
+                 .withSystem(code.system() + (resolve && code.hierarchical() ? "?hierarchical" : "")))
+            .collect(Collectors.toList());
+        return dataProvider.retrieve(null,
+                null,
+                null,
+                "Concept",
+                null,
+                "concept",
+                queryCodes,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
 }
