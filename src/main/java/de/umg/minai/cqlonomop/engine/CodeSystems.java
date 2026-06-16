@@ -1,6 +1,8 @@
 package de.umg.minai.cqlonomop.engine;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -41,8 +43,8 @@ public class CodeSystems {
         // Parse the code system designator as a URL.
         final URL codeSystemURL;
         try {
-            codeSystemURL= new URL(codeSystem);
-        } catch (MalformedURLException exception) {
+            codeSystemURL= new URI(codeSystem).toURL();
+        } catch (final URISyntaxException | MalformedURLException exception) {
             throw new RuntimeException(String.format("Code system URL '%s' is not valid: %s",
                     codeSystem,
                     exception));
@@ -55,12 +57,15 @@ public class CodeSystems {
         }
         if (query.equals("hierarchical")) {
             try {
-                final var baseURL = new URL(codeSystemURL.getProtocol(),
-                        codeSystemURL.getHost(),
-                        codeSystemURL.getPort(),
-                        codeSystemURL.getPath());
+                final var baseURL = new URI(codeSystemURL.getProtocol(),
+                                            null,
+                                            codeSystemURL.getHost(),
+                                            codeSystemURL.getPort(),
+                                            codeSystemURL.getPath(),
+                                            null,
+                                            null).toURL();
                 return new ResolutionResult(baseURL.toString(), true);
-            } catch (MalformedURLException exception) {
+            } catch (final URISyntaxException | MalformedURLException exception) {
                 throw new RuntimeException("should not happen");
             }
         } else {
@@ -87,11 +92,11 @@ public class CodeSystems {
         } else {
             final var id = OMOP_CODESYSTEM_URI_TO_VOCABULARY_ID.get(URLandHierarchical.id());
             if (id == null) {
-                throw new RuntimeException(String.format("Could not resolve codesystem URL '%s' (normalize from '%s'",
+                throw new RuntimeException(String.format("Could not resolve codesystem URL '%s' (normalized from '%s')",
                         URLandHierarchical.id(),
                         codeSystem));
             }
-            return new ResolutionResult(id, URLandHierarchical.hierarchical);
+            return new ResolutionResult(id, URLandHierarchical.hierarchical());
         }
     }
 
