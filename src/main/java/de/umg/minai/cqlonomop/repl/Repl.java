@@ -148,7 +148,7 @@ public class Repl implements Callable<Integer> {
         final var valuePresenter = new ValuePresenter(terminal, theme);
         this.resultPresenter = new ResultPresenter(terminal, theme, sourcePresenter, valuePresenter);
         this.errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
-        final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter);
+        final var outcomePresenter = new OutcomePresenter(terminal, theme, resultPresenter, errorPresenter, false);
         this.processor = new Processor(this.commandProcessor, evaluator, outcomePresenter);
         // CommandProfile is a bit special because it requires the outcome presenter.
         this.commandProcessor.registerCommand(new CommandProfile(this.evaluator, outcomePresenter));

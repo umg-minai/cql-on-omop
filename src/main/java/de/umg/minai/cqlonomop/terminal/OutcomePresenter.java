@@ -2,8 +2,11 @@ package de.umg.minai.cqlonomop.terminal;
 
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import org.jline.terminal.Terminal;
+import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.exception.Severity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,6 +28,8 @@ public class OutcomePresenter extends AbstractPresenter {
 
     private final ErrorPresenter errorPresenter;
 
+    // State tracking
+
     private Set<String> oldState = Set.of();
 
     private Set<String> newState = null;
@@ -34,15 +39,25 @@ public class OutcomePresenter extends AbstractPresenter {
     private static final int WARNING = 2;
     private final long[] counts = {0, 0, 0};
 
+    private record MessageKey(Severity severity, String message) {}
+
+    private record MessageInfo(Exception prototype, long count) {}
+
+    private Map<MessageKey, MessageInfo> clusters;
+
     private long startTime = 0;
 
     public OutcomePresenter(final Terminal terminal,
                             final Theme theme,
                             final ResultPresenter resultPresenter,
-                            final ErrorPresenter errorPresenter) {
+                            final ErrorPresenter errorPresenter,
+                            final boolean messageCounts) {
         super(terminal, theme);
         this.resultPresenter = resultPresenter;
         this.errorPresenter = errorPresenter;
+        if (messageCounts) {
+            this.clusters = new HashMap<>();
+        }
     }
 
     public void beginPresentation() {
@@ -50,6 +65,9 @@ public class OutcomePresenter extends AbstractPresenter {
         this.counts[SUCCESS] = 0;
         this.counts[FAILURE] = 0;
         this.counts[WARNING] = 0;
+        if (this.clusters != null) {
+            this.clusters.clear();
+        }
         this.startTime = System.nanoTime();
     }
 
@@ -59,28 +77,46 @@ public class OutcomePresenter extends AbstractPresenter {
         }
         final var endTime = System.nanoTime();
         final var elapsed = endTime - this.startTime;
-        if (counts[FAILURE] > 0 || (elapsed) > 2_000_000_000) {
-            final var builder = new ThemeAwareStringBuilder(this.theme)
-                    .style(this.theme.styleForElement(Theme.Element.INACTIVE))
-                    .append(String.format("%d ms", elapsed / 1_000_000))
-                    .append(", ")
-                    .append(String.valueOf(counts[SUCCESS]))
-                    .append(" ")
-                    .append(counts[SUCCESS] == 1 ? "success" : "successes")
-                    .append(", ");
-            if (counts[FAILURE] > 0) {
-                builder.style(this.theme.styleForElement(Theme.Element.ERROR));
-            }
-            builder.append(String.valueOf(counts[FAILURE]))
-                    .append(" ")
-                    .append(counts[FAILURE] == 1 ? "failure" : "failures");
-
+        if (counts[FAILURE] > 0 || counts[WARNING] > 0 || elapsed > 2_000_000_000) {
+            final var builder = new ThemeAwareStringBuilder(this.theme);
+            builder.withStyle(this.theme.styleForElement(Theme.Element.INACTIVE),
+                    (builder2) -> {
+                builder2.append(String.format("%.3f s", elapsed / 1_000_000_000.0d))
+                        .append(", ")
+                        .append(String.valueOf(counts[SUCCESS]))
+                        .append(" ")
+                        .append(counts[SUCCESS] == 1 ? "success" : "successes")
+                        .append(", ");
+                if (counts[FAILURE] > 0) {
+                    builder2.style(this.theme.styleForElement(Theme.Element.ERROR));
+                }
+                builder2.append(String.valueOf(counts[FAILURE]))
+                        .append(" ")
+                        .append(counts[FAILURE] == 1 ? "failure" : "failures");
+                return builder2;
+            });
             if (counts[WARNING] > 0) {
                 builder.append(", ");
-                builder.style(this.theme.styleForElement(Theme.Element.WARNING));
-                builder.append(String.valueOf(counts[WARNING]))
-                        .append(" ")
-                        .append(counts[WARNING] == 1 ? "warning" : "warnings");
+                builder.withStyle(this.theme.styleForElement(Theme.Element.WARNING),
+                        (builder2) ->
+                                builder2.append(String.valueOf(counts[WARNING]))
+                                        .append(" ")
+                                        .append(counts[WARNING] == 1 ? "warning" : "warnings"));
+            }
+            if (this.clusters != null && !this.clusters.isEmpty()) {
+                builder.append("\n");
+                for (var entry : this.clusters.entrySet()) {
+                    final var severity = entry.getKey().severity;
+                    final var prototype = entry.getValue().prototype;
+                    final var count = entry.getValue().count;
+                    var message = prototype.getMessage();
+                    // For error messages, the CQL engine append '\n<value>' to the message where <value> is the first
+                    // argument to the Message function. Strip that extra line.
+                    if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
+                        message = message.substring(0, message.lastIndexOf('\n'));
+                    }
+                    builder.append(String.format("%5d time(s): %s '%s'\n", count, severity.toString(), message));
+                }
             }
             builder.println(this.terminal);
         }
@@ -99,9 +135,12 @@ public class OutcomePresenter extends AbstractPresenter {
             }
             var debugResult = success.result().getDebugResult();
             if (debugResult != null) {
-                this.counts[WARNING] += debugResult.getMessages().stream()
-                        .filter(message -> message.getSeverity() == Severity.WARNING)
-                        .count();
+                 debugResult.getMessages().stream()
+                         .filter(message -> message.getSeverity() == Severity.WARNING)
+                         .forEach(warning -> {
+                             this.counts[WARNING] += 1;
+                             registerMessage(warning);
+                         });
             }
             this.counts[SUCCESS]++;
         } else if (outcome instanceof MapReduceEngine.Outcome.Failure failure) {
@@ -110,6 +149,7 @@ public class OutcomePresenter extends AbstractPresenter {
                 this.errorPresenter.presentError(builder, failure.error());
             }
             this.counts[FAILURE]++;
+            this.registerMessage(failure.error());
         }
         builder.print(this.terminal);
         this.terminal.flush();
@@ -119,6 +159,20 @@ public class OutcomePresenter extends AbstractPresenter {
         builder.withStyle(Theme.Element.HEADING,
                         contextObject != null ? contextObject.toString() : "Unfiltered Context")
                 .append("\n");
+    }
+
+    private void registerMessage(final Exception exception) {
+        if (this.clusters != null) {
+            MessageKey key;
+            if (exception instanceof CqlException cqlException) {
+                key = new MessageKey(cqlException.getSeverity(), cqlException.getMessage());
+            } else {
+                key = new MessageKey(Severity.ERROR, exception.getMessage());
+            }
+            this.clusters.compute(key, (_key, value) ->
+                    new MessageInfo(value != null ? value.prototype : exception,
+                            value != null ? value.count + 1 : 1));
+        }
     }
 
 }

@@ -113,6 +113,21 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     private boolean printMessages;
 
     @CommandLine.Option(
+            names = { "--print-message-counts" },
+            negatable = true,
+            description = """
+                    After printing the evaluation summary (success, warning and failure counts and elapsed time) also \
+                    print a breakdown of error, warning, etc. messages by frequency of occurrence.
+                    Enabled by default. This breakdown is intended to help with comparing batch runs and with \
+                    spotting new or rare messages that are easy to miss in the detailed message output which precedes \
+                    the summary.
+                    """,
+            defaultValue = "true",
+            fallbackValue = "true"
+    )
+    private boolean printMessageCounts;
+
+    @CommandLine.Option(
             names = { "--print-results" },
             negatable = true,
             description = """
@@ -197,7 +212,8 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                         (printResults || printResultsMatching != null) ? valuePresenter : null,
                         printResultsMatching)
                         : null,
-                printErrors ? errorPresenter : null);
+                printErrors ? errorPresenter : null,
+                printMessageCounts);
 
         // Prepare the requested result sink. The result sink will receive all evaluation results in the reduce step
         // of the MapReduceEngine and extract the expressions for resultNames for processing. It will also compute
