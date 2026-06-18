@@ -83,12 +83,6 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     )
     private Path profilePath;
 
-    private enum ProgressOutput {
-        NONE,
-        PROGRESS,
-        EXPRESSION_RESULTS
-    }
-
     @CommandLine.Option(
             names = { "--print-errors" },
             negatable = true,
