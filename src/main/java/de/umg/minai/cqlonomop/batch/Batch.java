@@ -92,9 +92,11 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                     when a CQL library is evaluated repeatedly, for example for each individual patient, the \
                     individual evaluations can succeed or fail so that any number of errors may be printed. The \
                     (UNIX) return value of the process is not affected by this option.
-                    """
+                    """,
+            defaultValue = "true",
+            fallbackValue = "true"
     )
-    private Boolean printErrors = true;
+    private boolean printErrors;
 
     @CommandLine.Option(
             names = { "--print-messages" },
@@ -104,9 +106,11 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                     Messages during evaluation are printed as soon as they are encountered by default. In particular, \
                     when a CQL library is evaluated repeatedly, for example for each individual patient, the \
                     individual evaluations can produce any number of messages.
-                    """
+                    """,
+            defaultValue = "true",
+            fallbackValue = "true"
     )
-    private Boolean printMessages = true;
+    private boolean printMessages;
 
     @CommandLine.Option(
             names = { "--print-results" },
@@ -116,9 +120,10 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                     This option is most useful for semi-interactive work and during development and debugging of CQL \
                     libraries. That said, it is of course possible to additionally select a sink for actual \
                     processing of the evaluation results.
-                    """
+                    """,
+            defaultValue = "false"
     )
-    private Boolean printResults = false;
+    private boolean printResults;
 
     @CommandLine.Option(
             names = { "--print-results-matching"},
@@ -139,9 +144,10 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                     Print some indication of progress during evaluation.
                     This option is most suitable for long-running evaluations in which the processing of results is \
                     handled by some sink other than the noop sink.
-                    """
+                    """,
+            defaultValue = "false"
     )
-    private Boolean printProgress = false;
+    private boolean printProgress;
 
     // A temporary source provider that is used for evaluating stand-alone CQL expressions. We use this to compute
     // the values of the CQL context object(s) and CQL parameters.
