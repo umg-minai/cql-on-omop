@@ -5,11 +5,9 @@ import org.opencds.cqf.cql.engine.runtime.*;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ValuePresenter extends AbstractPresenter {
 
@@ -54,11 +52,27 @@ public class ValuePresenter extends AbstractPresenter {
                     .filter(method -> method.getName().startsWith("get")
                             && !method.getName().equals("getClass")
                             && !method.getName().equals("getHibernateLazyInitializer"))
-                    .sorted(Comparator.comparing(Method::getName))
+                    .collect(Collectors.toMap(Method::getName, method -> method));
+            // Omit getter methods that would lead to some relation being presented twice (once for the foreign key and
+            // a second time for the related object). Concretely, omit getter methods for which
+            // 1. The name ends with "Id"
+            // 2. Another getter method with the same name except for the "Id" suffix exists
+            var iterator = getters.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                var name = entry.getKey();
+                if (name.endsWith("Id") && getters.get(name.substring(0, name.length() - 2)) != null) {
+                    iterator.remove();
+                }
+            }
+            // Sort and present the values of the remaining getter methods.
+            final var sortedGetters = getters.entrySet().stream()
+                    .sorted(Comparator.comparing(Map.Entry::getKey))
                     .toList();
             presentFields(builder,
-                    fieldPrinter -> getters.forEach(method -> {
-                        final var methodName = method.getName();
+                    fieldPrinter -> sortedGetters.forEach(entry -> {
+                        final var method = entry.getValue();
+                        final var methodName = entry.getKey();
                         final var fieldName = methodName.substring(3, 4).toLowerCase(Locale.ROOT)
                                 + methodName.substring(4);
                         fieldPrinter.accept(fieldName);
@@ -69,7 +83,7 @@ public class ValuePresenter extends AbstractPresenter {
                             builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
                         }
                     }),
-                    getters.size() > 4);
+                    sortedGetters.size() > 4);
         } else {
             presentValueSimple(builder, value);
         }
