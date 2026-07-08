@@ -71,16 +71,20 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
                                      String dateLowPath,
                                      String dateHighPath,
                                      Interval dateRange) {
-        if (this.entityManager == null) {
-            throw new RuntimeException("Cannot evaluate retrieve expression because database connection is not initialized.");
-        }
         // A "context Patient" statement is translated to something like "define Patient: [Person]" which then chokes
         // on the returned list because it expects a single element. Work around that issue. The replacement value
         // we provide here does not really matter since subsequent statements use the context value that we supply
         // directly.
-        if (Objects.equals(contextPath, "person") && Objects.equals(contextValue, "DummyContextObject")) {
+        if (Objects.equals(contextPath, "person") && dataType.equals("Person")) {
             return List.of(contextValue);
         }
+        // If we get here, the retrieve operation cannot be performed using just contextValue.  Database queries require
+        // the entityManager, so throw an exception if it is not available.
+        if (this.entityManager == null) {
+            throw new RuntimeException("Cannot evaluate retrieve expression because database connection is not"
+                    + " initialized.");
+        }
+
         final var entityManager = this.entityManager;
         // Create a base query that selects from the OMOP table for dataType.
         final var criteriaBuilder = entityManager.getCriteriaBuilder();
