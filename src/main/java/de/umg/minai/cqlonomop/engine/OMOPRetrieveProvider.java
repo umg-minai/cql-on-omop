@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.hibernate.query.sqm.PathElementException;
+import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
 import org.opencds.cqf.cql.engine.runtime.Interval;
@@ -76,7 +77,11 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         // we provide here does not really matter since subsequent statements use the context value that we supply
         // directly.
         if (Objects.equals(contextPath, "person") && dataType.equals("Person")) {
-            return List.of(contextValue);
+            if (contextValue != null) {
+                return List.of(contextValue);
+            } else {
+                throw new CqlException("Attempt to access context object when the context is not established.");
+            }
         }
         // If we get here, the retrieve operation cannot be performed using just contextValue.  Database queries require
         // the entityManager, so throw an exception if it is not available.
