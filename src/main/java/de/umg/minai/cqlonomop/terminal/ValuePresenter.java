@@ -1,8 +1,10 @@
 package de.umg.minai.cqlonomop.terminal;
 
 import org.jline.terminal.Terminal;
+import org.jline.utils.AttributedStyle;
 import org.opencds.cqf.cql.engine.runtime.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
@@ -10,6 +12,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ValuePresenter extends AbstractPresenter {
+
+    private final String ATHENA_UI_URL = "https://athena.ohdsi.org";
 
     public ValuePresenter(final Terminal terminal, final Theme theme) {
         super(terminal, theme);
@@ -162,6 +166,22 @@ public class ValuePresenter extends AbstractPresenter {
         if (value == null) {
             element = Theme.Element.GENERIC_LITERAL;
             string = "null";
+        } else if (!terminal.getType().equals(Terminal.TYPE_DUMB)
+                && (value.getClass().getSimpleName().equals("Concept")
+                || value.getClass().getSuperclass().getSimpleName().equals("Concept"))) {
+            var id = 0L;
+            try {
+                final var raw = value.getClass().getMethod("getConceptId").invoke(value);
+                if (raw instanceof Integer i) {
+                    id = i.longValue();
+                }
+            } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
+            final var linkStart = String.format("\033]8;;%s/search-terms/terms/%d\033\\", ATHENA_UI_URL, id);
+            final var linkEnd = "\033]8;;\033\\";
+            builder.styled(AttributedStyle.HIDDEN, linkStart);
+            builder.withStyle(Theme.Element.GENERIC_LITERAL, value.toString());
+            builder.styled(AttributedStyle.HIDDEN, linkEnd);
+            return;
         } else if (value instanceof Long) {
             element = Theme.Element.NUMBER_LITERAL;
             string = value + "L";
