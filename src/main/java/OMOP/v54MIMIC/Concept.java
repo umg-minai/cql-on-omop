@@ -60,6 +60,13 @@ public class Concept {
         return this.conceptId;
     }
 
+    /**
+     * Warning: This setter can be used to create invalid concepts.
+     */
+    public void setConceptId(final Integer newValue) {
+        this.conceptId = newValue;
+    }
+
     @Column(name = "concept_name", updatable = false, nullable = false)
     private String conceptName;
     
