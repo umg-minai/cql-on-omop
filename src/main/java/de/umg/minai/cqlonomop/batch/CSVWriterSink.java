@@ -5,8 +5,9 @@ import org.opencds.cqf.cql.engine.execution.ExpressionResult;
 import org.opencds.cqf.cql.engine.runtime.Tuple;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CSVWriterSink extends ExpressionResultToFileWriterSink {
 
@@ -37,7 +38,7 @@ public class CSVWriterSink extends ExpressionResultToFileWriterSink {
                 addToRow(row, element);
                 rowIndex++;
             }
-        } else if (value instanceof Tuple) {
+        } else if (value instanceof Tuple || value.getClass().getPackageName().startsWith("OMOP")) {
             final var row = ensureRow(rowIndex);
             maybeAddContext(row, contextObject);
             addToRow(row, value);
@@ -73,6 +74,8 @@ public class CSVWriterSink extends ExpressionResultToFileWriterSink {
             addIterableElements(row, iterable);
         } else if (object instanceof Tuple tuple) {
             addTupleElements(row, tuple);
+        } else if (object.getClass().getPackageName().startsWith("OMOP")) {
+            addObjectFields(row, object);
         } else {
             throw new RuntimeException(String.format("Unexpected result element %s (type %s, expected List or Tuple)",
                     object,
@@ -90,6 +93,45 @@ public class CSVWriterSink extends ExpressionResultToFileWriterSink {
             final var value = namedElements.get(key);
             row.add(value != null ? value.toString() : "null");
         });
+    }
+
+    private void addObjectFields(final List<String> row, final Object object) {
+        final var clazz = object.getClass();
+        final var getters = Arrays.stream(clazz.getMethods())
+                .filter(method -> method.getName().startsWith("get")
+                        && !method.getName().equals("getClass")
+                        && !method.getName().equals("getHibernateLazyInitializer"))
+                .collect(Collectors.toMap(Method::getName, method -> method));
+        // Omit getter methods that would lead to some relation being presented twice (once for the foreign key and
+        // a second time for the related object). Concretely, omit getter methods for which
+        // 1. The name ends with "Id"
+        // 2. Another getter method with the same name except for the "Id" suffix exists
+        var iterator = getters.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            var name = entry.getKey();
+            if (getters.get(name + "Id") != null) {
+                iterator.remove();
+            }
+        }
+        // Sort and present the values of the remaining getter methods.
+        getters.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    final var method = entry.getValue();
+                    try {
+                        final var fieldValue = method.invoke(object);
+                        if (fieldValue == null) {
+                          row.add("");
+                        } else if (fieldValue instanceof Optional<?> optional) {
+                            row.add(optional.isPresent() ? optional.get().toString() : "");
+                        } else {
+                            row.add(fieldValue.toString());
+                        }
+                    } catch (Exception e) {
+                        row.add(String.format("«Error: %s»", e));
+                    }
+                });
     }
 
     private void printSlice(final List<List<String>> slice, final PrintWriter stream) {
