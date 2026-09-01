@@ -8,6 +8,7 @@ import org.opencds.cqf.cql.engine.exception.Severity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Present an {@link de.umg.minai.cqlonomop.engine.MapReduceEngine.Outcome} to a terminal. Both success and failure
@@ -103,6 +104,7 @@ public class OutcomePresenter extends AbstractPresenter {
                                         .append(" ")
                                         .append(counts[WARNING] == 1 ? "warning" : "warnings"));
             }
+            // Summary of warning and message clusters.
             if (this.clusters != null && !this.clusters.isEmpty()) {
                 builder.append("\n");
                 for (var entry : this.clusters.entrySet()) {
@@ -163,14 +165,26 @@ public class OutcomePresenter extends AbstractPresenter {
                 .append("\n");
     }
 
+    private static final Pattern DATETIME_PATTERN
+            = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}(:?T[0-9]{2}:[0-9]{2}:[0-9]{2}(:?.[0-9]{3}(:?[+-][0-9]{2}:[0-9]{2})?)?)?");
+
+    private static final Pattern FLOATING_POINT_VALUE
+            = Pattern.compile("[+-]?[0-9]*[.][0-9]*");
+
     private void registerMessage(final Exception exception) {
         if (this.clusters != null) {
-            MessageKey key;
+            final Severity keySeverity;
+            String keyMessage;
             if (exception instanceof CqlException cqlException) {
-                key = new MessageKey(cqlException.getSeverity(), cqlException.getMessage());
+                keySeverity = cqlException.getSeverity();
+                keyMessage = cqlException.getMessage();
             } else {
-                key = new MessageKey(Severity.ERROR, exception.getMessage());
+                keySeverity = Severity.ERROR;
+                keyMessage = exception.getMessage();
             }
+            keyMessage = DATETIME_PATTERN.matcher(keyMessage).replaceAll("«DateTime»");
+            keyMessage = FLOATING_POINT_VALUE.matcher(keyMessage).replaceAll("«Number»");
+            final MessageKey key = new MessageKey(keySeverity, keyMessage);
             this.clusters.compute(key, (_key, value) ->
                     new MessageInfo(value != null ? value.prototype : exception,
                             value != null ? value.count + 1 : 1));
