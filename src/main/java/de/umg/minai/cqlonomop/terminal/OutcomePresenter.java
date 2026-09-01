@@ -29,7 +29,8 @@ public class OutcomePresenter extends AbstractPresenter {
     public enum Option {
         PRESENT_MESSAGES,
         PRESENT_ERRORS,
-        PRESENT_MESSAGE_SUMMARY
+        PRESENT_MESSAGE_SUMMARY,
+        PRESENT_MESSAGE_SUMMARY_PROTOTYPES
     }
 
     public static EnumSet<Option> DEFAULT_OPTIONS = EnumSet.of(Option.PRESENT_MESSAGES, Option.PRESENT_ERRORS);
@@ -136,6 +137,22 @@ public class OutcomePresenter extends AbstractPresenter {
                         message = message.substring(0, message.lastIndexOf('\n'));
                     }
                     builder.append(String.format("%5d time(s): %s '%s'\n", count, severity.toString(), message));
+                }
+                // If requested, detailed presentation of one prototype for each cluster.
+                if (this.options.contains(Option.PRESENT_MESSAGE_SUMMARY_PROTOTYPES)) {
+                    for (var messageInfo : this.clusters.values()) {
+                        final var prototype = messageInfo.prototype;
+                        builder.append("\n");
+                        if (prototype instanceof CqlException cqlException) {
+                            if (cqlException.getSeverity() == Severity.ERROR) {
+                                this.errorPresenter.presentError(builder, cqlException);
+                            } else {
+                                this.resultPresenter.presentMessage(builder, cqlException);
+                            }
+                        } else {
+                            this.errorPresenter.presentError(builder, prototype);
+                        }
+                    }
                 }
             }
             builder.println(this.terminal);

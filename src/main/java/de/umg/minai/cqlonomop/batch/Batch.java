@@ -113,20 +113,36 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     )
     private boolean printMessages;
 
+    private enum MessageSummary {
+        NONE,
+        BRIEF,
+        DETAILED
+    }
+
+    private static class MessageSummaryConverter implements CommandLine.ITypeConverter<MessageSummary> {
+
+        @Override
+        public MessageSummary convert(String value) {
+            return MessageSummary.valueOf(value.toUpperCase());
+        }
+
+    }
+
     @CommandLine.Option(
-            names = { "--print-message-counts" },
-            negatable = true,
+            names = { "--print-message-summary" },
             description = """
                     After printing the evaluation summary (success, warning and failure counts and elapsed time) also \
-                    print a breakdown of error, warning, etc. messages by frequency of occurrence.
-                    Enabled by default. This breakdown is intended to help with comparing batch runs and with \
+                    print either a brief breakdown of error, warning, etc. messages by frequency of occurrence or the aforementioned breakdown and details for one representative of each message category.
+                    A brief breakdown is printed by default. This breakdown is intended to help with comparing batch runs and with \
                     spotting new or rare messages that are easy to miss in the detailed message output which precedes \
                     the summary.
                     """,
-            defaultValue = "true",
-            fallbackValue = "true"
+            paramLabel = "none | brief | detailed",
+            defaultValue = "brief",
+            fallbackValue = "brief",
+            converter = MessageSummaryConverter.class
     )
-    private boolean printMessageCounts;
+    private MessageSummary printMessageSummary;
 
     @CommandLine.Option(
             names = { "--print-results" },
@@ -223,8 +239,12 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         if (printErrors) {
             outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_ERRORS);
         }
-        if (printMessageCounts) {
-            outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY);
+        switch (printMessageSummary) {
+            case BRIEF -> outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY);
+            case DETAILED -> {
+                outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY);
+                outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY_PROTOTYPES);
+            }
         }
         final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
                 theme,

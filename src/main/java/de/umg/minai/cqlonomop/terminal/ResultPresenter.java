@@ -88,26 +88,28 @@ public class ResultPresenter extends AbstractPresenter {
     }
 
     public void presentMessages(final ThemeAwareStringBuilder builder, final List<CqlException> messages) {
-        messages.forEach(message -> {
-            builder.withStyle(switch (message.getSeverity()) {
-                        case WARNING -> Theme.Element.MESSAGE_WARNING;
-                        case MESSAGE -> Theme.Element.MESSAGE_INFO;
-                        default -> Theme.Element.MESSAGE_OTHER;
-                    }, message.getSeverity().toString() + ": " + message.getMessage())
+        messages.forEach(message -> presentMessage(builder, message));
+    }
+
+    public void presentMessage(final ThemeAwareStringBuilder builder, final CqlException message) {
+        builder.withStyle(switch (message.getSeverity()) {
+                    case WARNING -> Theme.Element.MESSAGE_WARNING;
+                    case MESSAGE -> Theme.Element.MESSAGE_INFO;
+                    default -> Theme.Element.MESSAGE_OTHER;
+                }, message.getSeverity().toString() + ": " + message.getMessage())
+                .append("\n");
+        final var locator = message.getSourceLocator();
+        if (locator != null) {
+            builder.append("  ");
+            builder.withStyle(DefaultTheme.STYLE_HEADING, locator.getLibraryName())
                     .append("\n");
-            final var locator = message.getSourceLocator();
-            if (locator != null) {
-                builder.append("  ");
-                builder.withStyle(DefaultTheme.STYLE_HEADING, locator.getLibraryName())
-                        .append("\n");
-                final var libraryId = new VersionedIdentifier()
-                        .withSystem(locator.getLibrarySystemId())
-                        .withId(locator.getLibraryName())
-                        .withVersion(locator.getLibraryVersion());
-                final var sourceLines = this.sourcePresenter.fetchLibrarySource(libraryId);
-                this.sourcePresenter.presentSource(builder, sourceLines, locator.getSourceLocation());
-            }
-        });
+            final var libraryId = new VersionedIdentifier()
+                    .withSystem(locator.getLibrarySystemId())
+                    .withId(locator.getLibraryName())
+                    .withVersion(locator.getLibraryVersion());
+            final var sourceLines = this.sourcePresenter.fetchLibrarySource(libraryId);
+            this.sourcePresenter.presentSource(builder, sourceLines, locator.getSourceLocation());
+        }
     }
 
     public Set<String> getSeenResults() {
