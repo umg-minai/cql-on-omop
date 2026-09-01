@@ -247,13 +247,15 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
             }
             // Compute CQL parameters from expression provided via the commandline option.
             final var parameters = new HashMap<String, Object>();
-            for (var entry : cqlOptions.parameterBindings.entrySet()) {
-                final var name = entry.getKey();
-                final var expression = entry.getValue();
-                System.out.printf("Computing value for %s from %s\n", name, expression);
-                final var value = evaluateWithoutContext(engine, configuration, expression);
-                System.out.printf("Assigning %s <- %s\n", name, value);
-                parameters.put(name, value);
+            if (cqlOptions != null) {
+                for (var entry : cqlOptions.parameterBindings.entrySet()) {
+                    final var name = entry.getKey();
+                    final var expression = entry.getValue();
+                    System.out.printf("Computing value for %s from %s\n", name, expression);
+                    final var value = evaluateWithoutContext(engine, configuration, expression);
+                    System.out.printf("Assigning %s <- %s\n", name, value);
+                    parameters.put(name, value);
+                }
             }
             // Pass into everything to the engine: the library, the
             // context information and the profiling flag.
