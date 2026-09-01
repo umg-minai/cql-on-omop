@@ -45,6 +45,12 @@ public class ResultPresenter extends AbstractPresenter {
         present(builder -> presentResult(builder, result));
     }
 
+    public boolean willPresent(EvaluationResult result) {
+        final var debugResult = result.getDebugResult();
+        return (debugResult != null && !debugResult.getMessages().isEmpty())
+                || (this.valuePresenter != null && !result.expressionResults.isEmpty());
+    }
+
     public void presentResult(final ThemeAwareStringBuilder builder, final EvaluationResult result) {
         // Messages
         final var debugResult = result.getDebugResult();

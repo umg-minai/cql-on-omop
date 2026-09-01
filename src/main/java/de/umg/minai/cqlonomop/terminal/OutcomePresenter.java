@@ -125,7 +125,8 @@ public class OutcomePresenter extends AbstractPresenter {
     public void presentOutcome(final Object contextObject, final MapReduceEngine.Outcome outcome) {
         final var builder = new ThemeAwareStringBuilder(this.theme);
         if (outcome instanceof MapReduceEngine.Outcome.Success success) {
-            if (this.resultPresenter != null && !success.result().expressionResults.isEmpty()) {
+            // Present message and results.
+            if (this.resultPresenter != null && this.resultPresenter.willPresent(success.result())) {
                 printContextObject(builder, contextObject);
                 this.resultPresenter.reset(this.oldState);
                 this.resultPresenter.presentResult(builder, success.result());
@@ -133,6 +134,7 @@ public class OutcomePresenter extends AbstractPresenter {
                     this.newState = this.resultPresenter.getSeenResults();
                 }
             }
+            // Count messages.
             var debugResult = success.result().getDebugResult();
             if (debugResult != null) {
                  debugResult.getMessages().stream()
