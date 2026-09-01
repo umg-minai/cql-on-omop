@@ -113,6 +113,17 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
     )
     private boolean printMessages;
 
+    @CommandLine.Option(
+            names = { "--print-evaluation-summary" },
+            negatable = true,
+            description = """
+                    Print a one-line evaluation summary with success, warning and failure counts and elapsed time.
+                    """,
+            defaultValue = "true",
+            fallbackValue = "true"
+    )
+    private boolean printEvaluationSummary;
+
     private enum MessageSummary {
         NONE,
         BRIEF,
@@ -238,6 +249,9 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         final var outcomePresenterOptions = EnumSet.noneOf(OutcomePresenter.Option.class);
         if (printErrors) {
             outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_ERRORS);
+        }
+        if (printEvaluationSummary) {
+            outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_EVALUATION_SUMMARY);
         }
         switch (printMessageSummary) {
             case BRIEF -> outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY);
