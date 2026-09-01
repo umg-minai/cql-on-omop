@@ -19,6 +19,7 @@ import picocli.CommandLine.Command;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
@@ -203,17 +204,33 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         final var sourcePresenter = new SourcePresenter(terminal, theme, engine.getLibraryManager());
         final var valuePresenter = new de.umg.minai.cqlonomop.terminal.ValuePresenter(terminal, theme);
         final var errorPresenter = new ErrorPresenter(terminal, theme, sourcePresenter, valuePresenter);
+        // Result present
+        final var resultPresenterOptions = EnumSet.noneOf(ResultPresenter.Option.class);
+        if (printResults || printResultsMatching != null) {
+            resultPresenterOptions.add(ResultPresenter.Option.PRESENT_VALUES);
+        }
+        if (printMessages) {
+            resultPresenterOptions.add(ResultPresenter.Option.PRESENT_MESSAGES);
+        }
+        final var resultPresenter = new ResultPresenter(terminal,
+                theme,
+                sourcePresenter,
+                valuePresenter,
+                resultPresenterOptions,
+                printResultsMatching);
+        // Outcome presenter
+        final var outcomePresenterOptions = EnumSet.noneOf(OutcomePresenter.Option.class);
+        if (printErrors) {
+            outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_ERRORS);
+        }
+        if (printMessageCounts) {
+            outcomePresenterOptions.add(OutcomePresenter.Option.PRESENT_MESSAGE_SUMMARY);
+        }
         final var outcomePresenter = new de.umg.minai.cqlonomop.terminal.OutcomePresenter(terminal,
                 theme,
-                (printResults || printResultsMatching != null || printMessages)
-                        ? new ResultPresenter(terminal,
-                        theme,
-                        sourcePresenter,
-                        (printResults || printResultsMatching != null) ? valuePresenter : null,
-                        printResultsMatching)
-                        : null,
-                printErrors ? errorPresenter : null,
-                printMessageCounts);
+                resultPresenter,
+                errorPresenter,
+                outcomePresenterOptions);
 
         // Prepare the requested result sink. The result sink will receive all evaluation results in the reduce step
         // of the MapReduceEngine and extract the expressions for resultNames for processing. It will also compute

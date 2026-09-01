@@ -5,6 +5,7 @@ import org.jline.terminal.Terminal;
 import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.exception.Severity;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,16 @@ import java.util.regex.Pattern;
  * presented results is updated for the result set as a whole, not during the presentation of the first element.
  */
 public class OutcomePresenter extends AbstractPresenter {
+
+    public enum Option {
+        PRESENT_MESSAGES,
+        PRESENT_ERRORS,
+        PRESENT_MESSAGE_SUMMARY
+    }
+
+    public static EnumSet<Option> DEFAULT_OPTIONS = EnumSet.of(Option.PRESENT_MESSAGES, Option.PRESENT_ERRORS);
+
+    private final EnumSet<Option> options;
 
     private final ResultPresenter resultPresenter;
 
@@ -52,13 +63,20 @@ public class OutcomePresenter extends AbstractPresenter {
                             final Theme theme,
                             final ResultPresenter resultPresenter,
                             final ErrorPresenter errorPresenter,
-                            final boolean messageCounts) {
+                            final EnumSet<Option> options) {
         super(terminal, theme);
         this.resultPresenter = resultPresenter;
         this.errorPresenter = errorPresenter;
-        if (messageCounts) {
+        this.options = options;
+        if (options.contains(Option.PRESENT_MESSAGE_SUMMARY)) {
             this.clusters = new HashMap<>();
         }
+    }
+    public OutcomePresenter(final Terminal terminal,
+                            final Theme theme,
+                            final ResultPresenter resultPresenter,
+                            final ErrorPresenter errorPresenter) {
+        this(terminal, theme, resultPresenter, errorPresenter, DEFAULT_OPTIONS);
     }
 
     public void beginPresentation() {
@@ -128,7 +146,7 @@ public class OutcomePresenter extends AbstractPresenter {
         final var builder = new ThemeAwareStringBuilder(this.theme);
         if (outcome instanceof MapReduceEngine.Outcome.Success success) {
             // Present message and results.
-            if (this.resultPresenter != null && this.resultPresenter.willPresent(success.result())) {
+            if (this.resultPresenter.willPresent(success.result())) {
                 printContextObject(builder, contextObject);
                 this.resultPresenter.reset(this.oldState);
                 this.resultPresenter.presentResult(builder, success.result());
@@ -148,7 +166,7 @@ public class OutcomePresenter extends AbstractPresenter {
             }
             this.counts[SUCCESS]++;
         } else if (outcome instanceof MapReduceEngine.Outcome.Failure failure) {
-            if (this.errorPresenter != null) {
+            if (this.options.contains(Option.PRESENT_ERRORS)) {
                 printContextObject(builder, contextObject);
                 this.errorPresenter.presentError(builder, failure.error());
             }
