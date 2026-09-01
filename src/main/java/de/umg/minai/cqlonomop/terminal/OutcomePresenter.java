@@ -29,11 +29,14 @@ public class OutcomePresenter extends AbstractPresenter {
     public enum Option {
         PRESENT_MESSAGES,
         PRESENT_ERRORS,
+        PRESENT_EVALUATION_SUMMARY,
         PRESENT_MESSAGE_SUMMARY,
         PRESENT_MESSAGE_SUMMARY_PROTOTYPES
     }
 
-    public static EnumSet<Option> DEFAULT_OPTIONS = EnumSet.of(Option.PRESENT_MESSAGES, Option.PRESENT_ERRORS);
+    public static EnumSet<Option> DEFAULT_OPTIONS = EnumSet.of(Option.PRESENT_MESSAGES,
+            Option.PRESENT_ERRORS,
+            Option.PRESENT_EVALUATION_SUMMARY);
 
     private final EnumSet<Option> options;
 
@@ -95,68 +98,70 @@ public class OutcomePresenter extends AbstractPresenter {
         if (this.newState != null) {
             this.oldState = this.newState;
         }
-        final var endTime = System.nanoTime();
-        final var elapsed = endTime - this.startTime;
-        if (counts[FAILURE] > 0 || counts[WARNING] > 0 || elapsed > 2_000_000_000) {
-            final var builder = new ThemeAwareStringBuilder(this.theme);
-            builder.withStyle(this.theme.styleForElement(Theme.Element.INACTIVE),
-                    (builder2) -> {
-                builder2.append(String.format("%.3f s", elapsed / 1_000_000_000.0d))
-                        .append(", ")
-                        .append(String.valueOf(counts[SUCCESS]))
-                        .append(" ")
-                        .append(counts[SUCCESS] == 1 ? "success" : "successes")
-                        .append(", ");
-                if (counts[FAILURE] > 0) {
-                    builder2.style(this.theme.styleForElement(Theme.Element.ERROR));
-                }
-                builder2.append(String.valueOf(counts[FAILURE]))
-                        .append(" ")
-                        .append(counts[FAILURE] == 1 ? "failure" : "failures");
-                return builder2;
-            });
-            if (counts[WARNING] > 0) {
-                builder.append(", ");
-                builder.withStyle(this.theme.styleForElement(Theme.Element.WARNING),
-                        (builder2) ->
-                                builder2.append(String.valueOf(counts[WARNING]))
-                                        .append(" ")
-                                        .append(counts[WARNING] == 1 ? "warning" : "warnings"));
-            }
-            // Summary of warning and message clusters.
-            if (this.clusters != null && !this.clusters.isEmpty()) {
-                builder.append("\n");
-                for (var entry : this.clusters.entrySet()) {
-                    final var severity = entry.getKey().severity;
-                    final var prototype = entry.getValue().prototype;
-                    final var count = entry.getValue().count;
-                    var message = prototype.getMessage();
-                    // For error messages, the CQL engine append '\n<value>' to the message where <value> is the first
-                    // argument to the Message function. Strip that extra line.
-                    if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
-                        message = message.substring(0, message.lastIndexOf('\n'));
-                    }
-                    builder.append(String.format("%5d time(s): %s '%s'\n", count, severity.toString(), message));
-                }
-                // If requested, detailed presentation of one prototype for each cluster.
-                if (this.options.contains(Option.PRESENT_MESSAGE_SUMMARY_PROTOTYPES)) {
-                    for (var messageInfo : this.clusters.values()) {
-                        final var prototype = messageInfo.prototype;
-                        builder.append("\n");
-                        if (prototype instanceof CqlException cqlException) {
-                            if (cqlException.getSeverity() == Severity.ERROR) {
-                                this.errorPresenter.presentError(builder, cqlException);
-                            } else {
-                                this.resultPresenter.presentMessage(builder, cqlException);
+        final var builder = new ThemeAwareStringBuilder(this.theme);
+        if (this.options.contains(Option.PRESENT_EVALUATION_SUMMARY)) {
+            final var endTime = System.nanoTime();
+            final var elapsed = endTime - this.startTime;
+            if (counts[FAILURE] > 0 || counts[WARNING] > 0 || elapsed > 2_000_000_000) {
+                builder.withStyle(this.theme.styleForElement(Theme.Element.INACTIVE),
+                        (builder2) -> {
+                            builder2.append(String.format("%.3f s", elapsed / 1_000_000_000.0d))
+                                    .append(", ")
+                                    .append(String.valueOf(counts[SUCCESS]))
+                                    .append(" ")
+                                    .append(counts[SUCCESS] == 1 ? "success" : "successes")
+                                    .append(", ");
+                            if (counts[FAILURE] > 0) {
+                                builder2.style(this.theme.styleForElement(Theme.Element.ERROR));
                             }
+                            builder2.append(String.valueOf(counts[FAILURE]))
+                                    .append(" ")
+                                    .append(counts[FAILURE] == 1 ? "failure" : "failures");
+                            return builder2;
+                        });
+                if (counts[WARNING] > 0) {
+                    builder.append(", ");
+                    builder.withStyle(this.theme.styleForElement(Theme.Element.WARNING),
+                            (builder2) ->
+                                    builder2.append(String.valueOf(counts[WARNING]))
+                                            .append(" ")
+                                            .append(counts[WARNING] == 1 ? "warning" : "warnings"));
+                }
+                builder.append("\n");
+            }
+        }
+        // Summary of warning and message clusters.
+        if (this.clusters != null && !this.clusters.isEmpty()) {
+            for (var entry : this.clusters.entrySet()) {
+                final var severity = entry.getKey().severity;
+                final var prototype = entry.getValue().prototype;
+                final var count = entry.getValue().count;
+                var message = prototype.getMessage();
+                // For error messages, the CQL engine append '\n<value>' to the message where <value> is the first
+                // argument to the Message function. Strip that extra line.
+                if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
+                    message = message.substring(0, message.lastIndexOf('\n'));
+                }
+                builder.append(String.format("%5d time(s): %s '%s'\n", count, severity.toString(), message));
+            }
+            // If requested, detailed presentation of one prototype for each cluster.
+            if (this.options.contains(Option.PRESENT_MESSAGE_SUMMARY_PROTOTYPES)) {
+                for (var messageInfo : this.clusters.values()) {
+                    final var prototype = messageInfo.prototype;
+                    builder.append("\n");
+                    if (prototype instanceof CqlException cqlException) {
+                        if (cqlException.getSeverity() == Severity.ERROR) {
+                            this.errorPresenter.presentError(builder, cqlException);
                         } else {
-                            this.errorPresenter.presentError(builder, prototype);
+                            this.resultPresenter.presentMessage(builder, cqlException);
                         }
+                    } else {
+                        this.errorPresenter.presentError(builder, prototype);
                     }
                 }
             }
-            builder.println(this.terminal);
         }
+        builder.print(this.terminal);
     }
 
     public void presentOutcome(final Object contextObject, final MapReduceEngine.Outcome outcome) {
