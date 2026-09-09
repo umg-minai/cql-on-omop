@@ -5,10 +5,7 @@ import org.jline.terminal.Terminal;
 import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.exception.Severity;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -132,6 +129,11 @@ public class OutcomePresenter extends AbstractPresenter {
         }
         // Summary of warning and message clusters.
         if (this.clusters != null && !this.clusters.isEmpty()) {
+            // Determine common width for printed representation of message cluster counts with "thousand separators".
+            final var width = this.clusters.values().stream()
+                    .map(info -> String.format("%,d", info.count()).length())
+                    .max(Comparator.naturalOrder())
+                    .get();
             for (var entry : this.clusters.entrySet()) {
                 final var severity = entry.getKey().severity;
                 final var prototype = entry.getValue().prototype;
@@ -142,7 +144,9 @@ public class OutcomePresenter extends AbstractPresenter {
                 if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
                     message = message.substring(0, message.lastIndexOf('\n'));
                 }
-                builder.append(String.format("%5d time(s): %s '%s'\n", count, severity.toString(), message));
+                // Build format strign with previously determined width.
+                final var formatString = "%," + width + "d time(s): %s '%s'\n";
+                builder.append(String.format(formatString, count, severity.toString(), message));
             }
             // If requested, detailed presentation of one prototype for each cluster.
             if (this.options.contains(Option.PRESENT_MESSAGE_SUMMARY_PROTOTYPES)) {
