@@ -354,23 +354,10 @@ define function ToQuantity(OMOPObject OMOP.DrugExposure):
 
 define function ToQuantity(OMOPObject OMOP.DrugStrength):
   case
-    when ((OMOPObject.amountValue is not null)
-          and (OMOPObject.amountUnitConcept is not null)) then
-      // Use amount{Value,UnitConcept} if available.
-      System.Quantity{
-        value: OMOPObject.amountValue,
-        unit: // The unit [U] can occur in OMOP CDM data but the UCUM service
-              // cannot process this unit. [U] should be equivalent to [IU], so
-              // perform the replacement.
-              if OMOPObject.amountUnitConcept.conceptCode = '[U]' then
-                '[IU]'
-              else
-                OMOPObject.amountUnitConcept.conceptCode
-      }
     when ((OMOPObject.numeratorValue is not null)
           and (OMOPObject.numeratorUnitConcept is not null)) then
-      // If amount is not available, try numerator{Value,UnitConcept} and
-      // optionally denominator{Value,UnitConcept}
+      // Try numerator{Value,UnitConcept} and optionally
+      // denominator{Value,UnitConcept}
       (1) _
         let numerator: System.Quantity{
                          value: OMOPObject.numeratorValue,
@@ -397,6 +384,23 @@ define function ToQuantity(OMOPObject OMOP.DrugStrength):
                        // If there is no denominatorUnitConcept use just the
                        // numerator.
                        numerator
+    when OMOPObject.amountUnitConcept is not null then
+      // If numeratorValue is not available, try amountUnitConcept.
+      // One case in which amountUnitConcept (with or without amountValue)
+      // appears is when the DrugStrength object describes an ingredient rather
+      // than a concrete drug.  In that case, DrugExposures with that drug
+      // concept must contain a quantity value that matches the unit of the
+      // ingredient in the DrugStrength object.
+      System.Quantity{
+        value: Coalesce(OMOPObject.amountValue, 1),
+        unit: // The unit [U] can occur in OMOP CDM data but the UCUM service
+              // cannot process this unit. [U] should be equivalent to [IU], so
+              // perform the replacement.
+              if OMOPObject.amountUnitConcept.conceptCode = '[U]' then
+                '[IU]'
+              else
+                OMOPObject.amountUnitConcept.conceptCode
+      }
     else
       // If there is neither amount{Value,UnitConcept} nor
       // numerator{Value,UnitConcept}, we can't compute a valid Quantity.
