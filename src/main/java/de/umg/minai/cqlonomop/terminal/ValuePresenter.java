@@ -160,12 +160,11 @@ public class ValuePresenter extends AbstractPresenter {
         }
     }
 
-    public void presentValueSimple(final ThemeAwareStringBuilder builder, final Object value, int limit) {
-        final Theme.Element element;
+    public int presentValueSimple(final ThemeAwareStringBuilder builder, final Object value, int limit) {
+        final Theme.Element elementStyle;
         String string;
         if (value == null) {
-            element = Theme.Element.GENERIC_LITERAL;
-            string = "null";
+            return printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, "null", limit);
         } else if (!terminal.getType().equals(Terminal.TYPE_DUMB)
                 && (value.getClass().getSimpleName().equals("Concept")
                 || value.getClass().getSuperclass().getSimpleName().equals("Concept"))) {
@@ -178,32 +177,126 @@ public class ValuePresenter extends AbstractPresenter {
             } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
             final var linkStart = String.format("\033]8;;%s/search-terms/terms/%d\033\\", ATHENA_UI_URL, id);
             final var linkEnd = "\033]8;;\033\\";
+            final var valueString = value.toString();
             builder.styled(AttributedStyle.HIDDEN, linkStart);
-            builder.withStyle(Theme.Element.GENERIC_LITERAL, value.toString());
+            final var length = printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, valueString, limit);
             builder.styled(AttributedStyle.HIDDEN, linkEnd);
-            return;
+            return length;
         } else if (value instanceof Long) {
-            element = Theme.Element.NUMBER_LITERAL;
-            string = value + "L";
+            return printWithStyleMaybeTruncate(builder, Theme.Element.NUMBER_LITERAL, value + "L", limit);
         } else if (value instanceof Integer
                    || value instanceof BigDecimal || value instanceof Quantity || value instanceof Ratio) {
-            element = Theme.Element.NUMBER_LITERAL;
-            string = value.toString();
+            return printWithStyleMaybeTruncate(builder, Theme.Element.NUMBER_LITERAL, value.toString(), limit);
         } else if (value instanceof String) {
-            element = Theme.Element.STRING_LITERAL;
-            string = String.format("'%s'", value);
-        } else {
-            element = Theme.Element.GENERIC_LITERAL;
-            string = value.toString();
+            return printWithStyleMaybeTruncate(builder, Theme.Element.STRING_LITERAL, String.format("'%s'", value), limit);
+        } else if (value instanceof Iterable<?> iterable) {
+            final var listBuilder = new StringBuilder();
+            builder.append("[");
+            var length = 0;
+            var isTruncated = false;
+            var isFirst = true;
+            for (var element : iterable) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    if (!(length + 4 < limit)) {
+                        isTruncated = true;
+                        break;
+                    }
+                    builder.append(", ");
+                }
+                length += presentValueSimple(builder, element, limit - length);
+                if (length == limit) {
+                    isTruncated = true;
+                    break;
+                }
+            }
+            if (isTruncated) {
+                builder.append("…");
+            }
+            builder.append("]");
+            return length;
+        } else if (value instanceof DateTime dateTime) {
+            elementStyle = Theme.Element.GENERIC_LITERAL;
+            final var offsetDateTime = dateTime.getNormalized(Precision.MILLISECOND);
+            final var offsetSeconds = dateTime.getZoneOffset().getTotalSeconds();
+            final var precision = dateTime.getPrecision();
+            final int[] length = {0};
+            builder.withStyle(Theme.Element.GENERIC_LITERAL,
+                    (var builder1) -> {
+                        length[0] += addDateTimeComponent(builder1, 0, offsetDateTime.getYear(), precision);
+                        length[0] += addDateTimeComponent(builder1, 1, offsetDateTime.getMonthValue(), precision);
+                        length[0] += addDateTimeComponent(builder1, 2, offsetDateTime.getDayOfMonth(), precision);
+                        length[0] += addDateTimeComponent(builder1, 3, offsetDateTime.getHour(), precision);
+                        length[0] += addDateTimeComponent(builder1, 4, offsetDateTime.getMinute(), precision);
+                        length[0] += addDateTimeComponent(builder1, 5, offsetDateTime.getSecond(), precision);
+                        length[0] += addDateTimeComponent(builder1, 6, offsetDateTime.get(precision.toChronoField()), precision);
+                        length[0] += addDateTimeComponent(builder1, 7, (offsetSeconds >= 0) ? "+" : "-", precision);
+                        length[0] += addDateTimeComponent(builder1, 8, Math.abs(offsetSeconds) / 3600, precision);
+                        length[0] += addDateTimeComponent(builder1, 9, (Math.abs(offsetSeconds) % 3600) / 60, precision);
+                        return builder1;
+                    });
+            return length[0];
+        } else if (value instanceof Interval interval) {
+            var length = 0;
+            builder.append("Interval");
+            length += "Interval".length();
+            builder.append(interval.getLowClosed() ? "[" : "(");
+            length += 1;
+            length += presentValueSimple(builder, interval.getLow(), limit - length);
+            builder.append(", ");
+            length += 2;
+            length += presentValueSimple(builder, interval.getHigh(), limit - length);
+            builder.append(interval.getHighClosed() ? "]" : ")");
+            length += 1;
+            return length;
         }
-        if (limit > 0 && string.length() > limit) {
-            string = string.substring(0, limit - 1) + "…";
-        }
-        builder.withStyle(element, string);
+        return printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, value.toString(), limit);
     }
 
     public void presentValueSimple(final ThemeAwareStringBuilder builder, final Object value) {
         presentValueSimple(builder, value, -1);
+    }
+
+    private int printWithStyleMaybeTruncate(final ThemeAwareStringBuilder builder,
+                                            final Theme.Element style,
+                                            final String string,
+                                            int limit) {
+        final var maybeTruncated = (limit > 0 && string.length() > limit)
+            ? string.substring(0, limit - 1) + "…"
+            : string;
+        builder.withStyle(style, maybeTruncated);
+        return maybeTruncated.length();
+    }
+
+    private <T> int addDateTimeComponent(final ThemeAwareStringBuilder builder,
+                                         final int index,
+                                         final T value,
+                                         final Precision precision) {
+        final var precisionIndex = precision.toDateTimeIndex();
+        final String[] components = { "%04d", "-%02d", "-%02d", "T%02d", ":%02d", ":%02d", ".%03d", "%s", "%02d", ":%02d" };
+        final var string = String.format(components[index], value);
+        var length = 0;
+        if (!terminal.getType().equals(Terminal.TYPE_DUMB)) {
+            if (index <= precisionIndex) {
+                builder.append(string);
+            } else {
+                builder.withStyle(Theme.Element.INACTIVE, string);
+            }
+            length += string.length();
+        } else {
+            if (index == precisionIndex && precisionIndex < components.length) {
+                builder.append("«");
+                length += 1;
+            }
+            builder.append(string);
+            length += string.length();
+            if (index == components.length - 1 && precisionIndex < components.length - 1) {
+                builder.append("»");
+                length += 1;
+            }
+        }
+        return length;
     }
 
 }
