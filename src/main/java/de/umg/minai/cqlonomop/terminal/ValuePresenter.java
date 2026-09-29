@@ -71,7 +71,7 @@ public class ValuePresenter extends AbstractPresenter {
             }
             // Sort and present the values of the remaining getter methods.
             final var sortedGetters = getters.entrySet().stream()
-                    .sorted(Comparator.comparing(Map.Entry::getKey))
+                    .sorted(Map.Entry.comparingByKey())
                     .toList();
             presentFields(builder,
                     fieldPrinter -> sortedGetters.forEach(entry -> {
@@ -161,8 +161,6 @@ public class ValuePresenter extends AbstractPresenter {
     }
 
     public int presentValueSimple(final ThemeAwareStringBuilder builder, final Object value, int limit) {
-        final Theme.Element elementStyle;
-        String string;
         if (value == null) {
             return printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, "null", limit);
         } else if (!terminal.getType().equals(Terminal.TYPE_DUMB)
@@ -190,7 +188,6 @@ public class ValuePresenter extends AbstractPresenter {
         } else if (value instanceof String) {
             return printWithStyleMaybeTruncate(builder, Theme.Element.STRING_LITERAL, String.format("'%s'", value), limit);
         } else if (value instanceof Iterable<?> iterable) {
-            final var listBuilder = new StringBuilder();
             builder.append("[");
             var length = 0;
             var isTruncated = false;
@@ -217,7 +214,6 @@ public class ValuePresenter extends AbstractPresenter {
             builder.append("]");
             return length;
         } else if (value instanceof DateTime dateTime) {
-            elementStyle = Theme.Element.GENERIC_LITERAL;
             final var offsetDateTime = dateTime.getNormalized(Precision.MILLISECOND);
             final var offsetSeconds = dateTime.getZoneOffset().getTotalSeconds();
             final var precision = dateTime.getPrecision();
