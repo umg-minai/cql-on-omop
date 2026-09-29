@@ -185,18 +185,27 @@ public class ValuePresenter extends AbstractPresenter {
                 && (value.getClass().getSimpleName().equals("Concept")
                 || value.getClass().getSuperclass().getSimpleName().equals("Concept"))) {
             var id = 0L;
+            // The getConceptId() call may fail, for example when it causes a Hibernate proxy to be loaded and that
+            // fails.
             try {
                 final var raw = value.getClass().getMethod("getConceptId").invoke(value);
                 if (raw instanceof Integer i) {
                     id = i.longValue();
                 }
             } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {}
-            final var linkStart = String.format("\033]8;;%s/search-terms/terms/%d\033\\", ATHENA_UI_URL, id);
-            final var linkEnd = "\033]8;;\033\\";
-            final var valueString = value.toString();
-            builder.styled(AttributedStyle.HIDDEN, linkStart);
-            final var length = printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, valueString, limit);
-            builder.styled(AttributedStyle.HIDDEN, linkEnd);
+            var length = 0;
+            // The toString() call may fail for the same reasons as mentioned above.
+            try {
+                final var valueString =  value.toString();
+                final var linkStart = String.format("\033]8;;%s/search-terms/terms/%d\033\\", ATHENA_UI_URL, id);
+                final var linkEnd = "\033]8;;\033\\";
+                builder.styled(AttributedStyle.HIDDEN, linkStart);
+                length = printWithStyleMaybeTruncate(builder, Theme.Element.GENERIC_LITERAL, valueString, limit);
+                builder.styled(AttributedStyle.HIDDEN, linkEnd);
+            } catch (final Exception ignored) {
+                final var valueString = String.format("<error during %s.toString>", value.getClass().getCanonicalName());
+                length = printWithStyleMaybeTruncate(builder, Theme.Element.ERROR, valueString, limit);
+            }
             return length;
         } else if (value instanceof Long) {
             return printWithStyleMaybeTruncate(builder, Theme.Element.NUMBER_LITERAL, value + "L", limit);
