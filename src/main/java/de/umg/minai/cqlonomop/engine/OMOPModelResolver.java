@@ -1,6 +1,7 @@
 package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
+import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.model.ModelResolver;
 
 import java.lang.reflect.Constructor;
@@ -34,15 +35,30 @@ public class OMOPModelResolver implements ModelResolver {
         final Method method;
         Object result;
         try {
-            method = clazz.getMethod(String.format("get%s", name), new Class[]{});
+            method = clazz.getMethod(String.format("get%s", name));
             result = method.invoke(object);
         } catch (NoSuchMethodException e) {
-            System.err.printf("%s [get%s] not found in class %s%n",
+            System.err.printf("property '%s' [via get%s] not found in class %s%n",
                     path, name, clazz.getCanonicalName());
-            return null;
+            throw new CqlException(String.format("Property '%s' [via get%s] not found in class %s",
+                    path,
+                    name,
+                    clazz.getCanonicalName()));
         } catch (InvocationTargetException | IllegalAccessException e) {
-            System.err.printf("failed to get %s of %s: %s", path, object, e);
-            return null;
+            // toString() may trigger other method calls (such as those related to Hibernate) that could in turn fail.
+            // Make sure that the original is still reported if that problem occurs.
+            String objectString;
+            try {
+                objectString = object.toString();
+            } catch (Exception ignored) {
+                objectString = String.format("<error during %s.toString>", clazz.getCanonicalName());
+            }
+            throw new CqlException(String.format("Failed to get property '%s' [via get%s] of object %s: %s: %s",
+                    path,
+                    name,
+                    objectString,
+                    e,
+                    e.getMessage()));
         }
         if (result instanceof Optional<?> optional) {
             return optional.orElse(null);
