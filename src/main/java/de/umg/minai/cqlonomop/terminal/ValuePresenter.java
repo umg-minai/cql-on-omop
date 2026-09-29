@@ -61,12 +61,20 @@ public class ValuePresenter extends AbstractPresenter {
             // a second time for the related object). Concretely, omit getter methods for which
             // 1. The name ends with "Id"
             // 2. Another getter method with the same name except for the "Id" suffix exists
+            // However, remember the "associated id getter" in case the related object is not present (which is a
+            // foreign key violation but the database may be set up to allow this in some cases).
+            final var associatedIdGetters = new HashMap<Method, Method>();
             var iterator = getters.entrySet().iterator();
             while (iterator.hasNext()) {
                 var entry = iterator.next();
                 var name = entry.getKey();
-                if (name.endsWith("Id") && getters.get(name.substring(0, name.length() - 2)) != null) {
-                    iterator.remove();
+                // Skip for now but remember for later the "id getter".
+                if (name.endsWith("Id")) {
+                    final var objectGetter = getters.get(name.substring(0, name.length() - 2));
+                    if (objectGetter != null) {
+                        associatedIdGetters.put(objectGetter, entry.getValue());
+                        iterator.remove();
+                    }
                 }
             }
             // Sort and present the values of the remaining getter methods.
@@ -82,7 +90,17 @@ public class ValuePresenter extends AbstractPresenter {
                         fieldPrinter.accept(fieldName);
                         try {
                             final var fieldValue = method.invoke(value);
-                            presentFieldValue(builder, fieldValue);
+                            if (fieldValue == null && associatedIdGetters.containsKey(method)) {
+                                var id = 0;
+                                try {
+                                    id = (int) associatedIdGetters.get(method).invoke(value);
+                                } catch (final Exception ignored) {
+                                }
+                                builder.withStyle(Theme.Element.ERROR,
+                                        String.format("%s (broken relation, id %d)", fieldValue, id));
+                            } else {
+                                presentFieldValue(builder, fieldValue);
+                            }
                         } catch (Exception e) {
                             builder.withStyle(Theme.Element.ERROR, String.format("error accessing field: %s", e));
                         }
