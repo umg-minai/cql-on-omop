@@ -38,6 +38,13 @@ public interface ResultSink {
 
     }
 
+    /**
+     * Process all results after the map-reduce computation has finished and return aggregated information.
+     *
+     * @param intermediateResults All results represented as a map from CQL context object to respective result object.
+     * @return Aggregated result information, including the counts of success and failure results and optionally a debug
+     *         result.
+     */
     ResultInfo processResults(Map<Object, MapReduceEngine.Outcome> intermediateResults);
 
 }
