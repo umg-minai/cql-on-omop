@@ -328,6 +328,7 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                                 }
                                 adapter.processOutcome(contextObject, outcome);
                             }
+                            resultSink.processIntermediateResult(contextObject, outcome);
                             return outcome;
                         },
                         resultSink::processResults);

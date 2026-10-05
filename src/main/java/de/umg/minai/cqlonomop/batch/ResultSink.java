@@ -7,9 +7,24 @@ import java.util.Map;
 
 /**
  * Implementations of this interface receive intermediate results produced by a {@link MapReduceEngine}, optionally
- * perform some side effect, and finally return a {@link ResultInfo} instance. that summarizes the intermediate
+ * perform some side effects, and finally return a {@link ResultInfo} instance that summarizes the intermediate
  * results. The summary is in terms numbers of success and failure results as well as, optionally, a merged
  * {@link DebugResult} for all evaluations.
+ * <br/>
+ * The above processing happens in two phases
+ * <ol>
+ *     <li>
+ *         In the first phase, intermediate results are reported as they arise via calls of the
+ *         {@link processIntermediateResult} method. This phase can be used to collect information from the results
+ *         as well as modify the results in some way. One example of such a modification would be to remove certain
+ *         parts of the results to save memory.
+ *     </li>
+ *     <li>
+ *         In the second phase, all computed intermediate results are submitted at once via a call of the
+ *         {@link processResults} method. This method call is responsible for producing the final {@link ResultInfo}
+ *         object.
+ *     </li>
+ * </ol>
  */
 public interface ResultSink {
 
@@ -36,6 +51,23 @@ public interface ResultSink {
             return this.outcomeCounts()[FAILURE] == 0;
         }
 
+    }
+
+    /**
+     * Process the intermediate result {@param intermediateResult} for {@param contextObject} and return the processed
+     * object or a new object.
+     * <br/>
+     * This method is intended to either destructively modify {@param intermediateResult}, for example to safe memory by
+     * removing aspects that are no longer required, replace the object entirely or extract information from the object
+     * before the whole map-reduce computation finishes.
+     *
+     * @param contextObject The CQL context object for which the intermediate result has been computed.
+     * @param intermediateResult The computed intermediate result.
+     * @return Either the modified {@param intermediateResult} or new object of the same type.
+     */
+    default MapReduceEngine.Outcome processIntermediateResult(Object contextObject,
+                                                              MapReduceEngine.Outcome intermediateResult) {
+        return intermediateResult;
     }
 
     /**
