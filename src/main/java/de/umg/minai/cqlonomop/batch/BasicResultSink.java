@@ -3,10 +3,12 @@ package de.umg.minai.cqlonomop.batch;
 import de.umg.minai.cqlonomop.engine.MapReduceEngine;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
 import org.opencds.cqf.cql.engine.execution.ExpressionResult;
+import org.opencds.cqf.cql.engine.runtime.Interval;
+import org.opencds.cqf.cql.engine.runtime.Tuple;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 /**
  * This class provides a basic {@link ResultSink} implementation with protected methods than can be overridden in
@@ -24,25 +26,102 @@ public class BasicResultSink implements ResultSink {
 
     protected final List<Pattern> resultNames;
 
+    protected final DebugResult debugResult = new DebugResult();
+
+    protected final int[] counts = {0, 0};
+
     BasicResultSink(final List<String> resultNames) {
         this.resultNames = resultNames.stream().map(Pattern::compile).toList();
     }
 
+    // Intermediate results
+
     @Override
-    public ResultInfo processResults(final Map<Object, MapReduceEngine.Outcome> intermediateResults) {
-        final var debugResult = new DebugResult();
-        final int[] counts = {0, 0};
-        intermediateResults.forEach((contextObject, expressionResult) -> {
-            if (expressionResult instanceof MapReduceEngine.Outcome.Success success) {
-                processSuccess(contextObject, success);
+    public MapReduceEngine.Outcome processIntermediateResult(final Object contextObject,
+                                                             final MapReduceEngine.Outcome intermediateResult) {
+        if (intermediateResult instanceof MapReduceEngine.Outcome.Success success) {
+            processIntermediateSuccess(contextObject, success);
+            // Integrate information from debug result into the global DebugResult instance, then remove the debug
+            // result.
+            synchronized (this) {
                 augmentDebugResult(debugResult, contextObject, success);
-                counts[SUCCESS]++;
-            } else if (expressionResult instanceof MapReduceEngine.Outcome.Failure failure) {
+                this.counts[SUCCESS]++;
+            }
+            success.result().setDebugResult(null);
+            // Detach all objects that are part of expression results in the evaluation result from the evaluator
+            // state.
+            final var expressionResults = success.result().expressionResults;
+            final var newExpressionResults = new HashMap<String, ExpressionResult>();
+            expressionResults.forEach((expressionName, expressionResult)
+                    -> newExpressionResults.put(expressionName, detachExpressionResult(expressionResult)));
+            expressionResults.clear();
+            expressionResults.putAll(newExpressionResults);
+        } else if (intermediateResult instanceof MapReduceEngine.Outcome.Failure failure) {
+            processIntermediateFailure(contextObject, failure);
+            synchronized (this) {
+                this.counts[FAILURE]++;
+            }
+        }
+        return intermediateResult;
+    }
+
+    protected void processIntermediateSuccess(final Object ignoredContextObject,
+                                              final MapReduceEngine.Outcome.Success ignoredIntermediateSuccess) {
+    }
+
+    protected void processIntermediateFailure(final Object ignoredContextObject,
+                                              final MapReduceEngine.Outcome.Failure ignoredIntermediateSuccess) {
+    }
+
+    protected DebugResult augmentDebugResult(final DebugResult debugResult,
+                                             final Object ignoredContextObject,
+                                             final MapReduceEngine.Outcome.Success success) {
+        final var oneDebugResult = success.result().getDebugResult();
+        if (oneDebugResult != null) {
+            final var profile = oneDebugResult.getProfile();
+            if (profile != null) {
+                debugResult.ensureProfile().merge(profile);
+            }
+        }
+        return debugResult;
+    }
+
+    protected ExpressionResult detachExpressionResult(final ExpressionResult expressionResult) {
+        return new ExpressionResult(detachObject(expressionResult.value()), Set.of());
+    }
+
+    protected Object detachObject(final Object object) {
+        if (object instanceof Tuple tuple) {
+            final var elements = new LinkedHashMap<String, Object>();
+            tuple.getElements().forEach((key, value) -> elements.put(key, detachObject(value)));
+            return new Tuple().withElements(elements);
+        } else if (object instanceof Iterable<?> iterable) {
+            return StreamSupport.stream(iterable.spliterator(), false)
+                    .map(this::detachObject)
+                    .toList();
+        } else if (object instanceof Interval interval) {
+            // Objects that can occur as interval end points do not need detaching.
+            return new Interval(interval.getLow(),
+                    interval.getLowClosed(),
+                    interval.getHigh(),
+                    interval.getHighClosed());
+        } else {
+            return object;
+        }
+    }
+
+    // Final results
+
+    @Override
+    public ResultSink.ResultInfo processResults(final Map<Object, MapReduceEngine.Outcome> intermediateResults) {
+        intermediateResults.forEach((contextObject, intermediateResult) -> {
+            if (intermediateResult instanceof MapReduceEngine.Outcome.Success success) {
+                processSuccess(contextObject, success);
+            } else if (intermediateResult instanceof MapReduceEngine.Outcome.Failure failure) {
                 processFailure(contextObject, failure);
-                counts[FAILURE]++;
             }
         });
-        return new ResultInfo(debugResult, counts);
+        return new ResultInfo(this.debugResult, this.counts);
     }
 
     protected void processSuccess(final Object contextObject, final MapReduceEngine.Outcome.Success success) {
@@ -65,24 +144,8 @@ public class BasicResultSink implements ResultSink {
                                            final ExpressionResult expressionResult) {
     }
 
-    protected DebugResult augmentDebugResult(final DebugResult debugResult,
-                                             final Object contextObject,
-                                             final MapReduceEngine.Outcome.Success success) {
-        final var oneDebugResult = success.result().getDebugResult();
-        if (oneDebugResult != null) {
-            final var profile = oneDebugResult.getProfile();
-            if (profile != null) {
-                debugResult.ensureProfile().merge(profile);
-            }
-            var messages = oneDebugResult.getMessages();
-            if (!messages.isEmpty()) {
-                debugResult.getMessages().addAll(messages);
-            }
-        }
-        return debugResult;
-    }
-
-    protected void processFailure(final Object contextObject, final MapReduceEngine.Outcome.Failure failure) {
+    protected void processFailure(final Object ignoredContextObject,
+                                  final MapReduceEngine.Outcome.Failure ignoredFailure) {
     }
 
 }
