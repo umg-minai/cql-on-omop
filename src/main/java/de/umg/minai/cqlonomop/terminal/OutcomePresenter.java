@@ -144,7 +144,7 @@ public class OutcomePresenter extends AbstractPresenter {
                 if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
                     message = message.substring(0, message.lastIndexOf('\n'));
                 }
-                // Build format strign with previously determined width.
+                // Build format string with previously determined width.
                 final var formatString = "%," + width + "d time(s): %s '%s'\n";
                 builder.append(String.format(formatString, count, severity.toString(), message));
             }
