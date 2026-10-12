@@ -17,6 +17,7 @@ import org.jline.widget.AutosuggestionWidgets;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -127,13 +128,9 @@ public class Repl implements Callable<Integer> {
             final var builder = LineReaderBuilder.builder()
                     .terminal(this.terminal)
                     .completer(new Completer(systemModelInfo, domainModelInfo, this.commandProcessor));
-            final var xdgStateHome = System.getenv("XDG_STATE_HOME");
-            final var stateDirectory = xdgStateHome != null
-                    ? xdgStateHome
-                    : System.getenv("HOME");
-            if (stateDirectory != null) {
-                final var historyFile = String.format("%s/cql-on-omop/repl-history", stateDirectory);
-                builder.variable(LineReader.HISTORY_FILE, historyFile);
+            final var replHistoryFile = getREPLHistoryFile();
+            if (replHistoryFile != null) {
+                builder.variable(LineReader.HISTORY_FILE, replHistoryFile.toString());
             }
             this.reader = builder.build();
             final var autoSuggestions = new AutosuggestionWidgets(this.reader);
@@ -162,6 +159,30 @@ public class Repl implements Callable<Integer> {
             }
         }
         return CommandLine.ExitCode.OK;
+    }
+
+    // Helpers for locating XDG state directory
+
+    private static final Path DEFAULT_STATE_DIRECTORY = Path.of(".local", "state");
+
+    private static final Path REPL_HISTORY_FILE = Path.of("cql-on-omop", "repl-history");
+
+    private Path getREPLHistoryFile() {
+        var stateDirectory = pathFromEnvironment("XDG_STATE_HOME");
+        if (stateDirectory == null) {
+            final var homeDirectory = pathFromEnvironment("HOME");
+            if (homeDirectory != null) {
+                stateDirectory = homeDirectory.resolve(DEFAULT_STATE_DIRECTORY);
+            }
+        }
+        return stateDirectory != null
+                ? stateDirectory.resolve(REPL_HISTORY_FILE)
+                : null;
+    }
+
+    private Path pathFromEnvironment(final String variableName) {
+        final var value = System.getenv(variableName);
+        return value != null ? Path.of(value) : null;
     }
 
 }
