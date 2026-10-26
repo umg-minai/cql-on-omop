@@ -19,6 +19,8 @@ import picocli.CommandLine.Command;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -316,15 +318,22 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
             // including a profile via resultSink.
             engine.setProfiling(profilePath != null);
             final ResultSink.ResultInfo resultInfo;
-            int[] count = {0};
+            final var startTime = LocalDateTime.now();
+            final long totalCount;
+            if (contextObjects instanceof List<?> contextObjectList) {
+                totalCount = contextObjectList.size();
+            } else {
+                totalCount = 0;
+            }
+            int[] doneCount = {0};
             try (var adapter = new AutoClosableOutcomePresenter(outcomePresenter)) {
                 resultInfo = engine.prepareAndEvaluateLibraryMapReduce(libraryToEvaluate,
                         contextObjects,
                         parameters,
                         (contextObject, outcome) -> {
                             synchronized (this) {
-                                if ((++count[0] % 100 == 0) && printProgress) {
-                                    System.out.printf("%d\n", count[0]);
+                                if ((++doneCount[0] % 100 == 0) && printProgress) {
+                                    printProgress(startTime, LocalDateTime.now(), totalCount, doneCount[0]);
                                 }
                                 adapter.processOutcome(contextObject, outcome);
                             }
@@ -343,6 +352,38 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
         }
         terminal.flush();
         return overallSuccess ? CommandLine.ExitCode.OK : CommandLine.ExitCode.SOFTWARE;
+    }
+
+    private LocalDateTime previousTime = null;
+
+    private void printProgress(final LocalDateTime startTime,
+                               final LocalDateTime now,
+                               long totalCount,
+                               long doneCount) {
+        final var elapsed = Duration.between(startTime, now);
+        if (previousTime == null || Duration.between(previousTime, now).toSeconds() > 10) {
+            System.out.printf("%tFT%<tT [%5d s] %,9d/", now, elapsed.toSeconds(), doneCount);
+            if (totalCount == 0) {
+                System.out.print("        ? [     ? %]");
+            } else {
+                System.out.printf("%,9d [%6.2f %%]",
+                        totalCount,
+                        (((double) doneCount) / totalCount) * 100.0d);
+            }
+            if (previousTime != null) {
+                final var soFarDuration = elapsed.toNanos() / 1000000000.0d;
+                if (soFarDuration > 0) {
+                    final var rate = doneCount / soFarDuration;
+                    System.out.printf(" %7.2f evals/s", rate);
+                    if (totalCount > doneCount && rate != 0.0) {
+                        final var eta = (totalCount - doneCount) / rate;
+                        System.out.printf("; ETA: %d s", Math.round(eta));
+                    }
+                }
+            }
+            System.out.println();
+            previousTime = now;
+        }
     }
 
     // For context object and parameters
