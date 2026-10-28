@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.hibernate.query.sqm.PathElementException;
+import org.hibernate.sql.ast.tree.expression.Literal;
 import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
@@ -192,11 +193,14 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         // TODO(jmoringe): pass entityManager
         final var subQuery = baseQuery.subquery(this.conceptClass);
         final var subRoot = subQuery.from(this.conceptAncestorClass);
-        subQuery.select(subRoot.get("descendantConcept"));
-        subQuery.where(addCodeJoinCriteria(criteriaBuilder, subRoot, "ancestorConcept", codes));
-        return (isConceptRetrieve(root, conceptRelation))
-                ? criteriaBuilder.<Object>in(root).value(subQuery.getSelection())
-                : criteriaBuilder.in(root.get(conceptRelation)).value(subQuery.getSelection());
+        final var conceptPath = isConceptRetrieve(root, conceptRelation)
+                ? root
+                : root.get(conceptRelation);
+        subQuery.select(criteriaBuilder.literal(1))
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(subRoot.get("descendantConcept"), conceptPath)),
+                        addCodeJoinCriteria(criteriaBuilder, subRoot, "ancestorConcept", codes));
+        return criteriaBuilder.exists(subQuery);
     }
 
     /*
