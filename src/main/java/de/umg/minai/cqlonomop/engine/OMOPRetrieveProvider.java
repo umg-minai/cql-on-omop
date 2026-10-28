@@ -164,7 +164,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
         // For concepts that should be considered with hierarchy, we generate a sub-query which finds all ancestor
         // concepts and restrict the returned rows to those ancestor concepts.
-        Expression<Boolean> codeExpression = null;
+        Predicate codeExpression = null;
         if (!codesWithHierarchy.isEmpty()) {
             codeExpression = addCodeAncestorsJoinCriteria(criteriaBuilder, baseQuery, root, codePath, codesWithHierarchy);
         }
@@ -184,11 +184,11 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
     }
 
-    private <T> Expression<Boolean> addCodeAncestorsJoinCriteria(final CriteriaBuilder criteriaBuilder,
-                                                                 final CriteriaQuery<T> baseQuery,
-                                                                 final Root<?> root,
-                                                                 final String conceptRelation,
-                                                                 final Iterable<Code> codes) {
+    private <T> Predicate addCodeAncestorsJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                       final CriteriaQuery<T> baseQuery,
+                                                       final Root<?> root,
+                                                       final String conceptRelation,
+                                                       final Iterable<Code> codes) {
         // TODO(jmoringe): pass entityManager
         final var subQuery = baseQuery.subquery(this.conceptClass);
         final var subRoot = subQuery.from(this.conceptAncestorClass);
@@ -200,13 +200,13 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     /*
-     * Add restrictions for the supplied concept relation and codes to the query. Either by adding where clauses is
-     * the query is against the concept table or by adding a join with the concept table if the query.
+     * Add restrictions for the supplied concept relation and codes to the query. Either by adding where clauses if the
+     * query is against the concept table or by adding a join with the concept table.
      */
-    private <T, Q extends AbstractQuery<T>> Expression<Boolean> addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
-                                                                                    final Root<?> root,
-                                                                                    final String conceptRelation,
-                                                                                    final Iterable<Code> codes) {
+    private <T extends AbstractQuery<T>> Predicate addCodeJoinCriteria(final CriteriaBuilder criteriaBuilder,
+                                                                       final Root<?> root,
+                                                                       final String conceptRelation,
+                                                                       final Iterable<Code> codes) {
         jakarta.persistence.criteria.Predicate predicates;
         if (isConceptRetrieve(root, conceptRelation)) {
             predicates = conceptPredicateForCodes(criteriaBuilder, root, codes);
@@ -245,7 +245,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
     }
 
     /**
-     * Add predicates to @param{baseQuery} to restrict it the current context and return the modified query.
+     * Add predicates to {@param baseQuery} to restrict it to the current context and return the modified query.
      *
      * @param baseQuery   The partially built query that should be restricted to the context
      * @param dataType    The type of the objects that will be retrieved
@@ -265,7 +265,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
             Path<?> column;
             try {
                 column = root.get(columnName);
-            } catch (PathElementException e) {
+            } catch (final PathElementException ignored) {
                 column = root.get("compoundId").get(columnName);
             }
             addRestriction(baseQuery, criteriaBuilder.equal(column, contextInfo.value()));
@@ -282,6 +282,14 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
     }
 
+    /**
+     * Indicate whether the retrieve operation returns Concept instances and filters by concept id.
+     *
+     * @param root The root of the query.
+     * @param conceptRelation The name of the relation that references the concept table and should be used for
+     *                        filtering by code.
+     * @return True if the query retrieves Concept instances and filters by concept id.
+     */
     private boolean isConceptRetrieve(final Root<?> root, final String conceptRelation) {
         return root.getModel().getName().equals("Concept") && conceptRelation.equals("concept");
     }
