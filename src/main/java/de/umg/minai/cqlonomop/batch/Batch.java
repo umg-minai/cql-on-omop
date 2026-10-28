@@ -370,15 +370,13 @@ public class Batch implements Function<ResultSinkCommandAdapter, Integer> {
                         totalCount,
                         (((double) doneCount) / totalCount) * 100.0d);
             }
-            if (previousTime != null) {
-                final var soFarDuration = elapsed.toNanos() / 1000000000.0d;
-                if (soFarDuration > 0) {
-                    final var rate = doneCount / soFarDuration;
-                    System.out.printf(" %7.2f evals/s", rate);
-                    if (totalCount > doneCount && rate != 0.0) {
-                        final var eta = (totalCount - doneCount) / rate;
-                        System.out.printf("; ETA: %d s", Math.round(eta));
-                    }
+            final var soFarDuration = elapsed.toNanos() / 1000000000.0d;
+            if (soFarDuration > 0) {
+                final var rate = doneCount / soFarDuration;
+                System.out.printf(" %7.2f evals/s", rate);
+                if (totalCount > doneCount && rate != 0.0) {
+                    final var eta = (totalCount - doneCount) / rate;
+                    System.out.printf("; ETA: %d s", Math.round(eta));
                 }
             }
             System.out.println();
