@@ -1,9 +1,11 @@
 package de.umg.minai.cqlonomop.engine;
 
+import jakarta.persistence.PersistenceException;
 import org.cqframework.cql.cql2elm.LibrarySourceProvider;
 import org.hl7.elm.r1.FunctionDef;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.opencds.cqf.cql.engine.debug.DebugResult;
+import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.execution.Cache;
 import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.slf4j.Logger;
@@ -51,12 +53,15 @@ public class MapReduceEngine extends CQLonOMOPEngine {
     // The number of threads that should be used for parallel evaluation.
     private final Integer threadCount;
 
+    private final int contextObjectMaxRetryCount;
+
     private ExecutorService executorService = null;
 
     public MapReduceEngine(final Configuration configuration,
                            final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
         super(configuration, additionalLibrarySourceProviders);
         this.threadCount = configuration.getThreadCount();
+        this.contextObjectMaxRetryCount = configuration.getContextObjectMaxRetryCount();
     }
 
     public MapReduceEngine(final Configuration configuration) {
@@ -81,16 +86,35 @@ public class MapReduceEngine extends CQLonOMOPEngine {
             return withEvaluationResult(library, contextObject, parameterBindings, initialCache,
                     result -> continuation.apply(Outcome.success(result)));
         } catch (final Exception e) {
-            if (this.isDebugging()) {
-                final var initialCacheString = new StringBuilder();
-                for (var libraryAndResults : initialCache.getExpressions().entrySet()) {
-                    initialCacheString.append(String.format("  %s\n", libraryAndResults.getKey()));
-                    for (var nameAndResult : libraryAndResults.getValue().entrySet()) {
-                        initialCacheString.append(String.format("    %s -> %s\n",
-                                nameAndResult.getKey(), nameAndResult.getValue().value()));
-                    }
-                }
-                log.error(String.format("""
+            return continuation.apply(Outcome.failure(e));
+        }
+    }
+
+
+    private <R> R internalEvaluateWithRetries(final String library,
+                                              final Object contextObject,
+                                              final Map<String, Object> parameterBindings,
+                                              final Cache initialCache,
+                                              final Function<Outcome, R> continuation) {
+        for (int retry = 1;; ++retry) {
+            final var outcome = internalEvaluate(library, contextObject, parameterBindings, initialCache, x -> x);
+            if (outcome instanceof Outcome.Success) {
+                    return continuation.apply(outcome);
+            } else if (outcome instanceof Outcome.Failure failure
+                    && failure.error() instanceof CqlException
+                    && (failure.error().getCause() instanceof IllegalStateException
+                    || failure.error().getCause() instanceof PersistenceException)) {
+                if (retry > this.contextObjectMaxRetryCount) {
+                    if (this.isDebugging()) {
+                        final var initialCacheString = new StringBuilder();
+                        for (var libraryAndResults : initialCache.getExpressions().entrySet()) {
+                            initialCacheString.append(String.format("  %s\n", libraryAndResults.getKey()));
+                            for (var nameAndResult : libraryAndResults.getValue().entrySet()) {
+                                initialCacheString.append(String.format("    %s -> %s\n",
+                                        nameAndResult.getKey(), nameAndResult.getValue().value()));
+                            }
+                        }
+                        log.error(String.format("""
                                         Error during evaluation of CQL library
                                           '%s'
                                         with context object
@@ -100,13 +124,23 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                                         with initial cache
                                         %s
                                         """,
-                                library,
-                                contextObject,
-                                parameterBindings,
-                                initialCacheString),
-                        e);
+                                        library,
+                                        contextObject,
+                                        parameterBindings,
+                                        initialCacheString),
+                                failure.error());
+                    }
+                    return continuation.apply(outcome);
+                } else {
+                    System.err.printf("Evaluation for context object %s failed: %s; retrying, attempt %d of %d\n",
+                            contextObject,
+                            failure.error(),
+                            retry,
+                            this.contextObjectMaxRetryCount);
+                }
+            } else {
+                return continuation.apply(outcome);
             }
-            return continuation.apply(Outcome.failure(e));
         }
     }
 
@@ -185,7 +219,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                     if (iterator.hasNext()) {
                         final var oneContextObject = iterator.next();
                         executor.execute(() -> {
-                            internalEvaluate(library,
+                            internalEvaluateWithRetries(library,
                                     oneContextObject,
                                     parameterBindings,
                                     initialCache,
@@ -223,7 +257,7 @@ public class MapReduceEngine extends CQLonOMOPEngine {
         } else {
             // Roundabout creation and population of the map is due to the fact that it has to be mutable.
             final var intermediate = new HashMap<Object, I>();
-            return internalEvaluate(library, contextObject, parameterBindings, initialCache, outcome -> {
+            return internalEvaluateWithRetries(library, contextObject, parameterBindings, initialCache, outcome -> {
                 intermediate.put(contextObject, mapper.apply(contextObject, outcome));
                 return reducer.apply(intermediate);
             });

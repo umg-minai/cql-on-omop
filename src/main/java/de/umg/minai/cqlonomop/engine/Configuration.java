@@ -21,6 +21,8 @@ public class Configuration extends DatabaseConfiguration {
 
     private int retrieveRetryDelayMS = 0;
 
+    private int contextObjectMaxRetryCount = 0;
+
     public boolean getDebug() {
         return this.debug;
     }
@@ -76,6 +78,15 @@ public class Configuration extends DatabaseConfiguration {
 
     public Configuration withRetrieveRetryDelayMS(int retrieveRetryDelayMS) {
         this.retrieveRetryDelayMS = retrieveRetryDelayMS;
+        return this;
+    }
+
+    public int getContextObjectMaxRetryCount() {
+        return this.contextObjectMaxRetryCount;
+    }
+
+    public Configuration withContextObjectMaxRetryCount(int contextObjectMaxRetryCount) {
+        this.contextObjectMaxRetryCount = contextObjectMaxRetryCount;
         return this;
     }
 

@@ -107,7 +107,18 @@ public class CqlOptions {
                           This option has no effect unless --retrieve-max-retry-count is non-zero.
                           Note: There is no additional backoff for multiple retries at the moment.
                           """)
-    public int retrieveRetryDelayMS;
+    public int retrieveRetryDelayMS = 0;
+
+    @Option(names = {"--context-object-max-retry-count"},
+            paramLabel = "attempt-count",
+            description = """
+                          The maximum number of times the evaluation for a given context object should be retried.
+                          A non-zero number of retries may be useful for unreliable database connections that cannot \
+                          recover by retrying individual queries. Instead, this option causes the whole evaluation \
+                          for the context object in question to be retried, including a new database connection.
+                          Defaults to 0 which means that context object evaluations are not retried.
+                          """)
+    public int contextObjectMaxRetryCount = 0;
 
     // TODO(jmoringe): context and focus
 
@@ -116,7 +127,8 @@ public class CqlOptions {
                 .withOmopVersion(this.omopVersion.versionString)
                 .withLibrarySearchPath(this.librarySearchPath)
                 .withRetrieveMaxRetryCount(this.retrieveMaxRetryCount)
-                .withRetrieveRetryDelayMS(this.retrieveRetryDelayMS);
+                .withRetrieveRetryDelayMS(this.retrieveRetryDelayMS)
+                .withContextObjectMaxRetryCount(this.contextObjectMaxRetryCount);
     }
 
 }
