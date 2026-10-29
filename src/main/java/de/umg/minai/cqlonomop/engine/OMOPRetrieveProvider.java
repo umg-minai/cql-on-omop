@@ -5,7 +5,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.hibernate.query.sqm.PathElementException;
-import org.hibernate.sql.ast.tree.expression.Literal;
 import org.opencds.cqf.cql.engine.exception.CqlException;
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider;
 import org.opencds.cqf.cql.engine.runtime.Code;
