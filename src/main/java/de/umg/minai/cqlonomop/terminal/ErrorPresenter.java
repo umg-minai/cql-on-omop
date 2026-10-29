@@ -55,8 +55,9 @@ public class ErrorPresenter extends AbstractPresenter{
     // Runtime Exceptions
 
     private void presentSpecificError(final ThemeAwareStringBuilder builder, final CqlException exception) {
+        final var message =  exception.getMessage() != null ? exception.getMessage() : "<no details available>";
         builder.withStyle(Theme.Element.ERROR, b ->
-                b.append("CQL evaluation failed:\n\n").append(exception.getMessage()));
+                b.append("CQL evaluation failed:\n\n").append(message));
         builder.append("\n\n");
         final var frames = exception.getBacktrace().getFrames();
         for (int i = frames.size() - 1; i >= 0; --i) {
@@ -163,7 +164,8 @@ public class ErrorPresenter extends AbstractPresenter{
     private void presentErrorWithSource(final ThemeAwareStringBuilder builder,
                                         final CqlCompilerException error,
                                         final List<String> sourceLines) {
-        builder.append("\n  • ").append(error.getMessage()).append("\n");
+        final var message = error.getMessage() != null ? error.getMessage() : "<no details available>";
+        builder.append("\n  • ").append(message).append("\n");
         if (sourceLines != null) {
             final var locator = error.getLocator();
             if (locator != null) {

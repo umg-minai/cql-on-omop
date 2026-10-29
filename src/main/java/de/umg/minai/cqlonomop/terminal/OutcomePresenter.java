@@ -139,6 +139,9 @@ public class OutcomePresenter extends AbstractPresenter {
                 final var prototype = entry.getValue().prototype;
                 final var count = entry.getValue().count;
                 var message = prototype.getMessage();
+                if (message == null) {
+                    message = "<no details available>";
+                }
                 // For error messages, the CQL engine append '\n<value>' to the message where <value> is the first
                 // argument to the Message function. Strip that extra line.
                 if (severity == Severity.ERROR && message.indexOf('\n') != -1) {
@@ -226,8 +229,10 @@ public class OutcomePresenter extends AbstractPresenter {
                 keySeverity = Severity.ERROR;
                 keyMessage = exception.getMessage();
             }
-            keyMessage = DATETIME_PATTERN.matcher(keyMessage).replaceAll("«DateTime»");
-            keyMessage = FLOATING_POINT_VALUE.matcher(keyMessage).replaceAll("«Number»");
+            if (keyMessage != null) {
+                keyMessage = DATETIME_PATTERN.matcher(keyMessage).replaceAll("«DateTime»");
+                keyMessage = FLOATING_POINT_VALUE.matcher(keyMessage).replaceAll("«Number»");
+            }
             final MessageKey key = new MessageKey(keySeverity, keyMessage);
             this.clusters.compute(key, (_key, value) ->
                     new MessageInfo(value != null ? value.prototype : exception,
