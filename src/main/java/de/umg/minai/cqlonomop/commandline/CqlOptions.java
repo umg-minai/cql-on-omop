@@ -89,12 +89,34 @@ public class CqlOptions {
     )
     public Map<String, String> parameterBindings = Map.of();
 
+    @Option(names = {"--retrieve-max-retry-count"},
+            paramLabel = "attempt-count",
+            description = """
+                          The maximum number of times a failed retrieve operation should be retried.
+                          A non-zero number of retries may be useful for unreliable database connections.
+                          Defaults to 0 which means retrieve operations are not retried.
+                          """)
+    public int retrieveMaxRetryCount = 0;
+
+    @Option(names = {"--retrieve-retry-delay"},
+            paramLabel = "time-in-milliseconds",
+            description = """
+                          Time in milliseconds to wait before retrying a failed retrieve operation.
+                          Waiting before retrying may be used to try and take load off a heavily loaded and \
+                          intermittently failing database.
+                          This option has no effect unless --retrieve-max-retry-count is non-zero.
+                          Note: There is no additional backoff for multiple retries at the moment.
+                          """)
+    public int retrieveRetryDelayMS;
+
     // TODO(jmoringe): context and focus
 
     public Configuration applyToConfiguration(final Configuration configuration) {
         return configuration
                 .withOmopVersion(this.omopVersion.versionString)
-                .withLibrarySearchPath(this.librarySearchPath);
+                .withLibrarySearchPath(this.librarySearchPath)
+                .withRetrieveMaxRetryCount(this.retrieveMaxRetryCount)
+                .withRetrieveRetryDelayMS(this.retrieveRetryDelayMS);
     }
 
 }

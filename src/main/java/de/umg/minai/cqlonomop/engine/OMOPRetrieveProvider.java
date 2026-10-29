@@ -2,6 +2,7 @@ package de.umg.minai.cqlonomop.engine;
 
 import OMOP.MappingInfo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.hibernate.query.sqm.PathElementException;
@@ -17,6 +18,10 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
     private record Pair<L, R> (L left, R right) {}
 
+    private final int maxRetryCount;
+
+    private final int retryDelayMS;
+
     private final EntityManager entityManager;
 
     private final MappingInfo mappingInfo;
@@ -26,7 +31,11 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
 
     public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
                                 final EntityManager entityManager,
-                                final MappingInfo mappingInfo) {
+                                final MappingInfo mappingInfo,
+                                int maxRetryCount,
+                                int retryDelayMS) {
+        this.maxRetryCount = maxRetryCount;
+        this.retryDelayMS = retryDelayMS;
         this.entityManager = entityManager;
         this.mappingInfo = mappingInfo;
         //noinspection unchecked
@@ -35,19 +44,58 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         this.conceptAncestorClass = (Class<Object>) mappingInfo.getDataTypeInfo("ConceptAncestor").getClazz();
     }
 
+    public OMOPRetrieveProvider(final OMOPModelResolver modelResolver,
+                                final EntityManager entityManager,
+                                final MappingInfo mappingInfo) {
+        this(modelResolver, entityManager, mappingInfo, 0 , 0);
+    }
+
     public static class RetrieveResult implements Iterable<Object> {
 
         private final TypedQuery<?> query;
 
+        private final int maxRetries;
+
+        private final int retryDelay;
+
         private Object[] cache = null;
 
-        public RetrieveResult(final TypedQuery<?> query) {
+        public RetrieveResult(final TypedQuery<?> query, int maxRetries, int retryDelay) {
             this.query = query;
+            this.maxRetries = maxRetries;
+            this.retryDelay = retryDelay;
+        }
+
+        private List<?> executeQuery() {
+            return this.query.getResultList();
+        }
+
+        private List<?> executeQueryWithRetries() {
+            for (int retry = 1;; ++retry) {
+                try {
+                   return executeQuery();
+                } catch (final IllegalStateException | PersistenceException exception) {
+                    if (retry > this.maxRetries) {
+                        throw exception;
+                    } else {
+                        System.err.printf("SQL query failed: %s; will retry after %d ms, attempt %d of %d\n",
+                                exception,
+                                this.retryDelay,
+                                retry,
+                                this.maxRetries);
+                        try {
+                            //noinspection BusyWait
+                            Thread.sleep(Math.round(this.retryDelay * new Random().nextDouble(0.9, 1.2)));
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                }
+            }
         }
 
         public void ensureFetched() {
             if (this.cache == null) {
-                this.cache = this.query.getResultList().toArray();
+                this.cache = executeQueryWithRetries().toArray();
             }
         }
 
@@ -112,7 +160,7 @@ public class OMOPRetrieveProvider implements RetrieveProvider {
         }
         // Create query and return the (lazy) retrieve result.
         final var query = entityManager.createQuery(criteriaQuery);
-        return new RetrieveResult(query);
+        return new RetrieveResult(query, this.maxRetryCount, this.retryDelayMS);
     }
 
     /**

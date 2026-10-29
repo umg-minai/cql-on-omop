@@ -17,6 +17,10 @@ public class Configuration extends DatabaseConfiguration {
 
     private List<Path> librarySearchPath = List.of();
 
+    private int retrieveMaxRetryCount = 0;
+
+    private int retrieveRetryDelayMS = 0;
+
     public boolean getDebug() {
         return this.debug;
     }
@@ -54,6 +58,24 @@ public class Configuration extends DatabaseConfiguration {
 
     public Configuration withOmopVersion(final String omopVersion) {
         this.omopVersion = omopVersion;
+        return this;
+    }
+
+    public int getRetrieveMaxRetryCount() {
+        return this.retrieveMaxRetryCount;
+    }
+
+    public Configuration withRetrieveMaxRetryCount(int retrieveRetryCount) {
+        this.retrieveMaxRetryCount = retrieveRetryCount;
+        return this;
+    }
+
+    public int getRetrieveRetryDelayMS() {
+        return this.retrieveRetryDelayMS;
+    }
+
+    public Configuration withRetrieveRetryDelayMS(int retrieveRetryDelayMS) {
+        this.retrieveRetryDelayMS = retrieveRetryDelayMS;
         return this;
     }
 

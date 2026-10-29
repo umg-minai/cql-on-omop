@@ -51,10 +51,18 @@ public class CQLonOMOPEngine {
 
     private boolean isProfiling = false;
 
+    private final int retrieveRetryCount;
+
+    private final int retrieveRetryDelayMS;
+
     public CQLonOMOPEngine(final boolean debug,
                            final String version,
-                           final List<LibrarySourceProvider> librarySourceProviders) {
+                           final List<LibrarySourceProvider> librarySourceProviders,
+                           int retrieveRetryCount,
+                           int retrieveRetryDelayMS) {
         this.isDebugging = debug;
+        this.retrieveRetryCount = retrieveRetryCount;
+        this.retrieveRetryDelayMS = retrieveRetryDelayMS;
 
         this.modelIdentifier = new ModelIdentifier().withId("OMOP").withVersion(version);
         this.modelManager.getModelInfoLoader().registerModelInfoProvider(new OMOPModelInfoProvider(), true);
@@ -73,8 +81,10 @@ public class CQLonOMOPEngine {
                            final String version,
                            final SessionFactory sessionFactory,
                            final MappingInfo mappingInfo,
-                           final List<LibrarySourceProvider> librarySourceProviders) {
-        this(debug, version, librarySourceProviders);
+                           final List<LibrarySourceProvider> librarySourceProviders,
+                           int retrieveRetryCount,
+                           int retrieveRetryDelayMS) {
+        this(debug, version, librarySourceProviders, retrieveRetryCount, retrieveRetryDelayMS);
         this.sessionFactory = sessionFactory;
         this.mappingInfo = mappingInfo;
     }
@@ -90,7 +100,11 @@ public class CQLonOMOPEngine {
 
     public CQLonOMOPEngine(final Configuration configuration,
                            final List<LibrarySourceProvider> additionalLibrarySourceProviders) {
-        this(configuration.getDebug(), configuration.getOmopVersion(), computeSourceProvider(configuration, additionalLibrarySourceProviders));
+        this(configuration.getDebug(),
+                configuration.getOmopVersion(),
+                computeSourceProvider(configuration, additionalLibrarySourceProviders),
+                configuration.getRetrieveMaxRetryCount(),
+                configuration.getRetrieveRetryDelayMS());
         this.mappingInfo = MappingInfo.ensureVersion(configuration.getOmopVersion());
         if (configuration.getDatabaseConnectionString() != null
                 || configuration.getDatabaseName() != null) {
@@ -188,7 +202,10 @@ public class CQLonOMOPEngine {
     public <R> R withEngineSession(final Function<EngineSession, R> continuation) {
         try (var session = this.sessionFactory != null ? this.sessionFactory.openSession() : null;
              var entityManager = session != null ? session.getEntityManagerFactory().createEntityManager() : null) {
-            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager, this.mappingInfo);
+            final var dataProvider = OMOPDataProvider.fromEntityManager(entityManager,
+                    this.mappingInfo,
+                    this.retrieveRetryCount,
+                    this.retrieveRetryDelayMS);
             final var dataProviders = Map.<String, DataProvider>of(
                     String.format("urn:ohdsi:omop-types:%s", this.modelIdentifier.getVersion()),
                     dataProvider);

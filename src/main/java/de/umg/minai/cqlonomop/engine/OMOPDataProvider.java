@@ -18,9 +18,15 @@ public class OMOPDataProvider extends CompositeDataProvider {
     }
 
     public static OMOPDataProvider fromEntityManager(final EntityManager entityManager,
-                                                     final MappingInfo mappingInfo) {
+                                                     final MappingInfo mappingInfo,
+                                                     int retrieveRetryCount,
+                                                     int retrieveRetryDelay) {
         final var modelResolver = new OMOPModelResolver(mappingInfo);
-        final var retrieveProvider = new OMOPRetrieveProvider(modelResolver, entityManager, mappingInfo);
+        final var retrieveProvider = new OMOPRetrieveProvider(modelResolver,
+                entityManager,
+                mappingInfo,
+                retrieveRetryCount,
+                retrieveRetryDelay);
         return new OMOPDataProvider(modelResolver, retrieveProvider);
     }
 
