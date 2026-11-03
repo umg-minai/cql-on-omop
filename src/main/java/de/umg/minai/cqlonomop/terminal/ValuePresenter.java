@@ -308,7 +308,7 @@ public class ValuePresenter extends AbstractPresenter {
             }
             length += string.length();
         } else {
-            if (index == precisionIndex && precisionIndex < components.length) {
+            if (index == precisionIndex) {
                 builder.append("«");
                 length += 1;
             }
