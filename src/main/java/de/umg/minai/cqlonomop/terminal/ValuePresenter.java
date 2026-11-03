@@ -253,7 +253,7 @@ public class ValuePresenter extends AbstractPresenter {
                         length[0] += addDateTimeComponent(builder1, 3, offsetDateTime.getHour(), precision);
                         length[0] += addDateTimeComponent(builder1, 4, offsetDateTime.getMinute(), precision);
                         length[0] += addDateTimeComponent(builder1, 5, offsetDateTime.getSecond(), precision);
-                        length[0] += addDateTimeComponent(builder1, 6, offsetDateTime.get(precision.toChronoField()), precision);
+                        length[0] += addDateTimeComponent(builder1, 6, offsetDateTime.getNano(), precision);
                         length[0] += addDateTimeComponent(builder1, 7, (offsetSeconds >= 0) ? "+" : "-", precision);
                         length[0] += addDateTimeComponent(builder1, 8, Math.abs(offsetSeconds) / 3600, precision);
                         length[0] += addDateTimeComponent(builder1, 9, (Math.abs(offsetSeconds) % 3600) / 60, precision);
