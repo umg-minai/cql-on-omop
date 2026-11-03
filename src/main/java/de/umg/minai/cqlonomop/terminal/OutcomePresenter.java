@@ -218,6 +218,8 @@ public class OutcomePresenter extends AbstractPresenter {
     private static final Pattern FLOATING_POINT_VALUE
             = Pattern.compile("[+-]?[0-9]*[.][0-9]*");
 
+    private static final Pattern ID_VALUE = Pattern.compile("id [0-9]{4,}");
+
     private void registerMessage(final Exception exception) {
         if (this.clusters != null) {
             final Severity keySeverity;
@@ -232,6 +234,7 @@ public class OutcomePresenter extends AbstractPresenter {
             if (keyMessage != null) {
                 keyMessage = DATETIME_PATTERN.matcher(keyMessage).replaceAll("«DateTime»");
                 keyMessage = FLOATING_POINT_VALUE.matcher(keyMessage).replaceAll("«Number»");
+                keyMessage = ID_VALUE.matcher(keyMessage).replaceAll("«Id»");
             }
             final MessageKey key = new MessageKey(keySeverity, keyMessage);
             this.clusters.compute(key, (_key, value) ->
