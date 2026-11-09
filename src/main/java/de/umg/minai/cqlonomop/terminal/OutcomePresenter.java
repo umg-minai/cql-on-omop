@@ -218,7 +218,7 @@ public class OutcomePresenter extends AbstractPresenter {
     private static final Pattern FLOATING_POINT_VALUE
             = Pattern.compile("[+-]?[0-9]*[.][0-9]*");
 
-    private static final Pattern ID_VALUE = Pattern.compile("id [0-9]{4,}");
+    private static final Pattern ID_VALUE = Pattern.compile("id [0-9]+");
 
     private void registerMessage(final Exception exception) {
         if (this.clusters != null) {
