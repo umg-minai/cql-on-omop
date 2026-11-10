@@ -70,8 +70,10 @@ public class Terminology implements Callable<Integer> {
 
     private record CodeSystemKey(String libraryName, String name) {}
 
+    private record SourceLocation(String library, int startLine, int startColumn, int endLine, int endColumn) {}
+
     // TODO(moringenj): store name and source location?
-    private record Code(String code, String system, boolean hierarchical) {}
+    private record Code(String code, String system, boolean hierarchical, SourceLocation sourceLocation) {}
 
     @JsonAutoDetect
     private record ConceptInfo(
@@ -79,6 +81,7 @@ public class Terminology implements Callable<Integer> {
             String name,
             String domain,
             boolean withDescendants,
+            SourceLocation sourceLocation,
             Set<String> usingLibraries
     ) {}
 
@@ -203,9 +206,11 @@ public class Terminology implements Callable<Integer> {
                     final var omopCodeSystemURLAndHierarchical= getOMOPCodeSystemURL(key, codeSystems);
                     if (omopCodeSystemURLAndHierarchical != null) {
                         final var definingLibraryName = library.getIdentifier().getId();
+                        final var sourceLocation = getSourceLocation(definingLibraryName, codeDef);
                         final var code = new Code(codeDef.getId(),
                                 omopCodeSystemURLAndHierarchical.url(),
-                                omopCodeSystemURLAndHierarchical.hierarchical());
+                                omopCodeSystemURLAndHierarchical.hierarchical(),
+                                sourceLocation);
                         codes.computeIfAbsent(code, ignored -> new HashSet<>())
                                 .addAll(transitiveIncludedBy.get(definingLibraryName));
                     }
@@ -235,7 +240,8 @@ public class Terminology implements Callable<Integer> {
                         conceptInfos.put(idString, new ConceptInfo(idString,
                                 name,
                                 domainName,
-                                resolveConcepts ? false : code.hierarchical,
+                                resolveConcepts ? false : code.hierarchical(),
+                                code.sourceLocation(),
                                 usingLibraries));
                     }
                 }
@@ -245,6 +251,7 @@ public class Terminology implements Callable<Integer> {
                         null,
                         null,
                         code.hierarchical(),
+                        code.sourceLocation(),
                         usingLibraries));
             }
         }
@@ -303,6 +310,19 @@ public class Terminology implements Callable<Integer> {
                 null,
                 null,
                 null);
+    }
+
+    private SourceLocation getSourceLocation(final String definingLibrary, final CodeDef codeDef) {
+        if (!codeDef.getTrackbacks().isEmpty()) {
+            final var trackback = codeDef.getTrackbacks().get(0);
+            return new SourceLocation(definingLibrary,
+                    trackback.getStartLine(),
+                    trackback.getStartChar(),
+                    trackback.getEndLine(),
+                    trackback.getEndChar());
+        } else {
+            return null;
+        }
     }
 
 }
