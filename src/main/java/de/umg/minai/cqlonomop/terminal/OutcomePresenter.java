@@ -218,6 +218,9 @@ public class OutcomePresenter extends AbstractPresenter {
     private static final Pattern FLOATING_POINT_VALUE
             = Pattern.compile("[+-]?[0-9]*[.][0-9]*");
 
+    private static final Pattern VALUE_WITH_UNIT
+            = Pattern.compile("[+-]?[0-9]+ '[^']+'");
+
     private static final Pattern ID_VALUE = Pattern.compile("id [0-9]+");
 
     private void registerMessage(final Exception exception) {
@@ -234,6 +237,7 @@ public class OutcomePresenter extends AbstractPresenter {
             if (keyMessage != null) {
                 keyMessage = DATETIME_PATTERN.matcher(keyMessage).replaceAll("«DateTime»");
                 keyMessage = FLOATING_POINT_VALUE.matcher(keyMessage).replaceAll("«Number»");
+                keyMessage = VALUE_WITH_UNIT.matcher(keyMessage).replaceAll("«ValueWithUnit»");
                 keyMessage = ID_VALUE.matcher(keyMessage).replaceAll("«Id»");
             }
             final MessageKey key = new MessageKey(keySeverity, keyMessage);
