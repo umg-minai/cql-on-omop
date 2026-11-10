@@ -14,6 +14,7 @@ import de.umg.minai.cqlonomop.terminal.DefaultTheme;
 import de.umg.minai.cqlonomop.terminal.ErrorPresenter;
 import de.umg.minai.cqlonomop.terminal.SourcePresenter;
 import de.umg.minai.cqlonomop.terminal.Theme;
+import org.hl7.elm.r1.CodeDef;
 import org.hl7.elm.r1.IncludeDef;
 import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
@@ -114,16 +115,26 @@ public class Terminology implements Callable<Integer> {
             // Load the libraries specified on the commandline with dependencies and collect the dependency-closure
             // for processing.
             final var allLibraries = new HashSet<Library>();
+            final var transitiveIncludedBy = new HashMap<String, List<String>>();
             for (final var library : libraries) {
                 final var newLibraries = engine.prepareLibrary(new VersionedIdentifier().withId(library));
+                newLibraries.forEach(l -> {
+                    final var name = l.getIdentifier().getId();
+                    transitiveIncludedBy
+                            .computeIfAbsent(name, ignored -> new ArrayList<>())
+                            .add(library);
+                });
                 allLibraries.addAll(newLibraries);
             }
             // Collect the terminology, possibly using the database to resolve "hierarchical" concept references and
             // adding more information to concepts.
             Collection<ConceptInfo> conceptInfos =
                     engine.getSessionFactory() != null
-                            ? engine.withEngineSession(session -> collectTerminology(session, allLibraries, resolveConcepts))
-                            : collectTerminology(null, allLibraries, resolveConcepts);
+                            ? engine.withEngineSession(session -> collectTerminology(session,
+                            allLibraries,
+                            transitiveIncludedBy,
+                            resolveConcepts))
+                            : collectTerminology(null, allLibraries, transitiveIncludedBy, resolveConcepts);
             // Output collected concept info as JSON.
             var objectMapper = new ObjectMapper()
                 .enable(SerializationFeature.INDENT_OUTPUT);
@@ -138,7 +149,8 @@ public class Terminology implements Callable<Integer> {
 
     private Collection<ConceptInfo> collectTerminology(final CQLonOMOPEngine.EngineSession session,
                                                        final Collection<Library> libraries,
-                                                      boolean resolveConcepts) {
+                                                       final Map<String, List<String>> transitiveIncludedBy,
+                                                       boolean resolveConcepts) {
         if (resolveConcepts && session == null) {
             throw new RuntimeException("Was asked to resolve OMOP concepts but a database connection is not available.");
         }
@@ -190,17 +202,12 @@ public class Terminology implements Callable<Integer> {
                     // Collect all OMOP concept ids and remember for each which library (or libraries) defined it.
                     final var omopCodeSystemURLAndHierarchical= getOMOPCodeSystemURL(key, codeSystems);
                     if (omopCodeSystemURLAndHierarchical != null) {
+                        final var definingLibraryName = library.getIdentifier().getId();
                         final var code = new Code(codeDef.getId(),
                                 omopCodeSystemURLAndHierarchical.url(),
                                 omopCodeSystemURLAndHierarchical.hierarchical());
-                        codes.compute(code, (key1, existing) ->  {
-                            var list = existing;
-                            if (list == null) {
-                                list = new HashSet<>();
-                            }
-                            list.add(library.getIdentifier().getId());
-                            return list;
-                        });
+                        codes.computeIfAbsent(code, ignored -> new HashSet<>())
+                                .addAll(transitiveIncludedBy.get(definingLibraryName));
                     }
                 }
             }
