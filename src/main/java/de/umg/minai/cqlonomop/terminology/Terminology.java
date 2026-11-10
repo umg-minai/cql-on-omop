@@ -77,7 +77,7 @@ public class Terminology implements Callable<Integer> {
             String id,
             String name,
             String domain,
-            boolean withAncestors,
+            boolean withDescendants,
             Set<String> usingLibraries
     ) {}
 
@@ -253,7 +253,7 @@ public class Terminology implements Callable<Integer> {
      * processing should be performed.
      */
     private CodeSystemNormalizationResult getOMOPCodeSystemURL(final CodeSystemKey key, final Map<CodeSystemKey, String> codeSystems) {
-        // We got through this lookup process to achieve the following normalization of the "withAncestors" flag:
+        // We got through this lookup process to achieve the following normalization of the "withDescendants" flag:
         //
         // Case 1
         //   "OMOPSV Hierarchy" -> "https://fhir-terminology.ohdsi.org?hierarchical" via codeSystems.get()
