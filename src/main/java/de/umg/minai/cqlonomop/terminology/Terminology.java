@@ -228,7 +228,7 @@ public class Terminology implements Callable<Integer> {
                         conceptInfos.put(idString, new ConceptInfo(idString,
                                 name,
                                 domainName,
-                                false,
+                                resolveConcepts ? false : code.hierarchical,
                                 usingLibraries));
                     }
                 }
