@@ -139,9 +139,12 @@ public class Terminology implements Callable<Integer> {
                             resolveConcepts))
                             : collectTerminology(null, allLibraries, transitiveIncludedBy, resolveConcepts);
             // Output collected concept info as JSON.
-            var objectMapper = new ObjectMapper()
+            final var objectMapper = new ObjectMapper()
                 .enable(SerializationFeature.INDENT_OUTPUT);
-            objectMapper.writeValue(System.out, conceptInfos);
+            final var sorted = conceptInfos.stream()
+                    .sorted(Comparator.comparing(ConceptInfo::id))
+                    .toList();
+            objectMapper.writeValue(System.out, sorted);
         } catch (final Exception exception) {
             errorPresenter.presentError(exception);
             isSuccess = false;
