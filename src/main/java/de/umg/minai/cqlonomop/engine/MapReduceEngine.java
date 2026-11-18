@@ -11,10 +11,7 @@ import org.opencds.cqf.cql.engine.execution.EvaluationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -96,50 +93,59 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                                               final Map<String, Object> parameterBindings,
                                               final Cache initialCache,
                                               final Function<Outcome, R> continuation) {
-        for (int retry = 1;; ++retry) {
-            final var outcome = internalEvaluate(library, contextObject, parameterBindings, initialCache, x -> x);
-            if (outcome instanceof Outcome.Success) {
-                    return continuation.apply(outcome);
-            } else if (outcome instanceof Outcome.Failure failure
-                    && failure.error() instanceof CqlException
-                    && (failure.error().getCause() instanceof IllegalStateException
-                    || failure.error().getCause() instanceof PersistenceException)) {
-                if (retry > this.contextObjectMaxRetryCount) {
-                    if (this.isDebugging()) {
-                        final var initialCacheString = new StringBuilder();
-                        for (var libraryAndResults : initialCache.getExpressions().entrySet()) {
-                            initialCacheString.append(String.format("  %s\n", libraryAndResults.getKey()));
-                            for (var nameAndResult : libraryAndResults.getValue().entrySet()) {
-                                initialCacheString.append(String.format("    %s -> %s\n",
-                                        nameAndResult.getKey(), nameAndResult.getValue().value()));
-                            }
-                        }
-                        log.error(String.format("""
-                                        Error during evaluation of CQL library
-                                          '%s'
-                                        with context object
-                                          %s
-                                        with parameters
-                                          %s
-                                        with initial cache
-                                        %s
-                                        """,
-                                        library,
+        for (final int[] retry = {1};; ++retry[0]) {
+            final Optional<R> maybeResult = internalEvaluate(library,
+                    contextObject,
+                    parameterBindings,
+                    initialCache,
+                    outcome -> {
+                        if (outcome instanceof Outcome.Success) {
+                            return Optional.of(continuation.apply(outcome));
+                        } else if (outcome instanceof Outcome.Failure failure
+                                && failure.error() instanceof CqlException
+                                && (failure.error().getCause() instanceof IllegalStateException
+                                || failure.error().getCause() instanceof PersistenceException)) {
+                            if (retry[0] > this.contextObjectMaxRetryCount) {
+                                if (this.isDebugging()) {
+                                    final var initialCacheString = new StringBuilder();
+                                    for (var libraryAndResults : initialCache.getExpressions().entrySet()) {
+                                        initialCacheString.append(String.format("  %s\n", libraryAndResults.getKey()));
+                                        for (var nameAndResult : libraryAndResults.getValue().entrySet()) {
+                                            initialCacheString.append(String.format("    %s -> %s\n",
+                                                    nameAndResult.getKey(), nameAndResult.getValue().value()));
+                                        }
+                                    }
+                                    log.error(String.format("""
+                                                            Error during evaluation of CQL library
+                                                              '%s'
+                                                            with context object
+                                                              %s
+                                                            with parameters
+                                                              %s
+                                                            with initial cache
+                                                            %s
+                                                            """,
+                                                    library,
+                                                    contextObject,
+                                                    parameterBindings,
+                                                    initialCacheString),
+                                            failure.error());
+                                }
+                                return Optional.of(continuation.apply(outcome));
+                            } else {
+                                System.err.printf("Evaluation for context object %s failed: %s; retrying, attempt %d of %d\n",
                                         contextObject,
-                                        parameterBindings,
-                                        initialCacheString),
-                                failure.error());
-                    }
-                    return continuation.apply(outcome);
-                } else {
-                    System.err.printf("Evaluation for context object %s failed: %s; retrying, attempt %d of %d\n",
-                            contextObject,
-                            failure.error(),
-                            retry,
-                            this.contextObjectMaxRetryCount);
-                }
-            } else {
-                return continuation.apply(outcome);
+                                        failure.error(),
+                                        retry[0],
+                                        this.contextObjectMaxRetryCount);
+                                return Optional.empty();
+                            }
+                        } else {
+                            return Optional.of(continuation.apply(outcome));
+                        }
+                    });
+            if (maybeResult.isPresent()) {
+                return maybeResult.get();
             }
         }
     }
