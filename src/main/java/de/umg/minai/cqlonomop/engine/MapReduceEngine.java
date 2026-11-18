@@ -304,7 +304,6 @@ public class MapReduceEngine extends CQLonOMOPEngine {
                     final var result = unfilteredEngine.evaluate(library.getIdentifier(), expressions, parameterBindings);
                     result.expressionResults.forEach((expression, expressionResult) -> {
                         final var key = String.format("%s.%s", library.getIdentifier().getId(), expression);
-                        final var value = expressionResult.value();
                         unfilteredResult.expressionResults.put(key, expressionResult);
                     });
                     // Merge any message and/or profile data that were generated into the debug result of the overall
